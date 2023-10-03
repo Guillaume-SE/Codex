@@ -1,30 +1,30 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 
-export default class GamesController {
+export default class UsersController {
   public async index({}: HttpContextContract) {
     const test = {
       1: {
         id: 1,
-        name: 'Halo',
-        support: 'Xbox',
-        developper: 'Bungie'
+        name: 'Iron',
+        email: 'iron@iron.fr',
+        password: 'iron',
       },
       2: {
         id: 2,
-        name: 'Dark Souls',
-        support: 'Xbox',
-        developper: 'From Software'
+        name: 'Wanda',
+        email: 'wanda@wanda.fr',
+        password: 'wanda',
       },
     }
     return test
   }
   public async show({ params }: HttpContextContract) {
-    return `Return the game with id ${params.id}`
+    return `Return the user with id ${params.id}`
   }
 
   //ADMIN
   public async store({}) {
-    return `Game stored`
+    return `User stored`
   }
   public async update({ params }: HttpContextContract) {
     return `Updated the game with id ${params.id}`
