@@ -1,7 +1,7 @@
 import Route from '@ioc:Adonis/Core/Route'
-import 'App/Modules/Games/GamesRoutes'
-import 'App/Modules/Movies/MoviesRoutes'
-import 'App/Modules/Series/SeriesRoutes'
+import 'App/Routes/GamesRoutes'
+import 'App/Routes/MoviesRoutes'
+import 'App/Routes/SeriesRoutes'
 
 
 Route.get('/', async () => {
