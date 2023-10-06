@@ -1,8 +1,6 @@
 import Route from '@ioc:Adonis/Core/Route'
-import 'App/Routes/GamesRoutes'
-import 'App/Routes/MoviesRoutes'
-import 'App/Routes/SeriesRoutes'
-
+import 'App/Routes/UsersRoutes'
+import 'App/Routes/MediasRoutes'
 
 Route.get('/', async () => {
   return "Home";

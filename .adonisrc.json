@@ -21,8 +21,12 @@
     "./providers/AppProvider",
     "@adonisjs/core",
     "@adonisjs/auth",
-    "@adonisjs/lucid"
+    "@adonisjs/lucid",
+    "@adonisjs/session"
   ],
+  "namespaces": {
+    "httpControllers": "App/Controllers"
+  },
   "aceProviders": [
     "@adonisjs/repl"
   ],
