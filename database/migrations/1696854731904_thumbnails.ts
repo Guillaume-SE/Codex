@@ -5,12 +5,24 @@ export default class extends BaseSchema {
 
   public async up () {
     this.schema.createTable(this.tableName, (table) => {
-      table.increments('id')
-      // media_id
-      table.string('name', 255).notNullable()
-      table.string('path', 255).notNullable()
-      table.timestamp('created_at', { useTz: true })
-      table.timestamp('updated_at', { useTz: true })
+      table
+        .increments('id')
+      table
+        .integer('media_id')
+        .unsigned()
+        .references('id')
+        .inTable('medias')
+        .notNullable()
+      table
+        .string('name', 255)
+        .notNullable()
+      table
+        .string('path', 255)
+        .notNullable()
+      table
+        .timestamp('created_at', { useTz: true })
+      table
+        .timestamp('updated_at', { useTz: true })
     })
   }
 

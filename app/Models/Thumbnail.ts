@@ -5,7 +5,8 @@ export default class Thumbnail extends BaseModel {
   @column({ isPrimary: true })
   public id: number
 
-  // media_id
+  @column({ columnName: 'media_id' })
+  public mediaId: number
 
   @column()
   public name: string
@@ -16,6 +17,6 @@ export default class Thumbnail extends BaseModel {
   @column.dateTime({ autoCreate: true, columnName: 'created_at' })
   public createdAt: DateTime
 
-  @column.dateTime({ autoCreate: true, autoUpdate: true, columnName: 'updated_at'  })
+  @column.dateTime({ autoCreate: true, autoUpdate: true, columnName: 'updated_at' })
   public updatedAt: DateTime
 }

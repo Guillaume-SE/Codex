@@ -1,14 +1,16 @@
 import { DateTime } from 'luxon'
 import { BaseModel, column } from '@ioc:Adonis/Lucid/Orm'
-import { ReviewStatus } from 'App/Helpers/Types/ReviewStatus'
+import { ReviewStatus } from 'App/Helpers/Interfaces/ReviewStatus'
 
 export default class Review extends BaseModel {
   @column({ isPrimary: true })
   public id: number
 
-  // user_id
+  @column({ columnName: 'user_id' })
+  public userId: number
 
-  // media_id
+  @column({ columnName: 'media_id' })
+  public mediaId: number
 
   @column()
   public plateform: string

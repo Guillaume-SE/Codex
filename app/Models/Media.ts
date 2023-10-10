@@ -1,15 +1,16 @@
 import { DateTime } from 'luxon'
 import { BaseModel, column } from '@ioc:Adonis/Lucid/Orm'
-import { MediaTypes } from 'App/Helpers/Types/MediaTypes'
+import { MediaTypes } from 'App/Helpers/Interfaces/MediaTypes'
 
 export default class Media extends BaseModel {
   @column({ isPrimary: true })
   public id: number
 
+  @column({columnName: 'media_parent_id'})
+  public mediaParentId: number
+
   @column()
   public name: string
-
-  // media_parent_id HERE
 
   @column()
   public type: MediaTypes
