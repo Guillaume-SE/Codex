@@ -16,8 +16,7 @@ const plateform = [
     'Nintendo Switch',
     'PC',
     'Mobile',
-    'Emulateur'
-
+    'Emulateur',
 ] as const
 
-export type GamePlateform = typeof plateform[number]
+export type GamePlateform = (typeof plateform)[number]

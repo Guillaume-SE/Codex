@@ -27,8 +27,11 @@ export default class extends BaseSchema {
         .enum('status', this.reviewStatus)
         .notNullable()
       table
-        .integer('rated', 2)
+        .integer('rating', 2)
         .unsigned()
+        .nullable()
+      table
+        .string('notes', 100)
         .nullable()
       table
         .boolean('is_favorite')

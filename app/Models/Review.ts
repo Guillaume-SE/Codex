@@ -20,7 +20,10 @@ export default class Review extends BaseModel {
   public status: ReviewStatus
 
   @column()
-  public rated: number
+  public rating: number
+
+  @column()
+  public notes: string
 
   @column({ columnName: 'is_favorite'})
   public isFavorite: boolean
