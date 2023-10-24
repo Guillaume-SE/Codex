@@ -21,8 +21,6 @@ export default class extends BaseSchema {
         table.string('category', 30).notNullable()
         table.string('type', 30).notNullable()
         table.string('name', 255).notNullable()
-      // table.string('developer', 50).nullable()
-      // table.string('publisher', 50).nullable()
       // table.string('author', 50).nullable()
       // table.string('illustrator', 50).nullable()
       // table.string('director', 50).nullable()

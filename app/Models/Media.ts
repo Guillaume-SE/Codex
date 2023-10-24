@@ -23,12 +23,6 @@ export default class Media extends BaseModel {
   public name: string
 
   // @column()
-  // public developer: string
-
-  // @column()
-  // public publisher: string
-
-  // @column()
   // public author: string
 
   // @column()
