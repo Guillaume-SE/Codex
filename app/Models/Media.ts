@@ -28,9 +28,6 @@ export default class Media extends BaseModel {
   // @column()
   // public illustrator: string
 
-  // @column()
-  // public duration: number
-
   @column()
   public released: string
 
