@@ -5,9 +5,6 @@ export default class Thumbnail extends BaseModel {
   @column({ isPrimary: true })
   public id: number
 
-  @column({ columnName: 'media_id' })
-  public mediaId: number
-
   @column()
   public name: string
 

@@ -1,7 +1,8 @@
 const status = [
     'en cours',
-    'abandonné',
     'terminé',
+    'en pause',
+    'abandonné',
     'prévu'
 ] as const
 

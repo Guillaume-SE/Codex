@@ -1,7 +1,7 @@
 import { DateTime } from 'luxon'
 import { BaseModel, column } from '@ioc:Adonis/Lucid/Orm'
-import { ReviewStatus } from 'App/Helpers/Interfaces/ReviewStatus'
-import { GamePlateform } from 'App/Helpers/Interfaces/GamePlateform'
+import { ReviewStatus } from 'App/Models/Enums/ReviewStatus'
+import { GamePlateform } from 'App/Models/Enums/GamePlateform'
 
 export default class Review extends BaseModel {
   @column({ isPrimary: true })

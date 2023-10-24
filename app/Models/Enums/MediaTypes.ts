@@ -1,10 +1,10 @@
 const types = [
     'jeu vidéo',
-    'film',
-    'série',
-    'livre',
-    'épisode',
-    'dlc'
+    'dlc',
+    'manga',
+    'roman',
+    'comics',
+    'bande dessinée'
 ] as const
 
 export type MediaTypes = typeof types[number]
