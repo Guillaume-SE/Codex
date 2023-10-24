@@ -1,7 +1,6 @@
 import { DateTime } from 'luxon'
 import { BaseModel, column } from '@ioc:Adonis/Lucid/Orm'
 import { ReviewStatus } from 'App/Models/Enums/ReviewStatus'
-import { GamePlateform } from 'App/Models/Enums/GamePlateform'
 
 export default class Review extends BaseModel {
   @column({ isPrimary: true })
@@ -12,9 +11,6 @@ export default class Review extends BaseModel {
 
   @column({ columnName: 'media_id' })
   public mediaId: number
-
-  @column()
-  public plateform: GamePlateform
 
   @column()
   public status: ReviewStatus
