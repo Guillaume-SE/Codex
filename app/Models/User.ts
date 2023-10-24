@@ -1,6 +1,7 @@
 import { DateTime } from 'luxon'
 import Hash from '@ioc:Adonis/Core/Hash'
-import { BaseModel, beforeSave, column } from '@ioc:Adonis/Lucid/Orm'
+import { BaseModel, HasMany, beforeSave, column, hasMany } from '@ioc:Adonis/Lucid/Orm'
+import Review from 'App/Models/Review'
 
 export default class User extends BaseModel {
   @column({ isPrimary: true })
@@ -27,4 +28,6 @@ export default class User extends BaseModel {
       user.password = await Hash.make(user.password)
     }
   }
+  @hasMany(() => Review)
+  public reviews: HasMany<typeof Review>
 }

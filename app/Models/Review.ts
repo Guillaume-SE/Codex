@@ -1,6 +1,8 @@
 import { DateTime } from 'luxon'
-import { BaseModel, column } from '@ioc:Adonis/Lucid/Orm'
+import { BaseModel, BelongsTo, belongsTo, column } from '@ioc:Adonis/Lucid/Orm'
 import { ReviewStatus } from 'App/Models/Enums/ReviewStatus'
+import User from 'App/Models/User'
+import Media from 'App/Models/Media'
 
 export default class Review extends BaseModel {
   @column({ isPrimary: true })
@@ -21,12 +23,23 @@ export default class Review extends BaseModel {
   @column()
   public notes: string | null
 
-  @column({ columnName: 'is_favorite'})
+  @column({ columnName: 'is_favorite' })
   public isFavorite: boolean
 
   @column.dateTime({ autoCreate: true, columnName: 'created_at' })
   public createdAt: DateTime
 
-  @column.dateTime({ autoCreate: true, autoUpdate: true, columnName: 'updated_at'  })
+  @column.dateTime({ autoCreate: true, autoUpdate: true, columnName: 'updated_at' })
   public updatedAt: DateTime
+
+  //relations
+  @belongsTo(() => User, {
+    foreignKey: 'userId',
+  })
+  public author: BelongsTo<typeof User>
+
+  @belongsTo(() => Media, {
+    foreignKey: 'mediaId',
+  })
+  public media: BelongsTo<typeof Media>
 }

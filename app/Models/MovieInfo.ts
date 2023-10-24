@@ -1,8 +1,7 @@
 import { DateTime } from 'luxon'
 import { BaseModel, column } from '@ioc:Adonis/Lucid/Orm'
-import { GamePlateform } from 'App/Models/Enums/GamePlateform'
 
-export default class GamesInfo extends BaseModel {
+export default class MovieInfo extends BaseModel {
   @column({ isPrimary: true })
   public id: number
 
@@ -10,13 +9,13 @@ export default class GamesInfo extends BaseModel {
   public mediaId: number
 
   @column()
-  public developer: string | null
+  public director: string | null
 
   @column()
-  public publisher: string | null
+  public screenwriter: string | null
 
   @column()
-  public plateform: GamePlateform
+  public duration: number | null
 
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime

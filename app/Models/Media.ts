@@ -1,7 +1,8 @@
 import { DateTime } from 'luxon'
-import { BaseModel, column } from '@ioc:Adonis/Lucid/Orm'
+import { BaseModel, HasOne, column, hasOne } from '@ioc:Adonis/Lucid/Orm'
 import { MediaTypes } from 'App/Models/Enums/MediaTypes'
 import { MediaCategory } from 'App/Models/Enums/MediaCategory'
+import Review from 'App/Models/Review'
 
 export default class Media extends BaseModel {
   @column({ isPrimary: true })
@@ -22,12 +23,6 @@ export default class Media extends BaseModel {
   @column()
   public name: string
 
-  // @column()
-  // public author: string
-
-  // @column()
-  // public illustrator: string
-
   @column()
   public released: string | null
 
@@ -39,4 +34,8 @@ export default class Media extends BaseModel {
 
   @column.dateTime({ autoCreate: true, autoUpdate: true, columnName: 'updated_at' })
   public updatedAt: DateTime
+
+  //relation
+  @hasOne(() => Review)
+  public review: HasOne<typeof Review>
 }

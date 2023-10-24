@@ -2,7 +2,7 @@ import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 
 export default class MediasController {
   public async index({}: HttpContextContract) {
-    return `New media created !`
+    return `All medias !`
   }
   public async show({ params }: HttpContextContract) {
     return `Return the media with id ${params.id}`

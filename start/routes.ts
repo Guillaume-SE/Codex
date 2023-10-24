@@ -3,5 +3,5 @@ import 'App/Routes/UsersRoutes'
 import 'App/Routes/MediasRoutes'
 
 Route.get('/', async () => {
-  return "Home";
-})
+  return 'Home'
+}).as('home')
