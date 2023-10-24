@@ -9,13 +9,13 @@ export default class MoviesInfo extends BaseModel {
   public mediaId: number
 
   @column()
-  public director: string
+  public director: string | null
 
   @column()
-  public screenwriter: string
+  public screenwriter: string | null
 
   @column()
-  public duration: number
+  public duration: number | null
 
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime

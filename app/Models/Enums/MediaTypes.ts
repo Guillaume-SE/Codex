@@ -1,6 +1,9 @@
 const types = [
     'jeu vidéo',
     'dlc',
+    'dessin animé',
+    'série',
+    'animé',
     'manga',
     'roman',
     'comics',

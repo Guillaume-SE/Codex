@@ -19,7 +19,7 @@ export default class extends BaseSchema {
         .inTable('covers')
         .notNullable()
         table.string('category', 30).notNullable()
-        table.string('type', 30).notNullable()
+        table.string('type', 30).nullable()
         table.string('name', 255).notNullable()
       // table.string('author', 50).nullable()
       // table.string('illustrator', 50).nullable()

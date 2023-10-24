@@ -2,21 +2,7 @@ import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 
 export default class MediasController {
   public async index({}: HttpContextContract) {
-    const medias = [
-      {
-        "id": "1",
-        "name": 'Halo',
-        "genre": ["Action", "Fps"],
-        "developper": 'Bungie',
-      },
-      {
-        "id": 2,
-        "name": 'Avengers: Infinity War',
-        "genre": 'Action',
-        "duration": '180',
-      },
-    ]
-    return medias
+    return `New media created !`
   }
   public async show({ params }: HttpContextContract) {
     return `Return the media with id ${params.id}`

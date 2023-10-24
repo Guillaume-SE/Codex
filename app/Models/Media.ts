@@ -8,7 +8,7 @@ export default class Media extends BaseModel {
   public id: number
 
   @column({ columnName: 'media_parent_id' })
-  public mediaParentId: number
+  public mediaParentId: number | null
 
   @column({ columnName: 'cover_id' })
   public coverId: number
@@ -17,7 +17,7 @@ export default class Media extends BaseModel {
   public category: MediaCategory
 
   @column()
-  public type: MediaTypes
+  public type: MediaTypes | null
 
   @column()
   public name: string
@@ -29,10 +29,10 @@ export default class Media extends BaseModel {
   // public illustrator: string
 
   @column()
-  public released: string
+  public released: string | null
 
   @column()
-  public synopsis: string
+  public synopsis: string |null
 
   @column.dateTime({ autoCreate: true, columnName: 'created_at' })
   public createdAt: DateTime

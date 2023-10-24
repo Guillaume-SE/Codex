@@ -10,10 +10,10 @@ export default class GamesInfo extends BaseModel {
   public mediaId: number
 
   @column()
-  public developer: string
+  public developer: string | null
 
   @column()
-  public publisher: string
+  public publisher: string | null
 
   @column()
   public plateform: GamePlateform

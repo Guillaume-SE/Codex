@@ -1,8 +1,7 @@
 const category = [
     'jeux',
     'film',
-    'série',
-    'animé',
+    'saison',
     'livre'
 ] as const
 
