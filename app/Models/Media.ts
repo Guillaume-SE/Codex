@@ -1,8 +1,11 @@
 import { DateTime } from 'luxon'
-import { BaseModel, HasOne, column, hasOne } from '@ioc:Adonis/Lucid/Orm'
+import { BaseModel, BelongsTo, HasOne, belongsTo, column, hasOne } from '@ioc:Adonis/Lucid/Orm'
 import { MediaTypes } from 'App/Models/Enums/MediaTypes'
 import { MediaCategory } from 'App/Models/Enums/MediaCategory'
 import Review from 'App/Models/Review'
+import Cover from 'App/Models/Cover'
+import GameInfo from 'App/Models/GameInfo'
+import MovieInfo from 'App/Models/MovieInfo'
 
 export default class Media extends BaseModel {
   @column({ isPrimary: true })
@@ -27,7 +30,7 @@ export default class Media extends BaseModel {
   public released: string | null
 
   @column()
-  public synopsis: string |null
+  public synopsis: string | null
 
   @column.dateTime({ autoCreate: true, columnName: 'created_at' })
   public createdAt: DateTime
@@ -35,7 +38,22 @@ export default class Media extends BaseModel {
   @column.dateTime({ autoCreate: true, autoUpdate: true, columnName: 'updated_at' })
   public updatedAt: DateTime
 
-  //relation
+  //relations
+  @belongsTo(() => Cover)
+  public cover: BelongsTo<typeof Cover>
+
   @hasOne(() => Review)
   public review: HasOne<typeof Review>
+
+  @hasOne(() => GameInfo)
+  public gameInfo: HasOne<typeof GameInfo>
+
+  
+  @hasOne(() => MovieInfo)
+  public movieInfo: HasOne<typeof MovieInfo>
 }
+// @hasOne(() => SeasonInfo)
+// public seasonInfo: HasOne<typeof SeasonInfo>
+
+// @hasOne(() => BookInfo)
+// public bookInfo: HasOne<typeof BookInfo>

@@ -9,8 +9,8 @@ export default class extends BaseSchema {
       table
         .integer('media_parent_id')
         .unsigned()
-        .references('id')
-        .inTable(this.tableName)
+        // .references('id')
+        // .inTable(this.tableName)
         .nullable()
       table
         .integer('cover_id')
@@ -18,6 +18,7 @@ export default class extends BaseSchema {
         .references('id')
         .inTable('covers')
         .notNullable()
+        .onDelete('SET NULL')
         table.string('category', 30).notNullable()
         table.string('type', 30).nullable()
         table.string('name', 255).notNullable()

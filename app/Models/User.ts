@@ -28,6 +28,8 @@ export default class User extends BaseModel {
       user.password = await Hash.make(user.password)
     }
   }
+
+  //relations
   @hasMany(() => Review)
   public reviews: HasMany<typeof Review>
 }

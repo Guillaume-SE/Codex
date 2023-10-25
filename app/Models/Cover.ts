@@ -1,5 +1,6 @@
 import { DateTime } from 'luxon'
-import { BaseModel, column } from '@ioc:Adonis/Lucid/Orm'
+import { BaseModel, HasMany, column, hasMany } from '@ioc:Adonis/Lucid/Orm'
+import Media from 'App/Models/Media'
 
 export default class Thumbnail extends BaseModel {
   @column({ isPrimary: true })
@@ -16,4 +17,8 @@ export default class Thumbnail extends BaseModel {
 
   @column.dateTime({ autoCreate: true, autoUpdate: true, columnName: 'updated_at' })
   public updatedAt: DateTime
+
+  //relations
+  @hasMany(() => Media)
+  public reviews: HasMany<typeof Media>
 }
