@@ -29,7 +29,9 @@ export default class User extends BaseModel {
     }
   }
 
-  //relations
-  @hasMany(() => Review)
+  // RELATIONS
+  @hasMany(() => Review, {
+    foreignKey: 'createdBy'
+  })
   public reviews: HasMany<typeof Review>
 }

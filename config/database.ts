@@ -23,17 +23,6 @@ const databaseConfig: DatabaseConfig = {
   connection: Env.get('DB_CONNECTION'),
 
   connections: {
-    /*
-    |--------------------------------------------------------------------------
-    | SQLite
-    |--------------------------------------------------------------------------
-    |
-    | Configuration for the SQLite database.  Make sure to install the driver
-    | from npm when using this connection
-    |
-    | npm i sqlite3
-    |
-    */
     sqlite: {
       client: 'sqlite',
       connection: {
@@ -42,7 +31,7 @@ const databaseConfig: DatabaseConfig = {
       pool: {
         afterCreate: (conn, cb) => {
           conn.run('PRAGMA foreign_keys=true', cb)
-        }
+        },
       },
       migrations: {
         naturalSort: true,
@@ -52,7 +41,22 @@ const databaseConfig: DatabaseConfig = {
       debug: false,
     },
 
-  }
+    mysql: {
+      client: 'mysql2',
+      connection: {
+        host: Env.get('MYSQL_HOST'),
+        port: Env.get('MYSQL_PORT'),
+        user: Env.get('MYSQL_USER'),
+        password: Env.get('MYSQL_PASSWORD', ''),
+        database: Env.get('MYSQL_DB_NAME'),
+      },
+      migrations: {
+        naturalSort: true,
+      },
+      healthCheck: false,
+      debug: false,
+    },
+  },
 }
 
 export default databaseConfig

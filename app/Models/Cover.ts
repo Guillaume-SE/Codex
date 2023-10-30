@@ -2,7 +2,7 @@ import { DateTime } from 'luxon'
 import { BaseModel, HasMany, column, hasMany } from '@ioc:Adonis/Lucid/Orm'
 import Media from 'App/Models/Media'
 
-export default class Thumbnail extends BaseModel {
+export default class Cover extends BaseModel {
   @column({ isPrimary: true })
   public id: number
 
@@ -19,6 +19,8 @@ export default class Thumbnail extends BaseModel {
   public updatedAt: DateTime
 
   //relations
-  @hasMany(() => Media)
+  @hasMany(() => Media, {
+    foreignKey: 'coverId'
+  })
   public reviews: HasMany<typeof Media>
 }

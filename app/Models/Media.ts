@@ -1,5 +1,14 @@
 import { DateTime } from 'luxon'
-import { BaseModel, BelongsTo, HasOne, belongsTo, column, hasOne } from '@ioc:Adonis/Lucid/Orm'
+import {
+  BaseModel,
+  BelongsTo,
+  HasMany,
+  HasOne,
+  belongsTo,
+  column,
+  hasMany,
+  hasOne,
+} from '@ioc:Adonis/Lucid/Orm'
 import { MediaTypes } from 'App/Models/Enums/MediaTypes'
 import { MediaCategory } from 'App/Models/Enums/MediaCategory'
 import Review from 'App/Models/Review'
@@ -27,10 +36,10 @@ export default class Media extends BaseModel {
   public name: string
 
   @column()
-  public released: string | null
+  public released: string
 
   @column()
-  public synopsis: string | null
+  public synopsis: string
 
   @column.dateTime({ autoCreate: true, columnName: 'created_at' })
   public createdAt: DateTime
@@ -38,18 +47,35 @@ export default class Media extends BaseModel {
   @column.dateTime({ autoCreate: true, autoUpdate: true, columnName: 'updated_at' })
   public updatedAt: DateTime
 
-  //relations
-  @belongsTo(() => Cover)
+  // RELATIONS
+  @hasMany(() => Media, {
+    foreignKey: 'mediaParentId',
+  })
+  public parentMedia: HasMany<typeof Media>
+
+  @belongsTo(() => Media, {
+    foreignKey: 'mediaParentId',
+  })
+  public childrenMedia: BelongsTo<typeof Media>
+
+  @belongsTo(() => Cover, {
+    localKey: 'coverId',
+  })
   public cover: BelongsTo<typeof Cover>
 
-  @hasOne(() => Review)
+  @hasOne(() => Review, {
+    foreignKey: 'mediaId',
+  })
   public review: HasOne<typeof Review>
 
-  @hasOne(() => GameInfo)
+  @hasOne(() => GameInfo, {
+    foreignKey: 'mediaId',
+  })
   public gameInfo: HasOne<typeof GameInfo>
 
-  
-  @hasOne(() => MovieInfo)
+  @hasOne(() => MovieInfo, {
+    foreignKey: 'mediaId',
+  })
   public movieInfo: HasOne<typeof MovieInfo>
 }
 // @hasOne(() => SeasonInfo)

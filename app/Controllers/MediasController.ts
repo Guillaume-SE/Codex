@@ -1,16 +1,21 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
+import Media from 'App/Models/Media'
 
 export default class MediasController {
   public async index({}: HttpContextContract) {
-    return `All medias !`
+    const media = await Media.all()
+    return media;
   }
   public async show({ params }: HttpContextContract) {
     return `Return the media with id ${params.id}`
   }
 
   //ADMIN
-  public async store({}: HttpContextContract) {
-    return 'Media stored'
+  public async store({ request, response }: HttpContextContract) {
+    const data = request.body()
+    const media = await Media.create(data)
+    response.status(201)
+    return media
   }
 
   public async update({ params }: HttpContextContract) {

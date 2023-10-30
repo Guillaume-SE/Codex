@@ -8,8 +8,8 @@ export default class Review extends BaseModel {
   @column({ isPrimary: true })
   public id: number
 
-  @column({ columnName: 'user_id' })
-  public userId: number
+  @column({ columnName: 'created_by' })
+  public createdBy: number
 
   @column({ columnName: 'media_id' })
   public mediaId: number
@@ -34,12 +34,12 @@ export default class Review extends BaseModel {
 
   //relations
   @belongsTo(() => User, {
-    foreignKey: 'userId',
+    localKey: 'createdBy',
   })
   public author: BelongsTo<typeof User>
 
   @belongsTo(() => Media, {
-    foreignKey: 'mediaId',
+    localKey: 'mediaId',
   })
   public media: BelongsTo<typeof Media>
 }
