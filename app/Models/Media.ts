@@ -23,7 +23,7 @@ export default class Media extends BaseModel {
   public mediaParentId: number | null
 
   @column({ columnName: 'cover_id' })
-  public coverId: number
+  public coverId: number | null
 
   @column()
   public type: MediaTypes
