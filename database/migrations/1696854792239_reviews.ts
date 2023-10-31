@@ -23,7 +23,7 @@ export default class extends BaseSchema {
         .notNullable()
       table.string('status', 15).notNullable()
       table.integer('rating', 2).unsigned().nullable()
-      table.string('notes', 100).nullable()
+      table.string('notes', 150).nullable()
       table.boolean('is_favorite').defaultTo(false).notNullable()
       table.timestamp('created_at', { useTz: true })
       table.timestamp('updated_at', { useTz: true })

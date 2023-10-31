@@ -10,7 +10,6 @@ import {
   hasOne,
 } from '@ioc:Adonis/Lucid/Orm'
 import { MediaTypes } from 'App/Models/Enums/MediaTypes'
-import { MediaCategory } from 'App/Models/Enums/MediaCategory'
 import Review from 'App/Models/Review'
 import Cover from 'App/Models/Cover'
 import GameInfo from 'App/Models/GameInfo'
@@ -27,10 +26,7 @@ export default class Media extends BaseModel {
   public coverId: number
 
   @column()
-  public category: MediaCategory
-
-  @column()
-  public type: MediaTypes | null
+  public type: MediaTypes
 
   @column()
   public name: string
