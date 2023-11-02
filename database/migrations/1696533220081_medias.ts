@@ -16,7 +16,7 @@ export default class extends BaseSchema {
       table.string('type').notNullable()
       table.json('cover').nullable()
       table.string('released').notNullable().defaultTo('N/A')
-      table.text('synopsis').notNullable().defaultTo('N/A')
+      table.text('synopsis').notNullable()
       table.timestamp('created_at', { useTz: true })
       table.timestamp('updated_at', { useTz: true })
     })
