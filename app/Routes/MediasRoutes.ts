@@ -1,13 +1,14 @@
 import Route from '@ioc:Adonis/Core/Route'
 
 Route.group(() => {
-  Route.get('/', 'MediasController.index').as('index.medias')
-  Route.get('/:id', 'MediasController.show').as('show.medias')
+  Route.get('/', 'MediasController.getAll').as('medias.index')
+  Route.get('/:id', 'MediasController.getById').as('medias.show')
+  // findBy
 
   //ADMIN
-  Route.post('/', 'MediasController.store').as('store.medias')
-  Route.put('/:id', 'MediasController.update').as('update.medias')
-  Route.delete('/:id', 'MediasController.destroy').as('delete.medias')
+  Route.post('/', 'MediasController.addOne').as('medias.store')
+  Route.put('/:id', 'MediasController.update').as('medias.update')
+  Route.delete('/:id', 'MediasController.destroy').as('medias.delete')
 })
   .prefix('/medias')
   .prefix('/api')
