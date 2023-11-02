@@ -4,6 +4,7 @@ import {
   BelongsTo,
   HasMany,
   HasOne,
+  beforeSave,
   belongsTo,
   column,
   hasMany,
@@ -71,6 +72,14 @@ export default class Media extends BaseModel {
     foreignKey: 'mediaId',
   })
   public movieInfo: HasOne<typeof MovieInfo>
+
+  // SQL TEXT type can't be nullable and have a default value
+  @beforeSave()
+  public static async defaultValue(media: Media) {
+    if (media.synopsis === null || media.synopsis === '' || media.synopsis === undefined) {
+      media.synopsis = 'N/A'
+    }
+  }
 }
 // @hasOne(() => SeasonInfo)
 // public seasonInfo: HasOne<typeof SeasonInfo>
