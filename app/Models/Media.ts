@@ -11,7 +11,6 @@ import {
 } from '@ioc:Adonis/Lucid/Orm'
 import { MediaTypes } from 'App/Models/Enums/MediaTypes'
 import Review from 'App/Models/Review'
-import Cover from 'App/Models/Cover'
 import GameInfo from 'App/Models/GameInfo'
 import MovieInfo from 'App/Models/MovieInfo'
 
@@ -22,14 +21,11 @@ export default class Media extends BaseModel {
   @column({ columnName: 'media_parent_id' })
   public mediaParentId: number | null
 
-  @column({ columnName: 'cover_id' })
-  public coverId: number | null
+  @column()
+  public name: string
 
   @column()
   public type: MediaTypes
-
-  @column()
-  public name: string
 
   @column()
   public released: string
@@ -53,11 +49,6 @@ export default class Media extends BaseModel {
     foreignKey: 'mediaParentId',
   })
   public childrenMedia: BelongsTo<typeof Media>
-
-  @belongsTo(() => Cover, {
-    localKey: 'coverId',
-  })
-  public cover: BelongsTo<typeof Cover>
 
   @hasOne(() => Review, {
     foreignKey: 'mediaId',
