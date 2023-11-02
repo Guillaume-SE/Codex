@@ -9,21 +9,21 @@ import {
   hasMany,
   hasOne,
 } from '@ioc:Adonis/Lucid/Orm'
-import { attachment, AttachmentContract } from '@ioc:Adonis/Addons/AttachmentLite'
 import { MediaTypes } from 'App/Models/Enums/MediaTypes'
+import Review from 'App/Models/Review'
+import Cover from 'App/Models/Cover'
 import GameInfo from 'App/Models/GameInfo'
 import MovieInfo from 'App/Models/MovieInfo'
-import Review from 'App/Models/Review'
 
 export default class Media extends BaseModel {
-  // force "medias" name because the term doesn't exist in english
-  public static table = 'medias'
-
   @column({ isPrimary: true })
   public id: number
 
   @column({ columnName: 'media_parent_id' })
   public mediaParentId: number | null
+
+  @column({ columnName: 'cover_id' })
+  public coverId: number | null
 
   @column()
   public type: MediaTypes
@@ -36,9 +36,6 @@ export default class Media extends BaseModel {
 
   @column()
   public synopsis: string
-
-  @attachment()
-  public cover: AttachmentContract
 
   @column.dateTime({ autoCreate: true, columnName: 'created_at' })
   public createdAt: DateTime
@@ -56,6 +53,11 @@ export default class Media extends BaseModel {
     foreignKey: 'mediaParentId',
   })
   public childrenMedia: BelongsTo<typeof Media>
+
+  @belongsTo(() => Cover, {
+    localKey: 'coverId',
+  })
+  public cover: BelongsTo<typeof Cover>
 
   @hasOne(() => Review, {
     foreignKey: 'mediaId',
