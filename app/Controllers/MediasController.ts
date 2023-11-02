@@ -4,7 +4,7 @@ import Media from 'App/Models/Media'
 export default class MediasController {
   public async index({}: HttpContextContract) {
     const media = await Media.all()
-    return media;
+    return media
   }
   public async show({ params }: HttpContextContract) {
     return `Return the media with id ${params.id}`
