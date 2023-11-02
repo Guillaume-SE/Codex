@@ -15,6 +15,9 @@ import GameInfo from 'App/Models/GameInfo'
 import MovieInfo from 'App/Models/MovieInfo'
 
 export default class Media extends BaseModel {
+  // force "medias" name because the term doesn't exist in english
+  public static table = 'medias'
+
   @column({ isPrimary: true })
   public id: number
 
