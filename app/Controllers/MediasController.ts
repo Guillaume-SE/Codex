@@ -2,27 +2,40 @@ import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import Media from 'App/Models/Media'
 
 export default class MediasController {
-  public async index({}: HttpContextContract) {
+  public async getAll({ response }: HttpContextContract) {
     const media = await Media.all()
-    return media;
+    return response.json(media)
   }
-  public async show({ params }: HttpContextContract) {
-    return `Return the media with id ${params.id}`
+
+  public async getById({ params, response }: HttpContextContract) {
+    const mediaId = params.id
+    const media = await Media.find(mediaId)
+    if (!media) {
+      const message = 'Y a rien'
+      return response.status(404).json(message)
+    }
+    response.status(201)
+    return media
   }
 
   //ADMIN
-  public async store({ request, response }: HttpContextContract) {
+  public async addOne({ request, response }: HttpContextContract) {
     const data = request.body()
-    if( data.synopsis === null || data.synopsis === "" || data.synopsis === undefined) {
-      data.synopsis = "N/A"
-    }
     const media = await Media.create(data)
     response.status(201)
     return media
   }
 
-  public async update({ params }: HttpContextContract) {
-    return `Updated the media with id ${params.id}`
+  public async update({ request, params, response }: HttpContextContract) {
+    const mediaId = params.id
+    const data = request.body()
+    const media = await Media.find(mediaId)
+    if (!media) {
+      const message = 'Aucun media trouvé'
+      return response.status(404).json(message)
+    }
+    media.merge(data).save()
+    response.json(media)
   }
 
   public async destroy({ params }: HttpContextContract) {
