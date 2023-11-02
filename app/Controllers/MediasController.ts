@@ -13,6 +13,9 @@ export default class MediasController {
   //ADMIN
   public async store({ request, response }: HttpContextContract) {
     const data = request.body()
+    if( data.synopsis === null || data.synopsis === "" || data.synopsis === undefined) {
+      data.synopsis = "N/A"
+    }
     const media = await Media.create(data)
     response.status(201)
     return media
