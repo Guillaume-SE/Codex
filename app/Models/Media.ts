@@ -13,6 +13,7 @@ import { MediaTypes } from 'App/Models/Enums/MediaTypes'
 import Review from 'App/Models/Review'
 import GameInfo from 'App/Models/GameInfo'
 import MovieInfo from 'App/Models/MovieInfo'
+import { AttachmentContract, attachment } from '@ioc:Adonis/Addons/AttachmentLite'
 
 export default class Media extends BaseModel {
   // force "medias" name because the term doesn't exist in english
@@ -29,6 +30,9 @@ export default class Media extends BaseModel {
 
   @column()
   public type: MediaTypes
+
+  @attachment()
+  public cover: AttachmentContract
 
   @column()
   public released: string
