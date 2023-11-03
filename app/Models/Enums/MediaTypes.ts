@@ -10,7 +10,7 @@ const types = [
     'roman',
     'comics',
     'bande dessinée',
-    'autre'
+    'artbook'
 ] as const
 
 export type MediaTypes = typeof types[number]
