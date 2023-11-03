@@ -3,6 +3,8 @@ import { BaseModel, BelongsTo, belongsTo, column } from '@ioc:Adonis/Lucid/Orm'
 import Media from 'App/Models/Media'
 
 export default class MovieInfo extends BaseModel {
+  public static table = 'movies_infos'
+
   @column({ isPrimary: true })
   public id: number
 
