@@ -76,7 +76,7 @@ export default class Media extends BaseModel {
   // SQL TEXT type can't be nullable and have a default value
   @beforeSave()
   public static async defaultValue(media: Media) {
-    if (media.synopsis === null || media.synopsis === '' || media.synopsis === undefined) {
+    if (!media.synopsis) {
       media.synopsis = 'N/A'
     }
   }
