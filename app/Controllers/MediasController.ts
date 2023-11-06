@@ -11,14 +11,14 @@ export default class MediasController {
   }
 
   public async getOneById({ params, response }: HttpContextContract) {
-    const mediaId = params.id
-    const media = await Media.find(mediaId)
-    if (!media) {
-      const message = 'Y a rien'
-      return response.status(404).json(message)
+    const payload = params.id
+    try {
+      const media = await Media.findOrFail(payload)
+      response.status(201)
+      return media
+    } catch (error) {
+      return response.status(404).badRequest(error.message)
     }
-    response.status(201)
-    return media
   }
 
   //ADMIN
@@ -42,7 +42,11 @@ export default class MediasController {
     }
 
     const data = { media_parent_id, type, cover, name, released, synopsis }
-    const lastMediaCreated = await Media.query().select('id').from('medias').orderBy('id', 'desc').limit(1)
+    const lastMediaCreated = await Media.query()
+      .select('id')
+      .from('medias')
+      .orderBy('id', 'desc')
+      .limit(1)
     const media = await Media.create(data)
 
     if (isVideoGameType) {
