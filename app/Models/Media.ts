@@ -33,7 +33,7 @@ export default class Media extends BaseModel {
   public type: MediaTypes
 
   @attachment()
-  public cover: AttachmentContract
+  public cover: AttachmentContract | null
 
   @column()
   public released: string
@@ -73,16 +73,19 @@ export default class Media extends BaseModel {
   })
   public movieInfo: HasOne<typeof MovieInfo>
 
-  // SQL TEXT type can't be nullable and have a default value
+  // @hasOne(() => SeasonInfo)
+  // public seasonInfo: HasOne<typeof SeasonInfo>
+
+  // @hasOne(() => BookInfo)
+  // public bookInfo: HasOne<typeof BookInfo>
+
   @beforeSave()
   public static async defaultValue(media: Media) {
     if (!media.synopsis) {
       media.synopsis = 'N/A'
     }
+    if (!media.released) {
+      media.released = 'N/A'
+    }
   }
 }
-// @hasOne(() => SeasonInfo)
-// public seasonInfo: HasOne<typeof SeasonInfo>
-
-// @hasOne(() => BookInfo)
-// public bookInfo: HasOne<typeof BookInfo>
