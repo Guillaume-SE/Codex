@@ -4,6 +4,8 @@ import { GamePlateform } from 'App/Models/Enums/GamePlateform'
 import Media from './Media'
 
 export default class GameInfo extends BaseModel {
+  public static table = 'games_infos'
+
   @column({ isPrimary: true })
   public id: number
 
