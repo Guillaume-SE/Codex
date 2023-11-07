@@ -2,15 +2,36 @@ import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import Media from 'App/Models/Media'
 import GameInfo from 'App/Models/GameInfo'
 import MovieInfo from 'App/Models/MovieInfo'
+import { IMedia } from 'App/Interfaces/Media'
 
 export default class MediasController {
-  public async getAll({ response }: HttpContextContract) {
-    const media = await Media.all()
+  public async getAllMedias({ response }: HttpContextContract) {
+    const medias = await Media.all()
     response.status(201)
-    return media
+    return medias
   }
 
-  public async getOneById({ params, response }: HttpContextContract) {
+  public async getAllMovies({ response }: HttpContextContract) {
+    const movies = await Media.query()
+      .from('medias')
+      .join('movies_infos', 'medias.id', '=', 'movies_infos.media_id')
+      .select('medias.*')
+      .select('movies_infos.director', 'movies_infos.screenwriter', 'movies_infos.duration')
+    response.status(201)
+    return movies
+  }
+
+  public async getAllGames({ response }: HttpContextContract) {
+    const games = await Media.query()
+      .from('medias')
+      .join('games_infos', 'medias.id', '=', 'games_infos.media_id')
+      .select('medias.*')
+      .select('games_infos.developer', 'games_infos.publisher', 'games_infos.plateform')
+    response.status(201)
+    return games
+  }
+
+  public async getOneMediaById({ params, response }: HttpContextContract) {
     const payload = params.id
     try {
       const media = await Media.findOrFail(payload)
@@ -22,7 +43,7 @@ export default class MediasController {
   }
 
   //ADMIN
-  public async addOne({ request, response }: HttpContextContract) {
+  public async addOneMedia({ request, response }: HttpContextContract) {
     const bookType = ['manga', 'comics', 'bande dessinée', 'artbook']
     const movieType = ['film']
     const videoGameType = ['jeu vidéo', 'dlc']
@@ -30,6 +51,7 @@ export default class MediasController {
     const allTypes = [bookType, movieType, videoGameType, seasonType]
 
     const { media_parent_id, type, cover, name, released, synopsis, ...mediaInfos } = request.body()
+    const data: IMedia = { media_parent_id, type, cover, name, released, synopsis }
 
     const isVideoGameType = videoGameType.includes(type)
     const isBookType = bookType.includes(type)
@@ -41,7 +63,6 @@ export default class MediasController {
       return response.status(404).json("Le type de media n'est pas valide")
     }
 
-    const data = { media_parent_id, type, cover, name, released, synopsis }
     const lastMediaCreated = await Media.query()
       .select('id')
       .from('medias')
@@ -50,10 +71,17 @@ export default class MediasController {
     const media = await Media.create(data)
 
     if (isVideoGameType) {
-      // console.log(`c'est un jeu et il est de type ${type}`)
+      const { developer, publisher, plateform } = mediaInfos
+      const gameData = {
+        mediaId: lastMediaCreated[0].id,
+        developer,
+        publisher,
+        plateform,
+      }
+      const gameInfo = await GameInfo.create(gameData)
+      return response.status(201).json([media, gameInfo])
     }
     if (isBookType) {
-      // console.log(`c'est un livre et il est de type ${type}`)
     }
     if (isMovieType) {
       const { director, screenwriter, duration } = mediaInfos
@@ -64,34 +92,36 @@ export default class MediasController {
         duration,
       }
       const movieInfo = await MovieInfo.create(movieData)
-      response.status(201)
-      return [media, movieInfo]
+      return response.status(201).json([media, movieInfo])
     }
     if (isSeasonType) {
-      // console.log(`c'est une saison et elle est de type ${type}`)
     }
   }
 
-  public async updateOne({ request, params, response }: HttpContextContract) {
+  public async updateOneMedia({ request, params, response }: HttpContextContract) {
     const mediaId = params.id
     const data = request.body()
     const media = await Media.find(mediaId)
     if (!media) {
-      const message = 'Aucun media trouvé'
-      return response.status(404).json(message)
+      return response.status(404).json('Aucun media correspondant à cet id')
     }
-    await media.merge(data).save()
-    response.json(media)
+    try {
+      await media.merge(data).save()
+      return response.status(201).json(media)
+    } catch (error) {}
   }
 
-  public async deleteOne({ params, response }: HttpContextContract) {
+  public async deleteOneMedia({ params, response }: HttpContextContract) {
     const mediaId = params.id
     const media = await Media.find(mediaId)
     if (!media) {
-      const message = 'Aucun media trouvé'
-      return response.status(404).json(message)
+      return response.status(404).json('Aucun media correspondant à cet id')
     }
-    await media.delete()
-    response.json(media)
+    try {
+      await media.delete()
+      return response.status(201).json(media)
+    } catch (error) {
+      return response.status(404)
+    }
   }
 }
