@@ -3,6 +3,7 @@ import Media from 'App/Models/Media'
 import GameInfo from 'App/Models/GameInfo'
 import MovieInfo from 'App/Models/MovieInfo'
 import { IMedia } from 'App/Interfaces/Media'
+import Database from '@ioc:Adonis/Lucid/Database'
 
 export default class MediasController {
   public async getAllMedias({ response }: HttpContextContract) {
@@ -11,24 +12,54 @@ export default class MediasController {
     return medias
   }
 
-  public async getAllMovies({ response }: HttpContextContract) {
-    const movies = await Media.query()
-      .from('medias')
-      .join('movies_infos', 'medias.id', '=', 'movies_infos.media_id')
-      .select('medias.*')
-      .select('movies_infos.director', 'movies_infos.screenwriter', 'movies_infos.duration')
-    response.status(201)
-    return movies
-  }
-
   public async getAllGames({ response }: HttpContextContract) {
-    const games = await Media.query()
+    const datas = await Media.query()
       .from('medias')
       .join('games_infos', 'medias.id', '=', 'games_infos.media_id')
-      .select('medias.*')
-      .select('games_infos.developer', 'games_infos.publisher', 'games_infos.plateform')
-    response.status(201)
-    return games
+      .select('medias.*', 'games_infos.developer', 'games_infos.publisher', 'games_infos.plateform')
+    // .toQuery()
+    const mediasInfos = datas[0]
+    const gamesInfos = datas[0].$extras
+    const games = {
+      id: mediasInfos.id,
+      mediaParentId: mediasInfos.mediaParentId,
+      name: mediasInfos.name,
+      type: mediasInfos.type,
+      cover: mediasInfos.cover,
+      released: mediasInfos.released,
+      synopsis: mediasInfos.synopsis,
+      developer: gamesInfos.developer,
+      publisher: gamesInfos.publisher,
+      plateform: gamesInfos.plateform,
+    }
+    return response.status(201).json(games)
+  }
+
+  public async getAllMovies({ response }: HttpContextContract) {
+    const datas = await Media.query()
+      .from('medias')
+      .join('movies_infos', 'medias.id', '=', 'movies_infos.media_id')
+      .select(
+        'medias.*',
+        'movies_infos.director',
+        'movies_infos.screenwriter',
+        'movies_infos.duration'
+      )
+    const mediasInfos = datas[0]
+    const moviesInfos = datas[0].$extras
+    const movies = {
+      id: mediasInfos.id,
+      mediaParentId: mediasInfos.mediaParentId,
+      name: mediasInfos.name,
+      type: mediasInfos.type,
+      cover: mediasInfos.cover,
+      released: mediasInfos.released,
+      synopsis: mediasInfos.synopsis,
+      director: moviesInfos.director,
+      screenwriter: moviesInfos.screenwriter,
+      duration: moviesInfos.duration,
+    }
+    return response.status(201).json(movies)
   }
 
   public async getOneMediaById({ params, response }: HttpContextContract) {
@@ -50,8 +81,9 @@ export default class MediasController {
     const seasonType = ['series', 'animé', 'dessin animé', 'cartoon']
     const allTypes = [bookType, movieType, videoGameType, seasonType]
 
-    const { media_parent_id, type, cover, name, released, synopsis, ...mediaInfos } = request.body()
-    const data: IMedia = { media_parent_id, type, cover, name, released, synopsis }
+    const { media_parent_id, type, cover, name, released, synopsis, ...specificMediaInfos } =
+      request.body()
+    const generalMediaInfo: IMedia = { media_parent_id, type, cover, name, released, synopsis }
 
     const isVideoGameType = videoGameType.includes(type)
     const isBookType = bookType.includes(type)
@@ -63,38 +95,41 @@ export default class MediasController {
       return response.status(404).json("Le type de media n'est pas valide")
     }
 
-    const lastMediaCreated = await Media.query()
-      .select('id')
-      .from('medias')
-      .orderBy('id', 'desc')
-      .limit(1)
-    const media = await Media.create(data)
+    // const trx = await Database.transaction()
+    // try {
+    //   const media = await Media.create(generalMediaInfo, { client: trx })
+    //   media.useTransaction(trx)
+    //   await media.save()
+    //   if (isVideoGameType) {
+    //     await media.related('gameInfo').create(specificMediaInfos, { client: trx })
+    //   }
+    //   if (isMovieType) {
+    //     await media.related('movieInfo').create(specificMediaInfos)
+    //   }
+    //   if (isBookType) {
+    //   }
+    //   if (isSeasonType) {
+    //   }
+    //   await trx.commit()
+    // } catch (error) {
+    //   await trx.rollback()
+    // }
+    const trx = await Database.transaction()
 
-    if (isVideoGameType) {
-      const { developer, publisher, plateform } = mediaInfos
-      const gameData = {
-        mediaId: lastMediaCreated[0].id,
-        developer,
-        publisher,
-        plateform,
+    try {
+      const media = await Media.create(generalMediaInfo, { client: trx })
+
+      if (isVideoGameType) {
+        await media.related('gameInfo').create(specificMediaInfos)
       }
-      const gameInfo = await GameInfo.create(gameData)
-      return response.status(201).json([media, gameInfo])
-    }
-    if (isBookType) {
-    }
-    if (isMovieType) {
-      const { director, screenwriter, duration } = mediaInfos
-      const movieData = {
-        mediaId: lastMediaCreated[0].id,
-        director,
-        screenwriter,
-        duration,
+
+      if (isMovieType) {
+        await media.related('movieInfo').create(specificMediaInfos)
       }
-      const movieInfo = await MovieInfo.create(movieData)
-      return response.status(201).json([media, movieInfo])
-    }
-    if (isSeasonType) {
+
+      await trx.commit()
+    } catch (error) {
+      await trx.rollback()
     }
   }
 
