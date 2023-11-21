@@ -64,12 +64,12 @@ export default class Media extends BaseModel {
   public review: HasOne<typeof Review>
 
   @hasOne(() => GameInfo, {
-    foreignKey: 'mediaId',
+    // foreignKey: 'mediaId',
   })
   public gameInfo: HasOne<typeof GameInfo>
 
   @hasOne(() => MovieInfo, {
-    foreignKey: 'mediaId',
+    // foreignKey: 'mediaId',
   })
   public movieInfo: HasOne<typeof MovieInfo>
 
