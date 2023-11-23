@@ -1,8 +1,5 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import Media from 'App/Models/Media'
-import GameInfo from 'App/Models/GameInfo'
-import MovieInfo from 'App/Models/MovieInfo'
-import { IGame, IMedia } from 'App/Interfaces/Media'
 import Database from '@ioc:Adonis/Lucid/Database'
 
 export default class MediasController {
@@ -17,24 +14,23 @@ export default class MediasController {
       .from('medias')
       .join('games_infos', 'medias.id', '=', 'games_infos.media_id')
       .select('medias.*', 'games_infos.developer', 'games_infos.publisher', 'games_infos.plateform')
-    // .toQuery()
-    const games = datas.map(data => {
-      const mediasInfos = data;
-      const gamesInfos = data.$extras;
+    const games = datas.map((data) => {
+      const { id, mediaParentId, name, type, cover, released, synopsis } = data
+      const { developer, publisher, plateform } = data.$extras
       return {
-        id: mediasInfos.id,
-        mediaParentId: mediasInfos.mediaParentId,
-        name: mediasInfos.name,
-        type: mediasInfos.type,
-        cover: mediasInfos.cover,
-        released: mediasInfos.released,
-        synopsis: mediasInfos.synopsis,
-        developer: gamesInfos.developer,
-        publisher: gamesInfos.publisher,
-        plateform: gamesInfos.plateform,
-      };
-    });
-    return response.status(201).json(games);
+        id,
+        mediaParentId,
+        name,
+        type,
+        cover,
+        released,
+        synopsis,
+        developer,
+        publisher,
+        plateform,
+      }
+    })
+    return response.status(201).json(games)
   }
 
   public async getAllMovies({ response }: HttpContextContract) {
@@ -47,20 +43,23 @@ export default class MediasController {
         'movies_infos.screenwriter',
         'movies_infos.duration'
       )
-    const mediasInfos = datas[0]
-    const moviesInfos = datas[0].$extras
-    const movies = {
-      id: mediasInfos.id,
-      mediaParentId: mediasInfos.mediaParentId,
-      name: mediasInfos.name,
-      type: mediasInfos.type,
-      cover: mediasInfos.cover,
-      released: mediasInfos.released,
-      synopsis: mediasInfos.synopsis,
-      director: moviesInfos.director,
-      screenwriter: moviesInfos.screenwriter,
-      duration: moviesInfos.duration,
-    }
+
+    const movies = datas.map((data) => {
+      const { id, mediaParentId, name, type, cover, released, synopsis } = data
+      const { director, screenwriter, duration } = data.$extras
+      return {
+        id,
+        mediaParentId,
+        name,
+        type,
+        cover,
+        released,
+        synopsis,
+        director,
+        screenwriter,
+        duration,
+      }
+    })
     return response.status(201).json(movies)
   }
 
