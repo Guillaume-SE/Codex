@@ -1,63 +1,91 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import Media from 'App/Models/Media'
 import Database from '@ioc:Adonis/Lucid/Database'
+import { retrieveSourceMap } from 'source-map-support'
+// import CreateMediaValidator from 'App/Validators/CreateMediaValidator'
 
 export default class MediasController {
-  public async getAllMedias({ response }: HttpContextContract) {
-    const medias = await Media.all()
-    response.status(201)
-    return medias
-  }
+  // public async getAllMedias({ response }: HttpContextContract) {
+  //   const medias = await Media.all()
+  //   response.status(201)
+  //   return medias
+  // }
 
-  public async getAllGames({ response }: HttpContextContract) {
+  public async getAllGamesWithReviews({ response }: HttpContextContract) {
     const datas = await Media.query()
       .from('medias')
       .join('games_infos', 'medias.id', '=', 'games_infos.media_id')
+      .join('reviews', 'medias.id', '=', 'reviews.media_id')
       .select('medias.*', 'games_infos.developer', 'games_infos.publisher', 'games_infos.plateform')
     const games = datas.map((data) => {
       const { id, mediaParentId, name, type, cover, released, synopsis } = data
-      const { developer, publisher, plateform } = data.$extras
+      const { developer, publisher, plateform, status, rating, notes, is_favorite } = data.$extras
       return {
-        id,
-        mediaParentId,
-        name,
-        type,
-        cover,
-        released,
-        synopsis,
-        developer,
-        publisher,
-        plateform,
+        game: {
+          id,
+          mediaParentId,
+          name,
+          type,
+          cover,
+          released,
+          synopsis,
+          developer,
+          publisher,
+          plateform,
+        },
+        review: {
+          status,
+          rating,
+          notes,
+          is_favorite,
+        },
       }
     })
     return response.status(201).json(games)
   }
 
-  public async getAllMovies({ response }: HttpContextContract) {
+  public async getAllMoviesWithReviews({ response }: HttpContextContract) {
     const datas = await Media.query()
       .from('medias')
       .join('movies_infos', 'medias.id', '=', 'movies_infos.media_id')
+      .join('reviews', 'medias.id', '=', 'reviews.media_id')
       .select(
         'medias.*',
         'movies_infos.director',
         'movies_infos.screenwriter',
-        'movies_infos.duration'
+        'movies_infos.duration',
+        'reviews.status',
+        'reviews.rating',
+        'reviews.notes',
+        'reviews.is_favorite',
+        'reviews.created_at',
+        'reviews.updated_at'
       )
+    // .toQuery()
+    // console.log(datas)
 
     const movies = datas.map((data) => {
       const { id, mediaParentId, name, type, cover, released, synopsis } = data
-      const { director, screenwriter, duration } = data.$extras
+      const { director, screenwriter, duration, status, rating, notes, is_favorite } = data.$extras
       return {
-        id,
-        mediaParentId,
-        name,
-        type,
-        cover,
-        released,
-        synopsis,
-        director,
-        screenwriter,
-        duration,
+        movie: {
+          id,
+          mediaParentId,
+          name,
+          type,
+          cover,
+          released,
+          synopsis,
+          director,
+          screenwriter,
+          duration,
+        },
+        review: {
+          status,
+          rating,
+          notes,
+          is_favorite,
+        },
       }
     })
     return response.status(201).json(movies)
@@ -82,9 +110,10 @@ export default class MediasController {
     const seasonType = ['series', 'animé', 'dessin animé', 'cartoon']
     const allTypes = [bookType, movieType, videoGameType, seasonType]
 
-    const { media_parent_id, type, cover, name, released, synopsis, ...specificMediaInfos } =
+    const { mediaParentId, type, cover, name, released, synopsis, ...specificMediaInfos } =
       request.body()
-    const generalMediaInfo = { media_parent_id, type, cover, name, released, synopsis }
+    const generalMediaInfo = { mediaParentId, type, cover, name, released, synopsis }
+    // const mediaValidate = await request.validate(CreateMediaValidator)
 
     const isVideoGameType = videoGameType.includes(type)
     const isBookType = bookType.includes(type)
@@ -93,7 +122,7 @@ export default class MediasController {
     const asNoValidType = !allTypes.flat().includes(type)
 
     if (asNoValidType) {
-      return response.status(404).json("Le type de media n'est pas valide")
+      return response.status(400).json("Le type de media n'est pas valide")
     }
 
     const trx = await Database.transaction()
@@ -110,8 +139,10 @@ export default class MediasController {
       }
 
       await trx.commit()
+      return response.status(201).json(media)
     } catch (error) {
       await trx.rollback()
+      return response.status(400).json(error)
     }
   }
 
@@ -125,7 +156,9 @@ export default class MediasController {
     try {
       await media.merge(data).save()
       return response.status(201).json(media)
-    } catch (error) {}
+    } catch (error) {
+      return response.status(400).json(error)
+    }
   }
 
   public async deleteOneMedia({ params, response }: HttpContextContract) {
