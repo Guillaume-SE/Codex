@@ -18,7 +18,7 @@ export default class MovieInfo extends BaseModel {
   public screenwriter: string
 
   @column()
-  public duration: string
+  public duration: number
 
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime
