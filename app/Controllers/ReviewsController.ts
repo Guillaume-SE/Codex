@@ -36,7 +36,6 @@ export default class ReviewsController {
     const review = await Review.firstOrCreate({ mediaId: mediaId }, data)
     const isAlreadyReviewed = !review.$isLocal
     if (isAlreadyReviewed) {
-      console.log('Donnée concordante trouvée, review non ajoutée !!')
       return response.status(400).json({
         message: 'Donnée concordante trouvée, review non ajoutée !!',
         actualReview: review,
