@@ -21,11 +21,11 @@ export default class ReviewsController {
   }
 
   public async addOneReview({ request, response, params }: HttpContextContract) {
-    const authorId = 1
+    const createdBy = 1
     const mediaId = parseInt(params.mediaId)
     const { status, rating, notes, isFavorite } = request.body()
     const data = {
-      createdBy: authorId,
+      createdBy,
       mediaId,
       status,
       rating,
@@ -33,15 +33,15 @@ export default class ReviewsController {
       isFavorite,
     }
 
-    const trx = await Database.transaction()
-
-    try {
-      const review = await Review.create(data)
-      await trx.commit()
-      return response.status(200).json(review)
-    } catch (error) {
-      await trx.rollback()
-      return response.status(400).json(error)
+    const review = await Review.firstOrCreate({ mediaId: mediaId }, data)
+    const isAlreadyReviewed = !review.$isLocal
+    if (isAlreadyReviewed) {
+      console.log('Donnée concordante trouvée, review non ajoutée !!')
+      return response.status(400).json({
+        message: 'Donnée concordante trouvée, review non ajoutée !!',
+        actualReview: review,
+      })
     }
+    return response.status(200).json(review)
   }
 }
