@@ -5,11 +5,11 @@ import { retrieveSourceMap } from 'source-map-support'
 // import CreateMediaValidator from 'App/Validators/CreateMediaValidator'
 
 export default class MediasController {
-  // public async getAllMedias({ response }: HttpContextContract) {
-  //   const medias = await Media.all()
-  //   response.status(201)
-  //   return medias
-  // }
+  public async getAllMedias({ response }: HttpContextContract) {
+    const medias = await Media.all()
+    response.status(201)
+    return medias
+  }
 
   public async getAllGamesWithReviews({ response }: HttpContextContract) {
     const datas = await Media.query()

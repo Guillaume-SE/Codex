@@ -64,12 +64,12 @@ export default class Media extends BaseModel {
   public review: HasOne<typeof Review>
 
   @hasOne(() => GameInfo, {
-    // foreignKey: 'mediaId',
+    foreignKey: 'mediaId',
   })
   public gameInfo: HasOne<typeof GameInfo>
 
   @hasOne(() => MovieInfo, {
-    // foreignKey: 'mediaId',
+    foreignKey: 'mediaId',
   })
   public movieInfo: HasOne<typeof MovieInfo>
 
@@ -79,13 +79,13 @@ export default class Media extends BaseModel {
   // @hasOne(() => BookInfo)
   // public bookInfo: HasOne<typeof BookInfo>
 
-  @beforeSave()
-  public static async defaultValue(media: Media) {
-    if (!media.synopsis) {
-      media.synopsis = 'N/A'
-    }
-    if (!media.released) {
-      media.released = 'N/A'
-    }
-  }
+  // @beforeSave()
+  // public static async defaultValue(media: Media) {
+  //   if (!media.synopsis) {
+  //     media.synopsis = 'N/A'
+  //   }
+  //   if (!media.released) {
+  //     media.released = 'N/A'
+  //   }
+  // }
 }

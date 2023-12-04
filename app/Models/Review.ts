@@ -34,12 +34,11 @@ export default class Review extends BaseModel {
 
   //relations
   @belongsTo(() => User, {
-    localKey: 'createdBy',
+    // localKey: 'createdBy',
   })
   public author: BelongsTo<typeof User>
 
   @belongsTo(() => Media, {
-    localKey: 'mediaId',
   })
   public media: BelongsTo<typeof Media>
 }

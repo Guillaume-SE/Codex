@@ -28,7 +28,6 @@ export default class MovieInfo extends BaseModel {
 
   // RELATIONS
   @belongsTo(() => Media, {
-    // localKey: 'mediaId',
   })
   public media: BelongsTo<typeof Media>
 }
