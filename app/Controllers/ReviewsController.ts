@@ -22,7 +22,7 @@ export default class ReviewsController {
 
   public async addOneReview({ request, response, params }: HttpContextContract) {
     const createdBy = 1
-    const mediaId = parseInt(params.mediaId)
+    const mediaId   = parseInt(params.mediaId)
     const { status, rating, notes, isFavorite } = request.body()
     const data = {
       createdBy,
@@ -42,5 +42,34 @@ export default class ReviewsController {
       })
     }
     return response.status(200).json(review)
+  }
+
+  public async updateOneReview({ request, params, response }: HttpContextContract) {
+    const mediaId = params.id
+    const data    = request.body()
+    const media   = await Review.find(mediaId)
+    if (!media) {
+      return response.status(404).json('Aucun media ne correspond à cet id')
+    }
+    try {
+      await media.merge(data).save()
+      return response.status(201).json(media)
+    } catch (error) {
+      return response.status(400).json(error)
+    }
+  }
+
+  public async deleteOneReview({ params, response }: HttpContextContract) {
+    const mediaId = params.id
+    const media   = await Review.find(mediaId)
+    if (!media) {
+      return response.status(404).json('Aucun media correspondant à cet id')
+    }
+    try {
+      await media.delete()
+      return response.status(201).json(media)
+    } catch (error) {
+      return response.status(404)
+    }
   }
 }
