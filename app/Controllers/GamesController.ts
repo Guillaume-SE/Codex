@@ -46,4 +46,12 @@ export default class GamesController {
     })
     return response.status(201).json(games)
   }
+
+  public async getOneGameById({ params, response }: HttpContextContract) {
+    const mediaId = params.id
+    const media = await Media.findOrFail(mediaId)
+    if(!media) {
+      return response.status(404).json('Aucun media ne correspond à cet id')
+    }
+  }
 }

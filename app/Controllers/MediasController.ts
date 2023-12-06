@@ -23,10 +23,10 @@ export default class MediasController {
 
   //ADMIN
   public async addOneMedia({ request, response }: HttpContextContract) {
-    const bookType      = ['manga', 'comics', 'bande dessinée', 'artbook']
-    const movieType     = ['film']
+    const bookType = ['manga', 'comics', 'bande dessinée', 'artbook']
+    const movieType = ['film']
     const videoGameType = ['jeu vidéo', 'dlc']
-    const seasonType    = ['series', 'animé', 'dessin animé', 'cartoon']
+    const seasonType = ['series', 'animé', 'dessin animé', 'cartoon']
     const allTypes = [...bookType, ...movieType, ...videoGameType, ...seasonType]
 
     const { mediaParentId, type, cover, name, released, synopsis, ...specificMediaInfos } =
@@ -35,55 +35,91 @@ export default class MediasController {
     // const mediaValidate = await request.validate(CreateMediaValidator)
 
     const isVideoGameType = videoGameType.includes(type)
-    const isBookType      = bookType.includes(type)
-    const isMovieType     = movieType.includes(type)
-    const isSeasonType    = seasonType.includes(type)
+    const isBookType = bookType.includes(type)
+    const isMovieType = movieType.includes(type)
+    const isSeasonType = seasonType.includes(type)
     const asNoValidType = !allTypes.includes(type)
 
     if (asNoValidType) {
       return response.status(400).json("Le type de media n'est pas valide")
     }
 
-    // const trx = await Database.transaction()
+    const trx = await Database.transaction()
 
-    // try {
-    //   const media = await Media.create(generalMediaInfo, { client: trx })
+    try {
+      const media = await Media.create(generalMediaInfo, { client: trx })
 
-    //   if (isVideoGameType) {
-    //     await media.related('gameInfo').create(specificMediaInfos)
-    //   }
+      if (isVideoGameType) {
+        await media.related('gameInfo').create(specificMediaInfos)
+      }
 
-    //   if (isMovieType) {
-    //     await media.related('movieInfo').create(specificMediaInfos)
-    //   }
+      if (isMovieType) {
+        await media.related('movieInfo').create(specificMediaInfos)
+      }
 
-    //   await trx.commit()
-    //   return response.status(201).json(media)
-    // } catch (error) {
-    //   await trx.rollback()
-    //   return response.status(400).json(error)
-    // }
+      await trx.commit()
+      return response.status(201).json(media)
+    } catch (error) {
+      await trx.rollback()
+      return response.status(400).json(error)
+    }
   }
 
   public async updateOneMedia({ request, params, response }: HttpContextContract) {
     const mediaId = params.id
-    const data    = request.body()
-    const media   = await Media.find(mediaId)
+    const media = await Media.find(mediaId)
     if (!media) {
       return response.status(404).json('Aucun media ne correspond à cet id')
     }
+    // try {
+    //   await media.merge(data).save()
+    //   return response.status(201).json(media)
+    // } catch (error) {
+    //   return response.status(400).json(error)
+    // }
+    const bookType = ['manga', 'comics', 'bande dessinée', 'artbook']
+    const movieType = ['film']
+    const videoGameType = ['jeu vidéo', 'dlc']
+    const seasonType = ['series', 'animé', 'dessin animé', 'cartoon']
+    const allTypes = [...bookType, ...movieType, ...videoGameType, ...seasonType]
+
+    const { mediaParentId, type, cover, name, released, synopsis, ...specificMediaInfos } = request.body()
+    const generalMediaInfo = { mediaParentId, type, cover, name, released, synopsis }
+
+    const isVideoGameType = videoGameType.includes(type)
+    const isBookType = bookType.includes(type)
+    const isMovieType = movieType.includes(type)
+    const isSeasonType = seasonType.includes(type)
+    const asNoValidType = !allTypes.includes(type)
+
+    if (asNoValidType) {
+      return response.status(400).json("Le type de media n'est pas valide")
+    }
+
+    const trx = await Database.transaction()
+
     try {
-      await media.merge(data).save()
+      const media = await Media.updateOrCreate({} ,generalMediaInfo, { client: trx })
+
+      if (isVideoGameType) {
+        await media.related('gameInfo').updateOrCreate({} ,specificMediaInfos)
+      }
+
+      if (isMovieType) {
+        await media.related('movieInfo').updateOrCreate({} ,specificMediaInfos)
+      }
+
+      await trx.commit()
       return response.status(201).json(media)
     } catch (error) {
-      console.log("ERROR", error)
+      await trx.rollback()
       return response.status(400).json(error)
     }
   }
 
   public async deleteOneMedia({ params, response }: HttpContextContract) {
     const mediaId = params.id
-    const media   = await Media.find(mediaId)
+    const media = await Media.find(mediaId)
     if (!media) {
       return response.status(404).json('Aucun media correspondant à cet id')
     }
