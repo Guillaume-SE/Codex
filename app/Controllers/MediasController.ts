@@ -67,16 +67,11 @@ export default class MediasController {
 
   public async updateOneMedia({ request, params, response }: HttpContextContract) {
     const mediaId = params.id
-    const media = await Media.find(mediaId)
-    if (!media) {
+    const checkIfMediaExist = await Media.find(mediaId)
+    if (!checkIfMediaExist) {
       return response.status(404).json('Aucun media ne correspond à cet id')
     }
-    // try {
-    //   await media.merge(data).save()
-    //   return response.status(201).json(media)
-    // } catch (error) {
-    //   return response.status(400).json(error)
-    // }
+
     const bookType = ['manga', 'comics', 'bande dessinée', 'artbook']
     const movieType = ['film']
     const videoGameType = ['jeu vidéo', 'dlc']
@@ -112,6 +107,7 @@ export default class MediasController {
       await trx.commit()
       return response.status(201).json(media)
     } catch (error) {
+      console.log(error)
       await trx.rollback()
       return response.status(400).json(error)
     }

@@ -47,16 +47,18 @@ export default class ReviewsController {
   public async updateOneReview({ request, params, response }: HttpContextContract) {
     const mediaId = params.id
     const data    = request.body()
-    const media   = await Review.find(mediaId)
-    if (!media) {
+    // const review  = await Review.query().from('reviews').select('*').where('media_id', '=', mediaId)
+    const review = await Review.findBy("mediaId", mediaId)
+    if (!review) {
       return response.status(404).json('Aucun media ne correspond à cet id')
     }
-    try {
-      await media.merge(data).save()
-      return response.status(201).json(media)
-    } catch (error) {
-      return response.status(400).json(error)
-    }
+    console.log(review.id)
+    // try {
+    //   await review.updateOrCreate({}, data).save()
+    //   return response.status(201).json(review)
+    // } catch (error) {
+    //   return response.status(400).json(error)
+    // }
   }
 
   public async deleteOneReview({ params, response }: HttpContextContract) {
