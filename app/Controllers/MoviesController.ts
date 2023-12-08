@@ -57,7 +57,7 @@ export default class MoviesController {
     return response.status(201).json(movies)
   }
 
-  public async getOneMovieWithReviewById({ params, response }: HttpContextContract) {
+  public async getOneMovieWithReviewByMediaId({ params, response }: HttpContextContract) {
     const mediaId = params.mediaId
     const datas = await Media.query()
       .from('medias')

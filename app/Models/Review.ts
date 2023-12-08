@@ -5,6 +5,8 @@ import User from 'App/Models/User'
 import Media from 'App/Models/Media'
 
 export default class Review extends BaseModel {
+  public static table = 'reviews'
+
   @column({ isPrimary: true })
   public id: number
 
