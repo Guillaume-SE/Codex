@@ -12,6 +12,7 @@ export default class extends BaseSchema {
         .references('id')
         .inTable(this.tableName)
         .nullable()
+        .onDelete('SET NULL')
       table.string('name').notNullable()
       table.string('type').notNullable()
       table.json('cover').nullable()
