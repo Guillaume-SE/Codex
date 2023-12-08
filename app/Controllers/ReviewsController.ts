@@ -1,6 +1,7 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
-import Database from '@ioc:Adonis/Lucid/Database'
+import Media from 'App/Models/Media'
 import Review from 'App/Models/Review'
+import { validReviewStatus } from 'App/Models/Enums/ReviewStatus'
 
 export default class ReviewsController {
   public async getAllReviews({ response }: HttpContextContract) {
@@ -9,21 +10,16 @@ export default class ReviewsController {
     return reviews
   }
 
-  public async getOneReviewByMediaId({ params, response }: HttpContextContract) {
-    const mediaId = params.id
-    // try {
-    //   const media = await Media.findOrFail(payload)
-    //   response.status(201)
-    //   return media
-    // } catch (error) {
-    //   return response.status(404).badRequest(error.message)
-    // }
-  }
-
   public async addOneReview({ request, response, params }: HttpContextContract) {
+    const reviewStatus = validReviewStatus
     const createdBy = 1
-    const mediaId   = parseInt(params.mediaId)
+    const mediaId = parseInt(params.mediaId)
     const { status, rating, notes, isFavorite } = request.body()
+    const asNoValidStatus = !reviewStatus.includes(status)
+
+    if (asNoValidStatus) {
+      return response.status(404).json({ message: "Le statut de la review n'est pas valide" })
+    }
     const data = {
       createdBy,
       mediaId,
@@ -37,7 +33,7 @@ export default class ReviewsController {
     const isAlreadyReviewed = !review.$isLocal
     if (isAlreadyReviewed) {
       return response.status(400).json({
-        message: 'Donnée concordante trouvée, review non ajoutée !!',
+        message: 'Ce media à déjà une review !',
         actualReview: review,
       })
     }
@@ -45,33 +41,17 @@ export default class ReviewsController {
   }
 
   public async updateOneReview({ request, params, response }: HttpContextContract) {
-    const mediaId = params.id
-    const data    = request.body()
-    // const review  = await Review.query().from('reviews').select('*').where('media_id', '=', mediaId)
-    const review = await Review.findBy("mediaId", mediaId)
-    if (!review) {
-      return response.status(404).json('Aucun media ne correspond à cet id')
-    }
-    console.log(review.id)
-    // try {
-    //   await review.updateOrCreate({}, data).save()
-    //   return response.status(201).json(review)
-    // } catch (error) {
-    //   return response.status(400).json(error)
-    // }
-  }
-
-  public async deleteOneReview({ params, response }: HttpContextContract) {
-    const mediaId = params.id
-    const media   = await Review.find(mediaId)
+    const mediaId = params.mediaId
+    const updatedReview = request.body()
+    const media = await Media.find(mediaId)
     if (!media) {
-      return response.status(404).json('Aucun media correspondant à cet id')
+      return response.status(404).json("Aucun media n'a été trouvé")
     }
     try {
-      await media.delete()
-      return response.status(201).json(media)
+      await media.related('review').updateOrCreate({}, updatedReview)
+      return response.status(200).json(updatedReview)
     } catch (error) {
-      return response.status(404)
+      return response.status(404).json(error)
     }
   }
 }
