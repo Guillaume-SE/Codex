@@ -7,3 +7,4 @@ const status = [
 ] as const
 
 export type ReviewStatus = typeof status[number]
+export { status as validReviewStatus }
