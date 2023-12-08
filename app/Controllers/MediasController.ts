@@ -1,13 +1,13 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import Media from 'App/Models/Media'
 import Database from '@ioc:Adonis/Lucid/Database'
+import CreateMediaValidator from 'App/Validators/CreateMediaValidator'
 // import CreateMediaValidator from 'App/Validators/CreateMediaValidator'
 
 export default class MediasController {
   public async getAllMedias({ response }: HttpContextContract) {
     const medias = await Media.all()
-    response.status(201)
-    return medias
+    return response.status(201).json(medias)
   }
 
   public async getOneMediaById({ params, response }: HttpContextContract) {
@@ -29,14 +29,14 @@ export default class MediasController {
     const seasonType = ['series', 'animé', 'dessin animé', 'cartoon']
     const allTypes = [...bookType, ...movieType, ...videoGameType, ...seasonType]
 
+    // const payloadValidation = await request.validate(CreateMediaValidator)
     const { mediaParentId, type, cover, name, released, synopsis, ...specificMediaInfos } =
       request.body()
     const generalMediaInfo = { mediaParentId, type, cover, name, released, synopsis }
-    // const mediaValidate = await request.validate(CreateMediaValidator)
 
     const isVideoGameType = videoGameType.includes(type)
-    const isBookType = bookType.includes(type)
     const isMovieType = movieType.includes(type)
+    const isBookType = bookType.includes(type)
     const isSeasonType = seasonType.includes(type)
     const asNoValidType = !allTypes.includes(type)
 
@@ -47,7 +47,7 @@ export default class MediasController {
     const trx = await Database.transaction()
 
     try {
-      const media = await Media.create(generalMediaInfo, { client: trx })
+      const media = await Media.create(generalMediaInfo)
 
       if (isVideoGameType) {
         await media.related('gameInfo').create(specificMediaInfos)
