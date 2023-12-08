@@ -11,6 +11,12 @@ export default class CreateMediaValidator {
     name: schema.string([rules.trim()]),
     released: schema.string([rules.trim()]),
     synopsis: schema.string([rules.trim()]),
+    developer: schema.string.optional([rules.trim()]),
+    publisher: schema.string.optional([rules.trim()]),
+    plateform: schema.string.optional([rules.trim()]),
+    director: schema.string.optional([rules.trim()]),
+    screenwriter: schema.string.optional([rules.trim()]),
+    duration: schema.number.optional([rules.unsigned()])
   })
 
   public messages: CustomMessages = {}
