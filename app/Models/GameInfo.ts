@@ -1,6 +1,6 @@
 import { DateTime } from 'luxon'
 import { BaseModel, BelongsTo, belongsTo, column } from '@ioc:Adonis/Lucid/Orm'
-import { GamePlateform } from 'App/Models/Enums/GamePlateform'
+import { GamePlateform } from 'App/Models/Enums/GamePlatform'
 import Media from './Media'
 
 export default class GameInfo extends BaseModel {
@@ -19,7 +19,7 @@ export default class GameInfo extends BaseModel {
   public publisher: string
 
   @column()
-  public plateform: GamePlateform
+  public platform: GamePlateform
 
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime

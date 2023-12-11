@@ -1,5 +1,5 @@
 import { AttachmentContract } from "@ioc:Adonis/Addons/AttachmentLite";
-import { GamePlateform } from "App/Models/Enums/GamePlateform";
+import { GamePlateform } from "App/Models/Enums/GamePlatform";
 import { MediaTypes } from "App/Models/Enums/MediaTypes";
 import { DateTime } from "luxon";
 

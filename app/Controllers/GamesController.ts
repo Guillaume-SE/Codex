@@ -11,7 +11,7 @@ export default class GamesController {
         'medias.*',
         'games_infos.developer',
         'games_infos.publisher',
-        'games_infos.plateform',
+        'games_infos.platform',
         'reviews.status',
         'reviews.rating',
         'reviews.notes',
@@ -22,7 +22,7 @@ export default class GamesController {
 
     const games = datas.map((data) => {
       const { id, mediaParentId, name, type, cover, released, synopsis } = data
-      const { developer, publisher, plateform, status, rating, notes, is_favorite } = data.$extras
+      const { developer, publisher, platform, status, rating, notes, is_favorite } = data.$extras
       return {
         game: {
           id,
@@ -34,7 +34,7 @@ export default class GamesController {
           synopsis,
           developer,
           publisher,
-          plateform,
+          platform,
         },
         review: {
           status,
