@@ -2,7 +2,7 @@ import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import Media from 'App/Models/Media'
 import Database from '@ioc:Adonis/Lucid/Database'
 import CreateMediaValidator from 'App/Validators/CreateMediaValidator'
-// import CreateMediaValidator from 'App/Validators/CreateMediaValidator'
+import {validMediaTypes, gameTypes, movieTypes, seasonTypes, bookTypes, MediaTypes } from 'App/Models/Enums/MediaTypes'
 
 export default class MediasController {
   public async getAllMedias({ response }: HttpContextContract) {
@@ -23,15 +23,22 @@ export default class MediasController {
 
   //ADMIN
   public async addOneMedia({ request, response }: HttpContextContract) {
-    const bookType = ['manga', 'comics', 'bande dessinée', 'artbook']
-    const movieType = ['film']
-    const videoGameType = ['jeu vidéo', 'dlc']
-    const seasonType = ['series', 'animé', 'dessin animé', 'cartoon']
-    const allTypes = [...bookType, ...movieType, ...videoGameType, ...seasonType]
+    // const movieType = ['film']
+    // const videoGameType = ['jeu vidéo', 'dlc']
+    // const seasonType = ['series', 'animé', 'dessin animé', 'cartoon']
+    // const bookType = ['manga', 'comics', 'roman', 'bande dessinée', 'artbook']
+    // const allTypes = [...bookType, ...movieType, ...videoGameType, ...seasonType]
+    // const { mediaParentId, type, cover, name, released, synopsis, ...specificMediaInfos } =
+    //   request.body()
+    const videoGameType = gameTypes
+    const movieType = movieTypes
+    const seasonType = seasonTypes
+    const bookType = bookTypes
+    const allTypes = validMediaTypes
 
-    // const payloadValidation = await request.validate(CreateMediaValidator)
+    const payloadValidation = await request.validate(CreateMediaValidator)
     const { mediaParentId, type, cover, name, released, synopsis, ...specificMediaInfos } =
-      request.body()
+    payloadValidation
     const generalMediaInfo = { mediaParentId, type, cover, name, released, synopsis }
 
     const isVideoGameType = videoGameType.includes(type)
