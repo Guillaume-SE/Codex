@@ -9,7 +9,10 @@ export default class CreateMediaValidator {
   public schema = schema.create({
     mediaParentId: schema.number.nullable(),
     type: schema.enum(validMediaTypes, [rules.trim()]),
-    cover: schema.file.nullable(),
+    cover: schema.file.nullable({
+      size: '2mb',
+      extnames: ['png', 'webp', 'jpg'],
+    }),
     name: schema.string([rules.trim()]),
     released: schema.string([rules.trim()]),
     synopsis: schema.string([rules.trim()]),

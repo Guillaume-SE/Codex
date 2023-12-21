@@ -32,8 +32,11 @@ export default class Media extends BaseModel {
   @column()
   public type: MediaTypes
 
-  @attachment()
-  public cover: AttachmentContract | null
+  // @attachment()
+  // public cover: AttachmentContract | null
+
+  @column()
+  public cover: string | null
 
   @column()
   public released: string

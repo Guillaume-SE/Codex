@@ -2,7 +2,15 @@ import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import Media from 'App/Models/Media'
 import Database from '@ioc:Adonis/Lucid/Database'
 import CreateMediaValidator from 'App/Validators/CreateMediaValidator'
-import {validMediaTypes, gameTypes, movieTypes, seasonTypes, bookTypes, MediaTypes } from 'App/Models/Enums/MediaTypes'
+import {
+  validMediaTypes,
+  gameTypes,
+  movieTypes,
+  seasonTypes,
+  bookTypes,
+  MediaTypes,
+} from 'App/Models/Enums/MediaTypes'
+import { string } from '@ioc:Adonis/Core/Helpers'
 
 export default class MediasController {
   public async getAllMedias({ response }: HttpContextContract) {
@@ -38,7 +46,15 @@ export default class MediasController {
 
     const payloadValidation = await request.validate(CreateMediaValidator)
     const { mediaParentId, type, cover, name, released, synopsis, ...specificMediaInfos } =
-    payloadValidation
+      payloadValidation
+
+    if (cover) {
+      const timestamp = new Date().getTime().toString()
+      const randomString = string.generateRandom(10)
+      const coverFileName = timestamp + randomString + '.' + cover.extname
+      await cover.moveToDisk('./covers/', { name: coverFileName })
+      // const coverFilePath = cover.filePath
+    }
     const generalMediaInfo = { mediaParentId, type, cover, name, released, synopsis }
 
     const isVideoGameType = videoGameType.includes(type)
@@ -51,25 +67,25 @@ export default class MediasController {
       return response.status(400).json("Le type de media n'est pas valide")
     }
 
-    const trx = await Database.transaction()
+    // const trx = await Database.transaction()
 
-    try {
-      const media = await Media.create(generalMediaInfo)
+    // try {
+    // const media = await Media.create(generalMediaInfo)
 
-      if (isVideoGameType) {
-        await media.related('gameInfo').create(specificMediaInfos)
-      }
+    //   if (isVideoGameType) {
+    //     await media.related('gameInfo').create(specificMediaInfos)
+    //   }
 
-      if (isMovieType) {
-        await media.related('movieInfo').create(specificMediaInfos)
-      }
+    //   if (isMovieType) {
+    //     await media.related('movieInfo').create(specificMediaInfos)
+    //   }
 
-      await trx.commit()
-      return response.status(201).json(media)
-    } catch (error) {
-      await trx.rollback()
-      return response.status(400).json(error)
-    }
+    //   await trx.commit()
+    //   return response.status(201).json(media)
+    // } catch (error) {
+    //   await trx.rollback()
+    //   return response.status(400).json(error)
+    // }
   }
 
   public async updateOneMedia({ request, params, response }: HttpContextContract) {
@@ -85,7 +101,8 @@ export default class MediasController {
     const seasonType = ['series', 'animé', 'dessin animé', 'cartoon']
     const allTypes = [...bookType, ...movieType, ...videoGameType, ...seasonType]
 
-    const { mediaParentId, type, cover, name, released, synopsis, ...specificMediaInfos } = request.body()
+    const { mediaParentId, type, cover, name, released, synopsis, ...specificMediaInfos } =
+      request.body()
     const generalMediaInfo = { mediaParentId, type, cover, name, released, synopsis }
 
     const isVideoGameType = videoGameType.includes(type)
@@ -101,14 +118,14 @@ export default class MediasController {
     const trx = await Database.transaction()
 
     try {
-      const media = await Media.updateOrCreate({} ,generalMediaInfo, { client: trx })
+      const media = await Media.updateOrCreate({}, generalMediaInfo, { client: trx })
 
       if (isVideoGameType) {
-        await media.related('gameInfo').updateOrCreate({} ,specificMediaInfos)
+        await media.related('gameInfo').updateOrCreate({}, specificMediaInfos)
       }
 
       if (isMovieType) {
-        await media.related('movieInfo').updateOrCreate({} ,specificMediaInfos)
+        await media.related('movieInfo').updateOrCreate({}, specificMediaInfos)
       }
 
       await trx.commit()
