@@ -15,7 +15,7 @@ export default class extends BaseSchema {
         .onDelete('SET NULL')
       table.string('name').notNullable()
       table.string('type').notNullable()
-      table.json('cover').nullable()
+      table.string('cover').nullable()
       table.string('released').notNullable()
       table.text('synopsis').notNullable()
       table.timestamp('created_at', { useTz: true })
