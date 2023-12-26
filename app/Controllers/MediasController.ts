@@ -31,13 +31,6 @@ export default class MediasController {
 
   //ADMIN
   public async addOneMedia({ request, response }: HttpContextContract) {
-    // const movieType = ['film']
-    // const videoGameType = ['jeu vidéo', 'dlc']
-    // const seasonType = ['series', 'animé', 'dessin animé', 'cartoon']
-    // const bookType = ['manga', 'comics', 'roman', 'bande dessinée', 'artbook']
-    // const allTypes = [...bookType, ...movieType, ...videoGameType, ...seasonType]
-    // const { mediaParentId, type, cover, name, released, synopsis, ...specificMediaInfos } =
-    //   request.body()
     const videoGameType = gameTypes
     const movieType = movieTypes
     const seasonType = seasonTypes
@@ -48,14 +41,16 @@ export default class MediasController {
     const { mediaParentId, type, cover, name, released, synopsis, ...specificMediaInfos } =
       payloadValidation
 
+    // cover gestion
+    let coverFileName: string | null = null
     if (cover) {
       const timestamp = new Date().getTime().toString()
       const randomString = string.generateRandom(10)
-      const coverFileName = timestamp + randomString + '.' + cover.extname
+      coverFileName = `${timestamp}-${randomString}.${cover.extname}`
       await cover.moveToDisk('./covers/', { name: coverFileName })
       // const coverFilePath = cover.filePath
     }
-    const generalMediaInfo = { mediaParentId, type, cover, name, released, synopsis }
+    const generalMediaInfo = { mediaParentId, type, cover: coverFileName, name, released, synopsis }
 
     const isVideoGameType = videoGameType.includes(type)
     const isMovieType = movieType.includes(type)
@@ -67,25 +62,26 @@ export default class MediasController {
       return response.status(400).json("Le type de media n'est pas valide")
     }
 
-    // const trx = await Database.transaction()
+    const trx = await Database.transaction()
 
-    // try {
-    // const media = await Media.create(generalMediaInfo)
+    try {
+      const media = await Media.create(generalMediaInfo)
 
-    //   if (isVideoGameType) {
-    //     await media.related('gameInfo').create(specificMediaInfos)
-    //   }
+      if (isVideoGameType) {
+        await media.related('gameInfo').create(specificMediaInfos)
+      }
 
-    //   if (isMovieType) {
-    //     await media.related('movieInfo').create(specificMediaInfos)
-    //   }
+      if (isMovieType) {
+        await media.related('movieInfo').create(specificMediaInfos)
+      }
 
-    //   await trx.commit()
-    //   return response.status(201).json(media)
-    // } catch (error) {
-    //   await trx.rollback()
-    //   return response.status(400).json(error)
-    // }
+      await trx.commit()
+      return response.status(201).json(media)
+    } catch (error) {
+      await trx.rollback()
+      console.log(error)
+      return response.status(400).json(error)
+    }
   }
 
   public async updateOneMedia({ request, params, response }: HttpContextContract) {
