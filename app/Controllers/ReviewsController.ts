@@ -1,7 +1,7 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import Media from 'App/Models/Media'
 import Review from 'App/Models/Review'
-import { validReviewStatus } from 'App/Models/Enums/ReviewStatus'
+import { validReviewStatus } from 'App/Tools/Enums/ReviewStatus'
 
 export default class ReviewsController {
   public async getAllReviews({ response }: HttpContextContract) {

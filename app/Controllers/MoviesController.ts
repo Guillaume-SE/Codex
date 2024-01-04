@@ -7,14 +7,16 @@ export default class MoviesController {
       .from('medias')
       .join('movies_infos', 'medias.id', '=', 'movies_infos.media_id')
       .join('reviews', 'medias.id', '=', 'reviews.media_id')
+      .join('covers', 'medias.id', '=', 'covers.media_id')
       .select(
         'medias.id',
         'medias.media_parent_id',
         'medias.name',
         'medias.type',
-        'medias.cover',
         'medias.released',
         'medias.synopsis',
+        'covers.filename',
+        'covers.alternative',
         'movies_infos.director',
         'movies_infos.screenwriter',
         'movies_infos.duration',
@@ -25,11 +27,21 @@ export default class MoviesController {
         'reviews.created_at',
         'reviews.updated_at'
       )
-
+    console.log(datas)
     const movies = datas.map((data) => {
       const { id, mediaParentId, name, type, cover, released, synopsis, createdAt, updatedAt } =
         data
-      const { director, screenwriter, duration, status, rating, notes, is_favorite: isFavorite } = data.$extras
+      const {
+        filename,
+        alternative,
+        director,
+        screenwriter,
+        duration,
+        status,
+        rating,
+        notes,
+        is_favorite: isFavorite,
+      } = data.$extras
 
       return {
         movie: {
@@ -43,6 +55,10 @@ export default class MoviesController {
           director,
           screenwriter,
           duration,
+        },
+        cover: {
+          filename,
+          alternative,
         },
         review: {
           status,
@@ -63,14 +79,16 @@ export default class MoviesController {
       .from('medias')
       .join('movies_infos', 'medias.id', '=', 'movies_infos.media_id')
       .join('reviews', 'medias.id', '=', 'reviews.media_id')
+      .join('covers', 'medias.id', '=', 'covers.media_id')
       .select(
         'medias.id',
         'medias.media_parent_id',
         'medias.name',
         'medias.type',
-        'medias.cover',
         'medias.released',
         'medias.synopsis',
+        'covers.filename',
+        'covers.alternative',
         'movies_infos.director',
         'movies_infos.screenwriter',
         'movies_infos.duration',
@@ -88,9 +106,18 @@ export default class MoviesController {
       return response.status(404).json("Aucun film correspondant n'a été trouvé")
     }
     const movie = datas.map((data) => {
-      // createdAt et updatedAt sont celui de review ! 
-      const { id, mediaParentId, name, type, cover, released, synopsis, createdAt, updatedAt } = data
-      const { director, screenwriter, duration, status, rating, notes, is_favorite: isFavorite } = data.$extras
+      // createdAt et updatedAt sont celui de review !
+      const { id, mediaParentId, name, type, cover, released, synopsis, createdAt, updatedAt } =
+        data
+      const {
+        director,
+        screenwriter,
+        duration,
+        status,
+        rating,
+        notes,
+        is_favorite: isFavorite,
+      } = data.$extras
 
       return {
         movie: {
@@ -105,6 +132,10 @@ export default class MoviesController {
           screenwriter,
           duration,
         },
+        // cover: {
+        //   filename,
+        //   alternative,
+        // },
         review: {
           status,
           rating,

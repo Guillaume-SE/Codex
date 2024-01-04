@@ -1,6 +1,7 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
-import Media from 'App/Models/Media'
 import Database from '@ioc:Adonis/Lucid/Database'
+import Media from 'App/Models/Media'
+import Cover from 'App/Models/Cover'
 import CreateMediaValidator from 'App/Validators/CreateMediaValidator'
 import {
   validMediaTypes,
@@ -9,8 +10,9 @@ import {
   seasonTypes,
   bookTypes,
   MediaTypes,
-} from 'App/Models/Enums/MediaTypes'
-import { string } from '@ioc:Adonis/Core/Helpers'
+} from 'App/Tools/Enums/MediaTypes'
+import { createFileName } from 'App/Tools/Functions/generateCoverName'
+import { createAlternativeText } from 'App/Tools/Functions/generateCoverAltText'
 
 export default class MediasController {
   public async getAllMedias({ response }: HttpContextContract) {
@@ -41,42 +43,48 @@ export default class MediasController {
     const { mediaParentId, type, cover, name, released, synopsis, ...specificMediaInfos } =
       payloadValidation
 
-    // cover gestion
-    let coverFileName: string | null = null
+    // manage covers
+    let coverName: string = 'default.png'
+    let coverAltText: string = ''
     if (cover) {
-      const timestamp = new Date().getTime().toString()
-      const randomString = string.generateRandom(10)
-      coverFileName = `${timestamp}-${randomString}.${cover.extname}`
-      await cover.moveToDisk('./covers/', { name: coverFileName })
+      coverName = createFileName(cover.extname)
+      coverAltText = createAlternativeText(type, name)
+      await cover.moveToDisk('./covers', { name: coverName })
       // const coverFilePath = cover.filePath
     }
-    const generalMediaInfo = { mediaParentId, type, cover: coverFileName, name, released, synopsis }
+
+    const generalMediaInfo = { mediaParentId, type, name, released, synopsis }
+    const coverInfo = { filename: coverName, alternative: coverAltText }
 
     const isVideoGameType = videoGameType.includes(type)
     const isMovieType = movieType.includes(type)
     const isBookType = bookType.includes(type)
     const isSeasonType = seasonType.includes(type)
-    const asNoValidType = !allTypes.includes(type)
-
-    if (asNoValidType) {
-      return response.status(400).json("Le type de media n'est pas valide")
-    }
 
     const trx = await Database.transaction()
 
     try {
-      const media = await Media.create(generalMediaInfo)
+      const newMedia = await Media.create(generalMediaInfo)
+      await newMedia.related('cover').create(coverInfo)
 
       if (isVideoGameType) {
-        await media.related('gameInfo').create(specificMediaInfos)
+        await newMedia.related('gameInfo').create(specificMediaInfos)
       }
 
       if (isMovieType) {
-        await media.related('movieInfo').create(specificMediaInfos)
+        await newMedia.related('movieInfo').create(specificMediaInfos)
       }
 
+      // if (isBookType) {
+      //   await newMedia.related('bookInfo').create(specificMediaInfos)
+      // }
+
+      // if (isSeasonType) {
+      //   await newMedia.related('seasonInfo').create(specificMediaInfos)
+      // }
+
       await trx.commit()
-      return response.status(201).json(media)
+      return response.status(201).json(newMedia)
     } catch (error) {
       await trx.rollback()
       console.log(error)
@@ -91,19 +99,19 @@ export default class MediasController {
       return response.status(404).json('Aucun media ne correspond à cet id')
     }
 
-    const bookType = ['manga', 'comics', 'bande dessinée', 'artbook']
-    const movieType = ['film']
-    const videoGameType = ['jeu vidéo', 'dlc']
-    const seasonType = ['series', 'animé', 'dessin animé', 'cartoon']
-    const allTypes = [...bookType, ...movieType, ...videoGameType, ...seasonType]
+    const videoGameType = gameTypes
+    const movieType = movieTypes
+    const seasonType = seasonTypes
+    const bookType = bookTypes
+    const allTypes = validMediaTypes
 
     const { mediaParentId, type, cover, name, released, synopsis, ...specificMediaInfos } =
       request.body()
     const generalMediaInfo = { mediaParentId, type, cover, name, released, synopsis }
 
     const isVideoGameType = videoGameType.includes(type)
-    const isBookType = bookType.includes(type)
     const isMovieType = movieType.includes(type)
+    const isBookType = bookType.includes(type)
     const isSeasonType = seasonType.includes(type)
     const asNoValidType = !allTypes.includes(type)
 
