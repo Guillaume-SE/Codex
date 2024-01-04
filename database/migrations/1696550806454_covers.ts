@@ -1,28 +1,26 @@
 import BaseSchema from '@ioc:Adonis/Lucid/Schema'
 
 export default class extends BaseSchema {
-  protected tableName = 'medias'
+  protected tableName = 'covers'
 
-  public async up() {
+  public async up () {
     this.schema.createTable(this.tableName, (table) => {
       table.increments('id')
       table
-        .integer('media_parent_id')
+        .integer('media_id')
         .unsigned()
         .references('id')
-        .inTable(this.tableName)
-        .nullable()
-        .onDelete('SET NULL')
-      table.string('type').notNullable()
-      table.string('name').notNullable()
-      table.string('released').notNullable()
-      table.text('synopsis').notNullable()
+        .inTable('medias')
+        .notNullable()
+        .onDelete('CASCADE')
+      table.string('filename').notNullable()
+      table.string('alternative').notNullable()
       table.timestamp('created_at', { useTz: true })
       table.timestamp('updated_at', { useTz: true })
     })
   }
 
-  public async down() {
+  public async down () {
     this.schema.dropTable(this.tableName)
   }
 }
