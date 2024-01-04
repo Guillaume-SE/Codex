@@ -10,11 +10,12 @@ import {
   hasMany,
   hasOne,
 } from '@ioc:Adonis/Lucid/Orm'
-import { MediaTypes } from 'App/Models/Enums/MediaTypes'
+import { MediaTypes } from 'App/Tools/Enums/MediaTypes'
 import Review from 'App/Models/Review'
 import GameInfo from 'App/Models/GameInfo'
 import MovieInfo from 'App/Models/MovieInfo'
 import { AttachmentContract, attachment } from '@ioc:Adonis/Addons/AttachmentLite'
+import Cover from 'App/Models/Cover'
 
 export default class Media extends BaseModel {
   // force "medias" name because the term doesn't exist in english
@@ -27,13 +28,10 @@ export default class Media extends BaseModel {
   public mediaParentId: number | null
 
   @column()
-  public name: string
-
-  @column()
   public type: MediaTypes
 
   @column()
-  public cover: string | null
+  public name: string
 
   @column()
   public released: string
@@ -48,29 +46,22 @@ export default class Media extends BaseModel {
   public updatedAt: DateTime
 
   // RELATIONS
-  @hasMany(() => Media, {
-    foreignKey: 'mediaParentId',
-  })
+  @hasMany(() => Media)
   public parentMedia: HasMany<typeof Media>
 
-  @belongsTo(() => Media, {
-    foreignKey: 'mediaParentId',
-  })
+  @belongsTo(() => Media)
   public childrenMedia: BelongsTo<typeof Media>
 
-  @hasOne(() => Review, {
-    foreignKey: 'mediaId',
-  })
+  @hasOne(() => Review)
   public review: HasOne<typeof Review>
 
-  @hasOne(() => GameInfo, {
-    foreignKey: 'mediaId',
-  })
+  @hasOne(() => Cover)
+  public cover: HasOne<typeof Cover>
+
+  @hasOne(() => GameInfo)
   public gameInfo: HasOne<typeof GameInfo>
 
-  @hasOne(() => MovieInfo, {
-    foreignKey: 'mediaId',
-  })
+  @hasOne(() => MovieInfo)
   public movieInfo: HasOne<typeof MovieInfo>
 
   // @hasOne(() => SeasonInfo)

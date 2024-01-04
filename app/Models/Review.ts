@@ -1,6 +1,6 @@
 import { DateTime } from 'luxon'
 import { BaseModel, BelongsTo, belongsTo, column } from '@ioc:Adonis/Lucid/Orm'
-import { ReviewStatus } from 'App/Models/Enums/ReviewStatus'
+import { ReviewStatus } from 'App/Tools/Enums/ReviewStatus'
 import User from 'App/Models/User'
 import Media from 'App/Models/Media'
 
