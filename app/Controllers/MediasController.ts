@@ -1,5 +1,6 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import Database from '@ioc:Adonis/Lucid/Database'
+import Drive from '@ioc:Adonis/Core/Drive'
 import Media from 'App/Models/Media'
 import CreateMediaValidator from 'App/Validators/CreateMediaValidator'
 import {
@@ -44,7 +45,7 @@ export default class MediasController {
 
     // manage covers
     let coverName: string = 'default.png'
-    let coverAltText: string = ''
+    let coverAltText: string = 'image non disponible'
     if (cover) {
       coverName = createFileName(cover.extname)
       coverAltText = createAlternativeText(type, name)
@@ -86,7 +87,9 @@ export default class MediasController {
       return response.status(201).json(newMedia)
     } catch (error) {
       await trx.rollback()
-      console.log(error)
+      if (coverName !== 'default.png') {
+        await Drive.delete(coverName)
+      }
       return response.status(400).json(error)
     }
   }
