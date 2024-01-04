@@ -9,7 +9,8 @@ export default driveConfig({
     local: {
       driver: 'local',
       visibility: 'public',
-      root: Application.tmpPath('uploads'),
+      // root: Application.tmpPath('uploads'),
+      root: 'App/Uploads',
       serveFiles: true,
       basePath: '/uploads',
     },
