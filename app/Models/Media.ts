@@ -14,8 +14,9 @@ import { MediaTypes } from 'App/Tools/Enums/MediaTypes'
 import Review from 'App/Models/Review'
 import GameInfo from 'App/Models/GameInfo'
 import MovieInfo from 'App/Models/MovieInfo'
-import { AttachmentContract, attachment } from '@ioc:Adonis/Addons/AttachmentLite'
 import Cover from 'App/Models/Cover'
+import BookInfo from './BookInfo'
+import SeasonInfo from './SeasonInfo'
 
 export default class Media extends BaseModel {
   // force "medias" name because the term doesn't exist in english
@@ -64,11 +65,12 @@ export default class Media extends BaseModel {
   @hasOne(() => MovieInfo)
   public movieInfo: HasOne<typeof MovieInfo>
 
-  // @hasOne(() => SeasonInfo)
-  // public seasonInfo: HasOne<typeof SeasonInfo>
+  @hasOne(() => BookInfo)
+  public bookInfo: HasOne<typeof BookInfo>
 
-  // @hasOne(() => BookInfo)
-  // public bookInfo: HasOne<typeof BookInfo>
+  @hasOne(() => SeasonInfo)
+  public seasonInfo: HasOne<typeof SeasonInfo>
+
 
   // @beforeSave()
   // public static async defaultValue(media: Media) {

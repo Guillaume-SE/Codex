@@ -1,7 +1,6 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import Database from '@ioc:Adonis/Lucid/Database'
 import Media from 'App/Models/Media'
-import Cover from 'App/Models/Cover'
 import CreateMediaValidator from 'App/Validators/CreateMediaValidator'
 import {
   validMediaTypes,
@@ -75,13 +74,13 @@ export default class MediasController {
         await newMedia.related('movieInfo').create(specificMediaInfos)
       }
 
-      // if (isBookType) {
-      //   await newMedia.related('bookInfo').create(specificMediaInfos)
-      // }
+      if (isBookType) {
+        await newMedia.related('bookInfo').create(specificMediaInfos)
+      }
 
-      // if (isSeasonType) {
-      //   await newMedia.related('seasonInfo').create(specificMediaInfos)
-      // }
+      if (isSeasonType) {
+        await newMedia.related('seasonInfo').create(specificMediaInfos)
+      }
 
       await trx.commit()
       return response.status(201).json(newMedia)

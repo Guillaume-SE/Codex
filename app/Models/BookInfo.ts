@@ -2,8 +2,8 @@ import { DateTime } from 'luxon'
 import { BaseModel, BelongsTo, belongsTo, column } from '@ioc:Adonis/Lucid/Orm'
 import Media from 'App/Models/Media'
 
-export default class MovieInfo extends BaseModel {
-  public static table = 'movies_infos'
+export default class BookInfo extends BaseModel {
+  public static table = 'books_infos'
 
   @column({ isPrimary: true })
   public id: number
@@ -12,13 +12,16 @@ export default class MovieInfo extends BaseModel {
   public mediaId: number
 
   @column()
-  public director: string
+  public author: string
 
   @column()
-  public screenwriter: string
+  public illustrator: string
 
   @column()
-  public duration: number
+  public editor: string
+
+  @column()
+  public pages: number
 
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime
