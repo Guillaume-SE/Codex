@@ -11,7 +11,7 @@ export default class CreateMediaValidator {
     type: schema.enum(validMediaTypes, [rules.trim()]),
     cover: schema.file.nullable({
       size: '2mb',
-      extnames: ['png', 'webp', 'jpg'],
+      extnames: ['png', 'webp', 'jpg', 'jpeg'],
     }),
     name: schema.string([rules.trim()]),
     released: schema.string([rules.trim()]),

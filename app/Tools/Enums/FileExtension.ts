@@ -5,4 +5,5 @@ const extension = [
     'webp'
 ] as const
 
-export type ValidFileExtension = typeof extension[number]
+export type FileExtension = typeof extension[number]
+export { extension as validFileExtension }
