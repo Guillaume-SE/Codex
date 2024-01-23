@@ -3,9 +3,11 @@ import sharp from 'sharp'
 export async function standardize(coverTmp: string | undefined) {
   const sharpModification = sharp(coverTmp)
     .resize({
-      height: 250
+      height: 480,
+      width: 320,
+      fit: 'fill',
     })
-    .toFormat('jpeg', { mozjpeg: true })
+    .toFormat('jpg', { mozjpeg: true })
     .toBuffer()
   return sharpModification
 }
