@@ -12,7 +12,6 @@ import {
 } from 'App/Tools/Enums/MediaTypes'
 import { createFileName } from 'App/Tools/Functions/generateCoverName'
 import { createAlternativeText } from 'App/Tools/Functions/generateCoverAltText'
-import { getTableName } from 'App/Tools/Functions/getTableNameBasedOnType'
 import { standardize } from 'App/Tools/Functions/standardizeCover'
 
 export default class MediasController {
