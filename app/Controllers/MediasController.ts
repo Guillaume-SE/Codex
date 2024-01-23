@@ -59,8 +59,8 @@ export default class MediasController {
     if (cover) {
       coverName = createFileName(cover.extname)
       coverAltText = createAlternativeText(type, name)
-      const coverStandardization = standardize(cover.tmpPath)
-      await Drive.put(`covers/${coverName}`, await coverStandardization, {
+      const coverFormated = standardize(cover.tmpPath)
+      await Drive.put(`covers/${coverName}`, await coverFormated, {
         contentType: `image/${cover.extname}`,
       })
     }
