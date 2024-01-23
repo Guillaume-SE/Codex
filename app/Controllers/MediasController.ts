@@ -9,7 +9,6 @@ import {
   movieTypes,
   seasonTypes,
   bookTypes,
-  MediaTypes,
 } from 'App/Tools/Enums/MediaTypes'
 import { createFileName } from 'App/Tools/Functions/generateCoverName'
 import { createAlternativeText } from 'App/Tools/Functions/generateCoverAltText'
@@ -39,81 +38,73 @@ export default class MediasController {
     const { mediaParentId, type, cover, name, released, synopsis, ...specificMediaInfos } =
       payloadValidation
 
-    // const searchIfMediaAlreadyExist = await Media.query()
-    //   .from('medias')
-    //   .where('type', type)
-    //   .andWhere('name', name)
-    //   .andWhere('released', released)
-    // const mediaAlreadyExist = searchIfMediaAlreadyExist.length > 0
+    const searchIfMediaAlreadyExist = await Media.query()
+      .from('medias')
+      .where('type', type)
+      .andWhere('name', name)
+      .andWhere('released', released)
+    const mediaAlreadyExist = searchIfMediaAlreadyExist.length > 0
 
-    // if (mediaAlreadyExist) {
-    //   return response.status(400).json({
-    //     message: 'Ce media a déjà été ajouté !',
-    //     actualReview: searchIfMediaAlreadyExist,
-    //   })
-    // }
+    if (mediaAlreadyExist) {
+      return response.status(400).json({
+        message: 'Ce media a déjà été ajouté !',
+        actualReview: searchIfMediaAlreadyExist,
+      })
+    }
 
     // manage covers
     let coverName: string = 'default.png'
     let coverAltText: string = 'image non disponible'
     if (cover) {
-      coverName = createFileName(cover.extname)
+      coverName = createFileName()
       coverAltText = createAlternativeText(type, name)
       const coverFormated = standardize(cover.tmpPath)
       await Drive.put(`covers/${coverName}`, await coverFormated, {
-        contentType: `image/${cover.extname}`,
+        contentType: `image/jpg`,
       })
     }
 
     const generalMediaInfo = { mediaParentId, type, name, released, synopsis }
     const coverInfo = { filename: coverName, alternative: coverAltText }
 
-    // const tableName = getTableName(type)
-    const videoGameType = gameTypes
-    const movieType = movieTypes
-    const seasonType = seasonTypes
-    const bookType = bookTypes
-    // const allTypes = validMediaTypes
+    const isVideoGameType = gameTypes.includes(type)
+    const isMovieType = movieTypes.includes(type)
+    const isBookType = bookTypes.includes(type)
+    const isSeasonType = seasonTypes.includes(type)
 
-    const isVideoGameType = videoGameType.includes(type)
-    const isMovieType = movieType.includes(type)
-    const isBookType = bookType.includes(type)
-    const isSeasonType = seasonType.includes(type)
-    // const asNoValidType = !allTypes.includes(type)
+    const trx = await Database.transaction()
+    try {
+      const newMedia = await Media.create(generalMediaInfo)
+      await newMedia.related('cover').create(coverInfo)
 
-    // const trx = await Database.transaction()
+      if (isVideoGameType) {
+        await newMedia.related('gameInfo').create(specificMediaInfos)
+      }
 
-    // try {
-    //   const newMedia = await Media.create(generalMediaInfo)
-    //   await newMedia.related('cover').create(coverInfo)
+      if (isMovieType) {
+        await newMedia.related('movieInfo').create(specificMediaInfos)
+      }
 
-    //   if (isVideoGameType) {
-    //     await newMedia.related('gameInfo').create(specificMediaInfos)
-    //   }
+      if (isBookType) {
+        await newMedia.related('bookInfo').create(specificMediaInfos)
+      }
 
-    //   if (isMovieType) {
-    //     await newMedia.related('movieInfo').create(specificMediaInfos)
-    //   }
+      if (isSeasonType) {
+        await newMedia.related('seasonInfo').create(specificMediaInfos)
+      }
 
-    //   if (isBookType) {
-    //     await newMedia.related('bookInfo').create(specificMediaInfos)
-    //   }
-
-    //   if (isSeasonType) {
-    //     await newMedia.related('seasonInfo').create(specificMediaInfos)
-    //   }
-
-    //   await trx.commit()
-    //   return response.status(201).json(newMedia)
-    // } catch (error) {
-    //   await trx.rollback()
-    //   if (coverName !== 'default.png') {
-    //     await Drive.delete(coverName)
-    //   }
-    //   return response.status(400).json(error)
-    // }
+      await trx.commit()
+      return response.status(201).json(newMedia)
+    } catch (error) {
+      await trx.rollback()
+      if (coverName !== 'default.png') {
+        await Drive.delete(`covers/${coverName}`)
+      }
+      return response.status(400).json(error)
+    }
   }
 
+  // ADMIN
   public async updateOneMedia({ request, params, response }: HttpContextContract) {
     const mediaId = params.id
     const checkIfMediaExist = await Media.find(mediaId)
