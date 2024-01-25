@@ -12,7 +12,6 @@ export default class ReviewsController {
 
   public async addOneReview({ request, response, params }: HttpContextContract) {
     const allValidReviewStatus = validReviewStatus
-    const createdBy = 1
     const mediaId = parseInt(params.mediaId)
     const { status, rating, notes, isFavorite } = request.body()
     const asNoValidStatus = !allValidReviewStatus.includes(status)
@@ -21,7 +20,6 @@ export default class ReviewsController {
       return response.status(404).json({ message: "Le statut de la review n'est pas valide" })
     }
     const data = {
-      createdBy,
       mediaId,
       status,
       rating,
