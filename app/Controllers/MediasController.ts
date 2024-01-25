@@ -4,7 +4,6 @@ import Drive from '@ioc:Adonis/Core/Drive'
 import Media from 'App/Models/Media'
 import CreateMediaValidator from 'App/Validators/CreateMediaValidator'
 import {
-  validMediaTypes,
   gameTypes,
   movieTypes,
   seasonTypes,
