@@ -2,6 +2,7 @@ import { schema, CustomMessages, rules } from '@ioc:Adonis/Core/Validator'
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import { validMediaTypes } from 'App/Tools/Enums/MediaTypes'
 import { validGamePlatform } from 'App/Tools/Enums/GamePlatform'
+import { validCoverFileExtension } from 'App/Tools/Enums/FileExtension'
 
 export default class CreateMediaValidator {
   constructor(protected ctx: HttpContextContract) {}
@@ -11,7 +12,7 @@ export default class CreateMediaValidator {
     type: schema.enum(validMediaTypes, [rules.trim()]),
     cover: schema.file.nullable({
       size: '2mb',
-      extnames: ['png', 'webp', 'jpg', 'jpeg'],
+      extnames: validCoverFileExtension,
     }),
     name: schema.string([rules.trim()]),
     released: schema.string([rules.trim()]),
