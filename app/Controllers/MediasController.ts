@@ -111,25 +111,14 @@ export default class MediasController {
       return response.status(404).json('Aucun media ne correspond à cet id')
     }
 
-    const videoGameType = gameTypes
-    const movieType = movieTypes
-    const seasonType = seasonTypes
-    const bookType = bookTypes
-    const allTypes = validMediaTypes
-
     const { mediaParentId, type, cover, name, released, synopsis, ...specificMediaInfos } =
       request.body()
     const generalMediaInfo = { mediaParentId, type, cover, name, released, synopsis }
 
-    const isVideoGameType = videoGameType.includes(type)
-    const isMovieType = movieType.includes(type)
-    const isBookType = bookType.includes(type)
-    const isSeasonType = seasonType.includes(type)
-    const asNoValidType = !allTypes.includes(type)
-
-    if (asNoValidType) {
-      return response.status(400).json("Le type de media n'est pas valide")
-    }
+    const isVideoGameType = gameTypes.includes(type)
+    const isMovieType = movieTypes.includes(type)
+    const isBookType = bookTypes.includes(type)
+    const isSeasonType = seasonTypes.includes(type)
 
     const trx = await Database.transaction()
 
@@ -155,7 +144,6 @@ export default class MediasController {
       await trx.commit()
       return response.status(201).json(media)
     } catch (error) {
-      console.log(error)
       await trx.rollback()
       return response.status(400).json(error)
     }
