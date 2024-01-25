@@ -5,9 +5,8 @@ import { DateTime } from "luxon";
 export interface IMedia {
     id: number
     mediaParentId: number | null,
-    name: string,
     type: MediaTypes,
-    cover: string | null,
+    name: string,
     released: string,
     synopsis: string,
     createdAt?: DateTime,
