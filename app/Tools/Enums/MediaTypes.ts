@@ -1,10 +1,9 @@
 const types = [
-  'jeu vidéo',
-  'dlc',
+  'jeu de base',
+  'extension',
   'série',
   'animé',
   'dessin animé',
-  'cartoon',
   'film',
   'manga',
   'roman',
@@ -16,10 +15,10 @@ const types = [
 export type MediaTypes = (typeof types)[number]
 export { types as validMediaTypes }
 
-export const gameTypes = ['jeu vidéo', 'dlc']
+export const gameTypes = ['jeu de base', 'extension']
 
 export const movieTypes = ['film']
 
-export const seasonTypes = ['série', 'animé', 'dessin animé', 'cartoon']
+export const seasonTypes = ['série', 'animé', 'dessin animé']
 
 export const bookTypes = ['manga', 'roman', 'comics', 'bande dessinée', 'artbook']
