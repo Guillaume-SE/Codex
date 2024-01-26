@@ -13,7 +13,7 @@ export default class ReviewsController {
   public async addOneReview({ request, response, params }: HttpContextContract) {
     const allValidReviewStatus = validReviewStatus
     const mediaId = parseInt(params.mediaId)
-    const { status, rating, notes, isFavorite } = request.body()
+    const { status, rating, opinion, isFavorite } = request.body()
     const asNoValidStatus = !allValidReviewStatus.includes(status)
 
     if (asNoValidStatus) {
@@ -23,7 +23,7 @@ export default class ReviewsController {
       mediaId,
       status,
       rating,
-      notes,
+      opinion,
       isFavorite,
     }
 

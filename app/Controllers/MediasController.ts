@@ -3,15 +3,12 @@ import Database from '@ioc:Adonis/Lucid/Database'
 import Drive from '@ioc:Adonis/Core/Drive'
 import Media from 'App/Models/Media'
 import CreateMediaValidator from 'App/Validators/CreateMediaValidator'
-import {
-  gameTypes,
-  movieTypes,
-  seasonTypes,
-  bookTypes,
-} from 'App/Tools/Enums/MediaTypes'
+import UpdateMediaValidator from 'App/Validators/UpdateMediaValidator'
+import { gameTypes, movieTypes, seasonTypes, bookTypes } from 'App/Tools/Enums/MediaTypes'
 import { createFileName } from 'App/Tools/Functions/generateCoverName'
 import { createAlternativeText } from 'App/Tools/Functions/generateCoverAltText'
 import { standardize } from 'App/Tools/Functions/standardizeCover'
+import Cover from 'App/Models/Cover'
 
 export default class MediasController {
   public async getAllMedias({ response }: HttpContextContract) {
@@ -20,9 +17,9 @@ export default class MediasController {
   }
 
   public async getOneMediaById({ params, response }: HttpContextContract) {
-    const payload = params.id
+    const mediaId = params.id
     try {
-      const media = await Media.findOrFail(payload)
+      const media = await Media.findOrFail(mediaId)
       response.status(201)
       return media
     } catch (error) {
@@ -46,7 +43,7 @@ export default class MediasController {
     if (mediaAlreadyExist) {
       return response.status(400).json({
         message: 'Ce media a déjà été ajouté !',
-        actualReview: searchIfMediaAlreadyExist,
+        media: searchIfMediaAlreadyExist,
       })
     }
 
@@ -105,14 +102,16 @@ export default class MediasController {
   // ADMIN
   public async updateOneMedia({ request, params, response }: HttpContextContract) {
     const mediaId = params.id
-    const checkIfMediaExist = await Media.find(mediaId)
-    if (!checkIfMediaExist) {
-      return response.status(404).json('Aucun media ne correspond à cet id')
+    const mediaToUpdate = await Media.find(mediaId)
+    const mediaDoesntExist = !mediaToUpdate
+    if (mediaDoesntExist) {
+      return response.status(404).json("Le media à mettre à jour n'existe pas")
     }
 
-    const { mediaParentId, type, cover, name, released, synopsis, ...specificMediaInfos } =
-      request.body()
-    const generalMediaInfo = { mediaParentId, type, cover, name, released, synopsis }
+    const payloadValidation = await request.validate(UpdateMediaValidator)
+    const { mediaParentId, type, name, released, synopsis, ...specificMediaInfos } =
+      payloadValidation
+    const generalMediaInfo = { mediaParentId, type, name, released, synopsis }
 
     const isVideoGameType = gameTypes.includes(type)
     const isMovieType = movieTypes.includes(type)
@@ -122,26 +121,26 @@ export default class MediasController {
     const trx = await Database.transaction()
 
     try {
-      const media = await Media.updateOrCreate({}, generalMediaInfo, { client: trx })
+      mediaToUpdate.merge(generalMediaInfo).save()
 
       if (isVideoGameType) {
-        await media.related('gameInfo').updateOrCreate({}, specificMediaInfos)
+        await mediaToUpdate.related('gameInfo').updateOrCreate({}, specificMediaInfos)
       }
 
       if (isMovieType) {
-        await media.related('movieInfo').updateOrCreate({}, specificMediaInfos)
+        await mediaToUpdate.related('movieInfo').updateOrCreate({}, specificMediaInfos)
       }
 
       if (isBookType) {
-        await media.related('bookInfo').updateOrCreate({}, specificMediaInfos)
+        await mediaToUpdate.related('bookInfo').updateOrCreate({}, specificMediaInfos)
       }
 
       if (isSeasonType) {
-        await media.related('seasonInfo').updateOrCreate({}, specificMediaInfos)
+        await mediaToUpdate.related('seasonInfo').updateOrCreate({}, specificMediaInfos)
       }
 
       await trx.commit()
-      return response.status(201).json(media)
+      return response.status(201).json(mediaToUpdate)
     } catch (error) {
       await trx.rollback()
       return response.status(400).json(error)
@@ -154,8 +153,17 @@ export default class MediasController {
     if (!media) {
       return response.status(404).json('Aucun media correspondant à cet id')
     }
+    const coverToDelete = await Cover.findBy('media_id', mediaId)
+
     try {
       await media.delete()
+      if (coverToDelete) {
+        const defaultCoverName = 'default.png'
+        const coverName = coverToDelete.filename
+        if (coverName !== defaultCoverName) {
+          await Drive.delete(`covers/${coverName}`)
+        }
+      }
       return response.status(201).json(media)
     } catch (error) {
       return response.status(404)

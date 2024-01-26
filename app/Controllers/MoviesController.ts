@@ -22,15 +22,13 @@ export default class MoviesController {
         'movies_infos.duration',
         'reviews.status',
         'reviews.rating',
-        'reviews.notes',
+        'reviews.opinion',
         'reviews.is_favorite',
         'reviews.created_at',
         'reviews.updated_at'
       )
-    console.log(datas)
     const movies = datas.map((data) => {
-      const { id, mediaParentId, name, type, cover, released, synopsis, createdAt, updatedAt } =
-        data
+      const { id, mediaParentId, name, type, released, synopsis } = data
       const {
         filename,
         alternative,
@@ -39,17 +37,18 @@ export default class MoviesController {
         duration,
         status,
         rating,
-        notes,
-        is_favorite: isFavorite,
+        opinion,
+        is_favorite,
+        created_at,
+        updated_at,
       } = data.$extras
 
       return {
         movie: {
           id,
           mediaParentId,
-          name,
           type,
-          cover,
+          name,
           released,
           synopsis,
           director,
@@ -63,10 +62,10 @@ export default class MoviesController {
         review: {
           status,
           rating,
-          notes,
-          isFavorite,
-          createdAt,
-          updatedAt,
+          opinion,
+          isFavorite: is_favorite,
+          createdAt: created_at,
+          updatedAt: updated_at,
         },
       }
     })
@@ -94,7 +93,7 @@ export default class MoviesController {
         'movies_infos.duration',
         'reviews.status',
         'reviews.rating',
-        'reviews.notes',
+        'reviews.opinion',
         'reviews.is_favorite',
         'reviews.created_at',
         'reviews.updated_at'
@@ -107,16 +106,19 @@ export default class MoviesController {
     }
     const movie = datas.map((data) => {
       // createdAt et updatedAt sont celui de review !
-      const { id, mediaParentId, name, type, cover, released, synopsis, createdAt, updatedAt } =
-        data
+      const { id, mediaParentId, name, type, released, synopsis } = data
       const {
+        filename,
+        alternative,
         director,
         screenwriter,
         duration,
         status,
         rating,
-        notes,
+        opinion,
         is_favorite: isFavorite,
+        createdAt,
+        updatedAt,
       } = data.$extras
 
       return {
@@ -125,21 +127,20 @@ export default class MoviesController {
           mediaParentId,
           name,
           type,
-          cover,
           released,
           synopsis,
           director,
           screenwriter,
           duration,
         },
-        // cover: {
-        //   filename,
-        //   alternative,
-        // },
+        cover: {
+          filename,
+          alternative,
+        },
         review: {
           status,
           rating,
-          notes,
+          opinion,
           isFavorite,
           createdAt,
           updatedAt,
