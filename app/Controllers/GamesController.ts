@@ -9,30 +9,34 @@ export default class GamesController {
       .join('reviews', 'medias.id', '=', 'reviews.media_id')
       .leftJoin('covers', 'medias.id', '=', 'covers.media_id')
       .select(
-        'medias.*',
+        'medias.id',
+        'medias.media_parent_id',
+        'medias.name',
+        'medias.type',
+        'medias.released',
+        'medias.synopsis',
+        'covers.filename',
+        'covers.alternative',
         'games_infos.developer',
         'games_infos.publisher',
         'games_infos.platform',
-        'covers.filename',
-        'covers.alternative',
         'reviews.status',
         'reviews.rating',
-        'reviews.notes',
+        'reviews.opinion',
         'reviews.is_favorite',
         'reviews.created_at',
         'reviews.updated_at'
       )
 
     const games = datas.map((data) => {
-      const { id, mediaParentId, name, type, cover, released, synopsis } = data
-      const { filename, alternative, developer, publisher, platform, status, rating, notes, is_favorite } = data.$extras
+      const { id, mediaParentId, name, type, released, synopsis } = data
+      const { filename, alternative, developer, publisher, platform, status, rating, opinion, is_favorite } = data.$extras
       return {
         game: {
           id,
           mediaParentId,
           name,
           type,
-          cover,
           released,
           synopsis,
           developer,
@@ -46,7 +50,7 @@ export default class GamesController {
         review: {
           status,
           rating,
-          notes,
+          opinion,
           is_favorite,
         },
       }
