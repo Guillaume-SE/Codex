@@ -5,7 +5,7 @@ import Media from 'App/Models/Media'
 import CreateMediaValidator from 'App/Validators/CreateMediaValidator'
 import UpdateMediaValidator from 'App/Validators/UpdateMediaValidator'
 import { gameTypes, movieTypes, seasonTypes, bookTypes } from 'App/Tools/Enums/MediaTypes'
-import { createFileName } from 'App/Tools/Functions/generateCoverName'
+import { createFileName, coverByDefaultFilename } from 'App/Tools/Functions/generateCoverName'
 import { createAlternativeText } from 'App/Tools/Functions/generateCoverAltText'
 import { standardize } from 'App/Tools/Functions/standardizeCover'
 import Cover from 'App/Models/Cover'
@@ -92,7 +92,7 @@ export default class MediasController {
       return response.status(201).json(newMedia)
     } catch (error) {
       await trx.rollback()
-      if (coverName !== 'default.png') {
+      if (coverName !== coverByDefaultFilename) {
         await Drive.delete(`covers/${coverName}`)
       }
       return response.status(400).json(error)
@@ -157,12 +157,8 @@ export default class MediasController {
 
     try {
       await media.delete()
-      if (coverToDelete) {
-        const defaultCoverName = 'default.png'
-        const coverName = coverToDelete.filename
-        if (coverName !== defaultCoverName) {
-          await Drive.delete(`covers/${coverName}`)
-        }
+      if (coverToDelete && coverToDelete.filename !== coverByDefaultFilename) {
+        await Drive.delete(`covers/${coverToDelete.filename}`)
       }
       return response.status(201).json(media)
     } catch (error) {

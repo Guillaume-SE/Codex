@@ -4,7 +4,7 @@ import Cover from 'App/Models/Cover'
 import Media from 'App/Models/Media'
 import UpdateCoverValidator from 'App/Validators/UpdateCoverValidator'
 import { createAlternativeText } from 'App/Tools/Functions/generateCoverAltText'
-import { createFileName } from 'App/Tools/Functions/generateCoverName'
+import { coverByDefaultFilename, createFileName } from 'App/Tools/Functions/generateCoverName'
 import { standardize } from 'App/Tools/Functions/standardizeCover'
 
 export default class CoversController {
@@ -23,7 +23,7 @@ export default class CoversController {
     const actualCover = await Cover.findBy('media_id', mediaId)
     const coverDoesntExist = !actualCover
     if (coverDoesntExist) {
-      return response.status(404).json("Aucune cover lié à ce media n'a été trouvée")
+      return response.status(404).json("Aucune cover liée à ce media n'a été trouvée")
     }
 
     const payloadValidation = await request.validate(UpdateCoverValidator)
@@ -36,7 +36,7 @@ export default class CoversController {
     const newCoverFormated = standardize(newCover.tmpPath)
 
     try {
-      if (actualCover.filename !== 'default.png') {
+      if (actualCover.filename !== coverByDefaultFilename) {
         await Drive.delete(`covers/${actualCover.filename}`)
       }
       await Drive.put(`covers/${newCoverName}`, await newCoverFormated, {

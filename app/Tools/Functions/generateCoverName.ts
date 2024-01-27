@@ -8,3 +8,5 @@ export function createFileName(): string {
 
   return fullName
 }
+
+export const coverByDefaultFilename = 'default.jpg'
