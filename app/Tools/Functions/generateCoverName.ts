@@ -9,4 +9,4 @@ export function createFileName(): string {
   return fullName
 }
 
-export const coverByDefaultFilename = 'default.jpg'
+export const defaultCoverFilename = 'default.jpg'
