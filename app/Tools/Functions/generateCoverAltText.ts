@@ -31,3 +31,5 @@ export function createAlternativeText(mediaType: string, mediaName: string) {
 
   return fileAlternativeText
 }
+
+export const defaultCoverAltText = 'image non disponible'
