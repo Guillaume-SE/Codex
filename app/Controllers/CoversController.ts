@@ -3,8 +3,8 @@ import Drive from '@ioc:Adonis/Core/Drive'
 import Cover from 'App/Models/Cover'
 import Media from 'App/Models/Media'
 import UpdateCoverValidator from 'App/Validators/UpdateCoverValidator'
-import { createAlternativeText } from 'App/Tools/Functions/generateCoverAltText'
-import { coverByDefaultFilename, createFileName } from 'App/Tools/Functions/generateCoverName'
+import { createAlternativeText, defaultCoverAltText } from 'App/Tools/Functions/generateCoverAltText'
+import { defaultCoverFilename, createFileName } from 'App/Tools/Functions/generateCoverName'
 import { standardize } from 'App/Tools/Functions/standardizeCover'
 
 export default class CoversController {
@@ -36,7 +36,7 @@ export default class CoversController {
     const newCoverFormated = standardize(newCover.tmpPath)
 
     try {
-      if (actualCover.filename !== coverByDefaultFilename) {
+      if (actualCover.filename !== defaultCoverFilename) {
         await Drive.delete(`covers/${actualCover.filename}`)
       }
       await Drive.put(`covers/${newCoverName}`, await newCoverFormated, {
@@ -46,6 +46,29 @@ export default class CoversController {
       return response.status(201)
     } catch (error) {
       return response.status(404)
+    }
+  }
+
+  public async deleteOneCover({ params, response }: HttpContextContract) {
+    const mediaId = params.mediaId
+    const media = await Media.find(mediaId)
+    if (!media) {
+      return response.status(404).json('Aucun media correspondant à cet id')
+    }
+    const cover = await Cover.findBy('media_id', mediaId)
+
+    if (cover) {
+      try {
+        const isCoverByDefault = cover.filename === defaultCoverFilename
+        if (isCoverByDefault) {
+          return response.status(404).json("L'image par défaut ne peut être supprimée")
+        }
+        await Drive.delete(`covers/${cover.filename}`)
+        cover.merge({ filename: defaultCoverFilename, alternative: defaultCoverAltText }).save()
+        return response.status(201)
+      } catch (error) {
+        return response.status(404)
+      }
     }
   }
 }
