@@ -24,10 +24,23 @@ export default class Review extends BaseModel {
   @column({ columnName: 'is_favorite' })
   public isFavorite: boolean
 
-  @column.dateTime({ autoCreate: true, columnName: 'created_at' })
+  @column.dateTime({
+    autoCreate: true,
+    columnName: 'created_at',
+    serialize: (value: DateTime | null) => {
+      return value ? value.setZone('utc').toISO() : value
+    },
+  })
   public createdAt: DateTime
 
-  @column.dateTime({ autoCreate: true, autoUpdate: true, columnName: 'updated_at' })
+  @column.dateTime({
+    autoCreate: true,
+    autoUpdate: true,
+    columnName: 'updated_at',
+    serialize: (value: DateTime | null) => {
+      return value ? value.setZone('utc').toISO() : value
+    },
+  })
   public updatedAt: DateTime
 
   //relations
