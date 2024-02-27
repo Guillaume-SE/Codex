@@ -16,8 +16,6 @@ export default class extends BaseSchema {
       table.string('developer').notNullable()
       table.string('publisher').notNullable()
       table.string('platform').notNullable()
-      table.timestamp('created_at', { useTz: true })
-      table.timestamp('updated_at', { useTz: true })
     })
   }
 

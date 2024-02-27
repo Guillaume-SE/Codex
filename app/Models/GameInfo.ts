@@ -21,12 +21,6 @@ export default class GameInfo extends BaseModel {
   @column()
   public platform: GamePlateform
 
-  @column.dateTime({ autoCreate: true })
-  public createdAt: DateTime
-
-  @column.dateTime({ autoCreate: true, autoUpdate: true })
-  public updatedAt: DateTime
-
   // RELATIONS
   @belongsTo(() => Media)
   public media: BelongsTo<typeof Media>

@@ -23,12 +23,6 @@ export default class BookInfo extends BaseModel {
   @column()
   public pages: number
 
-  @column.dateTime({ autoCreate: true })
-  public createdAt: DateTime
-
-  @column.dateTime({ autoCreate: true, autoUpdate: true })
-  public updatedAt: DateTime
-
   // RELATIONS
   @belongsTo(() => Media)
   public media: BelongsTo<typeof Media>

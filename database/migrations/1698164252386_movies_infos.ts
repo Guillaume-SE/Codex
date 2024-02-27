@@ -16,8 +16,6 @@ export default class extends BaseSchema {
       table.string('director').notNullable()
       table.string('screenwriter').notNullable()
       table.integer('duration').notNullable()
-      table.timestamp('created_at', { useTz: true })
-      table.timestamp('updated_at', { useTz: true })
     })
   }
 

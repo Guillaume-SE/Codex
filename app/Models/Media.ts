@@ -40,12 +40,6 @@ export default class Media extends BaseModel {
   @column()
   public synopsis: string
 
-  // @column.dateTime({ autoCreate: true, columnName: 'created_at' })
-  // public createdAt: DateTime
-
-  // @column.dateTime({ autoCreate: true, autoUpdate: true, columnName: 'updated_at' })
-  // public updatedAt: DateTime
-
   // RELATIONS
   @hasMany(() => Media)
   public parentMedia: HasMany<typeof Media>
@@ -70,7 +64,6 @@ export default class Media extends BaseModel {
 
   @hasOne(() => SeasonInfo)
   public seasonInfo: HasOne<typeof SeasonInfo>
-
 
   // @beforeSave()
   // public static async defaultValue(media: Media) {
