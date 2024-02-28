@@ -105,7 +105,6 @@ export default class MoviesController {
       return response.status(404).json("Aucun film correspondant n'a été trouvé")
     }
     const movie = datas.map((data) => {
-      // createdAt et updatedAt sont celui de review !
       const { id, mediaParentId, name, type, released, synopsis } = data
       const {
         filename,
