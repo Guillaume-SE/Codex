@@ -33,8 +33,19 @@ export default class MediasController {
   //ADMIN
   public async addOneMedia({ request, response }: HttpContextContract) {
     const payloadValidation = await request.validate(CreateMediaValidator)
-    const { mediaParentId, type, cover, name, released, synopsis, ...specificMediaInfos } =
-      payloadValidation
+    const {
+      mediaParentId,
+      type,
+      cover,
+      name,
+      released,
+      synopsis,
+      status,
+      rating,
+      opinion,
+      isFavorite,
+      ...specificMediaInfos
+    } = payloadValidation
 
     const searchIfMediaAlreadyExist = await Media.query()
       .from('medias')
@@ -64,6 +75,7 @@ export default class MediasController {
 
     const generalMediaInfo = { mediaParentId, type, name, released, synopsis }
     const coverInfo = { filename: coverName, alternative: coverAltText }
+    const reviewInfo = { status, rating, opinion, isFavorite }
 
     const isVideoGameType = gameTypes.includes(type)
     const isMovieType = movieTypes.includes(type)
@@ -74,6 +86,7 @@ export default class MediasController {
     try {
       const newMedia = await Media.create(generalMediaInfo)
       await newMedia.related('cover').create(coverInfo)
+      await newMedia.related('review').create(reviewInfo)
 
       if (isVideoGameType) {
         await newMedia.related('gameInfo').create(specificMediaInfos)
@@ -92,7 +105,7 @@ export default class MediasController {
       }
 
       await trx.commit()
-      return response.status(201).json(newMedia)
+      return response.status(201).json({ newMedia, coverInfo, reviewInfo })
     } catch (error) {
       await trx.rollback()
       if (coverName !== defaultCoverFilename) {
