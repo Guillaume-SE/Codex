@@ -10,34 +10,6 @@ export default class ReviewsController {
     return reviews
   }
 
-  public async addOneReview({ request, response, params }: HttpContextContract) {
-    const allValidReviewStatus = validReviewStatus
-    const mediaId = params.mediaId
-    const { status, rating, opinion, isFavorite } = request.body()
-    const asNoValidStatus = !allValidReviewStatus.includes(status)
-
-    if (asNoValidStatus) {
-      return response.status(404).json({ message: "Le statut de la review n'est pas valide" })
-    }
-    const data = {
-      mediaId,
-      status,
-      rating,
-      opinion,
-      isFavorite,
-    }
-
-    const review = await Review.firstOrCreate({ mediaId: mediaId }, data)
-    const isAlreadyReviewed = !review.$isLocal
-    if (isAlreadyReviewed) {
-      return response.status(400).json({
-        message: 'Ce media à déjà une review !',
-        actualReview: review,
-      })
-    }
-    return response.status(200).json(review)
-  }
-
   public async updateOneReview({ request, params, response }: HttpContextContract) {
     const allValidReviewStatus = validReviewStatus
     const mediaId = params.mediaId
