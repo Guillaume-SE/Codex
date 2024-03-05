@@ -6,8 +6,6 @@ Route.group(() => {
   // Route.get('/query', 'MediasController.getOneById')
 
   //ADMIN
-  Route.post('/', 'MediasController.addOneMedia')
-  Route.put('/:id', 'MediasController.updateOneMedia')
   Route.delete('/:id', 'MediasController.deleteOneMedia')
 })
   .prefix('/medias')
