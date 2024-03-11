@@ -1,6 +1,5 @@
-import { DateTime } from 'luxon'
 import { BaseModel, BelongsTo, belongsTo, column } from '@ioc:Adonis/Lucid/Orm'
-import { GamePlateform } from 'App/Tools/Enums/GamePlatform'
+import { GamePlatform } from 'App/Tools/Enums/GamePlatform'
 import Media from 'App/Models/Media'
 
 export default class GameInfo extends BaseModel {
@@ -19,7 +18,7 @@ export default class GameInfo extends BaseModel {
   public publisher: string
 
   @column()
-  public platform: GamePlateform
+  public platform: GamePlatform
 
   // RELATIONS
   @belongsTo(() => Media)
