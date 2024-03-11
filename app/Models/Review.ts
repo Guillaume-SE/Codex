@@ -1,5 +1,11 @@
-import { DateTime } from 'luxon'
-import { BaseModel, BelongsTo, belongsTo, column } from '@ioc:Adonis/Lucid/Orm'
+import {
+  BaseModel,
+  BelongsTo,
+  belongsTo,
+  column,
+  beforeCreate,
+  beforeUpdate,
+} from '@ioc:Adonis/Lucid/Orm'
 import { ReviewStatus } from 'App/Tools/Enums/ReviewStatus'
 import Media from 'App/Models/Media'
 
@@ -24,20 +30,23 @@ export default class Review extends BaseModel {
   @column({ columnName: 'is_favorite' })
   public isFavorite: boolean
 
-  @column.dateTime({
-    autoCreate: true,
-    columnName: 'created_at',
-  })
-  public createdAt: DateTime
+  @column({ columnName: 'created_at' })
+  public createdAt: number
 
-  @column.dateTime({
-    autoCreate: true,
-    autoUpdate: true,
-    columnName: 'updated_at',
-  })
-  public updatedAt: DateTime
+  @column({ columnName: 'updated_at' })
+  public updatedAt: number
 
   //relations
   @belongsTo(() => Media, {})
   public media: BelongsTo<typeof Media>
+
+  @beforeCreate()
+  public static async defaultTimeStampValueOnCreate(review: Review) {
+    review.createdAt = Date.now()
+    review.updatedAt = Date.now()
+  }
+  @beforeUpdate()
+  public static async defaultTimeStampValueOnUpdate(review: Review) {
+    review.updatedAt = Date.now()
+  }
 }
