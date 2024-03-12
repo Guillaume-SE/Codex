@@ -1,13 +1,13 @@
+import Drive from '@ioc:Adonis/Core/Drive'
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import Database from '@ioc:Adonis/Lucid/Database'
-import Drive from '@ioc:Adonis/Core/Drive'
 import Media from 'App/Models/Media'
 import { movieTypes } from 'App/Tools/Enums/MediaTypes'
-import { createFileName, defaultCoverFilename } from 'App/Tools/Functions/generateCoverName'
 import {
   createAlternativeText,
   defaultCoverAltText,
 } from 'App/Tools/Functions/generateCoverAltText'
+import { createFileName, defaultCoverFilename } from 'App/Tools/Functions/generateCoverName'
 import { standardize } from 'App/Tools/Functions/standardizeCover'
 import CreateMovieValidator from 'App/Validators/CreateMovieValidator'
 import UpdateMovieValidator from 'App/Validators/UpdateMovieValidator'
@@ -45,7 +45,7 @@ export default class MoviesController {
     const mediaIsMovieType = movieTypes.includes(type)
     if (!mediaIsMovieType) {
       return response.status(400).json({
-        message: 'Le type d media ne correspond pas à la catégorie film',
+        message: 'Le type du media ne correspond pas à la catégorie film',
       })
     }
 
@@ -88,7 +88,7 @@ export default class MoviesController {
     const mediaToUpdate = await Media.find(mediaId)
     const mediaDoesntExist = !mediaToUpdate
     if (mediaDoesntExist) {
-      return response.status(404).json("Le film à mettre à jour n'existe pas")
+      return response.status(404).json('Aucun résultat pour cet identifiant')
     }
 
     const payloadValidation = await request.validate(UpdateMovieValidator)
@@ -99,7 +99,7 @@ export default class MoviesController {
     const mediaIsMovieType = movieTypes.includes(type)
     if (!mediaIsMovieType) {
       return response.status(400).json({
-        message: 'Le type ne correspond pas à la section film',
+        message: 'Le type ne correspond pas à la catégorie film',
       })
     }
 
@@ -117,7 +117,7 @@ export default class MoviesController {
     }
   }
 
-  public async getAllMoviesWithReviews({ response }: HttpContextContract) {
+  public async getAllMovies({ response }: HttpContextContract) {
     const datas = await Media.query()
       .from('medias')
       .join('movies_infos', 'medias.id', '=', 'movies_infos.media_id')
@@ -153,9 +153,9 @@ export default class MoviesController {
         status,
         rating,
         opinion,
-        is_favorite,
-        created_at,
-        updated_at,
+        is_favorite: isFavorite,
+        created_at: createdAt,
+        updated_at: updatedAt,
       } = data.$extras
 
       return {
@@ -178,16 +178,16 @@ export default class MoviesController {
           status,
           rating,
           opinion,
-          isFavorite: is_favorite,
-          createdAt: created_at,
-          updatedAt: updated_at,
+          isFavorite,
+          createdAt,
+          updatedAt,
         },
       }
     })
     return response.status(201).json(movies)
   }
 
-  public async getOneMovieWithReviewByMediaId({ params, response }: HttpContextContract) {
+  public async getOneMovieByMediaId({ params, response }: HttpContextContract) {
     const mediaId = params.mediaId
     const datas = await Media.query()
       .from('medias')
@@ -231,8 +231,8 @@ export default class MoviesController {
         rating,
         opinion,
         is_favorite: isFavorite,
-        createdAt,
-        updatedAt,
+        created_at: createdAt,
+        updated_at: updatedAt,
       } = data.$extras
 
       return {
