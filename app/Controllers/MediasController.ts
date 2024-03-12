@@ -17,7 +17,7 @@ export default class MediasController {
       response.status(201)
       return media
     } catch (error) {
-      return response.status(404).badRequest(error.message)
+      return response.status(404).json(error)
     }
   }
   // ADMIN
@@ -36,7 +36,7 @@ export default class MediasController {
       }
       return response.status(201).json(media)
     } catch (error) {
-      return response.status(404)
+      return response.status(404).json(error)
     }
   }
 }
