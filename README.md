@@ -7,7 +7,7 @@ It will use Node and AdonisJS for the back end and Vue.js for the front end.
 
 ### How to start
 
-Node version > 18.18
+Node version > 18.18  
 AdonisJS v5
 
 Set up the database informations in the `.env` like the `.env.example`.
