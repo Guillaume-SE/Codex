@@ -15,23 +15,23 @@ It also allows me to keep up to date with the ones I've planned to see, the ones
 
 ![codexdb-diagram](https://github.com/Guillaume-SE/Codex/assets/100344718/ae4559bf-de04-49d4-8d3d-62b91324024f)
 
-**Users**: As the project aims to contain only my media entries, I chose not to link the "users" table to "reviews". It will only be used for authentication.
+- **Users**: As the project aims to contain only my media entries, I chose not to link the "users" table to "reviews". It will only be used for authentication.
 
-**Media**: Will contain every type of data the media I add may have, for example books, video games, movies and series all have a synopsis.  
+- **Media**: Will contain every type of data the media I add may have, for example books, video games, movies and series all have a synopsis.  
 The [media type](https://github.com/Guillaume-SE/Codex/blob/main/app/Tools/Enums/MediaTypes.ts) will determine how the rest of the information is added to a dedicated table.  
 
-**Reviews**: Reviews are created as soon as a media is added, and a review cannot exist without its associated media. This is one of the reasons why `rating` and `opinion` are one of the only nullable columns, because if I haven't yet seen the film, read the book, played the game, there is no reason to assign a value to these 2 columns.  
+- **Reviews**: Reviews are created as soon as a media is added, and a review cannot exist without its associated media. This is one of the reasons why `rating` and `opinion` are one of the only nullable columns, because if I haven't yet seen the film, read the book, played the game, there is no reason to assign a value to these 2 columns.  
 The media will have the appropriate [status](https://github.com/Guillaume-SE/Codex/blob/main/app/Tools/Enums/ReviewStatus.ts) for this specific case.  
 
-**Covers**: Each media is associated with an official cover that easily identifies it. If an official cover has not been found on the internet (or in poor quality), a default cover is automatically assigned.  
+- **Covers**: Each media is associated with an official cover that easily identifies it. If an official cover has not been found on the internet (or in poor quality), a default cover is automatically assigned.  
 
-**movies_infos**: contains all media-specific information relating to the films.  
+- **movies_infos**: contains all media-specific information relating to the films.  
 
-**games_infos**: contains all media information related to video games.  
+- **games_infos**: contains all media information related to video games.  
 
-**seasons_infos**: contains all the information specific to media with a seasonal structure, such as series and anime.  
+- **seasons_infos**: contains all the information specific to media with a seasonal structure, such as series and anime.  
 
-**books_infos**: contains all book-related media information.  
+- **books_infos**: contains all book-related media information.  
 
 
 
