@@ -1,4 +1,4 @@
-### What's Codex ?
+# What's Codex ?
 
 Codex is a site where I list the things I've read, seen and played, to which I give a rating.
 This can be series, films, video games and books.
