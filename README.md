@@ -6,16 +6,17 @@ It also allows me to keep up to date with the ones I've planned to see, the ones
 
 ### Functionalities
 
-- Manage and curate a taxonomy of medias (books, movies, series, video games)
+- Manage and curate a taxonomy of medias (books, movies, series, video games).
 - Cascade deletion of the cover file when the related media is deleted.
 - Handles storing user-uploaded cover images with automatic resize ([Sharp](https://sharp.pixelplumbing.com/)).
-- Details page for each media, retrieved by media id
+- Details page for each media, retrieved by media id.
 
 ### Future plans
 
 - Restrict access to certain pages and functions to non-administrator users.
-- Search medias by title and a number of filters (genre, rating, name, etc)
-- Statistical display of media distribution according to various criteria
+- Search medias by title and a number of filters (genre, rating, name, etc).
+- Statistical display of media distribution according to various criteria.
+- Setting up a front end with Vue.js.
 
 ### How to start
 
