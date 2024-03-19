@@ -20,7 +20,7 @@ It also allows me to keep up to date with the ones I've planned to see, the ones
 **Media**: Will contain every type of data the media I add may have, for example books, video games, movies and series all have a synopsis.  
 The [media type](https://github.com/Guillaume-SE/Codex/blob/main/app/Tools/Enums/MediaTypes.ts) will determine how the rest of the information is added to a dedicated table.  
 
-**Reviews**: Reviews are created as soon as a media is added, and a review cannot exist without its associated media. This is one of the reasons why "rating" and "opinion" are one of the only nullable columns, because if I haven't yet seen the film, read the book, played the game, there is no reason to assign a value to these 2 columns.  
+**Reviews**: Reviews are created as soon as a media is added, and a review cannot exist without its associated media. This is one of the reasons why `rating` and `opinion` are one of the only nullable columns, because if I haven't yet seen the film, read the book, played the game, there is no reason to assign a value to these 2 columns.  
 The media will have the appropriate [status](https://github.com/Guillaume-SE/Codex/blob/main/app/Tools/Enums/ReviewStatus.ts) for this specific case.  
 
 **Covers**: Each media is associated with an official cover that easily identifies it. If an official cover has not been found on the internet (or in poor quality), a default cover is automatically assigned.  
