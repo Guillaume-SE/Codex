@@ -11,6 +11,10 @@ It also allows me to keep up to date with the ones I've planned to see, the ones
 - Handles storing user-uploaded cover images with automatic resize ([Sharp](https://sharp.pixelplumbing.com/)).
 - Details page for each media, retrieved by media id.
 
+### Database diagram with relation
+![codexdb-diagram](https://github.com/Guillaume-SE/Codex/assets/100344718/ae4559bf-de04-49d4-8d3d-62b91324024f)
+
+
 ### Future plans
 
 - Restrict access to certain pages and functions to non-administrator users.
