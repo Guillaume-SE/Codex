@@ -10,7 +10,7 @@ It will use Node and AdonisJS for the back end and Vue.js for the front end.
 Node version > 18.18  
 AdonisJS v5
 
-Set up the database informations in the `.env` like the `.env.example`.
+Set up the database informations in the `.env` like the `.env.example`. The project use a MySQL database.
 The command `node ace migration:run` is needed to create the database.
 
 ```
