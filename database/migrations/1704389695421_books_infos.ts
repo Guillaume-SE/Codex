@@ -14,7 +14,7 @@ export default class extends BaseSchema {
         .notNullable()
         .onDelete('CASCADE')
       table.string('author').notNullable()
-      table.string('illustrator').notNullable()
+      table.string('illustrator').nullable()
       table.string('editor').notNullable()
       table.integer('pages').notNullable()
     })
