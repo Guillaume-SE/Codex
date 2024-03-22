@@ -154,9 +154,9 @@ export default class GamesController {
         status,
         rating,
         opinion,
-        is_favorite,
-        created_at,
-        updated_at,
+        is_favorite: isFavorite,
+        created_at: createdAt,
+        updated_at: updatedAt,
       } = data.$extras
       return {
         game: {
@@ -178,9 +178,9 @@ export default class GamesController {
           status,
           rating,
           opinion,
-          is_favorite,
-          createdAt: created_at,
-          updatedAt: updated_at,
+          isFavorite,
+          createdAt,
+          updatedAt,
         },
       }
     })
@@ -236,7 +236,7 @@ export default class GamesController {
       } = data.$extras
 
       return {
-        movie: {
+        game: {
           id,
           mediaParentId,
           name,
