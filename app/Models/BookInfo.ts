@@ -1,4 +1,3 @@
-import { DateTime } from 'luxon'
 import { BaseModel, BelongsTo, belongsTo, column } from '@ioc:Adonis/Lucid/Orm'
 import Media from 'App/Models/Media'
 
@@ -15,7 +14,7 @@ export default class BookInfo extends BaseModel {
   public author: string
 
   @column()
-  public illustrator: string
+  public illustrator: string | null
 
   @column()
   public editor: string
