@@ -38,7 +38,7 @@ export default class SeasonsController {
 
     if (seasonAlreadyExist) {
       return response.status(400).json({
-        message: 'Cette saison a déjà été ajouté !',
+        message: 'Cette saison a déjà été ajoutée !',
         media: searchIfSeasonAlreadyExist,
       })
     }
