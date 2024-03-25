@@ -1,6 +1,7 @@
 import Drive from '@ioc:Adonis/Core/Drive'
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import Database from '@ioc:Adonis/Lucid/Database'
+import Cover from 'App/Models/Cover'
 import Media from 'App/Models/Media'
 import { bookTypes } from 'App/Tools/Enums/MediaTypes'
 import {
@@ -10,6 +11,7 @@ import {
 import { createFileName, defaultCoverFilename } from 'App/Tools/Functions/generateCoverName'
 import { standardize } from 'App/Tools/Functions/standardizeCover'
 import CreateBookValidator from 'App/Validators/CreateBookValidator'
+import UpdateBookValidator from 'App/Validators/UpdateBookValidator'
 
 export default class BooksController {
   public async addOneBook({ request, response }: HttpContextContract) {
@@ -78,6 +80,53 @@ export default class BooksController {
       if (coverName !== defaultCoverFilename) {
         await Drive.delete(`covers/${coverName}`)
       }
+      return response.status(400).json(error)
+    }
+  }
+
+  public async updateOneBook({ request, params, response }: HttpContextContract) {
+    const mediaId = params.id
+    const mediaToUpdate = await Media.find(mediaId)
+    const mediaDoesntExist = !mediaToUpdate
+    if (mediaDoesntExist) {
+      return response.status(404).json('Aucun résultat pour cet identifiant')
+    }
+
+    const actualCover = await Cover.findBy('media_id', mediaId)
+    const coverDoesntExist = !actualCover
+    if (coverDoesntExist) {
+      return response.status(404).json("Aucune cover liée à ce media n'a été trouvée")
+    }
+
+    const payloadValidation = await request.validate(UpdateBookValidator)
+    const { mediaParentId, type, name, released, synopsis, ...specificBookInfos } =
+      payloadValidation
+    const generalMediaInfos = { mediaParentId, type, name, released, synopsis }
+
+    const mediaBookType = bookTypes.includes(type)
+    if (!mediaBookType) {
+      return response.status(400).json({
+        message: 'Le type ne correspond pas à la catégorie livre',
+      })
+    }
+
+    // update cover alt text
+    const mediaNameAsChanged = mediaToUpdate.name !== payloadValidation.name
+    const newCoverAltText = createAlternativeText(type, name)
+    if (mediaNameAsChanged) {
+      actualCover.merge({ alternative: newCoverAltText }).save()
+    }
+
+    const trx = await Database.transaction()
+
+    try {
+      mediaToUpdate.merge(generalMediaInfos).save()
+      await mediaToUpdate.related('bookInfo').updateOrCreate({}, specificBookInfos)
+
+      await trx.commit()
+      return response.status(201).json(mediaToUpdate)
+    } catch (error) {
+      await trx.rollback()
       return response.status(400).json(error)
     }
   }
