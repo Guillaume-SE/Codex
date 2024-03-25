@@ -1,6 +1,7 @@
 import Drive from '@ioc:Adonis/Core/Drive'
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import Database from '@ioc:Adonis/Lucid/Database'
+import Cover from 'App/Models/Cover'
 import Media from 'App/Models/Media'
 import { movieTypes } from 'App/Tools/Enums/MediaTypes'
 import {
@@ -91,6 +92,12 @@ export default class MoviesController {
       return response.status(404).json('Aucun résultat pour cet identifiant')
     }
 
+    const actualCover = await Cover.findBy('media_id', mediaId)
+    const coverDoesntExist = !actualCover
+    if (coverDoesntExist) {
+      return response.status(404).json("Aucune cover liée à ce media n'a été trouvée")
+    }
+
     const payloadValidation = await request.validate(UpdateMovieValidator)
     const { mediaParentId, type, name, released, synopsis, ...specificMovieInfos } =
       payloadValidation
@@ -101,6 +108,13 @@ export default class MoviesController {
       return response.status(400).json({
         message: 'Le type ne correspond pas à la catégorie film',
       })
+    }
+
+    // update cover alt text
+    const mediaNameAsChanged = mediaToUpdate.name !== payloadValidation.name
+    const newCoverAltText = createAlternativeText(type, name)
+    if (mediaNameAsChanged) {
+      actualCover.merge({ alternative: newCoverAltText }).save()
     }
 
     const trx = await Database.transaction()
