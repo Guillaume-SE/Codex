@@ -1,17 +1,18 @@
-import Drive from '@ioc:Adonis/Core/Drive'
-import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
-import Database from '@ioc:Adonis/Lucid/Database'
-import Cover from 'App/Models/Cover'
-import Media from 'App/Models/Media'
-import { gameTypes } from 'App/Tools/Enums/MediaTypes'
+import Drive from "@ioc:Adonis/Core/Drive"
+import type { HttpContextContract } from "@ioc:Adonis/Core/HttpContext"
+import Database from "@ioc:Adonis/Lucid/Database"
+import Cover from "App/Models/Cover"
+import GameInfo from "App/Models/GameInfo"
+import Media from "App/Models/Media"
+import { gameTypes } from "App/Tools/Enums/MediaTypes"
 import {
   createAlternativeText,
   defaultCoverAltText,
-} from 'App/Tools/Functions/generateCoverAltText'
-import { createFileName, defaultCoverFilename } from 'App/Tools/Functions/generateCoverName'
-import { standardize } from 'App/Tools/Functions/standardizeCover'
-import CreateGameValidator from 'App/Validators/CreateGameValidator'
-import UpdateGameValidator from 'App/Validators/UpdateGameValidator'
+} from "App/Tools/Functions/generateCoverAltText"
+import { createFileName, defaultCoverFilename } from "App/Tools/Functions/generateCoverName"
+import { standardize } from "App/Tools/Functions/standardizeCover"
+import CreateGameValidator from "App/Validators/CreateGameValidator"
+import UpdateGameValidator from "App/Validators/UpdateGameValidator"
 
 export default class GamesController {
   public async addOneGame({ request, response }: HttpContextContract) {
@@ -31,22 +32,22 @@ export default class GamesController {
     } = payloadValidation
 
     const searchIfGameAlreadyExist = await Media.query()
-      .from('medias')
-      .where('type', type)
-      .andWhere('name', name)
-      .andWhere('released', released)
+      .from("medias")
+      .where("type", type)
+      .andWhere("name", name)
+      .andWhere("released", released)
     const gameAlreadyExist = searchIfGameAlreadyExist.length > 0
 
     if (gameAlreadyExist) {
       return response.status(400).json({
-        message: 'Ce film a déjà été ajouté !',
+        message: "Ce film a déjà été ajouté !",
         media: searchIfGameAlreadyExist,
       })
     }
     const mediaIsGameType = gameTypes.includes(type)
     if (!mediaIsGameType) {
       return response.status(400).json({
-        message: 'Le type du media ne correspond pas à la catégorie jeu vidéo',
+        message: "Le type du media ne correspond pas à la catégorie jeu vidéo",
       })
     }
 
@@ -69,9 +70,9 @@ export default class GamesController {
     const trx = await Database.transaction()
     try {
       const newMedia = await Media.create(generalMediaInfos)
-      await newMedia.related('gameInfo').create(specificGameInfos)
-      await newMedia.related('cover').create(coverInfo)
-      await newMedia.related('review').create(reviewInfo)
+      await newMedia.related("gameInfo").create(specificGameInfos)
+      await newMedia.related("cover").create(coverInfo)
+      await newMedia.related("review").create(reviewInfo)
 
       await trx.commit()
       return response.status(201).json({ newMedia, coverInfo, reviewInfo })
@@ -89,13 +90,19 @@ export default class GamesController {
     const mediaToUpdate = await Media.find(mediaId)
     const mediaDoesntExist = !mediaToUpdate
     if (mediaDoesntExist) {
-      return response.status(404).json('Aucun résultat pour cet identifiant')
+      return response.status(404).json("Aucun media ne correspond à cet identifiant")
     }
 
-    const actualCover = await Cover.findBy('media_id', mediaId)
+    const actualCover = await Cover.findBy("media_id", mediaId)
     const coverDoesntExist = !actualCover
     if (coverDoesntExist) {
       return response.status(404).json("Aucune cover liée à ce media n'a été trouvée")
+    }
+
+    const gameToUpdate = await GameInfo.findBy("mediaId", mediaId)
+    const gameDoesntExist = !gameToUpdate
+    if (gameDoesntExist) {
+      return response.status(404).json("Aucun jeu ne correspond à ce media")
     }
 
     const payloadValidation = await request.validate(UpdateGameValidator)
@@ -106,25 +113,27 @@ export default class GamesController {
     const mediaIsGameType = gameTypes.includes(type)
     if (!mediaIsGameType) {
       return response.status(400).json({
-        message: 'Le type ne correspond pas à la catégorie jeu vidéo',
+        message: "Le type ne correspond pas à la catégorie jeu vidéo",
       })
     }
 
     // update cover alt text
     const mediaNameAsChanged = mediaToUpdate.name !== payloadValidation.name
     const newCoverAltText = createAlternativeText(type, name)
-    if (mediaNameAsChanged) {
-      actualCover.merge({ alternative: newCoverAltText }).save()
-    }
 
     const trx = await Database.transaction()
 
     try {
       mediaToUpdate.merge(generalMediaInfos).save()
-      await mediaToUpdate.related('gameInfo').updateOrCreate({}, specificGameInfos)
+      gameToUpdate.merge(specificGameInfos).save()
+      if (mediaNameAsChanged) {
+        actualCover.merge({ alternative: newCoverAltText }).save()
+      }
 
       await trx.commit()
-      return response.status(201).json(mediaToUpdate)
+      return response
+        .status(201)
+        .json({ media: mediaToUpdate, gameInfos: gameToUpdate, cover: actualCover })
     } catch (error) {
       await trx.rollback()
       return response.status(400).json(error)
@@ -133,28 +142,28 @@ export default class GamesController {
 
   public async getAllGames({ response }: HttpContextContract) {
     const datas = await Media.query()
-      .from('medias')
-      .join('games_infos', 'medias.id', '=', 'games_infos.media_id')
-      .join('reviews', 'medias.id', '=', 'reviews.media_id')
-      .join('covers', 'medias.id', '=', 'covers.media_id')
+      .from("medias")
+      .join("games_infos", "medias.id", "=", "games_infos.media_id")
+      .join("reviews", "medias.id", "=", "reviews.media_id")
+      .join("covers", "medias.id", "=", "covers.media_id")
       .select(
-        'medias.id',
-        'medias.media_parent_id',
-        'medias.name',
-        'medias.type',
-        'medias.released',
-        'medias.synopsis',
-        'covers.filename',
-        'covers.alternative',
-        'games_infos.developer',
-        'games_infos.publisher',
-        'games_infos.platform',
-        'reviews.status',
-        'reviews.rating',
-        'reviews.opinion',
-        'reviews.is_favorite',
-        'reviews.created_at',
-        'reviews.updated_at'
+        "medias.id",
+        "medias.media_parent_id",
+        "medias.name",
+        "medias.type",
+        "medias.released",
+        "medias.synopsis",
+        "covers.filename",
+        "covers.alternative",
+        "games_infos.developer",
+        "games_infos.publisher",
+        "games_infos.platform",
+        "reviews.status",
+        "reviews.rating",
+        "reviews.opinion",
+        "reviews.is_favorite",
+        "reviews.created_at",
+        "reviews.updated_at"
       )
 
     const games = datas.map((data) => {
@@ -204,30 +213,30 @@ export default class GamesController {
   public async getOneGameByMediaId({ params, response }: HttpContextContract) {
     const mediaId = params.mediaId
     const datas = await Media.query()
-      .from('medias')
-      .join('games_infos', 'medias.id', '=', 'games_infos.media_id')
-      .join('reviews', 'medias.id', '=', 'reviews.media_id')
-      .join('covers', 'medias.id', '=', 'covers.media_id')
+      .from("medias")
+      .join("games_infos", "medias.id", "=", "games_infos.media_id")
+      .join("reviews", "medias.id", "=", "reviews.media_id")
+      .join("covers", "medias.id", "=", "covers.media_id")
       .select(
-        'medias.id',
-        'medias.media_parent_id',
-        'medias.name',
-        'medias.type',
-        'medias.released',
-        'medias.synopsis',
-        'covers.filename',
-        'covers.alternative',
-        'games_infos.developer',
-        'games_infos.publisher',
-        'games_infos.platform',
-        'reviews.status',
-        'reviews.rating',
-        'reviews.opinion',
-        'reviews.is_favorite',
-        'reviews.created_at',
-        'reviews.updated_at'
+        "medias.id",
+        "medias.media_parent_id",
+        "medias.name",
+        "medias.type",
+        "medias.released",
+        "medias.synopsis",
+        "covers.filename",
+        "covers.alternative",
+        "games_infos.developer",
+        "games_infos.publisher",
+        "games_infos.platform",
+        "reviews.status",
+        "reviews.rating",
+        "reviews.opinion",
+        "reviews.is_favorite",
+        "reviews.created_at",
+        "reviews.updated_at"
       )
-      .where('medias.id', '=', mediaId)
+      .where("medias.id", "=", mediaId)
 
     const noGameFound = datas.length === 0
     if (noGameFound) {
