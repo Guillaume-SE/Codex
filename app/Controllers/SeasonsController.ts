@@ -75,7 +75,7 @@ export default class SeasonsController {
       await newMedia.related("review").create(reviewInfo)
 
       await trx.commit()
-      return response.status(201).json({ newMedia, coverInfo, reviewInfo })
+      return response.status(201).json({ media: newMedia, cover: coverInfo, review: reviewInfo })
     } catch (error) {
       await trx.rollback()
       if (coverName !== defaultCoverFilename) {
