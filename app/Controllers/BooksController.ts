@@ -1,9 +1,11 @@
+import { inject } from "@adonisjs/core/build/standalone"
 import Drive from "@ioc:Adonis/Core/Drive"
 import type { HttpContextContract } from "@ioc:Adonis/Core/HttpContext"
 import Database from "@ioc:Adonis/Lucid/Database"
 import BookInfo from "App/Models/BookInfo"
 import Cover from "App/Models/Cover"
 import Media from "App/Models/Media"
+import BookService from "App/Services/BookService"
 import { bookTypes } from "App/Tools/Enums/MediaTypes"
 import {
   createAlternativeText,
@@ -14,7 +16,10 @@ import { standardize } from "App/Tools/Functions/standardizeCover"
 import CreateBookValidator from "App/Validators/CreateBookValidator"
 import UpdateBookValidator from "App/Validators/UpdateBookValidator"
 
+@inject()
 export default class BooksController {
+  constructor(protected bookService: BookService) {}
+
   public async addOneBook({ request, response }: HttpContextContract) {
     const payloadValidation = await request.validate(CreateBookValidator)
     const {
@@ -141,155 +146,20 @@ export default class BooksController {
   }
 
   public async getAllBooks({ response }: HttpContextContract) {
-    const datas = await Media.query()
-      .from("medias")
-      .join("books_infos", "medias.id", "=", "books_infos.media_id")
-      .join("reviews", "medias.id", "=", "reviews.media_id")
-      .join("covers", "medias.id", "=", "covers.media_id")
-      .select(
-        "medias.id",
-        "medias.media_parent_id",
-        "medias.name",
-        "medias.type",
-        "medias.released",
-        "medias.synopsis",
-        "covers.filename",
-        "covers.alternative",
-        "books_infos.author",
-        "books_infos.illustrator",
-        "books_infos.editor",
-        "books_infos.pages",
-        "reviews.status",
-        "reviews.rating",
-        "reviews.opinion",
-        "reviews.is_favorite",
-        "reviews.created_at",
-        "reviews.updated_at"
-      )
-    const books = datas.map((data) => {
-      const { id, mediaParentId, name, type, released, synopsis } = data
-      const {
-        filename,
-        alternative,
-        author,
-        illustrator,
-        editor,
-        pages,
-        status,
-        rating,
-        opinion,
-        is_favorite: isFavorite,
-        created_at: createdAt,
-        updated_at: updatedAt,
-      } = data.$extras
-
-      return {
-        book: {
-          id,
-          mediaParentId,
-          type,
-          name,
-          released,
-          synopsis,
-          author,
-          illustrator,
-          editor,
-          pages,
-        },
-        cover: {
-          filename,
-          alternative,
-        },
-        review: {
-          status,
-          rating,
-          opinion,
-          isFavorite,
-          createdAt,
-          updatedAt,
-        },
-      }
-    })
+    const books = await this.bookService.getAllBooks()
     return response.status(201).json(books)
   }
 
   public async getOneBookByMediaId({ params, response }: HttpContextContract) {
     const mediaId = params.mediaId
-    const datas = await Media.query()
-      .from("medias")
-      .join("books_infos", "medias.id", "=", "books_infos.media_id")
-      .join("reviews", "medias.id", "=", "reviews.media_id")
-      .join("covers", "medias.id", "=", "covers.media_id")
-      .select(
-        "medias.id",
-        "medias.media_parent_id",
-        "medias.name",
-        "medias.type",
-        "medias.released",
-        "medias.synopsis",
-        "covers.filename",
-        "covers.alternative",
-        "books_infos.author",
-        "books_infos.illustrator",
-        "books_infos.editor",
-        "books_infos.pages",
-        "reviews.status",
-        "reviews.rating",
-        "reviews.opinion",
-        "reviews.is_favorite",
-        "reviews.created_at",
-        "reviews.updated_at"
-      )
-      .where("medias.id", "=", mediaId)
 
-    const noBookFound = datas.length === 0
-    if (noBookFound) {
-      return response.status(404).json("Aucun livre correspondant n'a été trouvé")
+    try {
+      const book = await this.bookService.getBookByMediaId(mediaId)
+      return response.status(200).json(book)
+    } catch (NotFoundError) {
+      return response
+        .status(404)
+        .json({ error_name: NotFoundError.name, error_message: NotFoundError.message })
     }
-    const movie = datas.map((data) => {
-      const { id, mediaParentId, name, type, released, synopsis } = data
-      const {
-        filename,
-        alternative,
-        author,
-        illustrator,
-        editor,
-        pages,
-        status,
-        rating,
-        opinion,
-        is_favorite: isFavorite,
-        created_at: createdAt,
-        updated_at: updatedAt,
-      } = data.$extras
-
-      return {
-        book: {
-          id,
-          mediaParentId,
-          name,
-          type,
-          released,
-          synopsis,
-          author,
-          illustrator,
-          editor,
-          pages,
-        },
-        cover: {
-          filename,
-          alternative,
-        },
-        review: {
-          status,
-          rating,
-          opinion,
-          isFavorite,
-          createdAt,
-          updatedAt,
-        },
-      }
-    })
-    return response.status(200).json(movie)
   }
 }
