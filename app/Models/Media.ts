@@ -3,28 +3,27 @@ import {
   BelongsTo,
   HasMany,
   HasOne,
-  beforeSave,
   belongsTo,
   column,
   hasMany,
   hasOne,
-} from '@ioc:Adonis/Lucid/Orm'
-import { MediaTypes } from 'App/Tools/Enums/MediaTypes'
-import Review from 'App/Models/Review'
-import GameInfo from 'App/Models/GameInfo'
-import MovieInfo from 'App/Models/MovieInfo'
-import Cover from 'App/Models/Cover'
-import BookInfo from './BookInfo'
-import SeasonInfo from './SeasonInfo'
+} from "@ioc:Adonis/Lucid/Orm"
+import Cover from "App/Models/Cover"
+import GameInfo from "App/Models/GameInfo"
+import MovieInfo from "App/Models/MovieInfo"
+import Review from "App/Models/Review"
+import { MediaTypes } from "App/Tools/Enums/MediaTypes"
+import BookInfo from "./BookInfo"
+import SeasonInfo from "./SeasonInfo"
 
 export default class Media extends BaseModel {
   // force "medias" name because the term doesn't exist in english
-  public static table = 'medias'
+  public static table = "medias"
 
   @column({ isPrimary: true })
   public id: number
 
-  @column({ columnName: 'media_parent_id' })
+  @column({ columnName: "media_parent_id" })
   public mediaParentId: number | null
 
   @column()
@@ -63,14 +62,4 @@ export default class Media extends BaseModel {
 
   @hasOne(() => SeasonInfo)
   public seasonInfo: HasOne<typeof SeasonInfo>
-
-  // @beforeSave()
-  // public static async defaultValue(media: Media) {
-  //   if (!media.synopsis) {
-  //     media.synopsis = 'N/A'
-  //   }
-  //   if (!media.released) {
-  //     media.released = 'N/A'
-  //   }
-  // }
 }
