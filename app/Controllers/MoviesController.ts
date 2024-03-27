@@ -57,6 +57,7 @@ export default class MoviesController {
     if (cover) {
       coverName = createFileName()
       coverAltText = createAlternativeText(type, name)
+      // tmp path for Sharp because he need a path
       const coverFormated = standardize(cover.tmpPath)
       await Drive.put(`covers/${coverName}`, await coverFormated, {
         contentType: `image/jpg`,
