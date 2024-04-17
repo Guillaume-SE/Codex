@@ -19,6 +19,7 @@
     "#models/*": "./app/models/*.js",
     "#mails/*": "./app/mails/*.js",
     "#enums/*": "./app/enums/*.js",
+    "#functions/*": "./app/functions/*.js",
     "#services/*": "./app/services/*.js",
     "#listeners/*": "./app/listeners/*.js",
     "#events/*": "./app/events/*.js",
@@ -62,7 +63,8 @@
     "edge.js": "^6.0.2",
     "luxon": "^3.4.4",
     "mysql2": "^3.9.4",
-    "reflect-metadata": "^0.2.2"
+    "reflect-metadata": "^0.2.2",
+    "sharp": "^0.33.3"
   },
   "eslintConfig": {
     "extends": "@adonisjs/eslint-config/app"
