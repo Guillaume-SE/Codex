@@ -1,9 +1,9 @@
 import { AlreadyExistError, WrongMediaTypeError } from '#app/exceptions/CustomError'
 import CreateSeasonValidator from '#app/validators/CreateSeasonValidator'
 import UpdateSeasonValidator from '#app/validators/UpdateSeasonValidator'
-import CoverService from '#services/CoverService'
-import MediaService from '#services/MediaService'
-import SeasonService from '#services/SeasonService'
+import CoverService from '#services/cover_service'
+import MediaService from '#services/media_service'
+import SeasonService from '#services/season_service'
 import { inject } from '@adonisjs/core'
 import type { HttpContext } from '@adonisjs/core/http'
 

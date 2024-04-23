@@ -1,9 +1,9 @@
 import { AlreadyExistError, WrongMediaTypeError } from '#app/exceptions/CustomError'
 import CreateMovieValidator from '#app/validators/CreateMovieValidator'
 import UpdateMovieValidator from '#app/validators/UpdateMovieValidator'
-import CoverService from '#services/CoverService'
-import MediaService from '#services/MediaService'
-import MovieService from '#services/MovieService'
+import CoverService from '#services/cover_service'
+import MediaService from '#services/media_service'
+import MovieService from '#services/movie_service'
 import { inject } from '@adonisjs/core'
 import type { HttpContext } from '@adonisjs/core/http'
 

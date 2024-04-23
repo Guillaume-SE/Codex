@@ -1,19 +1,18 @@
 import { createAlternativeText } from '#functions/create_cover_alt_text'
-import BookInfo from '#models/book_info'
+import GameInfo from '#models/game_info'
 import Media from '#models/media'
-import CoverService from '#services/CoverService'
-import MediaService from '#services/MediaService'
+import CoverService from '#services/cover_service'
+import MediaService from '#services/media_service'
 import env from '#start/env'
 import { inject } from '@adonisjs/core'
 
 @inject()
-export default class BookService {
+export default class GameService {
   constructor(
     protected mediaService: MediaService,
     protected coverService: CoverService
   ) {}
-
-  async addOneBook(payload) {
+  async addOneGame(payload) {
     const {
       mediaParentId,
       type,
@@ -25,7 +24,7 @@ export default class BookService {
       rating,
       opinion,
       isFavorite,
-      ...specificBookInfos
+      ...specificGameInfos
     } = payload
 
     await this.mediaService.isMediaAlreadyAdded(type, name, released)
@@ -43,19 +42,19 @@ export default class BookService {
     const reviewInfo = { status, rating, opinion, isFavorite }
 
     const newMedia = await Media.create(generalMediaInfos)
-    await newMedia.related('bookInfo').create(specificBookInfos)
+    await newMedia.related('gameInfo').create(specificGameInfos)
     await newMedia.related('cover').create(coverInfo)
     await newMedia.related('review').create(reviewInfo)
 
     return {
       media: generalMediaInfos,
-      book: specificBookInfos,
+      game: specificGameInfos,
       cover: coverInfo,
       review: reviewInfo,
     }
   }
 
-  async updateOneBook(payload, mediaId: number) {
+  async updateOneGame(payload, mediaId: number) {
     const media = await this.mediaService.isMediaExist(mediaId)
     if (!media) {
       throw new Error('pas de media')
@@ -65,34 +64,30 @@ export default class BookService {
     if (!cover) {
       throw new Error('pas de cover')
     }
-    const book = await this.isBookExist(mediaId)
-    if (!book) {
-      throw new Error('pas de livre')
+    const game = await this.isGameExist(mediaId)
+    if (!game) {
+      throw new Error('pas de jeu')
     }
-    const { mediaParentId, type, name, released, synopsis, ...specificBookInfos } = payload
+    const { mediaParentId, type, name, released, synopsis, ...specificGameInfos } = payload
     const generalMediaInfos = { mediaParentId, type, name, released, synopsis }
 
     // update also the cover alt text
     const mediaNameAsChanged = media.name !== payload.name
     const newCoverAltText = createAlternativeText(type, name)
 
-    // const trx = await Database.transaction()
-
     media.merge(generalMediaInfos).save()
-    book.merge(specificBookInfos).save()
+    game.merge(specificGameInfos).save()
     if (mediaNameAsChanged) {
       cover.merge({ alternative: newCoverAltText }).save()
     }
 
-    // await trx.commit()
-
-    return { media: generalMediaInfos, book: specificBookInfos, cover: newCoverAltText }
+    return { media: generalMediaInfos, game: specificGameInfos, cover: newCoverAltText }
   }
 
-  async getAllBooks() {
+  public async getAllGames() {
     const datas = await Media.query()
       .from('medias')
-      .join('books_infos', 'medias.id', '=', 'books_infos.media_id')
+      .join('games_infos', 'medias.id', '=', 'games_infos.media_id')
       .join('reviews', 'medias.id', '=', 'reviews.media_id')
       .join('covers', 'medias.id', '=', 'covers.media_id')
       .select(
@@ -104,10 +99,9 @@ export default class BookService {
         'medias.synopsis',
         'covers.filename',
         'covers.alternative',
-        'books_infos.author',
-        'books_infos.illustrator',
-        'books_infos.editor',
-        'books_infos.pages',
+        'games_infos.developer',
+        'games_infos.publisher',
+        'games_infos.platform',
         'reviews.status',
         'reviews.rating',
         'reviews.opinion',
@@ -115,15 +109,15 @@ export default class BookService {
         'reviews.created_at',
         'reviews.updated_at'
       )
-    const books = datas.map((data) => {
+
+    const games = datas.map((data) => {
       const { id, mediaParentId, name, type, released, synopsis } = data
       const {
         filename,
         alternative,
-        author,
-        illustrator,
-        editor,
-        pages,
+        developer,
+        publisher,
+        platform,
         status,
         rating,
         opinion,
@@ -131,19 +125,17 @@ export default class BookService {
         created_at: createdAt,
         updated_at: updatedAt,
       } = data.$extras
-
       return {
-        book: {
+        game: {
           id,
           mediaParentId,
-          type,
           name,
+          type,
           released,
           synopsis,
-          author,
-          illustrator,
-          editor,
-          pages,
+          developer,
+          publisher,
+          platform,
         },
         cover: {
           filename,
@@ -159,14 +151,13 @@ export default class BookService {
         },
       }
     })
-
-    return books
+    return games
   }
 
-  async getOneBookByMediaId(mediaId: number) {
+  public async getOneGameByMediaId(mediaId: number) {
     const datas = await Media.query()
       .from('medias')
-      .join('books_infos', 'medias.id', '=', 'books_infos.media_id')
+      .join('games_infos', 'medias.id', '=', 'games_infos.media_id')
       .join('reviews', 'medias.id', '=', 'reviews.media_id')
       .join('covers', 'medias.id', '=', 'covers.media_id')
       .select(
@@ -178,10 +169,9 @@ export default class BookService {
         'medias.synopsis',
         'covers.filename',
         'covers.alternative',
-        'books_infos.author',
-        'books_infos.illustrator',
-        'books_infos.editor',
-        'books_infos.pages',
+        'games_infos.developer',
+        'games_infos.publisher',
+        'games_infos.platform',
         'reviews.status',
         'reviews.rating',
         'reviews.opinion',
@@ -191,19 +181,18 @@ export default class BookService {
       )
       .where('medias.id', '=', mediaId)
 
-    const noBookFound = datas.length === 0
-    if (noBookFound) {
-      throw new Error("Aucun livre correspondant n'a été trouvé")
+    const noGameFound = datas.length === 0
+    if (noGameFound) {
+      throw new Error("Aucun jeu correspondant n'a été trouvé")
     }
-    const book = datas.map((data) => {
+    const game = datas.map((data) => {
       const { id, mediaParentId, name, type, released, synopsis } = data
       const {
         filename,
         alternative,
-        author,
-        illustrator,
-        editor,
-        pages,
+        developer,
+        publisher,
+        platform,
         status,
         rating,
         opinion,
@@ -213,17 +202,16 @@ export default class BookService {
       } = data.$extras
 
       return {
-        book: {
+        game: {
           id,
           mediaParentId,
           name,
           type,
           released,
           synopsis,
-          author,
-          illustrator,
-          editor,
-          pages,
+          developer,
+          publisher,
+          platform,
         },
         cover: {
           filename,
@@ -239,11 +227,11 @@ export default class BookService {
         },
       }
     })
-    return book
+    return game
   }
 
-  async isBookExist(mediaId: number) {
-    const book = await BookInfo.findBy('media_id', mediaId)
-    return book
+  async isGameExist(mediaId: number) {
+    const game = await GameInfo.findBy('media_id', mediaId)
+    return game
   }
 }

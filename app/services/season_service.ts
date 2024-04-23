@@ -1,18 +1,19 @@
 import { createAlternativeText } from '#functions/create_cover_alt_text'
-import GameInfo from '#models/game_info'
 import Media from '#models/media'
-import CoverService from '#services/CoverService'
-import MediaService from '#services/MediaService'
+import SeasonInfo from '#models/season_info'
+import CoverService from '#services/cover_service'
+import MediaService from '#services/media_service'
 import env from '#start/env'
 import { inject } from '@adonisjs/core'
 
 @inject()
-export default class GameService {
+export default class SeasonService {
   constructor(
     protected mediaService: MediaService,
     protected coverService: CoverService
   ) {}
-  async addOneGame(payload) {
+
+  async addOneSeason(payload) {
     const {
       mediaParentId,
       type,
@@ -24,7 +25,7 @@ export default class GameService {
       rating,
       opinion,
       isFavorite,
-      ...specificGameInfos
+      ...specificSeasonInfos
     } = payload
 
     await this.mediaService.isMediaAlreadyAdded(type, name, released)
@@ -42,19 +43,19 @@ export default class GameService {
     const reviewInfo = { status, rating, opinion, isFavorite }
 
     const newMedia = await Media.create(generalMediaInfos)
-    await newMedia.related('gameInfo').create(specificGameInfos)
+    await newMedia.related('seasonInfo').create(specificSeasonInfos)
     await newMedia.related('cover').create(coverInfo)
     await newMedia.related('review').create(reviewInfo)
 
     return {
       media: generalMediaInfos,
-      game: specificGameInfos,
+      season: specificSeasonInfos,
       cover: coverInfo,
       review: reviewInfo,
     }
   }
 
-  async updateOneGame(payload, mediaId: number) {
+  async updateOneSeason(payload, mediaId: number) {
     const media = await this.mediaService.isMediaExist(mediaId)
     if (!media) {
       throw new Error('pas de media')
@@ -64,11 +65,11 @@ export default class GameService {
     if (!cover) {
       throw new Error('pas de cover')
     }
-    const game = await this.isGameExist(mediaId)
-    if (!game) {
-      throw new Error('pas de jeu')
+    const season = await this.isSeasonExist(mediaId)
+    if (!season) {
+      throw new Error('pas de saison')
     }
-    const { mediaParentId, type, name, released, synopsis, ...specificGameInfos } = payload
+    const { mediaParentId, type, name, released, synopsis, ...specificSeasonInfos } = payload
     const generalMediaInfos = { mediaParentId, type, name, released, synopsis }
 
     // update also the cover alt text
@@ -76,18 +77,18 @@ export default class GameService {
     const newCoverAltText = createAlternativeText(type, name)
 
     media.merge(generalMediaInfos).save()
-    game.merge(specificGameInfos).save()
+    season.merge(specificSeasonInfos).save()
     if (mediaNameAsChanged) {
       cover.merge({ alternative: newCoverAltText }).save()
     }
 
-    return { media: generalMediaInfos, game: specificGameInfos, cover: newCoverAltText }
+    return { media: generalMediaInfos, season: specificSeasonInfos, cover: newCoverAltText }
   }
 
-  public async getAllGames() {
+  async getAllSeasons() {
     const datas = await Media.query()
       .from('medias')
-      .join('games_infos', 'medias.id', '=', 'games_infos.media_id')
+      .join('seasons_infos', 'medias.id', '=', 'seasons_infos.media_id')
       .join('reviews', 'medias.id', '=', 'reviews.media_id')
       .join('covers', 'medias.id', '=', 'covers.media_id')
       .select(
@@ -99,9 +100,8 @@ export default class GameService {
         'medias.synopsis',
         'covers.filename',
         'covers.alternative',
-        'games_infos.developer',
-        'games_infos.publisher',
-        'games_infos.platform',
+        'seasons_infos.creator',
+        'seasons_infos.length',
         'reviews.status',
         'reviews.rating',
         'reviews.opinion',
@@ -110,14 +110,13 @@ export default class GameService {
         'reviews.updated_at'
       )
 
-    const games = datas.map((data) => {
+    const seasons = datas.map((data) => {
       const { id, mediaParentId, name, type, released, synopsis } = data
       const {
         filename,
         alternative,
-        developer,
-        publisher,
-        platform,
+        creator,
+        length,
         status,
         rating,
         opinion,
@@ -126,16 +125,15 @@ export default class GameService {
         updated_at: updatedAt,
       } = data.$extras
       return {
-        game: {
+        season: {
           id,
           mediaParentId,
           name,
           type,
           released,
           synopsis,
-          developer,
-          publisher,
-          platform,
+          creator,
+          length,
         },
         cover: {
           filename,
@@ -151,13 +149,13 @@ export default class GameService {
         },
       }
     })
-    return games
+    return seasons
   }
 
-  public async getOneGameByMediaId(mediaId: number) {
+  async getOneSeasonByMediaId(mediaId: number) {
     const datas = await Media.query()
       .from('medias')
-      .join('games_infos', 'medias.id', '=', 'games_infos.media_id')
+      .join('seasons_infos', 'medias.id', '=', 'seasons_infos.media_id')
       .join('reviews', 'medias.id', '=', 'reviews.media_id')
       .join('covers', 'medias.id', '=', 'covers.media_id')
       .select(
@@ -169,9 +167,8 @@ export default class GameService {
         'medias.synopsis',
         'covers.filename',
         'covers.alternative',
-        'games_infos.developer',
-        'games_infos.publisher',
-        'games_infos.platform',
+        'seasons_infos.creator',
+        'seasons_infos.length',
         'reviews.status',
         'reviews.rating',
         'reviews.opinion',
@@ -181,18 +178,17 @@ export default class GameService {
       )
       .where('medias.id', '=', mediaId)
 
-    const noGameFound = datas.length === 0
-    if (noGameFound) {
-      throw new Error("Aucun jeu correspondant n'a été trouvé")
+    const noSeasonFound = datas.length === 0
+    if (noSeasonFound) {
+      throw new Error("Aucune saison correspondant n'a été trouvée")
     }
-    const game = datas.map((data) => {
+    const season = datas.map((data) => {
       const { id, mediaParentId, name, type, released, synopsis } = data
       const {
         filename,
         alternative,
-        developer,
-        publisher,
-        platform,
+        creator,
+        length,
         status,
         rating,
         opinion,
@@ -202,16 +198,15 @@ export default class GameService {
       } = data.$extras
 
       return {
-        game: {
+        season: {
           id,
           mediaParentId,
           name,
           type,
           released,
           synopsis,
-          developer,
-          publisher,
-          platform,
+          creator,
+          length,
         },
         cover: {
           filename,
@@ -227,11 +222,11 @@ export default class GameService {
         },
       }
     })
-    return game
+    return season
   }
 
-  async isGameExist(mediaId: number) {
-    const game = await GameInfo.findBy('media_id', mediaId)
-    return game
+  async isSeasonExist(mediaId: number) {
+    const season = await SeasonInfo.findBy('media_id', mediaId)
+    return season
   }
 }

@@ -1,9 +1,9 @@
 import { AlreadyExistError, WrongMediaTypeError } from '#app/exceptions/CustomError'
 import CreateGameValidator from '#app/validators/CreateGameValidator'
 import UpdateGameValidator from '#app/validators/UpdateGameValidator'
-import CoverService from '#services/CoverService'
-import GameService from '#services/GameService'
-import MediaService from '#services/MediaService'
+import CoverService from '#services/cover_service'
+import GameService from '#services/game_service'
+import MediaService from '#services/media_service'
 import { inject } from '@adonisjs/core'
 import type { HttpContext } from '@adonisjs/core/http'
 

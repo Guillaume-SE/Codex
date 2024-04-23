@@ -1,19 +1,19 @@
 import { createAlternativeText } from '#functions/create_cover_alt_text'
+import BookInfo from '#models/book_info'
 import Media from '#models/media'
-import MovieInfo from '#models/movie_info'
-import CoverService from '#services/CoverService'
-import MediaService from '#services/MediaService'
+import CoverService from '#services/cover_service'
+import MediaService from '#services/media_service'
 import env from '#start/env'
 import { inject } from '@adonisjs/core'
 
 @inject()
-export default class MovieService {
+export default class BookService {
   constructor(
     protected mediaService: MediaService,
     protected coverService: CoverService
   ) {}
 
-  async addOneMovie(payload) {
+  async addOneBook(payload) {
     const {
       mediaParentId,
       type,
@@ -25,7 +25,7 @@ export default class MovieService {
       rating,
       opinion,
       isFavorite,
-      ...specificMovieInfos
+      ...specificBookInfos
     } = payload
 
     await this.mediaService.isMediaAlreadyAdded(type, name, released)
@@ -43,19 +43,19 @@ export default class MovieService {
     const reviewInfo = { status, rating, opinion, isFavorite }
 
     const newMedia = await Media.create(generalMediaInfos)
-    await newMedia.related('movieInfo').create(specificMovieInfos)
+    await newMedia.related('bookInfo').create(specificBookInfos)
     await newMedia.related('cover').create(coverInfo)
     await newMedia.related('review').create(reviewInfo)
 
     return {
       media: generalMediaInfos,
-      movie: specificMovieInfos,
+      book: specificBookInfos,
       cover: coverInfo,
       review: reviewInfo,
     }
   }
 
-  async updateOneMovie(payload, mediaId: number) {
+  async updateOneBook(payload, mediaId: number) {
     const media = await this.mediaService.isMediaExist(mediaId)
     if (!media) {
       throw new Error('pas de media')
@@ -65,30 +65,34 @@ export default class MovieService {
     if (!cover) {
       throw new Error('pas de cover')
     }
-    const movie = await this.isMovieExist(mediaId)
-    if (!movie) {
-      throw new Error('pas de film')
+    const book = await this.isBookExist(mediaId)
+    if (!book) {
+      throw new Error('pas de livre')
     }
-    const { mediaParentId, type, name, released, synopsis, ...specificMovieInfos } = payload
+    const { mediaParentId, type, name, released, synopsis, ...specificBookInfos } = payload
     const generalMediaInfos = { mediaParentId, type, name, released, synopsis }
 
     // update also the cover alt text
     const mediaNameAsChanged = media.name !== payload.name
     const newCoverAltText = createAlternativeText(type, name)
 
+    // const trx = await Database.transaction()
+
     media.merge(generalMediaInfos).save()
-    movie.merge(specificMovieInfos).save()
+    book.merge(specificBookInfos).save()
     if (mediaNameAsChanged) {
       cover.merge({ alternative: newCoverAltText }).save()
     }
 
-    return { media: generalMediaInfos, movie: specificMovieInfos, cover: newCoverAltText }
+    // await trx.commit()
+
+    return { media: generalMediaInfos, book: specificBookInfos, cover: newCoverAltText }
   }
 
-  async getAllMovies() {
+  async getAllBooks() {
     const datas = await Media.query()
       .from('medias')
-      .join('movies_infos', 'medias.id', '=', 'movies_infos.media_id')
+      .join('books_infos', 'medias.id', '=', 'books_infos.media_id')
       .join('reviews', 'medias.id', '=', 'reviews.media_id')
       .join('covers', 'medias.id', '=', 'covers.media_id')
       .select(
@@ -100,9 +104,10 @@ export default class MovieService {
         'medias.synopsis',
         'covers.filename',
         'covers.alternative',
-        'movies_infos.director',
-        'movies_infos.screenwriter',
-        'movies_infos.duration',
+        'books_infos.author',
+        'books_infos.illustrator',
+        'books_infos.editor',
+        'books_infos.pages',
         'reviews.status',
         'reviews.rating',
         'reviews.opinion',
@@ -110,14 +115,15 @@ export default class MovieService {
         'reviews.created_at',
         'reviews.updated_at'
       )
-    const movies = datas.map((data) => {
+    const books = datas.map((data) => {
       const { id, mediaParentId, name, type, released, synopsis } = data
       const {
         filename,
         alternative,
-        director,
-        screenwriter,
-        duration,
+        author,
+        illustrator,
+        editor,
+        pages,
         status,
         rating,
         opinion,
@@ -127,16 +133,17 @@ export default class MovieService {
       } = data.$extras
 
       return {
-        movie: {
+        book: {
           id,
           mediaParentId,
           type,
           name,
           released,
           synopsis,
-          director,
-          screenwriter,
-          duration,
+          author,
+          illustrator,
+          editor,
+          pages,
         },
         cover: {
           filename,
@@ -152,13 +159,14 @@ export default class MovieService {
         },
       }
     })
-    return movies
+
+    return books
   }
 
-  async getOneMovieByMediaId(mediaId: number) {
+  async getOneBookByMediaId(mediaId: number) {
     const datas = await Media.query()
       .from('medias')
-      .join('movies_infos', 'medias.id', '=', 'movies_infos.media_id')
+      .join('books_infos', 'medias.id', '=', 'books_infos.media_id')
       .join('reviews', 'medias.id', '=', 'reviews.media_id')
       .join('covers', 'medias.id', '=', 'covers.media_id')
       .select(
@@ -170,9 +178,10 @@ export default class MovieService {
         'medias.synopsis',
         'covers.filename',
         'covers.alternative',
-        'movies_infos.director',
-        'movies_infos.screenwriter',
-        'movies_infos.duration',
+        'books_infos.author',
+        'books_infos.illustrator',
+        'books_infos.editor',
+        'books_infos.pages',
         'reviews.status',
         'reviews.rating',
         'reviews.opinion',
@@ -182,18 +191,19 @@ export default class MovieService {
       )
       .where('medias.id', '=', mediaId)
 
-    const noMovieFound = datas.length === 0
-    if (noMovieFound) {
-      throw new Error("Aucun film correspondant n'a été trouvé")
+    const noBookFound = datas.length === 0
+    if (noBookFound) {
+      throw new Error("Aucun livre correspondant n'a été trouvé")
     }
-    const movie = datas.map((data) => {
+    const book = datas.map((data) => {
       const { id, mediaParentId, name, type, released, synopsis } = data
       const {
         filename,
         alternative,
-        director,
-        screenwriter,
-        duration,
+        author,
+        illustrator,
+        editor,
+        pages,
         status,
         rating,
         opinion,
@@ -203,16 +213,17 @@ export default class MovieService {
       } = data.$extras
 
       return {
-        movie: {
+        book: {
           id,
           mediaParentId,
           name,
           type,
           released,
           synopsis,
-          director,
-          screenwriter,
-          duration,
+          author,
+          illustrator,
+          editor,
+          pages,
         },
         cover: {
           filename,
@@ -228,11 +239,11 @@ export default class MovieService {
         },
       }
     })
-    return movie
+    return book
   }
 
-  async isMovieExist(mediaId: number) {
-    const movie = await MovieInfo.findBy('media_id', mediaId)
-    return movie
+  async isBookExist(mediaId: number) {
+    const book = await BookInfo.findBy('media_id', mediaId)
+    return book
   }
 }

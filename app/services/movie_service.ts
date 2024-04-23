@@ -1,19 +1,19 @@
 import { createAlternativeText } from '#functions/create_cover_alt_text'
 import Media from '#models/media'
-import SeasonInfo from '#models/season_info'
-import CoverService from '#services/CoverService'
-import MediaService from '#services/MediaService'
+import MovieInfo from '#models/movie_info'
+import CoverService from '#services/cover_service'
+import MediaService from '#services/media_service'
 import env from '#start/env'
 import { inject } from '@adonisjs/core'
 
 @inject()
-export default class SeasonService {
+export default class MovieService {
   constructor(
     protected mediaService: MediaService,
     protected coverService: CoverService
   ) {}
 
-  async addOneSeason(payload) {
+  async addOneMovie(payload) {
     const {
       mediaParentId,
       type,
@@ -25,7 +25,7 @@ export default class SeasonService {
       rating,
       opinion,
       isFavorite,
-      ...specificSeasonInfos
+      ...specificMovieInfos
     } = payload
 
     await this.mediaService.isMediaAlreadyAdded(type, name, released)
@@ -43,19 +43,19 @@ export default class SeasonService {
     const reviewInfo = { status, rating, opinion, isFavorite }
 
     const newMedia = await Media.create(generalMediaInfos)
-    await newMedia.related('seasonInfo').create(specificSeasonInfos)
+    await newMedia.related('movieInfo').create(specificMovieInfos)
     await newMedia.related('cover').create(coverInfo)
     await newMedia.related('review').create(reviewInfo)
 
     return {
       media: generalMediaInfos,
-      season: specificSeasonInfos,
+      movie: specificMovieInfos,
       cover: coverInfo,
       review: reviewInfo,
     }
   }
 
-  async updateOneSeason(payload, mediaId: number) {
+  async updateOneMovie(payload, mediaId: number) {
     const media = await this.mediaService.isMediaExist(mediaId)
     if (!media) {
       throw new Error('pas de media')
@@ -65,11 +65,11 @@ export default class SeasonService {
     if (!cover) {
       throw new Error('pas de cover')
     }
-    const season = await this.isSeasonExist(mediaId)
-    if (!season) {
-      throw new Error('pas de saison')
+    const movie = await this.isMovieExist(mediaId)
+    if (!movie) {
+      throw new Error('pas de film')
     }
-    const { mediaParentId, type, name, released, synopsis, ...specificSeasonInfos } = payload
+    const { mediaParentId, type, name, released, synopsis, ...specificMovieInfos } = payload
     const generalMediaInfos = { mediaParentId, type, name, released, synopsis }
 
     // update also the cover alt text
@@ -77,18 +77,18 @@ export default class SeasonService {
     const newCoverAltText = createAlternativeText(type, name)
 
     media.merge(generalMediaInfos).save()
-    season.merge(specificSeasonInfos).save()
+    movie.merge(specificMovieInfos).save()
     if (mediaNameAsChanged) {
       cover.merge({ alternative: newCoverAltText }).save()
     }
 
-    return { media: generalMediaInfos, season: specificSeasonInfos, cover: newCoverAltText }
+    return { media: generalMediaInfos, movie: specificMovieInfos, cover: newCoverAltText }
   }
 
-  async getAllSeasons() {
+  async getAllMovies() {
     const datas = await Media.query()
       .from('medias')
-      .join('seasons_infos', 'medias.id', '=', 'seasons_infos.media_id')
+      .join('movies_infos', 'medias.id', '=', 'movies_infos.media_id')
       .join('reviews', 'medias.id', '=', 'reviews.media_id')
       .join('covers', 'medias.id', '=', 'covers.media_id')
       .select(
@@ -100,8 +100,9 @@ export default class SeasonService {
         'medias.synopsis',
         'covers.filename',
         'covers.alternative',
-        'seasons_infos.creator',
-        'seasons_infos.length',
+        'movies_infos.director',
+        'movies_infos.screenwriter',
+        'movies_infos.duration',
         'reviews.status',
         'reviews.rating',
         'reviews.opinion',
@@ -109,14 +110,14 @@ export default class SeasonService {
         'reviews.created_at',
         'reviews.updated_at'
       )
-
-    const seasons = datas.map((data) => {
+    const movies = datas.map((data) => {
       const { id, mediaParentId, name, type, released, synopsis } = data
       const {
         filename,
         alternative,
-        creator,
-        length,
+        director,
+        screenwriter,
+        duration,
         status,
         rating,
         opinion,
@@ -124,16 +125,18 @@ export default class SeasonService {
         created_at: createdAt,
         updated_at: updatedAt,
       } = data.$extras
+
       return {
-        season: {
+        movie: {
           id,
           mediaParentId,
-          name,
           type,
+          name,
           released,
           synopsis,
-          creator,
-          length,
+          director,
+          screenwriter,
+          duration,
         },
         cover: {
           filename,
@@ -149,13 +152,13 @@ export default class SeasonService {
         },
       }
     })
-    return seasons
+    return movies
   }
 
-  async getOneSeasonByMediaId(mediaId: number) {
+  async getOneMovieByMediaId(mediaId: number) {
     const datas = await Media.query()
       .from('medias')
-      .join('seasons_infos', 'medias.id', '=', 'seasons_infos.media_id')
+      .join('movies_infos', 'medias.id', '=', 'movies_infos.media_id')
       .join('reviews', 'medias.id', '=', 'reviews.media_id')
       .join('covers', 'medias.id', '=', 'covers.media_id')
       .select(
@@ -167,8 +170,9 @@ export default class SeasonService {
         'medias.synopsis',
         'covers.filename',
         'covers.alternative',
-        'seasons_infos.creator',
-        'seasons_infos.length',
+        'movies_infos.director',
+        'movies_infos.screenwriter',
+        'movies_infos.duration',
         'reviews.status',
         'reviews.rating',
         'reviews.opinion',
@@ -178,17 +182,18 @@ export default class SeasonService {
       )
       .where('medias.id', '=', mediaId)
 
-    const noSeasonFound = datas.length === 0
-    if (noSeasonFound) {
-      throw new Error("Aucune saison correspondant n'a été trouvée")
+    const noMovieFound = datas.length === 0
+    if (noMovieFound) {
+      throw new Error("Aucun film correspondant n'a été trouvé")
     }
-    const season = datas.map((data) => {
+    const movie = datas.map((data) => {
       const { id, mediaParentId, name, type, released, synopsis } = data
       const {
         filename,
         alternative,
-        creator,
-        length,
+        director,
+        screenwriter,
+        duration,
         status,
         rating,
         opinion,
@@ -198,15 +203,16 @@ export default class SeasonService {
       } = data.$extras
 
       return {
-        season: {
+        movie: {
           id,
           mediaParentId,
           name,
           type,
           released,
           synopsis,
-          creator,
-          length,
+          director,
+          screenwriter,
+          duration,
         },
         cover: {
           filename,
@@ -222,11 +228,11 @@ export default class SeasonService {
         },
       }
     })
-    return season
+    return movie
   }
 
-  async isSeasonExist(mediaId: number) {
-    const season = await SeasonInfo.findBy('media_id', mediaId)
-    return season
+  async isMovieExist(mediaId: number) {
+    const movie = await MovieInfo.findBy('media_id', mediaId)
+    return movie
   }
 }
