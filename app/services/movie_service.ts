@@ -1,4 +1,5 @@
 import { createAlternativeText } from '#functions/create_cover_alt_text'
+import { IMovie } from '#interfaces/media_interfaces'
 import Media from '#models/media'
 import MovieInfo from '#models/movie_info'
 import CoverService from '#services/cover_service'
@@ -13,7 +14,7 @@ export default class MovieService {
     protected coverService: CoverService
   ) {}
 
-  async addOneMovie(payload) {
+  async addOneMovie(payload: IMovie) {
     const {
       mediaParentId,
       type,
@@ -55,7 +56,7 @@ export default class MovieService {
     }
   }
 
-  async updateOneMovie(payload, mediaId: number) {
+  async updateOneMovie(payload: IMovie, mediaId: number) {
     const media = await this.mediaService.isMediaExist(mediaId)
     if (!media) {
       throw new Error('pas de media')

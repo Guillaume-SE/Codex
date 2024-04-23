@@ -1,4 +1,5 @@
 import { createAlternativeText } from '#functions/create_cover_alt_text'
+import { IGame } from '#interfaces/media_interfaces'
 import GameInfo from '#models/game_info'
 import Media from '#models/media'
 import CoverService from '#services/cover_service'
@@ -12,7 +13,7 @@ export default class GameService {
     protected mediaService: MediaService,
     protected coverService: CoverService
   ) {}
-  async addOneGame(payload) {
+  async addOneGame(payload: IGame) {
     const {
       mediaParentId,
       type,
@@ -54,7 +55,7 @@ export default class GameService {
     }
   }
 
-  async updateOneGame(payload, mediaId: number) {
+  async updateOneGame(payload: IGame, mediaId: number) {
     const media = await this.mediaService.isMediaExist(mediaId)
     if (!media) {
       throw new Error('pas de media')

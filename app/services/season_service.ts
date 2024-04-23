@@ -1,4 +1,5 @@
 import { createAlternativeText } from '#functions/create_cover_alt_text'
+import { ISeason } from '#interfaces/media_interfaces'
 import Media from '#models/media'
 import SeasonInfo from '#models/season_info'
 import CoverService from '#services/cover_service'
@@ -13,7 +14,7 @@ export default class SeasonService {
     protected coverService: CoverService
   ) {}
 
-  async addOneSeason(payload) {
+  async addOneSeason(payload: ISeason) {
     const {
       mediaParentId,
       type,
@@ -55,7 +56,7 @@ export default class SeasonService {
     }
   }
 
-  async updateOneSeason(payload, mediaId: number) {
+  async updateOneSeason(payload: ISeason, mediaId: number) {
     const media = await this.mediaService.isMediaExist(mediaId)
     if (!media) {
       throw new Error('pas de media')

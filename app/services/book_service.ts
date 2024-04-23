@@ -1,4 +1,5 @@
 import { createAlternativeText } from '#functions/create_cover_alt_text'
+import { IBook } from '#interfaces/media_interfaces'
 import BookInfo from '#models/book_info'
 import Media from '#models/media'
 import CoverService from '#services/cover_service'
@@ -13,7 +14,7 @@ export default class BookService {
     protected coverService: CoverService
   ) {}
 
-  async addOneBook(payload) {
+  async addOneBook(payload: IBook) {
     const {
       mediaParentId,
       type,
@@ -55,7 +56,7 @@ export default class BookService {
     }
   }
 
-  async updateOneBook(payload, mediaId: number) {
+  async updateOneBook(payload: IBook, mediaId: number) {
     const media = await this.mediaService.isMediaExist(mediaId)
     if (!media) {
       throw new Error('pas de media')
