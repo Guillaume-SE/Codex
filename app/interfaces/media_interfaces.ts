@@ -4,7 +4,6 @@ import { ReviewStatus } from '#enums/ReviewStatus'
 import { MultipartFile } from '@adonisjs/core/bodyparser'
 
 export interface IMedia {
-  id: number
   mediaParentId: number | null
   cover?: MultipartFile
   type: MediaTypes
@@ -12,8 +11,8 @@ export interface IMedia {
   released: string
   synopsis: string
   status?: ReviewStatus
-  rating?: number
-  opinion?: string
+  rating?: number | null
+  opinion?: string | null
   isFavorite?: boolean
 }
 
