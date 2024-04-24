@@ -1,8 +1,7 @@
-import CreateBookValidator from '#app/validators/CreateBookValidator'
-import UpdateBookValidator from '#app/validators/UpdateBookValidator'
 import BookService from '#services/book_service'
 import CoverService from '#services/cover_service'
 import MediaService from '#services/media_service'
+import { createBookValidator, updateBookValidator } from '#validators/book_validator'
 import { inject } from '@adonisjs/core'
 import type { HttpContext } from '@adonisjs/core/http'
 
@@ -15,7 +14,7 @@ export default class BooksController {
   ) {}
 
   public async addOneBook({ request, response }: HttpContext) {
-    const payloadValidation = await request.validate(CreateBookValidator)
+    const payloadValidation = await request.validateUsing(createBookValidator)
 
     try {
       const newMedia = await this.bookService.addOneBook(payloadValidation)
@@ -30,7 +29,7 @@ export default class BooksController {
 
   public async updateOneBook({ request, params, response }: HttpContext) {
     const mediaId = params.id
-    const payloadValidation = await request.validate(UpdateBookValidator)
+    const payloadValidation = await request.validateUsing(updateBookValidator)
     try {
       const book = await this.bookService.updateOneBook(payloadValidation, mediaId)
 
