@@ -10,7 +10,7 @@ export default class extends BaseSchema {
         .integer('media_id')
         .unsigned()
         .references('id')
-        .inTable('medias')
+        .inTable('media')
         .notNullable()
         .onDelete('CASCADE')
       table.string('filename').notNullable()

@@ -3,7 +3,7 @@ import Media from '#models/media'
 import type { HttpContext } from '@adonisjs/core/http'
 
 export default class MediasController {
-  public async getAllMedias({ response }: HttpContext) {
+  public async getAllMedia({ response }: HttpContext) {
     const medias = await Media.all()
     return response.status(201).json(medias)
   }

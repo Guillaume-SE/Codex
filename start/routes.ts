@@ -1,7 +1,7 @@
 import router from '@adonisjs/core/services/router'
 import { middleware } from './kernel.js'
 const UsersController = () => import('#controllers/users_controller')
-const MediasController = () => import('#controllers/medias_controller')
+const MediaController = () => import('#controllers/media_controller')
 const MoviesController = () => import('#controllers/movies_controller')
 const GamesController = () => import('#controllers/games_controller')
 const SeasonsController = () => import('#controllers/seasons_controller')
@@ -19,10 +19,10 @@ router.get('/users/:id', [UsersController, 'show']).as('users.show')
 /**
  * medias
  */
-router.get('/medias', [MediasController, 'getAllMedias']).as('medias.show')
-router.get('/medias/:id', [MediasController, 'getOneMediaById']).as('medias.show.one')
+router.get('/media', [MediaController, 'getAllMedia']).as('media.show')
+router.get('/media/:id', [MediaController, 'getOneMediaById']).as('media.show.one')
 //ADMIN
-router.delete('/medias/:id', [MediasController, 'deleteOneMedia']).as('medias.delete')
+router.delete('/media/:id', [MediaController, 'deleteOneMedia']).as('media.delete')
 
 /**
  * movies
@@ -31,7 +31,7 @@ router.get('/movies', [MoviesController, 'getAllMovies']).as('movies.show')
 router.get('/movies/:mediaId', [MoviesController, 'getOneMovieByMediaId']).as('movies.show.one')
 //ADMIN
 router.post('/movies', [MoviesController, 'addOneMovie']).as('movies.add')
-router.put('/movies/:id', [MoviesController, 'updateOneMovie']).as('movies.update')
+router.put('/movies/:mediaId', [MoviesController, 'updateOneMovie']).as('movies.update')
 
 /**
  * games
@@ -40,7 +40,7 @@ router.get('/games', [GamesController, 'getAllGames']).as('games.show')
 router.get('/games/:mediaId', [GamesController, 'getOneGameByMediaId']).as('games.show.one')
 //ADMIN
 router.post('/games', [GamesController, 'addOneGame']).as('games.add')
-router.put('/games/:id', [GamesController, 'updateOneGame']).as('games.update')
+router.put('/games/:mediaId', [GamesController, 'updateOneGame']).as('games.update')
 
 /**
  * seasons
@@ -49,7 +49,7 @@ router.get('/seasons', [SeasonsController, 'getAllSeasons']).as('seasons.show')
 router.get('/seasons/:mediaId', [SeasonsController, 'getOneSeasonByMediaId']).as('seasons.show.one')
 //ADMIN
 router.post('/seasons', [SeasonsController, 'addOneSeason']).as('seasons.add')
-router.put('/seasons/:id', [SeasonsController, 'updateOneSeason']).as('seasons.update')
+router.put('/seasons/:mediaId', [SeasonsController, 'updateOneSeason']).as('seasons.update')
 
 /**
  * books
@@ -58,7 +58,7 @@ router.get('/books', [BooksController, 'getAllBooks']).as('books.show')
 router.get('/books/:mediaId', [BooksController, 'getOneBookByMediaId']).as('books.show.one')
 //ADMIN
 router.post('/books', [BooksController, 'addOneBook']).as('books.add')
-router.put('/books/:id', [BooksController, 'updateOneBook']).as('books.update')
+router.put('/books/:mediaId', [BooksController, 'updateOneBook']).as('books.update')
 
 /**
  * covers

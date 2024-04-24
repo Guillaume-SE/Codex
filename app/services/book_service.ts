@@ -92,17 +92,17 @@ export default class BookService {
 
   async getAllBooks() {
     const datas = await Media.query()
-      .from('medias')
-      .join('books_infos', 'medias.id', '=', 'books_infos.media_id')
-      .join('reviews', 'medias.id', '=', 'reviews.media_id')
-      .join('covers', 'medias.id', '=', 'covers.media_id')
+      .from('media')
+      .join('books_infos', 'media.id', '=', 'books_infos.media_id')
+      .join('reviews', 'media.id', '=', 'reviews.media_id')
+      .join('covers', 'media.id', '=', 'covers.media_id')
       .select(
-        'medias.id',
-        'medias.media_parent_id',
-        'medias.name',
-        'medias.type',
-        'medias.released',
-        'medias.synopsis',
+        'media.id',
+        'media.media_parent_id',
+        'media.name',
+        'media.type',
+        'media.released',
+        'media.synopsis',
         'covers.filename',
         'covers.alternative',
         'books_infos.author',
@@ -166,17 +166,17 @@ export default class BookService {
 
   async getOneBookByMediaId(mediaId: number) {
     const datas = await Media.query()
-      .from('medias')
-      .join('books_infos', 'medias.id', '=', 'books_infos.media_id')
-      .join('reviews', 'medias.id', '=', 'reviews.media_id')
-      .join('covers', 'medias.id', '=', 'covers.media_id')
+      .from('media')
+      .join('books_infos', 'media.id', '=', 'books_infos.media_id')
+      .join('reviews', 'media.id', '=', 'reviews.media_id')
+      .join('covers', 'media.id', '=', 'covers.media_id')
       .select(
-        'medias.id',
-        'medias.media_parent_id',
-        'medias.name',
-        'medias.type',
-        'medias.released',
-        'medias.synopsis',
+        'media.id',
+        'media.media_parent_id',
+        'media.name',
+        'media.type',
+        'media.released',
+        'media.synopsis',
         'covers.filename',
         'covers.alternative',
         'books_infos.author',
@@ -190,7 +190,7 @@ export default class BookService {
         'reviews.created_at',
         'reviews.updated_at'
       )
-      .where('medias.id', '=', mediaId)
+      .where('media.id', '=', mediaId)
 
     const noBookFound = datas.length === 0
     if (noBookFound) {

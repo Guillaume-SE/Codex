@@ -4,7 +4,7 @@ import Media from '#models/media'
 export default class MediaService {
   async isMediaAlreadyAdded(type: MediaTypes, name: string, released: string) {
     const media = await Media.query()
-      .from('medias')
+      .from('media')
       .where('type', type)
       .andWhere('name', name)
       .andWhere('released', released)
