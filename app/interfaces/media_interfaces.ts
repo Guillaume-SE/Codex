@@ -5,7 +5,7 @@ import { MultipartFile } from '@adonisjs/core/bodyparser'
 
 export interface IMedia {
   mediaParentId: number | null
-  cover?: MultipartFile
+  cover?: MultipartFile | null
   type: MediaTypes
   name: string
   released: string
