@@ -13,6 +13,9 @@ export default class GameService {
     protected mediaService: MediaService,
     protected coverService: CoverService
   ) {}
+  protected defaultCoverFilename = env.get('DEFAULT_COVER_FILENAME')
+  protected defaultCoverAltText = env.get('DEFAULT_COVER_ALT_TEXT')
+
   async addOneGame(payload: IGame) {
     const {
       mediaParentId,
@@ -30,8 +33,8 @@ export default class GameService {
 
     await this.mediaService.isMediaAlreadyAdded(type, name, released)
 
-    let coverName = env.get('DEFAULT_COVER_FILENAME')
-    let coverAltText = env.get('DEFAULT_COVER_ALT_TEXT')
+    let coverName = this.defaultCoverFilename
+    let coverAltText = this.defaultCoverAltText
     if (cover) {
       const newCover = await this.coverService.saveCover(type, name, cover.tmpPath)
       coverName = newCover.coverName
@@ -74,11 +77,12 @@ export default class GameService {
 
     // update also the cover alt text
     const mediaNameAsChanged = media.name !== payload.name
+    const isNotDefaultCover = cover.alternative !== this.defaultCoverAltText
     const newCoverAltText = createAlternativeText(type, name)
 
     media.merge(generalMediaInfos).save()
     game.merge(specificGameInfos).save()
-    if (mediaNameAsChanged) {
+    if (mediaNameAsChanged && isNotDefaultCover) {
       cover.merge({ alternative: newCoverAltText }).save()
     }
 
@@ -87,17 +91,17 @@ export default class GameService {
 
   public async getAllGames() {
     const datas = await Media.query()
-      .from('medias')
-      .join('games_infos', 'medias.id', '=', 'games_infos.media_id')
-      .join('reviews', 'medias.id', '=', 'reviews.media_id')
-      .join('covers', 'medias.id', '=', 'covers.media_id')
+      .from('media')
+      .join('games_infos', 'media.id', '=', 'games_infos.media_id')
+      .join('reviews', 'media.id', '=', 'reviews.media_id')
+      .join('covers', 'media.id', '=', 'covers.media_id')
       .select(
-        'medias.id',
-        'medias.media_parent_id',
-        'medias.name',
-        'medias.type',
-        'medias.released',
-        'medias.synopsis',
+        'media.id',
+        'media.media_parent_id',
+        'media.name',
+        'media.type',
+        'media.released',
+        'media.synopsis',
         'covers.filename',
         'covers.alternative',
         'games_infos.developer',
@@ -157,17 +161,17 @@ export default class GameService {
 
   public async getOneGameByMediaId(mediaId: number) {
     const datas = await Media.query()
-      .from('medias')
-      .join('games_infos', 'medias.id', '=', 'games_infos.media_id')
-      .join('reviews', 'medias.id', '=', 'reviews.media_id')
-      .join('covers', 'medias.id', '=', 'covers.media_id')
+      .from('media')
+      .join('games_infos', 'media.id', '=', 'games_infos.media_id')
+      .join('reviews', 'media.id', '=', 'reviews.media_id')
+      .join('covers', 'media.id', '=', 'covers.media_id')
       .select(
-        'medias.id',
-        'medias.media_parent_id',
-        'medias.name',
-        'medias.type',
-        'medias.released',
-        'medias.synopsis',
+        'media.id',
+        'media.media_parent_id',
+        'media.name',
+        'media.type',
+        'media.released',
+        'media.synopsis',
         'covers.filename',
         'covers.alternative',
         'games_infos.developer',
@@ -180,7 +184,7 @@ export default class GameService {
         'reviews.created_at',
         'reviews.updated_at'
       )
-      .where('medias.id', '=', mediaId)
+      .where('media.id', '=', mediaId)
 
     const noGameFound = datas.length === 0
     if (noGameFound) {
