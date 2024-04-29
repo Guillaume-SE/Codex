@@ -1,7 +1,7 @@
 export function createFullPath(
-  filename: string,
-  filepath: string,
-  fileExtension: string,
+  filename: string | undefined,
+  filepath: string | undefined,
+  fileExtension: string | undefined,
   withRaw: boolean
 ): string {
   if (withRaw) {

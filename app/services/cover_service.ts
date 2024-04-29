@@ -9,9 +9,9 @@ import env from '#start/env'
 import { writeFile } from 'node:fs/promises'
 
 export default class CoverService {
-  protected coverResizedDir = env.get('COVER_RESIZED_DIR')
-  protected coverRawDir = env.get('COVER_RAW_DIR')
-  protected coverExtension = env.get('DEFAULT_COVER_EXTENSION')
+  protected coverResizedDir: string | undefined = env.get('COVER_RESIZED_DIR')
+  protected coverRawDir: string | undefined = env.get('COVER_RAW_DIR')
+  protected coverExtension: string | undefined = env.get('DEFAULT_COVER_EXTENSION')
 
   async saveCover(type: MediaTypes, name: string, tmpPath: string | undefined) {
     const coverName = createFileName()
