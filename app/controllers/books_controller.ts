@@ -14,31 +14,27 @@ export default class BooksController {
   ) {}
 
   public async addOneBook({ request, response }: HttpContext) {
-    const payloadValidation = await request.validateUsing(createBookValidator)
-
     try {
+      const payloadValidation = await request.validateUsing(createBookValidator)
       const newMedia = await this.bookService.addOneBook(payloadValidation)
       return response.status(201).json(newMedia)
     } catch (error) {
-      return response.status(400).json({
-        name: error.name,
-        message: error.message,
-      })
+      return response.status(400).json({ error })
     }
   }
 
   public async updateOneBook({ request, params, response }: HttpContext) {
-    const mediaId = params.id
-    const payloadValidation = await request.validateUsing(updateBookValidator)
+    const mediaId = params.mediaId
     try {
+      const payloadValidation = await request.validateUsing(updateBookValidator)
       const book = await this.bookService.updateOneBook(payloadValidation, mediaId)
 
       return response.status(201).json(book)
     } catch (error) {
-      return response.status(400).json({
-        errorName: error.name,
-        errorMessage: error.message,
-      })
+      if (error instanceof Error) {
+        return response.status(400).json({ error })
+      }
+      return response.status(400).json({ error })
     }
   }
 
@@ -49,7 +45,6 @@ export default class BooksController {
 
   public async getOneBookByMediaId({ params, response }: HttpContext) {
     const mediaId = params.mediaId
-
     try {
       const book = await this.bookService.getOneBookByMediaId(mediaId)
       return response.status(200).json(book)
