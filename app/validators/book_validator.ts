@@ -7,10 +7,12 @@ export const createBookValidator = vine.compile(
   vine.object({
     mediaParentId: vine.number().nullable(),
     type: vine.enum(validBookTypes),
-    cover: vine.file({
-      size: '2mb',
-      extnames: validCoverFileExtension,
-    }),
+    cover: vine
+      .file({
+        size: '2mb',
+        extnames: validCoverFileExtension,
+      })
+      .nullable(),
     name: vine.string().trim(),
     released: vine.string().trim(),
     synopsis: vine.string().trim(),
