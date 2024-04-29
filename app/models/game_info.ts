@@ -4,6 +4,8 @@ import { BaseModel, belongsTo, column } from '@adonisjs/lucid/orm'
 import type { BelongsTo } from '@adonisjs/lucid/types/relations'
 
 export default class GameInfo extends BaseModel {
+  public static table = 'games_infos'
+
   @column({ isPrimary: true })
   declare id: number
 

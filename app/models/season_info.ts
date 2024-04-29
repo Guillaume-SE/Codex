@@ -3,6 +3,8 @@ import { BaseModel, belongsTo, column } from '@adonisjs/lucid/orm'
 import type { BelongsTo } from '@adonisjs/lucid/types/relations'
 
 export default class SeasonInfo extends BaseModel {
+  public static table = 'seasons_infos'
+
   @column({ isPrimary: true })
   declare id: number
 

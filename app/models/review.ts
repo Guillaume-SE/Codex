@@ -4,6 +4,8 @@ import { BaseModel, beforeCreate, beforeUpdate, belongsTo, column } from '@adoni
 import type { BelongsTo } from '@adonisjs/lucid/types/relations'
 
 export default class Review extends BaseModel {
+  public static table = 'reviews'
+
   @column({ isPrimary: true })
   declare id: number
 

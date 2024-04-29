@@ -9,6 +9,8 @@ import { BaseModel, belongsTo, column, hasMany, hasOne } from '@adonisjs/lucid/o
 import type { BelongsTo, HasMany, HasOne } from '@adonisjs/lucid/types/relations'
 
 export default class Media extends BaseModel {
+  public static table = 'media'
+
   @column({ isPrimary: true })
   declare id: number
 
