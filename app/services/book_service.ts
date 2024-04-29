@@ -6,6 +6,7 @@ import CoverService from '#services/cover_service'
 import MediaService from '#services/media_service'
 import env from '#start/env'
 import { inject } from '@adonisjs/core'
+import db from '@adonisjs/lucid/services/db'
 
 @inject()
 export default class BookService {
@@ -13,6 +14,8 @@ export default class BookService {
     protected mediaService: MediaService,
     protected coverService: CoverService
   ) {}
+  protected defaultCoverFilename = env.get('DEFAULT_COVER_FILENAME')
+  protected defaultCoverAltText = env.get('DEFAULT_COVER_ALT_TEXT')
 
   async addOneBook(payload: IBook) {
     const {
@@ -31,8 +34,8 @@ export default class BookService {
 
     await this.mediaService.isMediaAlreadyAdded(type, name, released)
 
-    let coverName = env.get('DEFAULT_COVER_FILENAME')
-    let coverAltText = env.get('DEFAULT_COVER_ALT_TEXT')
+    let coverName = this.defaultCoverFilename
+    let coverAltText = this.defaultCoverAltText
     if (cover) {
       const newCover = await this.coverService.saveCover(type, name, cover.tmpPath)
       coverName = newCover.coverName
@@ -75,17 +78,14 @@ export default class BookService {
 
     // update also the cover alt text
     const mediaNameAsChanged = media.name !== payload.name
+    const isNotDefaultCover = cover.alternative !== this.defaultCoverAltText
     const newCoverAltText = createAlternativeText(type, name)
-
-    // const trx = await Database.transaction()
 
     media.merge(generalMediaInfos).save()
     book.merge(specificBookInfos).save()
-    if (mediaNameAsChanged) {
+    if (mediaNameAsChanged && isNotDefaultCover) {
       cover.merge({ alternative: newCoverAltText }).save()
     }
-
-    // await trx.commit()
 
     return { media: generalMediaInfos, book: specificBookInfos, cover: newCoverAltText }
   }
