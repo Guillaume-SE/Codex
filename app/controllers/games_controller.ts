@@ -1,9 +1,7 @@
-import { AlreadyExistError, WrongMediaTypeError } from '#app/exceptions/CustomError'
-import CreateGameValidator from '#app/validators/CreateGameValidator'
-import UpdateGameValidator from '#app/validators/UpdateGameValidator'
 import CoverService from '#services/cover_service'
 import GameService from '#services/game_service'
 import MediaService from '#services/media_service'
+import { createGameValidator, updateGameValidator } from '#validators/game_validator'
 import { inject } from '@adonisjs/core'
 import type { HttpContext } from '@adonisjs/core/http'
 
@@ -16,37 +14,27 @@ export default class GamesController {
   ) {}
 
   public async addOneGame({ request, response }: HttpContext) {
-    const payloadValidation = await request.validate(CreateGameValidator)
-
     try {
+      const payloadValidation = await request.validateUsing(createGameValidator)
       const newMedia = await this.gameService.addOneGame(payloadValidation)
       return response.status(201).json(newMedia)
     } catch (error) {
-      if (error instanceof AlreadyExistError || error instanceof WrongMediaTypeError) {
-        return response.status(400).json({
-          name: error.name,
-          message: error.message,
-        })
-      }
-      console.error(error)
+      return response.status(400).json({ error })
     }
   }
 
   public async updateOneGame({ request, params, response }: HttpContext) {
-    const mediaId = params.id
-    const payloadValidation = await request.validate(UpdateGameValidator)
+    const mediaId = params.mediaId
     try {
+      const payloadValidation = await request.validateUsing(updateGameValidator)
       const game = await this.gameService.updateOneGame(payloadValidation, mediaId)
 
       return response.status(201).json(game)
     } catch (error) {
-      if (error instanceof AlreadyExistError || error instanceof WrongMediaTypeError) {
-        return response.status(400).json({
-          name: error.name,
-          message: error.message,
-        })
+      if (error instanceof Error) {
+        return response.status(400).json({ error })
       }
-      console.error(error)
+      return response.status(400).json({ error })
     }
   }
 
