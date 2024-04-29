@@ -6,7 +6,6 @@ import CoverService from '#services/cover_service'
 import MediaService from '#services/media_service'
 import env from '#start/env'
 import { inject } from '@adonisjs/core'
-import db from '@adonisjs/lucid/services/db'
 
 @inject()
 export default class BookService {
