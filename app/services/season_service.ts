@@ -13,6 +13,8 @@ export default class SeasonService {
     protected mediaService: MediaService,
     protected coverService: CoverService
   ) {}
+  protected defaultCoverFilename = env.get('DEFAULT_COVER_FILENAME')
+  protected defaultCoverAltText = env.get('DEFAULT_COVER_ALT_TEXT')
 
   async addOneSeason(payload: ISeason) {
     const {
@@ -31,8 +33,8 @@ export default class SeasonService {
 
     await this.mediaService.isMediaAlreadyAdded(type, name, released)
 
-    let coverName = env.get('DEFAULT_COVER_FILENAME')
-    let coverAltText = env.get('DEFAULT_COVER_ALT_TEXT')
+    let coverName = this.defaultCoverFilename
+    let coverAltText = this.defaultCoverAltText
     if (cover) {
       const newCover = await this.coverService.saveCover(type, name, cover.tmpPath)
       coverName = newCover.coverName
@@ -75,11 +77,12 @@ export default class SeasonService {
 
     // update also the cover alt text
     const mediaNameAsChanged = media.name !== payload.name
+    const isNotDefaultCover = cover.alternative !== this.defaultCoverAltText
     const newCoverAltText = createAlternativeText(type, name)
 
     media.merge(generalMediaInfos).save()
     season.merge(specificSeasonInfos).save()
-    if (mediaNameAsChanged) {
+    if (mediaNameAsChanged && isNotDefaultCover) {
       cover.merge({ alternative: newCoverAltText }).save()
     }
 
@@ -88,17 +91,17 @@ export default class SeasonService {
 
   async getAllSeasons() {
     const datas = await Media.query()
-      .from('medias')
-      .join('seasons_infos', 'medias.id', '=', 'seasons_infos.media_id')
-      .join('reviews', 'medias.id', '=', 'reviews.media_id')
-      .join('covers', 'medias.id', '=', 'covers.media_id')
+      .from('media')
+      .join('seasons_infos', 'media.id', '=', 'seasons_infos.media_id')
+      .join('reviews', 'media.id', '=', 'reviews.media_id')
+      .join('covers', 'media.id', '=', 'covers.media_id')
       .select(
-        'medias.id',
-        'medias.media_parent_id',
-        'medias.name',
-        'medias.type',
-        'medias.released',
-        'medias.synopsis',
+        'media.id',
+        'media.media_parent_id',
+        'media.name',
+        'media.type',
+        'media.released',
+        'media.synopsis',
         'covers.filename',
         'covers.alternative',
         'seasons_infos.creator',
@@ -155,17 +158,17 @@ export default class SeasonService {
 
   async getOneSeasonByMediaId(mediaId: number) {
     const datas = await Media.query()
-      .from('medias')
-      .join('seasons_infos', 'medias.id', '=', 'seasons_infos.media_id')
-      .join('reviews', 'medias.id', '=', 'reviews.media_id')
-      .join('covers', 'medias.id', '=', 'covers.media_id')
+      .from('media')
+      .join('seasons_infos', 'media.id', '=', 'seasons_infos.media_id')
+      .join('reviews', 'media.id', '=', 'reviews.media_id')
+      .join('covers', 'media.id', '=', 'covers.media_id')
       .select(
-        'medias.id',
-        'medias.media_parent_id',
-        'medias.name',
-        'medias.type',
-        'medias.released',
-        'medias.synopsis',
+        'media.id',
+        'media.media_parent_id',
+        'media.name',
+        'media.type',
+        'media.released',
+        'media.synopsis',
         'covers.filename',
         'covers.alternative',
         'seasons_infos.creator',
@@ -177,7 +180,7 @@ export default class SeasonService {
         'reviews.created_at',
         'reviews.updated_at'
       )
-      .where('medias.id', '=', mediaId)
+      .where('media.id', '=', mediaId)
 
     const noSeasonFound = datas.length === 0
     if (noSeasonFound) {
