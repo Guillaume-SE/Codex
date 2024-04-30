@@ -1,9 +1,7 @@
-import { AlreadyExistError, WrongMediaTypeError } from '#app/exceptions/CustomError'
-import CreateMovieValidator from '#app/validators/CreateMovieValidator'
-import UpdateMovieValidator from '#app/validators/UpdateMovieValidator'
 import CoverService from '#services/cover_service'
 import MediaService from '#services/media_service'
 import MovieService from '#services/movie_service'
+import { createMovieValidator, updateMovieValidator } from '#validators/movie_validator'
 import { inject } from '@adonisjs/core'
 import type { HttpContext } from '@adonisjs/core/http'
 
@@ -16,36 +14,27 @@ export default class MoviesController {
   ) {}
 
   public async addOneMovie({ request, response }: HttpContext) {
-    const payloadValidation = await request.validate(CreateMovieValidator)
     try {
+      const payloadValidation = await request.validateUsing(createMovieValidator)
       const newMedia = await this.movieService.addOneMovie(payloadValidation)
       return response.status(201).json(newMedia)
     } catch (error) {
-      if (error instanceof AlreadyExistError || error instanceof WrongMediaTypeError) {
-        return response.status(400).json({
-          name: error.name,
-          message: error.message,
-        })
-      }
-      console.error(error)
+      return response.status(400).json({ error })
     }
   }
 
   public async updateOneMovie({ request, params, response }: HttpContext) {
-    const mediaId = params.id
-    const payloadValidation = await request.validate(UpdateMovieValidator)
+    const mediaId = params.mediaId
     try {
+      const payloadValidation = await request.validateUsing(updateMovieValidator)
       const movie = await this.movieService.updateOneMovie(payloadValidation, mediaId)
 
       return response.status(201).json(movie)
     } catch (error) {
-      if (error instanceof AlreadyExistError || error instanceof WrongMediaTypeError) {
-        return response.status(400).json({
-          name: error.name,
-          message: error.message,
-        })
+      if (error instanceof Error) {
+        return response.status(400).json({ error })
       }
-      console.error(error)
+      return response.status(400).json({ error })
     }
   }
 
@@ -60,10 +49,8 @@ export default class MoviesController {
     try {
       const movie = await this.movieService.getOneMovieByMediaId(mediaId)
       return response.status(200).json(movie)
-    } catch (NotFoundError) {
-      return response
-        .status(404)
-        .json({ error_name: NotFoundError.name, error_message: NotFoundError.message })
+    } catch (error) {
+      return response.status(404).json({ errorName: error.name, errorMessage: error.message })
     }
   }
 }
