@@ -1,5 +1,5 @@
 import { createAlternativeText } from '#functions/create_cover_alt_text'
-import { IMovie } from '#interfaces/media_interfaces'
+import { IMovie } from '#interfaces/media_interface'
 import Media from '#models/media'
 import MovieInfo from '#models/movie_info'
 import CoverService from '#services/cover_service'

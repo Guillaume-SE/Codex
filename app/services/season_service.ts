@@ -1,5 +1,5 @@
 import { createAlternativeText } from '#functions/create_cover_alt_text'
-import { ISeason } from '#interfaces/media_interfaces'
+import { ISeason } from '#interfaces/media_interface'
 import Media from '#models/media'
 import SeasonInfo from '#models/season_info'
 import CoverService from '#services/cover_service'

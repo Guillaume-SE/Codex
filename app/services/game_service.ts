@@ -1,5 +1,5 @@
 import { createAlternativeText } from '#functions/create_cover_alt_text'
-import { IGame } from '#interfaces/media_interfaces'
+import { IGame } from '#interfaces/media_interface'
 import GameInfo from '#models/game_info'
 import Media from '#models/media'
 import CoverService from '#services/cover_service'

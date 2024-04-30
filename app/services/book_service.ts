@@ -1,5 +1,5 @@
 import { createAlternativeText } from '#functions/create_cover_alt_text'
-import { IBook } from '#interfaces/media_interfaces'
+import { IBook } from '#interfaces/media_interface'
 import BookInfo from '#models/book_info'
 import Media from '#models/media'
 import CoverService from '#services/cover_service'
