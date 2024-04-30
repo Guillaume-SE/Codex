@@ -1,35 +1,29 @@
-import UpdateCoverValidator from '#app/validators/UpdateCoverValidator'
 import { resize } from '#functions/cover_modification'
 import { createAlternativeText } from '#functions/create_cover_alt_text'
 import { createFileName } from '#functions/generate_cover_name'
 import Cover from '#models/cover'
 import Media from '#models/media'
+import CoverService from '#services/cover_service'
 import env from '#start/env'
+import { updateCoverValidator } from '#validators/cover_validator'
+import { inject } from '@adonisjs/core'
 import type { HttpContext } from '@adonisjs/core/http'
 
+@inject()
 export default class CoversController {
+  constructor(protected coverService: CoverService) {}
   protected defaultCoverFilename = env.get('DEFAULT_COVER_FILENAME')
   protected defaultCoverAltText = env.get('DEFAULT_COVER_ALT_TEXT')
 
   public async getAllCovers({ response }: HttpContext) {
-    const covers = await Cover.all()
-    return response.status(201).json(covers)
+    const covers = await this.coverService.getAllCovers()
+    return response.status(201).json({ covers: covers })
   }
 
   public async updateOneCover({ request, params, response }: HttpContext) {
     const mediaId = params.mediaId
-    const mediaRelatedToCover = await Media.find(mediaId)
-    const mediaDoesntExist = !mediaRelatedToCover
-    if (mediaDoesntExist) {
-      return response.status(404).json("Aucun media n'a été trouvé")
-    }
-    const actualCover = await Cover.findBy('media_id', mediaId)
-    const coverDoesntExist = !actualCover
-    if (coverDoesntExist) {
-      return response.status(404).json("Aucune cover liée à ce media n'a été trouvée")
-    }
 
-    const payloadValidation = await request.validate(UpdateCoverValidator)
+    const payloadValidation = await request.validateUsing(updateCoverValidator)
     const newCover = payloadValidation.cover
 
     const mediaName = mediaRelatedToCover.name
