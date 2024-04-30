@@ -23,6 +23,11 @@ router.get('/media', [MediaController, 'getAllMedia']).as('media.show')
 router.get('/media/:id', [MediaController, 'getOneMediaById']).as('media.show.one')
 //ADMIN
 router.delete('/media/:id', [MediaController, 'deleteOneMedia']).as('media.delete')
+/**
+ * reviews
+ */
+//ADMIN
+router.put('media/:mediaId/reviews', [ReviewsController, 'updateOneReview']).as('reviews.update')
 
 /**
  * movies
@@ -67,10 +72,3 @@ router.get('/covers', [CoversController, 'getAllCovers'])
 //ADMIN
 router.put('/covers/:mediaId', [CoversController, 'updateOneCover'])
 router.delete('/covers/:mediaId', [CoversController, 'deleteOneCover'])
-
-/**
- * reviews
- */
-router.get('/reviews', [ReviewsController, 'getAllReviews']).as('reviews.show')
-//ADMIN
-router.put('/reviews/:mediaId', [ReviewsController, 'updateOneReview']).as('reviews.update')
