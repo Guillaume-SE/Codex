@@ -16,7 +16,7 @@ export default class SeasonService {
   protected defaultCoverFilename = env.get('DEFAULT_COVER_FILENAME')
   protected defaultCoverAltText = env.get('DEFAULT_COVER_ALT_TEXT')
 
-  async addOneSeason(payload: ISeason) {
+  async addOneSeason(datas: ISeason) {
     const {
       mediaParentId,
       type,
@@ -29,7 +29,7 @@ export default class SeasonService {
       opinion,
       isFavorite,
       ...specificSeasonInfos
-    } = payload
+    } = datas
 
     await this.mediaService.isMediaAlreadyAdded(type, name, released)
 
@@ -58,7 +58,7 @@ export default class SeasonService {
     }
   }
 
-  async updateOneSeason(payload: ISeason, mediaId: number) {
+  async updateOneSeason(datas: ISeason, mediaId: number) {
     const media = await this.mediaService.isMediaExist(mediaId)
     if (!media) {
       throw new Error('pas de media')
@@ -72,11 +72,11 @@ export default class SeasonService {
     if (!season) {
       throw new Error('pas de saison')
     }
-    const { mediaParentId, type, name, released, synopsis, ...specificSeasonInfos } = payload
+    const { mediaParentId, type, name, released, synopsis, ...specificSeasonInfos } = datas
     const generalMediaInfos = { mediaParentId, type, name, released, synopsis }
 
     // update also the cover alt text
-    const mediaNameAsChanged = media.name !== payload.name
+    const mediaNameAsChanged = media.name !== datas.name
     const isNotDefaultCover = cover.alternative !== this.defaultCoverAltText
     const newCoverAltText = createAlternativeText(type, name)
 

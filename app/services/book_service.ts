@@ -16,7 +16,7 @@ export default class BookService {
   protected defaultCoverFilename = env.get('DEFAULT_COVER_FILENAME')
   protected defaultCoverAltText = env.get('DEFAULT_COVER_ALT_TEXT')
 
-  async addOneBook(payload: IBook) {
+  async addOneBook(data: IBook) {
     const {
       mediaParentId,
       type,
@@ -29,7 +29,7 @@ export default class BookService {
       opinion,
       isFavorite,
       ...specificBookInfos
-    } = payload
+    } = data
 
     await this.mediaService.isMediaAlreadyAdded(type, name, released)
 
@@ -58,7 +58,7 @@ export default class BookService {
     }
   }
 
-  async updateOneBook(payload: IBook, mediaId: number) {
+  async updateOneBook(datas: IBook, mediaId: number) {
     const media = await this.mediaService.isMediaExist(mediaId)
     if (!media) {
       throw new Error('pas de media')
@@ -72,11 +72,11 @@ export default class BookService {
     if (!book) {
       throw new Error('pas de livre')
     }
-    const { mediaParentId, type, name, released, synopsis, ...specificBookInfos } = payload
+    const { mediaParentId, type, name, released, synopsis, ...specificBookInfos } = datas
     const generalMediaInfos = { mediaParentId, type, name, released, synopsis }
 
     // update also the cover alt text
-    const mediaNameAsChanged = media.name !== payload.name
+    const mediaNameAsChanged = media.name !== datas.name
     const isNotDefaultCover = cover.alternative !== this.defaultCoverAltText
     const newCoverAltText = createAlternativeText(type, name)
 

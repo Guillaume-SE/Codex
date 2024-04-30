@@ -16,7 +16,7 @@ export default class MovieService {
   protected defaultCoverFilename = env.get('DEFAULT_COVER_FILENAME')
   protected defaultCoverAltText = env.get('DEFAULT_COVER_ALT_TEXT')
 
-  async addOneMovie(payload: IMovie) {
+  async addOneMovie(datas: IMovie) {
     const {
       mediaParentId,
       type,
@@ -29,7 +29,7 @@ export default class MovieService {
       opinion,
       isFavorite,
       ...specificMovieInfos
-    } = payload
+    } = datas
 
     await this.mediaService.isMediaAlreadyAdded(type, name, released)
 
@@ -58,7 +58,7 @@ export default class MovieService {
     }
   }
 
-  async updateOneMovie(payload: IMovie, mediaId: number) {
+  async updateOneMovie(datas: IMovie, mediaId: number) {
     const media = await this.mediaService.isMediaExist(mediaId)
     if (!media) {
       throw new Error('pas de media')
@@ -72,11 +72,11 @@ export default class MovieService {
     if (!movie) {
       throw new Error('pas de film')
     }
-    const { mediaParentId, type, name, released, synopsis, ...specificMovieInfos } = payload
+    const { mediaParentId, type, name, released, synopsis, ...specificMovieInfos } = datas
     const generalMediaInfos = { mediaParentId, type, name, released, synopsis }
 
     // update also the cover alt text
-    const mediaNameAsChanged = media.name !== payload.name
+    const mediaNameAsChanged = media.name !== datas.name
     const isNotDefaultCover = cover.alternative !== this.defaultCoverAltText
     const newCoverAltText = createAlternativeText(type, name)
 

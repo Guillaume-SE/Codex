@@ -16,7 +16,7 @@ export default class GameService {
   protected defaultCoverFilename = env.get('DEFAULT_COVER_FILENAME')
   protected defaultCoverAltText = env.get('DEFAULT_COVER_ALT_TEXT')
 
-  async addOneGame(payload: IGame) {
+  async addOneGame(datas: IGame) {
     const {
       mediaParentId,
       type,
@@ -29,7 +29,7 @@ export default class GameService {
       opinion,
       isFavorite,
       ...specificGameInfos
-    } = payload
+    } = datas
 
     await this.mediaService.isMediaAlreadyAdded(type, name, released)
 
@@ -58,7 +58,7 @@ export default class GameService {
     }
   }
 
-  async updateOneGame(payload: IGame, mediaId: number) {
+  async updateOneGame(datas: IGame, mediaId: number) {
     const media = await this.mediaService.isMediaExist(mediaId)
     if (!media) {
       throw new Error('pas de media')
@@ -72,11 +72,11 @@ export default class GameService {
     if (!game) {
       throw new Error('pas de jeu')
     }
-    const { mediaParentId, type, name, released, synopsis, ...specificGameInfos } = payload
+    const { mediaParentId, type, name, released, synopsis, ...specificGameInfos } = datas
     const generalMediaInfos = { mediaParentId, type, name, released, synopsis }
 
     // update also the cover alt text
-    const mediaNameAsChanged = media.name !== payload.name
+    const mediaNameAsChanged = media.name !== datas.name
     const isNotDefaultCover = cover.alternative !== this.defaultCoverAltText
     const newCoverAltText = createAlternativeText(type, name)
 
