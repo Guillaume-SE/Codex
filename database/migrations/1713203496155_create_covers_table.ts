@@ -14,6 +14,7 @@ export default class extends BaseSchema {
         .notNullable()
         .onDelete('CASCADE')
       table.string('filename').notNullable()
+      table.string('filename_raw').nullable()
       table.string('alternative').notNullable()
     })
   }

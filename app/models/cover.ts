@@ -14,6 +14,9 @@ export default class Cover extends BaseModel {
   @column()
   declare filename: string
 
+  @column({ columnName: 'filename_raw' })
+  declare filenameRaw: string | null
+
   @column()
   declare alternative: string
 
