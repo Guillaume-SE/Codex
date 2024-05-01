@@ -1,6 +1,3 @@
-import { resize } from '#functions/cover_modification'
-import { createAlternativeText } from '#functions/create_cover_alt_text'
-import { createFileName } from '#functions/generate_cover_name'
 import Cover from '#models/cover'
 import Media from '#models/media'
 import CoverService from '#services/cover_service'
@@ -23,51 +20,24 @@ export default class CoversController {
   public async updateOneCover({ request, params, response }: HttpContext) {
     const mediaId = params.mediaId
 
-    const payloadValidation = await request.validateUsing(updateCoverValidator)
-    const newCover = payloadValidation.cover
-
-    const mediaName = mediaRelatedToCover.name
-    const mediaType = mediaRelatedToCover.type
-    const newCoverName = createFileName()
-    const newCoverAltText = createAlternativeText(mediaType, mediaName)
-    const newCoverFormated = resize(newCover.tmpPath)
-
     try {
-      if (actualCover.filename !== this.defaultCoverFilename) {
-        await Drive.delete(`covers/${actualCover.filename}`)
-      }
-      await Drive.put(`covers/${newCoverName}`, await newCoverFormated, {
-        contentType: `image/jpg`,
-      })
-      actualCover.merge({ filename: newCoverName, alternative: newCoverAltText }).save()
-      return response.status(201)
+      const payloadValidation = await request.validateUsing(updateCoverValidator)
+      const cover = await this.coverService.updateOneCover(payloadValidation, mediaId)
+
+      return response.status(201).json(cover)
     } catch (error) {
-      return response.status(404)
+      return response.status(404).json(error)
     }
   }
 
   public async deleteOneCover({ params, response }: HttpContext) {
     const mediaId = params.mediaId
-    const media = await Media.find(mediaId)
-    if (!media) {
-      return response.status(404).json('Aucun media correspondant à cet id')
-    }
-    const cover = await Cover.findBy('media_id', mediaId)
 
-    if (cover) {
-      try {
-        const isCoverByDefault = cover.filename === this.defaultCoverFilename
-        if (isCoverByDefault) {
-          return response.status(404).json("L'image par défaut ne peut être supprimée")
-        }
-        await Drive.delete(`covers/${cover.filename}`)
-        cover
-          .merge({ filename: this.defaultCoverFilename, alternative: this.defaultCoverAltText })
-          .save()
-        return response.status(201)
-      } catch (error) {
-        return response.status(404)
-      }
+    try {
+      const cover = await this.coverService.deleteOneCover(mediaId)
+      return response.status(201).json(cover)
+    } catch (error) {
+      return response.status(404).json(error)
     }
   }
 }
