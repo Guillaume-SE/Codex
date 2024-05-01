@@ -34,15 +34,17 @@ export default class MovieService {
     await this.mediaService.isMediaAlreadyAdded(type, name, released)
 
     let coverName = this.defaultCoverFilename
+    let coverRawName = null
     let coverAltText = this.defaultCoverAltText
     if (cover) {
       const newCover = await this.coverService.saveCover(type, name, cover.tmpPath)
-      coverName = newCover.coverName
+      coverName = newCover.coverFilename
+      coverRawName = newCover.coverRawFilename
       coverAltText = newCover.coverAltText
     }
 
     const generalMediaInfos = { mediaParentId, type, name, released, synopsis }
-    const coverInfo = { filename: coverName, alternative: coverAltText }
+    const coverInfo = { filename: coverName, filenameRaw: coverRawName, alternative: coverAltText }
     const reviewInfo = { status, rating, opinion, isFavorite }
 
     const newMedia = await Media.create(generalMediaInfos)
