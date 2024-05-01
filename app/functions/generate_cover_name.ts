@@ -1,9 +1,12 @@
-import string from '@adonisjs/core/helpers/string'
+import { PathLike } from 'fs'
 
-export function createFileName(): string {
-  const timestamp = new Date().getTime().toString()
-  const randomString = string.random(15)
-  const fullName = `${timestamp}-${randomString}`
-
-  return fullName
+export function createFileName(
+  name: string,
+  fileExtension: string | PathLike,
+  withRaw: boolean
+): string {
+  if (withRaw) {
+    return `${name}-raw${fileExtension}`
+  }
+  return `${name}${fileExtension}`
 }
