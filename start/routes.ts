@@ -21,7 +21,6 @@ router.get('/users/:id', [UsersController, 'show']).as('users.show')
  */
 router.get('/media', [MediaController, 'getAllMedia']).as('media.show')
 router.get('/media/:id', [MediaController, 'getOneMediaById']).as('media.show.one')
-//ADMIN
 router.delete('/media/:id', [MediaController, 'deleteOneMedia']).as('media.delete')
 /**
  * reviews
