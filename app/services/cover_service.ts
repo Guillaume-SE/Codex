@@ -4,17 +4,18 @@ import { resize, toBuffer } from '#functions/cover_modification'
 import { createAlternativeText } from '#functions/create_cover_alt_text'
 import { createFileName } from '#functions/generate_cover_name'
 import { generateUniqueString } from '#functions/generate_unique_string'
-import { ICover } from '#interfaces/cover_interface'
+import { INewCover } from '#interfaces/cover_interface'
 import Cover from '#models/cover'
+import MediaService from '#services/media_service'
 import env from '#start/env'
 import { inject } from '@adonisjs/core'
 import { PathLike } from 'node:fs'
 import { unlink, writeFile } from 'node:fs/promises'
-import MediaService from './media_service.js'
 
 @inject()
 export default class CoverService {
   constructor(protected mediaService: MediaService) {}
+
   protected coverResizedDir: string | PathLike = env.get('COVER_RESIZED_DIR')
   protected coverRawDir: string | PathLike = env.get('COVER_RAW_DIR')
   protected coverExtension: string | PathLike = env.get('DEFAULT_COVER_EXTENSION')
@@ -28,18 +29,18 @@ export default class CoverService {
 
     const coverResized = await resize(tmpPath)
     const coverResizedFullPath = `${this.coverResizedDir}${coverFilename}`
-    const saveCoverResized = writeFile(coverResizedFullPath, coverResized)
+    const saveCoverResized = await writeFile(coverResizedFullPath, coverResized)
 
     // save cover without modification
     const coverRawFilename = createFileName(coverName, this.coverExtension, true)
     const coverRaw = await toBuffer(tmpPath)
     const coverRawFullPath = `${this.coverRawDir}${coverRawFilename}`
-    const saveCoverRaw = writeFile(coverRawFullPath, coverRaw)
+    const saveCoverRaw = await writeFile(coverRawFullPath, coverRaw)
 
     return { coverFilename, coverRawFilename, coverAltText }
   }
 
-  async updateOneCover(datas: ICover, mediaId: number) {
+  async updateOneCover(datas: INewCover, mediaId: number) {
     const media = await this.mediaService.isMediaExist(mediaId)
     if (!media) {
       throw new Error('pas de media')
@@ -70,16 +71,14 @@ export default class CoverService {
   }
 
   async deleteOneCover(mediaId: number) {
-    const media = await this.mediaService.isMediaExist(mediaId)
-    if (!media) {
-      throw new Error('pas de media')
-    }
-    const cover = await Cover.findBy('media_id', mediaId)
+    const cover = await this.isCoverExist(mediaId)
+
     if (cover) {
       const isNotDefaultCover = cover.filename !== this.defaultCoverFilename
       if (isNotDefaultCover) {
         await unlink(`${this.coverResizedDir}${cover.filename}`)
         await unlink(`${this.coverRawDir}${cover.filenameRaw}`)
+
         cover
           .merge({
             filename: this.defaultCoverFilename,
@@ -88,6 +87,14 @@ export default class CoverService {
           })
           .save()
       }
+    }
+  }
+
+  async deleteCoverWithFilename(filename: string, filenameRaw: string) {
+    const isNotDefaultCover = filename !== this.defaultCoverFilename
+    if (isNotDefaultCover) {
+      await unlink(`${this.coverResizedDir}${filename}`)
+      await unlink(`${this.coverRawDir}${filenameRaw}`)
     }
   }
 
