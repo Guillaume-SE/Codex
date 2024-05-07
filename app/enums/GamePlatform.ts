@@ -15,7 +15,8 @@ const platform = [
   'Nintendo DS',
   'Nintendo Switch',
   'PC',
-  'Mobile',
+  'Android',
+  'iOS',
   'Emulateur',
 ] as const
 
