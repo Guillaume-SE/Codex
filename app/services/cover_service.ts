@@ -11,6 +11,7 @@ import env from '#start/env'
 import { inject } from '@adonisjs/core'
 import { PathLike } from 'node:fs'
 import { rm, writeFile } from 'node:fs/promises'
+import path from 'node:path'
 
 @inject()
 export default class CoverService {
@@ -46,7 +47,7 @@ export default class CoverService {
       throw new Error('pas de media')
     }
 
-    const actualCover = await this.isCoverExist(mediaId)
+    const actualCover = await this.getOneCoverById(mediaId)
     if (!actualCover) {
       throw new Error('pas de cover')
     }
@@ -76,8 +77,10 @@ export default class CoverService {
     if (cover) {
       const isNotDefaultCover = cover.filename !== this.defaultCoverFilename
       if (isNotDefaultCover) {
-        await rm(`${this.coverResizedDir}${cover.filename}`, { force: true })
-        await rm(`${this.coverRawDir}${cover.filenameRaw}`, { force: true })
+        const coverResizedFullpath = path.join(`${this.coverResizedDir}${cover.filename}`)
+        const coverRawFullpath = path.join(`${this.coverRawDir}${cover.filenameRaw}`)
+        await rm(coverResizedFullpath, { force: true })
+        await rm(coverRawFullpath, { force: true })
 
         cover
           .merge({
@@ -90,11 +93,10 @@ export default class CoverService {
     }
   }
 
-  async deleteCoverWithFilename(filename: string, filenameRaw: string) {
+  async deleteCoverWithFilename(filename: string | null) {
     const isNotDefaultCover = filename !== this.defaultCoverFilename
     if (isNotDefaultCover) {
-      await rm(`${this.coverResizedDir}${filename}`)
-      await rm(`${this.coverRawDir}${filenameRaw}`)
+      await rm(`${path}${filename}`)
     }
   }
 
@@ -103,7 +105,7 @@ export default class CoverService {
     return covers
   }
 
-  async isCoverExist(mediaId: number) {
+  async getOneCoverById(mediaId: number) {
     const cover = await Cover.findBy('media_id', mediaId)
     return cover
   }
