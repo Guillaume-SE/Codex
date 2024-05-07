@@ -3,7 +3,7 @@ import Cover from '#models/cover'
 import Media from '#models/media'
 import env from '#start/env'
 import { inject } from '@adonisjs/core'
-import { unlink } from 'fs/promises'
+import { rm, unlink } from 'fs/promises'
 import { PathLike } from 'node:fs'
 
 @inject()
@@ -28,8 +28,8 @@ export default class MediaService {
     if (coverToDelete) {
       const isNotDefaultCover = coverToDelete.filename !== this.defaultCoverFilename
       if (isNotDefaultCover) {
-        await unlink(`${this.coverResizedDir}${coverToDelete.filename}`)
-        await unlink(`${this.coverRawDir}${coverToDelete.filenameRaw}`)
+        await rm(`${this.coverResizedDir}${coverToDelete.filename}`, { force: true })
+        await rm(`${this.coverRawDir}${coverToDelete.filenameRaw}`, { force: true })
       }
     }
   }
