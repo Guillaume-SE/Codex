@@ -6,6 +6,8 @@ import CoverService from '#services/cover_service'
 import MediaService from '#services/media_service'
 import env from '#start/env'
 import { inject } from '@adonisjs/core'
+import { PathLike } from 'node:fs'
+import { unlink } from 'node:fs/promises'
 
 @inject()
 export default class GameService {
@@ -15,6 +17,8 @@ export default class GameService {
   ) {}
   protected defaultCoverFilename = env.get('DEFAULT_COVER_FILENAME')
   protected defaultCoverAltText = env.get('DEFAULT_COVER_ALT_TEXT')
+  protected coverResizedDir: string | PathLike = env.get('COVER_RESIZED_DIR')
+  protected coverRawDir: string | PathLike = env.get('COVER_RAW_DIR')
 
   async addOneGame(datas: IGame) {
     const {
@@ -33,16 +37,22 @@ export default class GameService {
 
     await this.mediaService.isMediaAlreadyAdded(type, name, released)
 
-    let coverName = this.defaultCoverFilename
+    let coverFilename = this.defaultCoverFilename
+    let coverRawFilename = null
     let coverAltText = this.defaultCoverAltText
     if (cover) {
       const newCover = await this.coverService.saveCover(type, name, cover.tmpPath)
-      coverName = newCover.coverName
+      coverFilename = newCover.coverFilename
+      coverRawFilename = newCover.coverRawFilename
       coverAltText = newCover.coverAltText
     }
 
     const generalMediaInfos = { mediaParentId, type, name, released, synopsis }
-    const coverInfo = { filename: coverName, alternative: coverAltText }
+    const coverInfo = {
+      filename: coverFilename,
+      filenameRaw: coverRawFilename,
+      alternative: coverAltText,
+    }
     const reviewInfo = { status, rating, opinion, isFavorite }
 
     const newMedia = await Media.create(generalMediaInfos)
@@ -103,6 +113,7 @@ export default class GameService {
         'media.released',
         'media.synopsis',
         'covers.filename',
+        'covers.filename_raw',
         'covers.alternative',
         'games_infos.developer',
         'games_infos.publisher',
@@ -119,6 +130,7 @@ export default class GameService {
       const { id, mediaParentId, name, type, released, synopsis } = data
       const {
         filename,
+        filename_raw: filenameRaw,
         alternative,
         developer,
         publisher,
@@ -144,6 +156,7 @@ export default class GameService {
         },
         cover: {
           filename,
+          filenameRaw,
           alternative,
         },
         review: {
@@ -173,6 +186,7 @@ export default class GameService {
         'media.released',
         'media.synopsis',
         'covers.filename',
+        'covers.filename_raw',
         'covers.alternative',
         'games_infos.developer',
         'games_infos.publisher',
@@ -194,6 +208,7 @@ export default class GameService {
       const { id, mediaParentId, name, type, released, synopsis } = data
       const {
         filename,
+        filename_raw: filenameRaw,
         alternative,
         developer,
         publisher,
@@ -220,6 +235,7 @@ export default class GameService {
         },
         cover: {
           filename,
+          filenameRaw,
           alternative,
         },
         review: {

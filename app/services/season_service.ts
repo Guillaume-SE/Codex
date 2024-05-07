@@ -33,16 +33,22 @@ export default class SeasonService {
 
     await this.mediaService.isMediaAlreadyAdded(type, name, released)
 
-    let coverName = this.defaultCoverFilename
+    let coverFilename = this.defaultCoverFilename
+    let coverRawFilename = null
     let coverAltText = this.defaultCoverAltText
     if (cover) {
       const newCover = await this.coverService.saveCover(type, name, cover.tmpPath)
-      coverName = newCover.coverName
+      coverFilename = newCover.coverFilename
+      coverRawFilename = newCover.coverRawFilename
       coverAltText = newCover.coverAltText
     }
 
     const generalMediaInfos = { mediaParentId, type, name, released, synopsis }
-    const coverInfo = { filename: coverName, alternative: coverAltText }
+    const coverInfo = {
+      filename: coverFilename,
+      filenameRaw: coverRawFilename,
+      alternative: coverAltText,
+    }
     const reviewInfo = { status, rating, opinion, isFavorite }
 
     const newMedia = await Media.create(generalMediaInfos)
@@ -103,6 +109,7 @@ export default class SeasonService {
         'media.released',
         'media.synopsis',
         'covers.filename',
+        'covers.filename_raw',
         'covers.alternative',
         'seasons_infos.creator',
         'seasons_infos.length',
@@ -118,6 +125,7 @@ export default class SeasonService {
       const { id, mediaParentId, name, type, released, synopsis } = data
       const {
         filename,
+        filename_raw: filenameRaw,
         alternative,
         creator,
         length,
@@ -141,6 +149,7 @@ export default class SeasonService {
         },
         cover: {
           filename,
+          filenameRaw,
           alternative,
         },
         review: {
@@ -170,6 +179,7 @@ export default class SeasonService {
         'media.released',
         'media.synopsis',
         'covers.filename',
+        'covers.filename_raw',
         'covers.alternative',
         'seasons_infos.creator',
         'seasons_infos.length',
@@ -190,6 +200,7 @@ export default class SeasonService {
       const { id, mediaParentId, name, type, released, synopsis } = data
       const {
         filename,
+        filename_raw: filenameRaw,
         alternative,
         creator,
         length,
@@ -214,6 +225,7 @@ export default class SeasonService {
         },
         cover: {
           filename,
+          filenameRaw,
           alternative,
         },
         review: {

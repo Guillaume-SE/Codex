@@ -33,18 +33,22 @@ export default class MovieService {
 
     await this.mediaService.isMediaAlreadyAdded(type, name, released)
 
-    let coverName = this.defaultCoverFilename
-    let coverRawName = null
+    let coverFilename = this.defaultCoverFilename
+    let coverRawFilename = null
     let coverAltText = this.defaultCoverAltText
     if (cover) {
       const newCover = await this.coverService.saveCover(type, name, cover.tmpPath)
-      coverName = newCover.coverFilename
-      coverRawName = newCover.coverRawFilename
+      coverFilename = newCover.coverFilename
+      coverRawFilename = newCover.coverRawFilename
       coverAltText = newCover.coverAltText
     }
 
     const generalMediaInfos = { mediaParentId, type, name, released, synopsis }
-    const coverInfo = { filename: coverName, filenameRaw: coverRawName, alternative: coverAltText }
+    const coverInfo = {
+      filename: coverFilename,
+      filenameRaw: coverRawFilename,
+      alternative: coverAltText,
+    }
     const reviewInfo = { status, rating, opinion, isFavorite }
 
     const newMedia = await Media.create(generalMediaInfos)
@@ -105,6 +109,7 @@ export default class MovieService {
         'media.released',
         'media.synopsis',
         'covers.filename',
+        'covers.filename_raw',
         'covers.alternative',
         'movies_infos.director',
         'movies_infos.screenwriter',
@@ -120,6 +125,7 @@ export default class MovieService {
       const { id, mediaParentId, name, type, released, synopsis } = data
       const {
         filename,
+        filename_raw: filenameRaw,
         alternative,
         director,
         screenwriter,
@@ -146,6 +152,7 @@ export default class MovieService {
         },
         cover: {
           filename,
+          filenameRaw,
           alternative,
         },
         review: {
@@ -175,6 +182,7 @@ export default class MovieService {
         'media.released',
         'media.synopsis',
         'covers.filename',
+        'covers.filename_raw',
         'covers.alternative',
         'movies_infos.director',
         'movies_infos.screenwriter',
@@ -196,6 +204,7 @@ export default class MovieService {
       const { id, mediaParentId, name, type, released, synopsis } = data
       const {
         filename,
+        filename_raw: filenameRaw,
         alternative,
         director,
         screenwriter,
@@ -222,6 +231,7 @@ export default class MovieService {
         },
         cover: {
           filename,
+          filenameRaw,
           alternative,
         },
         review: {
