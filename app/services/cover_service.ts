@@ -6,15 +6,15 @@ import { createFileName } from '#functions/generate_cover_name'
 import { generateUniqueString } from '#functions/generate_unique_string'
 import { INewCover } from '#interfaces/cover_interface'
 import Cover from '#models/cover'
-import MediaService from '#services/media_service'
+import Media from '#models/media'
 import env from '#start/env'
 import { inject } from '@adonisjs/core'
 import { PathLike } from 'node:fs'
-import { unlink, writeFile } from 'node:fs/promises'
+import { rm, writeFile } from 'node:fs/promises'
 
 @inject()
 export default class CoverService {
-  constructor(protected mediaService: MediaService) {}
+  constructor() {}
 
   protected coverResizedDir: string | PathLike = env.get('COVER_RESIZED_DIR')
   protected coverRawDir: string | PathLike = env.get('COVER_RAW_DIR')
@@ -41,7 +41,7 @@ export default class CoverService {
   }
 
   async updateOneCover(datas: INewCover, mediaId: number) {
-    const media = await this.mediaService.isMediaExist(mediaId)
+    const media = await Media.find(mediaId)
     if (!media) {
       throw new Error('pas de media')
     }
@@ -55,8 +55,8 @@ export default class CoverService {
     //delete old file
     const isNotDefaultCover = actualCover.filename !== this.defaultCoverFilename
     if (isNotDefaultCover) {
-      await unlink(`${this.coverResizedDir}${actualCover.filename}`)
-      await unlink(`${this.coverRawDir}${actualCover.filenameRaw}`)
+      await rm(`${this.coverResizedDir}${actualCover.filename}`)
+      await rm(`${this.coverRawDir}${actualCover.filenameRaw}`)
     }
 
     const saveNewCover = await this.saveCover(media.type, media.name, newCover.tmpPath)
@@ -71,13 +71,13 @@ export default class CoverService {
   }
 
   async deleteOneCover(mediaId: number) {
-    const cover = await this.isCoverExist(mediaId)
+    const cover = await Cover.findBy('media_id', mediaId)
 
     if (cover) {
       const isNotDefaultCover = cover.filename !== this.defaultCoverFilename
       if (isNotDefaultCover) {
-        await unlink(`${this.coverResizedDir}${cover.filename}`)
-        await unlink(`${this.coverRawDir}${cover.filenameRaw}`)
+        await rm(`${this.coverResizedDir}${cover.filename}`, { force: true })
+        await rm(`${this.coverRawDir}${cover.filenameRaw}`, { force: true })
 
         cover
           .merge({
@@ -93,8 +93,8 @@ export default class CoverService {
   async deleteCoverWithFilename(filename: string, filenameRaw: string) {
     const isNotDefaultCover = filename !== this.defaultCoverFilename
     if (isNotDefaultCover) {
-      await unlink(`${this.coverResizedDir}${filename}`)
-      await unlink(`${this.coverRawDir}${filenameRaw}`)
+      await rm(`${this.coverResizedDir}${filename}`)
+      await rm(`${this.coverRawDir}${filenameRaw}`)
     }
   }
 
