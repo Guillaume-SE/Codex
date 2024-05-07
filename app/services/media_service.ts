@@ -1,9 +1,7 @@
 import { MediaTypes } from '#enums/MediaTypes'
-import Cover from '#models/cover'
 import Media from '#models/media'
 import env from '#start/env'
 import { inject } from '@adonisjs/core'
-import { rm } from 'fs/promises'
 import { PathLike } from 'node:fs'
 
 @inject()
@@ -19,18 +17,7 @@ export default class MediaService {
     if (!media) {
       throw new Error('pas de media')
     }
-
-    const coverToDelete = await Cover.findBy('media_id', mediaId)
-
     await media.delete()
-
-    if (coverToDelete) {
-      const isNotDefaultCover = coverToDelete.filename !== this.defaultCoverFilename
-      if (isNotDefaultCover) {
-        await rm(`${this.coverResizedDir}${coverToDelete.filename}`, { force: true })
-        await rm(`${this.coverRawDir}${coverToDelete.filenameRaw}`, { force: true })
-      }
-    }
   }
 
   async getOneMediaById(mediaId: number) {
