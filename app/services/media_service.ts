@@ -3,7 +3,7 @@ import Cover from '#models/cover'
 import Media from '#models/media'
 import env from '#start/env'
 import { inject } from '@adonisjs/core'
-import { rm, unlink } from 'fs/promises'
+import { rm } from 'fs/promises'
 import { PathLike } from 'node:fs'
 
 @inject()
@@ -15,12 +15,11 @@ export default class MediaService {
   protected coverRawDir: string | PathLike = env.get('COVER_RAW_DIR')
 
   public async deleteOneMedia(mediaId: number) {
-    const media = await this.isMediaExist(mediaId)
+    const media = await this.getOneMediaById(mediaId)
     if (!media) {
       throw new Error('pas de media')
     }
 
-    // direct call to model to avoid circular dependencies
     const coverToDelete = await Cover.findBy('media_id', mediaId)
 
     await media.delete()
@@ -51,11 +50,6 @@ export default class MediaService {
       throw new Error('Le media a déjà été ajouté')
     }
 
-    return media
-  }
-
-  async isMediaExist(mediaId: number) {
-    const media = await Media.find(mediaId)
     return media
   }
 }
