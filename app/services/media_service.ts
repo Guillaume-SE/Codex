@@ -1,16 +1,10 @@
 import { MediaTypes } from '#enums/MediaTypes'
 import Media from '#models/media'
-import env from '#start/env'
 import { inject } from '@adonisjs/core'
-import { PathLike } from 'node:fs'
 
 @inject()
 export default class MediaService {
   constructor() {}
-
-  protected defaultCoverFilename = env.get('DEFAULT_COVER_FILENAME')
-  protected coverResizedDir: string | PathLike = env.get('COVER_RESIZED_DIR')
-  protected coverRawDir: string | PathLike = env.get('COVER_RAW_DIR')
 
   public async deleteOneMedia(mediaId: number) {
     const media = await this.getOneMediaById(mediaId)
