@@ -15,9 +15,9 @@ export default class MediasController {
     const mediaId = params.id
 
     try {
-      const cover = await this.coverService.deleteOneCover(mediaId)
-      const media = await this.mediaService.deleteOneMedia(mediaId)
-      return response.status(201).json({ media })
+      await this.coverService.deleteOneCover(mediaId)
+      await this.mediaService.deleteOneMedia(mediaId)
+      return response.status(200)
     } catch (error) {
       return response.status(404).json(error)
     }
