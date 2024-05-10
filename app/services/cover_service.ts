@@ -32,7 +32,7 @@ export default class CoverService {
     const coverResizedFullPath = `${this.coverResizedDir}${coverFilename}`
     const saveCoverResized = await writeFile(coverResizedFullPath, coverResized)
 
-    // save cover without modification
+    // same without modification
     const coverRawFilename = createFileName(coverName, this.coverExtension, true)
     const coverRaw = await toBuffer(tmpPath)
     const coverRawFullPath = `${this.coverRawDir}${coverRawFilename}`
