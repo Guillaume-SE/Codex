@@ -8,12 +8,12 @@ export default class ReviewsController {
   constructor(protected mediaService: MediaService) {}
 
   async updateOneReview(datas: IReview, mediaId: number) {
-    const media = await this.mediaService.isMediaExist(mediaId)
+    const media = await this.mediaService.getOneMediaById(mediaId)
     if (!media) {
       throw new Error('pas de media')
     }
 
-    const review = await this.isReviewExist(mediaId)
+    const review = await this.getOneReviewByMediaId(mediaId)
     if (!review) {
       throw new Error('pas de review')
     }
@@ -23,7 +23,7 @@ export default class ReviewsController {
     return review
   }
 
-  async isReviewExist(mediaId: number) {
+  async getOneReviewByMediaId(mediaId: number) {
     const review = await Review.findBy('media_id', mediaId)
     return review
   }
