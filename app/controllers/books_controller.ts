@@ -49,7 +49,7 @@ export default class BooksController {
       const book = await this.bookService.getOneBookByMediaId(mediaId)
       return response.status(200).json(book)
     } catch (error) {
-      return response.status(404).json({ errorName: error.name, errorMessage: error.message })
+      return response.status(404).json(error)
     }
   }
 }

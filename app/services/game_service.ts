@@ -7,7 +7,6 @@ import MediaService from '#services/media_service'
 import env from '#start/env'
 import { inject } from '@adonisjs/core'
 import { PathLike } from 'node:fs'
-import { unlink } from 'node:fs/promises'
 
 @inject()
 export default class GameService {
