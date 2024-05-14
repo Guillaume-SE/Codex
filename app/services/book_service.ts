@@ -69,12 +69,12 @@ export default class BookService {
   }
 
   async updateOneBook(datas: IBook, mediaId: number) {
-    const media = await this.mediaService.isMediaExist(mediaId)
+    const media = await this.mediaService.getOneMediaById(mediaId)
     if (!media) {
       throw new Error('pas de media')
     }
 
-    const cover = await this.coverService.isCoverExist(mediaId)
+    const cover = await this.coverService.getOneCoverById(mediaId)
     if (!cover) {
       throw new Error('pas de cover')
     }
