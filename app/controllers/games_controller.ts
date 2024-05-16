@@ -8,9 +8,9 @@ import type { HttpContext } from '@adonisjs/core/http'
 @inject()
 export default class GamesController {
   constructor(
-    protected mediaService: MediaService,
-    protected gameService: GameService,
-    protected coverService: CoverService
+    readonly mediaService: MediaService,
+    readonly gameService: GameService,
+    readonly coverService: CoverService
   ) {}
 
   public async addOneGame({ request, response }: HttpContext) {

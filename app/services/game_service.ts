@@ -11,13 +11,13 @@ import { PathLike } from 'node:fs'
 @inject()
 export default class GameService {
   constructor(
-    protected mediaService: MediaService,
-    protected coverService: CoverService
+    readonly mediaService: MediaService,
+    readonly coverService: CoverService
   ) {}
-  protected defaultCoverFilename = env.get('DEFAULT_COVER_FILENAME')
-  protected defaultCoverAltText = env.get('DEFAULT_COVER_ALT_TEXT')
-  protected coverResizedDir: string | PathLike = env.get('COVER_RESIZED_DIR')
-  protected coverRawDir: string | PathLike = env.get('COVER_RAW_DIR')
+  readonly defaultCoverFilename = env.get('DEFAULT_COVER_FILENAME')
+  readonly defaultCoverAltText = env.get('DEFAULT_COVER_ALT_TEXT')
+  readonly coverResizedDir: string | PathLike = env.get('COVER_RESIZED_DIR')
+  readonly coverRawDir: string | PathLike = env.get('COVER_RAW_DIR')
 
   async addOneGame(datas: IGame) {
     const {

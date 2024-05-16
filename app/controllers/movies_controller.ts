@@ -8,9 +8,9 @@ import type { HttpContext } from '@adonisjs/core/http'
 @inject()
 export default class MoviesController {
   constructor(
-    protected mediaService: MediaService,
-    protected movieService: MovieService,
-    protected coverService: CoverService
+    readonly mediaService: MediaService,
+    readonly movieService: MovieService,
+    readonly coverService: CoverService
   ) {}
 
   public async addOneMovie({ request, response }: HttpContext) {

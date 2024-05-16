@@ -8,9 +8,9 @@ import type { HttpContext } from '@adonisjs/core/http'
 @inject()
 export default class SeasonsController {
   constructor(
-    protected mediaService: MediaService,
-    protected seasonService: SeasonService,
-    protected coverService: CoverService
+    readonly mediaService: MediaService,
+    readonly seasonService: SeasonService,
+    readonly coverService: CoverService
   ) {}
 
   public async addOneSeason({ request, response }: HttpContext) {

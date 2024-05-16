@@ -10,11 +10,11 @@ import { inject } from '@adonisjs/core'
 @inject()
 export default class MovieService {
   constructor(
-    protected mediaService: MediaService,
-    protected coverService: CoverService
+    readonly mediaService: MediaService,
+    readonly coverService: CoverService
   ) {}
-  protected defaultCoverFilename = env.get('DEFAULT_COVER_FILENAME')
-  protected defaultCoverAltText = env.get('DEFAULT_COVER_ALT_TEXT')
+  readonly defaultCoverFilename = env.get('DEFAULT_COVER_FILENAME')
+  readonly defaultCoverAltText = env.get('DEFAULT_COVER_ALT_TEXT')
 
   async addOneMovie(datas: IMovie) {
     const {

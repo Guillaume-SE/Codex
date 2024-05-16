@@ -8,9 +8,9 @@ import type { HttpContext } from '@adonisjs/core/http'
 @inject()
 export default class BooksController {
   constructor(
-    protected mediaService: MediaService,
-    protected bookService: BookService,
-    protected coverService: CoverService
+    readonly mediaService: MediaService,
+    readonly bookService: BookService,
+    readonly coverService: CoverService
   ) {}
 
   public async addOneBook({ request, response }: HttpContext) {
