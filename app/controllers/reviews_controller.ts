@@ -5,7 +5,7 @@ import type { HttpContext } from '@adonisjs/core/http'
 
 @inject()
 export default class ReviewsController {
-  constructor(protected reviewService: ReviewService) {}
+  constructor(readonly reviewService: ReviewService) {}
 
   public async updateOneReview({ request, params, response }: HttpContext) {
     const mediaId = params.mediaId

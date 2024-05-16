@@ -7,8 +7,8 @@ import type { HttpContext } from '@adonisjs/core/http'
 @inject()
 export default class MediasController {
   constructor(
-    protected mediaService: MediaService,
-    protected coverService: CoverService
+    readonly mediaService: MediaService,
+    readonly coverService: CoverService
   ) {}
 
   public async deleteOneMedia({ params, response }: HttpContext) {
