@@ -11,7 +11,10 @@ export const bookTypes = ['manga', 'roman', 'comics', 'bande dessinée', 'artboo
 export { bookTypes as validBookTypes }
 
 const types = [...gameTypes, ...movieTypes, ...seasonTypes, ...bookTypes] as const
+const categories = ['jeu vidéo', 'film', 'saison', 'livre']
 
 // for TS type, mainly for Media Model
 export type MediaTypes = (typeof types)[number]
 export { types as validMediaTypes }
+
+export type MediaCategories = (typeof categories)[number]
