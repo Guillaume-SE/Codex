@@ -34,8 +34,6 @@ export default class BookService {
       ...specificBookInfos
     } = data
 
-    await this.mediaService.isMediaAlreadyAdded(type, name, released)
-
     let coverFilename = this.defaultCoverFilename
     let coverRawFilename = null
     let coverAltText = this.defaultCoverAltText

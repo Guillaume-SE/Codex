@@ -16,7 +16,6 @@ export default class extends BaseSchema {
       table.string('type').notNullable()
       table.string('name').notNullable()
       table.string('released').notNullable()
-      table.unique(['type', 'name', 'released'])
       table.text('synopsis').notNullable()
     })
   }

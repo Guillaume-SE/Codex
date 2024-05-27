@@ -31,8 +31,6 @@ export default class SeasonService {
       ...specificSeasonInfos
     } = datas
 
-    await this.mediaService.isMediaAlreadyAdded(type, name, released)
-
     let coverFilename = this.defaultCoverFilename
     let coverRawFilename = null
     let coverAltText = this.defaultCoverAltText
