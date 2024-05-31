@@ -1,10 +1,10 @@
 import sharp from 'sharp'
 
-export async function resize(path: string | undefined) {
+export async function resize(path: string | undefined, height: number, width: number) {
   const sharpModification = sharp(path)
     .resize({
-      height: 500,
-      width: 340,
+      height: height,
+      width: width,
       fit: 'cover',
       position: 'top',
     })
@@ -14,6 +14,5 @@ export async function resize(path: string | undefined) {
 }
 
 export async function toBuffer(path: string | undefined) {
-  const sharpModification = sharp(path).toBuffer()
-  return sharpModification
+  return sharp(path).toBuffer()
 }
