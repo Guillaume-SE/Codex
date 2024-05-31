@@ -28,7 +28,7 @@ export default class CoverService {
     const coverFilename = createFileName(coverName, this.coverExtension, false)
     const coverAltText = createAlternativeText(type, name)
 
-    const coverResized = await resize(tmpPath)
+    const coverResized = await resize(tmpPath, 500, 340)
     const coverResizedFullPath = `${this.coverResizedDir}${coverFilename}`
     const saveCoverResized = await writeFile(coverResizedFullPath, coverResized)
 
