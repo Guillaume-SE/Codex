@@ -3,9 +3,10 @@ import sharp from 'sharp'
 export async function resize(path: string | undefined) {
   const sharpModification = sharp(path)
     .resize({
-      height: 480,
-      width: 320,
-      fit: 'fill',
+      height: 500,
+      width: 340,
+      fit: 'cover',
+      position: 'top',
     })
     .toFormat('jpg', { mozjpeg: true })
     .toBuffer()
