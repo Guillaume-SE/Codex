@@ -70,6 +70,9 @@ npm run dev
 node ace migration:run
 ```
 
+## Status
+20/06/24: I'm currently working on a v2 for the database, more complex but for greater flexibility!
+
 ## Other
 
 This repo is the new version of Codex now under Adonis v6.  
