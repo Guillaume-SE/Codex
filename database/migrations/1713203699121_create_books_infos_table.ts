@@ -11,12 +11,10 @@ export default class extends BaseSchema {
         .unsigned()
         .references('id')
         .inTable('media')
-        .notNullable()
         .onDelete('CASCADE')
-      table.string('author').notNullable()
-      table.string('illustrator').nullable()
-      table.string('editor').notNullable()
-      table.integer('pages').notNullable()
+        .onUpdate('CASCADE')
+        .notNullable()
+      table.integer('pages').unsigned().notNullable()
     })
   }
 

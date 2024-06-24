@@ -1,12 +1,12 @@
 import sharp from 'sharp'
 
-export async function resize(path: string | undefined, height: number, width: number) {
+export async function resize(path: string | undefined, width: number) {
   const sharpModification = sharp(path)
     .resize({
-      height: height,
+      // height: 500,
       width: width,
-      fit: 'cover',
-      position: 'top',
+      // fit: 'cover',
+      // position: 'top',
     })
     .toFormat('jpg', { mozjpeg: true })
     .toBuffer()

@@ -19,10 +19,11 @@ export default class BookService {
   readonly coverResizedDir: string | PathLike = env.get('COVER_RESIZED_DIR')
   readonly coverRawDir: string | PathLike = env.get('COVER_RAW_DIR')
 
-  async addOneBook(data: IBook) {
+  async addOneBook(data: any) {
     const {
       mediaParentId,
-      type,
+      typeId = 1,
+      categoryId = 1,
       cover,
       name,
       released,
@@ -34,28 +35,29 @@ export default class BookService {
       ...specificBookInfos
     } = data
 
-    let coverFilename = this.defaultCoverFilename
-    let coverRawFilename = null
-    let coverAltText = this.defaultCoverAltText
-    if (cover) {
-      const newCover = await this.coverService.saveCover(type, name, cover.tmpPath)
-      coverFilename = newCover.coverFilename
-      coverRawFilename = newCover.coverRawFilename
-      coverAltText = newCover.coverAltText
-    }
+    // let coverFilename = this.defaultCoverFilename
+    // let coverRawFilename = null
+    // let coverAltText = this.defaultCoverAltText
+    // if (cover) {
+    //   const newCover = await this.coverService.saveCover(type, name, cover.tmpPath)
+    //   coverFilename = newCover.coverFilename
+    //   coverRawFilename = newCover.coverRawFilename
+    //   coverAltText = newCover.coverAltText
+    // }
 
-    const generalMediaInfos = { mediaParentId, type, name, released, synopsis }
-    const coverInfo = {
-      filename: coverFilename,
-      filenameRaw: coverRawFilename,
-      alternative: coverAltText,
-    }
+    const generalMediaInfos = { mediaParentId, typeId, categoryId, name, released, synopsis }
+    // const coverInfo = {
+    //   filename: coverFilename,
+    //   filenameRaw: coverRawFilename,
+    //   alternative: coverAltText,
+    // }
     const reviewInfo = { status, rating, opinion, isFavorite }
 
     const newMedia = await Media.create(generalMediaInfos)
-    await newMedia.related('bookInfo').create(specificBookInfos)
-    await newMedia.related('cover').create(coverInfo)
-    await newMedia.related('review').create(reviewInfo)
+    console.log(newMedia.id)
+    // await newMedia.related('bookInfo').create(specificBookInfos)
+    // await newMedia.related('cover').create(coverInfo)
+    // await newMedia.related('review').create(reviewInfo)
 
     return {
       media: generalMediaInfos,

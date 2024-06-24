@@ -8,14 +8,8 @@ export default class MovieInfo extends BaseModel {
   @column({ isPrimary: true })
   declare id: number
 
-  @column({ columnName: 'media_id' })
+  @column({ columnName: 'media_id', serializeAs: 'mediaId' })
   declare mediaId: number
-
-  @column()
-  declare director: string
-
-  @column()
-  declare screenwriter: string
 
   @column()
   declare duration: number

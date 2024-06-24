@@ -1,19 +1,20 @@
-import type { ReviewStatus } from '#enums/ReviewStatus'
 import Media from '#models/media'
+import ReviewStatuses from '#models/review_statuses'
 import { BaseModel, beforeCreate, beforeUpdate, belongsTo, column } from '@adonisjs/lucid/orm'
 import type { BelongsTo } from '@adonisjs/lucid/types/relations'
 
 export default class Review extends BaseModel {
   public static table = 'reviews'
+  serializeExtras = true
 
   @column({ isPrimary: true })
   declare id: number
 
-  @column({ columnName: 'media_id' })
+  @column({ columnName: 'media_id', serializeAs: 'mediaId' })
   declare mediaId: number
 
   @column()
-  declare status: ReviewStatus
+  declare status: string
 
   @column()
   declare rating: number | null
@@ -21,22 +22,21 @@ export default class Review extends BaseModel {
   @column()
   declare opinion: string | null
 
-  @column({ columnName: 'is_favorite' })
+  @column({ columnName: 'is_favorite', serializeAs: 'isFavorite' })
   declare isFavorite: boolean
 
-  @column({ columnName: 'created_at' })
-  declare createdAt: number
-
-  @column({ columnName: 'updated_at' })
+  @column({ columnName: 'updated_at', serializeAs: 'updatedAt' })
   declare updatedAt: number
 
   //relations
   @belongsTo(() => Media, {})
   declare media: BelongsTo<typeof Media>
 
+  @belongsTo(() => ReviewStatuses)
+  declare reviewStatuses: BelongsTo<typeof ReviewStatuses>
+
   @beforeCreate()
   static async defaultTimeStampValueOnCreate(review: Review) {
-    review.createdAt = Date.now()
     review.updatedAt = Date.now()
   }
   @beforeUpdate()

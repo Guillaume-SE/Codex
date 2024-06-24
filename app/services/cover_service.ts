@@ -23,12 +23,14 @@ export default class CoverService {
   protected defaultCoverFilename = env.get('DEFAULT_COVER_FILENAME')
   protected defaultCoverAltText = env.get('DEFAULT_COVER_ALT_TEXT')
 
-  async saveCover(type: MediaTypes, name: string, tmpPath: string | undefined) {
+  async addCoverInfos() {}
+
+  async saveCover(mediaName: string, tmpPath: string | undefined) {
     const coverName = generateUniqueString()
     const coverFilename = createFileName(coverName, this.coverExtension, false)
-    const coverAltText = createAlternativeText(type, name)
+    const coverAltText = createAlternativeText(mediaName)
 
-    const coverResized = await resize(tmpPath, 500, 340)
+    const coverResized = await resize(tmpPath, 340)
     const coverResizedFullPath = `${this.coverResizedDir}${coverFilename}`
     const saveCoverResized = await writeFile(coverResizedFullPath, coverResized)
 

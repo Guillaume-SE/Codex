@@ -11,14 +11,17 @@ export default class Cover extends BaseModel {
   @column({ columnName: 'media_id' })
   declare mediaId: number
 
-  @column()
-  declare filename: string
+  @column({ columnName: 'small_format', serializeAs: 'smallFormat' })
+  declare smallFormat: string | null
 
-  @column({ columnName: 'filename_raw' })
-  declare filenameRaw: string | null
+  @column({ columnName: 'medium_format', serializeAs: 'mediumFormat' })
+  declare mediumFormat: string
 
-  @column()
-  declare alternative: string
+  @column({ columnName: 'raw_format', serializeAs: 'rawFormat' })
+  declare rawFormat: string | null
+
+  @column({ columnName: 'alternative_text', serializeAs: 'alternativeText' })
+  declare alternativeText: string
 
   // relations
   @belongsTo(() => Media)

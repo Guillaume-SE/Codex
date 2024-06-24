@@ -1,4 +1,4 @@
-import type { GamePlatform } from '#enums/GamePlatform'
+import GamePlatform from '#models/game_platform'
 import Media from '#models/media'
 import { BaseModel, belongsTo, column } from '@adonisjs/lucid/orm'
 import type { BelongsTo } from '@adonisjs/lucid/types/relations'
@@ -9,19 +9,16 @@ export default class GameInfo extends BaseModel {
   @column({ isPrimary: true })
   declare id: number
 
-  @column({ columnName: 'media_id' })
+  @column({ columnName: 'media_id', serializeAs: 'mediaId' })
   declare mediaId: number
 
   @column()
-  declare developer: string
-
-  @column()
-  declare publisher: string
-
-  @column()
-  declare platform: GamePlatform
+  declare platform: string
 
   // RELATIONS
   @belongsTo(() => Media)
   declare media: BelongsTo<typeof Media>
+
+  @belongsTo(() => GamePlatform)
+  declare gamePlatform: BelongsTo<typeof GamePlatform>
 }

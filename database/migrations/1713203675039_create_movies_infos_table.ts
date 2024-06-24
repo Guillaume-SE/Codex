@@ -11,11 +11,10 @@ export default class extends BaseSchema {
         .unsigned()
         .references('id')
         .inTable('media')
-        .notNullable()
         .onDelete('CASCADE')
-      table.string('director').notNullable()
-      table.string('screenwriter').notNullable()
-      table.integer('duration').notNullable()
+        .onUpdate('CASCADE')
+        .notNullable()
+      table.integer('duration').unsigned().notNullable()
     })
   }
 

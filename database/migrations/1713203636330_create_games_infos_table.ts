@@ -11,11 +11,17 @@ export default class extends BaseSchema {
         .unsigned()
         .references('id')
         .inTable('media')
-        .notNullable()
         .onDelete('CASCADE')
-      table.string('developer').notNullable()
-      table.string('publisher').notNullable()
-      table.string('platform').notNullable()
+        .onUpdate('CASCADE')
+        .notNullable()
+      table
+        .integer('platform_id')
+        .unsigned()
+        .references('id')
+        .inTable('game_platforms')
+        .onDelete('RESTRICT')
+        .onUpdate('CASCADE')
+        .notNullable()
     })
   }
 
