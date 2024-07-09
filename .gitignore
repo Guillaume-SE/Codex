@@ -24,5 +24,9 @@ yarn-error.log
 # Platform specific
 .DS_Store
 
+# non important image uploaded
+uploads/covers
+uploads/covers-raw
+
 # others
 test.html
