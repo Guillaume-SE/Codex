@@ -12,7 +12,7 @@ export default class MovieInfo extends BaseModel {
   declare mediaId: number
 
   @column()
-  declare duration: number
+  declare duration: number | null
 
   // RELATIONS
   @belongsTo(() => Media)
