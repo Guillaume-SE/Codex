@@ -14,9 +14,8 @@ export default class extends BaseSchema {
         .onDelete('CASCADE')
         .onUpdate('CASCADE')
         .notNullable()
-      table.string('small_format').nullable()
-      table.string('medium_format').notNullable()
-      table.string('raw_format').nullable()
+      table.string('resized_version').notNullable()
+      table.string('raw_version').notNullable()
       table.string('alternative_text').notNullable()
     })
   }
