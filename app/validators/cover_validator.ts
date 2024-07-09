@@ -1,11 +1,13 @@
 import { validCoverFileExtension } from '#enums/FileExtension'
 import vine from '@vinejs/vine'
 
-export const updateCoverValidator = vine.compile(
+export const createCoverValidator = vine.compile(
   vine.object({
-    cover: vine.file({
-      size: '2mb',
-      extnames: validCoverFileExtension,
-    }),
+    cover: vine
+      .file({
+        size: '2mb',
+        extnames: validCoverFileExtension,
+      })
+      .nullable(),
   })
 )
