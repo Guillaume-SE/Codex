@@ -11,8 +11,8 @@ export default class SeriesInfo extends BaseModel {
   @column({ columnName: 'media_id', serializeAs: 'mediaId' })
   declare mediaId: number
 
-  @column()
-  declare length: number
+  @column({ columnName: 'series_season_length', serializeAs: 'seriesSeasonLength' })
+  declare seriesSeasonLength: number | null
 
   // RELATIONS
   @belongsTo(() => Media)

@@ -1,98 +1,8 @@
-import { createAlternativeText } from '#functions/create_cover_alt_text'
-import { IMovie } from '#interfaces/media_interface'
 import Media from '#models/media'
-import MovieInfo from '#models/movie_info'
-import CoverService from '#services/cover_service'
-import MediaService from '#services/media_service'
-import env from '#start/env'
 import { inject } from '@adonisjs/core'
 
 @inject()
 export default class MovieService {
-  constructor(
-    readonly mediaService: MediaService,
-    readonly coverService: CoverService
-  ) {}
-  readonly defaultCoverFilename = env.get('DEFAULT_COVER_FILENAME')
-  readonly defaultCoverAltText = env.get('DEFAULT_COVER_ALT_TEXT')
-
-  async addOneMovie(datas: IMovie) {
-    const {
-      mediaParentId,
-      type,
-      cover,
-      name,
-      released,
-      synopsis,
-      status,
-      rating,
-      opinion,
-      isFavorite,
-      ...specificMovieInfos
-    } = datas
-
-    let coverFilename = this.defaultCoverFilename
-    let coverRawFilename = null
-    let coverAltText = this.defaultCoverAltText
-    if (cover) {
-      const newCover = await this.coverService.saveCover(type, name, cover.tmpPath)
-      coverFilename = newCover.coverFilename
-      coverRawFilename = newCover.coverRawFilename
-      coverAltText = newCover.coverAltText
-    }
-
-    const generalMediaInfos = { mediaParentId, type, name, released, synopsis }
-    const coverInfo = {
-      filename: coverFilename,
-      filenameRaw: coverRawFilename,
-      alternative: coverAltText,
-    }
-    const reviewInfo = { status, rating, opinion, isFavorite }
-
-    const newMedia = await Media.create(generalMediaInfos)
-    await newMedia.related('movieInfo').create(specificMovieInfos)
-    await newMedia.related('cover').create(coverInfo)
-    await newMedia.related('review').create(reviewInfo)
-
-    return {
-      media: generalMediaInfos,
-      movie: specificMovieInfos,
-      cover: coverInfo,
-      review: reviewInfo,
-    }
-  }
-
-  async updateOneMovie(datas: IMovie, mediaId: number) {
-    const media = await this.mediaService.getOneMediaById(mediaId)
-    if (!media) {
-      throw new Error('pas de media')
-    }
-
-    const cover = await this.coverService.getOneCoverById(mediaId)
-    if (!cover) {
-      throw new Error('pas de cover')
-    }
-    const movie = await this.isMovieExist(mediaId)
-    if (!movie) {
-      throw new Error('pas de film')
-    }
-    const { mediaParentId, type, name, released, synopsis, ...specificMovieInfos } = datas
-    const generalMediaInfos = { mediaParentId, type, name, released, synopsis }
-
-    // update also the cover alt text
-    const mediaNameAsChanged = media.name !== datas.name
-    const isNotDefaultCover = cover.alternative !== this.defaultCoverAltText
-    const newCoverAltText = createAlternativeText(type, name)
-
-    media.merge(generalMediaInfos).save()
-    movie.merge(specificMovieInfos).save()
-    if (mediaNameAsChanged && isNotDefaultCover) {
-      cover.merge({ alternative: newCoverAltText }).save()
-    }
-
-    return { media: generalMediaInfos, movie: specificMovieInfos, cover: newCoverAltText }
-  }
-
   async getAllMovies() {
     const datas = await Media.query()
       .from('media')
@@ -242,11 +152,6 @@ export default class MovieService {
         },
       }
     })
-    return movie
-  }
-
-  async isMovieExist(mediaId: number) {
-    const movie = await MovieInfo.findBy('media_id', mediaId)
     return movie
   }
 }

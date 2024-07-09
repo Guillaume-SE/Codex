@@ -1,100 +1,17 @@
 import { createAlternativeText } from '#functions/create_cover_alt_text'
-import { IGame } from '#interfaces/media_interface'
+import type { IGameInfos } from '#interfaces/media_infos_interface'
 import GameInfo from '#models/game_info'
 import Media from '#models/media'
-import CoverService from '#services/cover_service'
-import MediaService from '#services/media_service'
 import env from '#start/env'
 import { inject } from '@adonisjs/core'
 import { PathLike } from 'node:fs'
 
 @inject()
 export default class GameService {
-  constructor(
-    readonly mediaService: MediaService,
-    readonly coverService: CoverService
-  ) {}
   readonly defaultCoverFilename = env.get('DEFAULT_COVER_FILENAME')
   readonly defaultCoverAltText = env.get('DEFAULT_COVER_ALT_TEXT')
   readonly coverResizedDir: string | PathLike = env.get('COVER_RESIZED_DIR')
   readonly coverRawDir: string | PathLike = env.get('COVER_RAW_DIR')
-
-  async addOneGame(datas: IGame) {
-    const {
-      mediaParentId,
-      type,
-      cover,
-      name,
-      released,
-      synopsis,
-      status,
-      rating,
-      opinion,
-      isFavorite,
-      ...specificGameInfos
-    } = datas
-
-    let coverFilename = this.defaultCoverFilename
-    let coverRawFilename = null
-    let coverAltText = this.defaultCoverAltText
-    if (cover) {
-      const newCover = await this.coverService.saveCover(type, name, cover.tmpPath)
-      coverFilename = newCover.coverFilename
-      coverRawFilename = newCover.coverRawFilename
-      coverAltText = newCover.coverAltText
-    }
-
-    const generalMediaInfos = { mediaParentId, type, name, released, synopsis }
-    const coverInfo = {
-      filename: coverFilename,
-      filenameRaw: coverRawFilename,
-      alternative: coverAltText,
-    }
-    const reviewInfo = { status, rating, opinion, isFavorite }
-
-    const newMedia = await Media.create(generalMediaInfos)
-    await newMedia.related('gameInfo').create(specificGameInfos)
-    await newMedia.related('cover').create(coverInfo)
-    await newMedia.related('review').create(reviewInfo)
-
-    return {
-      media: generalMediaInfos,
-      game: specificGameInfos,
-      cover: coverInfo,
-      review: reviewInfo,
-    }
-  }
-
-  async updateOneGame(datas: IGame, mediaId: number) {
-    const media = await this.mediaService.getOneMediaById(mediaId)
-    if (!media) {
-      throw new Error('pas de media')
-    }
-
-    const cover = await this.coverService.getOneCoverById(mediaId)
-    if (!cover) {
-      throw new Error('pas de cover')
-    }
-    const game = await this.isGameExist(mediaId)
-    if (!game) {
-      throw new Error('pas de jeu')
-    }
-    const { mediaParentId, type, name, released, synopsis, ...specificGameInfos } = datas
-    const generalMediaInfos = { mediaParentId, type, name, released, synopsis }
-
-    // update also the cover alt text
-    const mediaNameAsChanged = media.name !== datas.name
-    const isNotDefaultCover = cover.alternative !== this.defaultCoverAltText
-    const newCoverAltText = createAlternativeText(type, name)
-
-    media.merge(generalMediaInfos).save()
-    game.merge(specificGameInfos).save()
-    if (mediaNameAsChanged && isNotDefaultCover) {
-      cover.merge({ alternative: newCoverAltText }).save()
-    }
-
-    return { media: generalMediaInfos, game: specificGameInfos, cover: newCoverAltText }
-  }
 
   public async getAllGames() {
     const datas = await Media.query()
