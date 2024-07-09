@@ -1,75 +1,102 @@
-import { INewMedia } from '#interfaces/media_interface'
+import {
+  IAnimeInfos,
+  IBookInfos,
+  IGameInfos,
+  IMediaSpecificInfos,
+  IMovieInfos,
+  ISeriesInfos,
+} from '#interfaces/media_infos_interface'
+import { IMedia } from '#interfaces/media_interface'
 import Media from '#models/media'
-import CoverService from '#services/cover_service'
-import env from '#start/env'
+import MediaCategory from '#models/media_category'
+import MediaType from '#models/media_type'
 import { inject } from '@adonisjs/core'
-import { PathLike } from 'node:fs'
+import db from '@adonisjs/lucid/services/db'
 
 @inject()
 export default class MediaService {
-  constructor(readonly coverService: CoverService) {}
-  readonly defaultCoverFilename = env.get('DEFAULT_COVER_FILENAME')
-  readonly defaultCoverAltText = env.get('DEFAULT_COVER_ALT_TEXT')
-  readonly coverResizedDir: string | PathLike = env.get('COVER_RESIZED_DIR')
-  readonly coverRawDir: string | PathLike = env.get('COVER_RAW_DIR')
-
-  public async addOneMedia(datas: INewMedia) {
-    const {
-      mediaParentId,
-      categoryId,
-      typeId,
-      cover,
-      name,
-      released,
-      synopsis,
-      status,
-      rating,
-      opinion,
-      isFavorite,
-      ...specificCategoryInfos
-    } = datas
-
-    let coverFilename = this.defaultCoverFilename
-    let coverRawFilename = null
-    let coverAltText = this.defaultCoverAltText
-    if (cover) {
-      const newCover = await this.coverService.saveCover(name, cover.tmpPath)
-      coverFilename = newCover.coverFilename
-      coverRawFilename = newCover.coverRawFilename
-      coverAltText = newCover.coverAltText
+  public async addOneMedia(
+    media: IMedia,
+    mediaGenres: Array<number>,
+    specificInfos: IMediaSpecificInfos
+  ) {
+    const isValidType = await MediaType.find(media.typeId)
+    if (!isValidType) {
+      throw new Error('Aucun type ne correspond')
     }
 
-    const generalMediaInfos = { mediaParentId, categoryId, typeId, name, released, synopsis }
-    const coverInfo = {
-      filename: coverFilename,
-      filenameRaw: coverRawFilename,
-      alternative: coverAltText,
+    const isValidCategory = await MediaCategory.find(media.categoryId)
+    if (!isValidCategory) {
+      throw new Error('Aucune catégorie ne correspond')
     }
-    const reviewInfo = { status, rating, opinion, isFavorite }
+    const newMediaCategoryName = isValidCategory.name
 
-    const newMedia = await Media.create(generalMediaInfos)
-    await newMedia.related('bookInfo').create(specificBookInfos)
-    await newMedia.related('cover').create(coverInfo)
-    await newMedia.related('review').create(reviewInfo)
-
-    return {
-      media: generalMediaInfos,
-      book: specificBookInfos,
-      cover: coverInfo,
-      review: reviewInfo,
+    const isValidTypeForCategory = await MediaType.findBy({
+      id: media.typeId,
+      categoryId: media.categoryId,
+    })
+    if (!isValidTypeForCategory) {
+      throw new Error('Le type choisi ne fait pas partie de la catégorie selectionnée')
     }
+
+    const isBook = (specificInfos: any): specificInfos is IBookInfos => 'pages' in specificInfos
+    const isGame = (specificInfos: any): specificInfos is IGameInfos =>
+      'platformId' in specificInfos
+    const isMovie = (specificInfos: any): specificInfos is IMovieInfos =>
+      'duration' in specificInfos
+    const isSeries = (specificInfos: any): specificInfos is ISeriesInfos =>
+      'seriesSeasonLength' in specificInfos
+    const isAnime = (specificInfos: any): specificInfos is IAnimeInfos =>
+      'animeSeasonLength' in specificInfos
+
+    const newMedia = new Media()
+
+    await db.transaction(async (trx) => {
+      newMedia.useTransaction(trx)
+      await newMedia
+        .merge({
+          ...media,
+        })
+        .save()
+
+      await newMedia.related('genres').sync(mediaGenres)
+
+      if (isBook(specificInfos) && newMediaCategoryName === 'Livre') {
+        await newMedia.related('bookInfo').create(specificInfos)
+      }
+      if (isGame(specificInfos) && newMediaCategoryName === 'Jeu vidéo') {
+        await newMedia.related('gameInfo').create(specificInfos)
+      }
+      if (isMovie(specificInfos) && newMediaCategoryName === 'Film') {
+        await newMedia.related('movieInfo').create(specificInfos)
+      }
+      if (isSeries(specificInfos) && newMediaCategoryName === 'Série') {
+        await newMedia.related('seriesInfo').create(specificInfos)
+      }
+      if (isAnime(specificInfos) && newMediaCategoryName === 'Animé') {
+        await newMedia.related('animeInfo').create(specificInfos)
+      }
+      const isMediaInfosNotMatchWithSelectedType =
+        (isBook(specificInfos) && newMediaCategoryName !== 'Livre') ||
+        (isGame(specificInfos) && newMediaCategoryName !== 'Jeu vidéo') ||
+        (isMovie(specificInfos) && newMediaCategoryName !== 'Film') ||
+        (isSeries(specificInfos) && newMediaCategoryName !== 'Série') ||
+        (isAnime(specificInfos) && newMediaCategoryName !== 'Animé')
+      if (isMediaInfosNotMatchWithSelectedType) {
+        throw new Error('Aucune concordance entre les infos fournies et la catégorie choisie')
+      }
+    })
+
+    return newMedia
   }
 
+  public async updateOneMedia() {}
+
   public async deleteOneMedia(mediaId: number) {
-    const media = await this.getOneMediaById(mediaId)
+    const media = await Media.find(mediaId)
     if (!media) {
       throw new Error('pas de media')
     }
     await media.delete()
-  }
-
-  async getOneMediaById(mediaId: number) {
-    const media = await Media.find(mediaId)
-    return media
   }
 }

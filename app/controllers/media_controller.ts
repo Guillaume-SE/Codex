@@ -1,3 +1,5 @@
+import { IMedia } from '#interfaces/media_interface'
+import { IReview } from '#interfaces/review_interface'
 import Media from '#models/media'
 import CoverService from '#services/cover_service'
 import MediaService from '#services/media_service'
@@ -15,11 +17,45 @@ export default class MediasController {
   public async addOneMedia({ request, response }: HttpContext) {
     try {
       const payloadValidation = await request.validateUsing(createMediaValidator)
-      const newMedia = await this.mediaService.addOneMedia(payloadValidation)
+      const {
+        mediaParentId,
+        categoryId,
+        typeId,
+        name,
+        alternativeName,
+        released,
+        synopsis,
+        genresIds,
+        ...mediaSpecificInfos
+      } = payloadValidation
+
+      const generalMediaInfos: IMedia = {
+        mediaParentId,
+        categoryId,
+        typeId,
+        name,
+        alternativeName,
+        released,
+        synopsis,
+      }
+      const newMedia = await this.mediaService.addOneMedia(
+        generalMediaInfos,
+        genresIds,
+        mediaSpecificInfos
+      )
       return response.status(201).json(newMedia)
     } catch (error) {
-      return response.status(400).json({ error })
+      return response.status(400).json({ error, customError: error.message })
     }
+  }
+
+  public async updateOneMedia() {
+    // try {
+    //   const media = await Media.findOrFail(9)
+    //   await media.related('genres').sync([])
+    // } catch (e) {
+    //   console.log(e)
+    // }
   }
 
   public async deleteOneMedia({ params, response }: HttpContext) {
@@ -42,7 +78,7 @@ export default class MediasController {
   public async getOneMediaById({ params, response }: HttpContext) {
     const mediaId = params.id
     try {
-      const media = await this.mediaService.getOneMediaById(mediaId)
+      const media = await Media.find(mediaId)
       return response.status(201).json(media)
     } catch (error) {
       return response.status(404).json(error)
