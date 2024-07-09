@@ -1,3 +1,4 @@
+import type { MediaCategories } from '#enums/MediaCategories'
 import Media from '#models/media'
 import MediaType from '#models/media_type'
 import { BaseModel, column, hasMany } from '@adonisjs/lucid/orm'
@@ -10,7 +11,7 @@ export default class MediaCategory extends BaseModel {
   declare id: number
 
   @column()
-  declare name: string
+  declare name: MediaCategories
   //RELATIONS
   @hasMany(() => Media)
   declare media: HasMany<typeof Media>
