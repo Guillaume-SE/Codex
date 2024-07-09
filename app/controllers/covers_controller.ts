@@ -1,6 +1,6 @@
+import { ICover } from '#interfaces/cover_interface'
 import CoverService from '#services/cover_service'
-import env from '#start/env'
-import { updateCoverValidator } from '#validators/cover_validator'
+import { createCoverValidator } from '#validators/cover_validator'
 import { inject } from '@adonisjs/core'
 import type { HttpContext } from '@adonisjs/core/http'
 
@@ -8,12 +8,29 @@ import type { HttpContext } from '@adonisjs/core/http'
 export default class CoversController {
   constructor(readonly coverService: CoverService) {}
 
-  readonly defaultCoverFilename = env.get('DEFAULT_COVER_FILENAME')
-  readonly defaultCoverAltText = env.get('DEFAULT_COVER_ALT_TEXT')
+  async addOneCover({ params, response, request }: HttpContext) {
+    const mediaId = params.mediaId
 
-  public async getAllCovers({ response }: HttpContext) {
-    const covers = await this.coverService.getAllCovers()
-    return response.status(201).json({ covers })
+    try {
+      const datas = await request.validateUsing(createCoverValidator)
+      const newCover = await this.coverService.addCoverInfos(datas, mediaId)
+      if (newCover.coverPath) {
+        const coverInfos = {
+          tmpPath: newCover.coverPath,
+          resizedFilename: newCover.cover.resizedVersion,
+          rawFilename: newCover.cover.rawVersion,
+        }
+        await this.coverService.saveCover(
+          coverInfos.resizedFilename,
+          coverInfos.rawFilename,
+          coverInfos.tmpPath
+        )
+      }
+      return response.status(201).json(newCover)
+    } catch (error) {
+      console.log(error)
+      return response.status(404).json(error)
+    }
   }
 
   public async updateOneCover({ request, params, response }: HttpContext) {
@@ -38,5 +55,10 @@ export default class CoversController {
     } catch (error) {
       return response.status(404).json(error)
     }
+  }
+
+  public async getAllCovers({ response }: HttpContext) {
+    const covers = await this.coverService.getAllCovers()
+    return response.status(201).json({ covers })
   }
 }
