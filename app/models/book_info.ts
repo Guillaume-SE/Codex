@@ -12,7 +12,7 @@ export default class BookInfo extends BaseModel {
   declare mediaId: number
 
   @column()
-  declare pages: number
+  declare pages: number | null
 
   // RELATIONS
   @belongsTo(() => Media)
