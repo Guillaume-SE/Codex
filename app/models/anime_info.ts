@@ -11,11 +11,8 @@ export default class AnimeInfo extends BaseModel {
   @column({ columnName: 'media_id', serializeAs: 'mediaId' })
   declare mediaId: number
 
-  @column({ columnName: 'alternative_name', serializeAs: 'alternativeName' })
-  declare alternativeName: string
-
-  @column()
-  declare length: number
+  @column({ columnName: 'anime_season_length', serializeAs: 'animeSeasonLength' })
+  declare animeSeasonLength: number | null
 
   // RELATIONS
   @belongsTo(() => Media)
