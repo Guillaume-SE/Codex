@@ -14,7 +14,7 @@ export default class extends BaseSchema {
         .onDelete('CASCADE')
         .onUpdate('CASCADE')
         .notNullable()
-      table.integer('length').unsigned().notNullable()
+      table.integer('series_season_length').unsigned().nullable()
     })
   }
 

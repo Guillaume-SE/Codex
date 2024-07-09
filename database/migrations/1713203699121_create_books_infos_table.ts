@@ -14,7 +14,7 @@ export default class extends BaseSchema {
         .onDelete('CASCADE')
         .onUpdate('CASCADE')
         .notNullable()
-      table.integer('pages').unsigned().notNullable()
+      table.integer('pages').unsigned().nullable()
     })
   }
 
