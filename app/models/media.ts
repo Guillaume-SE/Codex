@@ -2,14 +2,15 @@ import AnimeInfo from '#models/anime_info'
 import BookInfo from '#models/book_info'
 import Cover from '#models/cover'
 import GameInfo from '#models/game_info'
+import Genre from '#models/genre'
 import MediaCategory from '#models/media_category'
+import MediaContributor from '#models/media_contributor'
 import MediaType from '#models/media_type'
 import MovieInfo from '#models/movie_info'
 import Review from '#models/review'
 import SeriesInfo from '#models/series_info'
-import { BaseModel, belongsTo, column, hasMany, hasOne } from '@adonisjs/lucid/orm'
-import type { BelongsTo, HasMany, HasOne } from '@adonisjs/lucid/types/relations'
-import MediaContributor from './media_contributor.js'
+import { BaseModel, belongsTo, column, hasMany, hasOne, manyToMany } from '@adonisjs/lucid/orm'
+import type { BelongsTo, HasMany, HasOne, ManyToMany } from '@adonisjs/lucid/types/relations'
 
 export default class Media extends BaseModel {
   public static table = 'media'
@@ -28,6 +29,9 @@ export default class Media extends BaseModel {
 
   @column()
   declare name: string
+
+  @column({ columnName: 'alternative_name', serializeAs: 'alternativeName' })
+  declare alternativeName: string | null
 
   @column()
   declare released: string
@@ -68,6 +72,12 @@ export default class Media extends BaseModel {
 
   @hasOne(() => SeriesInfo)
   declare seriesInfo: HasOne<typeof SeriesInfo>
+
+  @manyToMany(() => Genre, {
+    pivotTable: 'media_genres',
+    pivotTimestamps: false,
+  })
+  declare genres: ManyToMany<typeof Genre>
 
   @hasMany(() => MediaContributor, {})
   declare mediaProject: HasMany<typeof MediaContributor>
