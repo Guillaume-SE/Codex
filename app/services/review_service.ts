@@ -1,14 +1,37 @@
-import { IReview } from '#interfaces/review_interface'
+import type { IReview } from '#interfaces/review_interface'
+import Media from '#models/media'
 import Review from '#models/review'
-import MediaService from '#services/media_service'
 import { inject } from '@adonisjs/core'
+import db from '@adonisjs/lucid/services/db'
 
 @inject()
 export default class ReviewsController {
-  constructor(protected mediaService: MediaService) {}
+  async addOneReview(datas: IReview, mediaId: number) {
+    const media = await Media.find(mediaId)
+    if (!media) {
+      throw new Error("Le media n'existe pas")
+    }
+    const isAlreadyReviewed = await Review.findBy('mediaId', mediaId)
+    if (isAlreadyReviewed) {
+      throw new Error('Ce media possède déjà une critique')
+    }
+
+    const review = new Review()
+
+    await db.transaction(async (trx) => {
+      review.useTransaction(trx)
+      await review
+        .merge({
+          mediaId: media.id,
+          ...datas,
+        })
+        .save()
+    })
+    return review
+  }
 
   async updateOneReview(datas: IReview, mediaId: number) {
-    const media = await this.mediaService.getOneMediaById(mediaId)
+    const media = await Media.findOrFail(mediaId)
     if (!media) {
       throw new Error('pas de media')
     }
