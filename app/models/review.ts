@@ -14,7 +14,7 @@ export default class Review extends BaseModel {
   declare mediaId: number
 
   @column()
-  declare status: string
+  declare statusId: number
 
   @column()
   declare rating: number | null
@@ -29,7 +29,7 @@ export default class Review extends BaseModel {
   declare updatedAt: number
 
   //relations
-  @belongsTo(() => Media, {})
+  @belongsTo(() => Media)
   declare media: BelongsTo<typeof Media>
 
   @belongsTo(() => ReviewStatuses)

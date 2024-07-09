@@ -1,11 +1,11 @@
 import { MultipartFile } from '@adonisjs/core/bodyparser'
 
 export interface INewCover {
-  cover: MultipartFile
+  cover?: MultipartFile | null
 }
 
 export interface ICover {
-  filename: string
-  filenameRaw: string | null
-  alternative: string
+  resizedVersion: string
+  rawVersion: string
+  alternativeText: string
 }

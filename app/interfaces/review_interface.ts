@@ -1,8 +1,8 @@
-import { ReviewStatus } from '#enums/ReviewStatus'
-
 export interface IReview {
-  status: ReviewStatus
+  statusId: number
   rating: number | null
   opinion: string | null
   isFavorite: boolean
+  createdAt?: number
+  updatedAt?: number
 }
