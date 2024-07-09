@@ -23,5 +23,5 @@ export default class Genre extends BaseModel {
     pivotTable: 'media_genres',
     pivotTimestamps: false,
   })
-  declare mediaGenres: ManyToMany<typeof Media>
+  declare media: ManyToMany<typeof Media>
 }
