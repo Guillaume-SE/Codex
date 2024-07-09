@@ -31,6 +31,7 @@ export default class extends BaseSchema {
         .onUpdate('CASCADE')
         .notNullable()
       table.string('name').notNullable()
+      table.string('alternative_name').nullable()
       table.string('released').notNullable()
       table.text('synopsis').nullable()
     })
