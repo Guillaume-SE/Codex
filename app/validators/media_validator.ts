@@ -1,5 +1,3 @@
-import { validCoverFileExtension } from '#enums/FileExtension'
-import { validReviewStatus } from '#enums/ReviewStatus'
 import vine from '@vinejs/vine'
 
 export const createMediaValidator = vine.compile(
@@ -7,35 +5,16 @@ export const createMediaValidator = vine.compile(
     mediaParentId: vine.number().positive().nullable(),
     categoryId: vine.number().positive(),
     typeId: vine.number().positive(),
-    cover: vine
-      .file({
-        size: '2mb',
-        extnames: validCoverFileExtension,
-      })
-      .nullable(),
     name: vine.string().trim(),
+    alternativeName: vine.string().trim().nullable(),
     released: vine.string().trim(),
+    genresIds: vine.array(vine.number()),
     synopsis: vine.string().trim(),
-    // books
-    author: vine.string().trim().optional(),
-    illustrator: vine.string().trim().nullable().optional(),
-    editor: vine.string().trim().optional(),
-    pages: vine.number().positive().optional(),
-    // games
-    developer: vine.string().trim().optional(),
-    publisher: vine.string().trim().optional(),
-    platform: vine.number().positive().optional(),
-    // movies
-    director: vine.string().trim().optional(),
-    screenwriter: vine.string().trim().optional(),
-    duration: vine.number().positive().optional(),
-    // seasons
-    creator: vine.string().trim().optional(),
-    length: vine.number().positive().optional(),
-    // //review
-    status: vine.enum(validReviewStatus),
-    rating: vine.number().range([0, 10]).nullable(),
-    opinion: vine.string().trim().nullable(),
-    isFavorite: vine.boolean(),
+    // specific infos
+    platformId: vine.number().positive().optional(),
+    pages: vine.number().positive().nullable().optional(),
+    duration: vine.number().positive().nullable().optional(),
+    animeSeasonLength: vine.number().positive().nullable().optional(),
+    seriesSeasonLength: vine.number().positive().nullable().optional(),
   })
 )
