@@ -50,7 +50,6 @@ export default class MediaService {
       'animeSeasonLength' in specificInfos
 
     const newMedia = new Media()
-
     await db.transaction(async (trx) => {
       newMedia.useTransaction(trx)
       await newMedia
@@ -76,13 +75,13 @@ export default class MediaService {
       if (isAnime(specificInfos) && newMediaCategoryName === 'Animé') {
         await newMedia.related('animeInfo').create(specificInfos)
       }
-      const isMediaInfosNotMatchWithSelectedType =
+      const isMediaInfosNotMatchWithSelectedCategory =
         (isBook(specificInfos) && newMediaCategoryName !== 'Livre') ||
         (isGame(specificInfos) && newMediaCategoryName !== 'Jeu vidéo') ||
         (isMovie(specificInfos) && newMediaCategoryName !== 'Film') ||
         (isSeries(specificInfos) && newMediaCategoryName !== 'Série') ||
         (isAnime(specificInfos) && newMediaCategoryName !== 'Animé')
-      if (isMediaInfosNotMatchWithSelectedType) {
+      if (isMediaInfosNotMatchWithSelectedCategory) {
         throw new Error('Aucune concordance entre les infos fournies et la catégorie choisie')
       }
     })
