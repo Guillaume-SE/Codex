@@ -6,7 +6,7 @@ import db from '@adonisjs/lucid/services/db'
 
 @inject()
 export default class ReviewsController {
-  async addOneReview(datas: IReview, mediaId: number) {
+  async addOneReview(review: IReview, mediaId: number) {
     const media = await Media.find(mediaId)
     if (!media) {
       throw new Error("Le media n'existe pas")
@@ -16,17 +16,8 @@ export default class ReviewsController {
       throw new Error('Ce media possède déjà une critique')
     }
 
-    const review = new Review()
+    await media.related('review').create(review)
 
-    await db.transaction(async (trx) => {
-      review.useTransaction(trx)
-      await review
-        .merge({
-          mediaId: media.id,
-          ...datas,
-        })
-        .save()
-    })
     return review
   }
 
