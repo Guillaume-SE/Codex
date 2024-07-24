@@ -1,4 +1,3 @@
-import { ICover } from '#interfaces/cover_interface'
 import CoverService from '#services/cover_service'
 import { createCoverValidator } from '#validators/cover_validator'
 import { inject } from '@adonisjs/core'
@@ -28,8 +27,7 @@ export default class CoversController {
       }
       return response.status(201).json(newCover)
     } catch (error) {
-      console.log(error)
-      return response.status(404).json(error)
+      return response.status(404).json({ error, customError: error.message })
     }
   }
 
