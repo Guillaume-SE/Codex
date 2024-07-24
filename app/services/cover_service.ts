@@ -30,7 +30,6 @@ export default class CoverService {
 
     const existingCover = await Cover.findBy('media_id', mediaId)
     if (existingCover) {
-      console.log(existingCover)
       throw new Error("La media a déjà des infos pour sa cover, redirection vers l'update")
     }
 
@@ -47,7 +46,6 @@ export default class CoverService {
     }
 
     const cover = new Cover()
-
     await db.transaction(async (trx) => {
       cover.useTransaction(trx)
       await cover
