@@ -13,18 +13,16 @@ export default class CoversController {
     try {
       const datas = await request.validateUsing(createCoverValidator)
       const newCover = await this.coverService.addCoverInfos(datas, mediaId)
-      if (newCover.coverPath) {
-        const coverInfos = {
-          tmpPath: newCover.coverPath,
-          resizedFilename: newCover.cover.resizedVersion,
-          rawFilename: newCover.cover.rawVersion,
-        }
-        await this.coverService.saveCover(
-          coverInfos.resizedFilename,
-          coverInfos.rawFilename,
-          coverInfos.tmpPath
-        )
+      const coverInfos = {
+        tmpPath: newCover.coverTmpPath,
+        resizedFilename: newCover.coverInfos.resizedVersion,
+        rawFilename: newCover.coverInfos.rawVersion,
       }
+      await this.coverService.saveCover(
+        coverInfos.resizedFilename,
+        coverInfos.rawFilename,
+        coverInfos.tmpPath
+      )
       return response.status(201).json(newCover)
     } catch (error) {
       return response.status(404).json({ error, customError: error.message })
