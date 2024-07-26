@@ -2,7 +2,6 @@ import type { IReview } from '#interfaces/review_interface'
 import Media from '#models/media'
 import Review from '#models/review'
 import { inject } from '@adonisjs/core'
-import db from '@adonisjs/lucid/services/db'
 
 @inject()
 export default class ReviewsController {
