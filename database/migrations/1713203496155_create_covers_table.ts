@@ -16,7 +16,6 @@ export default class extends BaseSchema {
         .notNullable()
       table.string('resized_version').notNullable()
       table.string('raw_version').notNullable()
-      table.string('alternative_text').notNullable()
     })
   }
 

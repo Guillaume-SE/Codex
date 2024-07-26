@@ -17,9 +17,6 @@ export default class Cover extends BaseModel {
   @column({ columnName: 'raw_version', serializeAs: 'rawVersion' })
   declare rawVersion: string
 
-  @column({ columnName: 'alternative_text', serializeAs: 'alternativeText' })
-  declare alternativeText: string
-
   // relations
   @belongsTo(() => Media)
   declare media: BelongsTo<typeof Media>

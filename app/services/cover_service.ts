@@ -20,9 +20,8 @@ export default class CoverService {
   protected coverRawDir: string | PathLike = env.get('COVER_RAW_DIR')
   protected coverExtension: string | PathLike = env.get('DEFAULT_COVER_EXTENSION')
   protected defaultCoverFilename = env.get('DEFAULT_COVER_FILENAME')
-  protected defaultCoverAltText = env.get('DEFAULT_COVER_ALT_TEXT')
 
-  async addCoverInfos(datas: INewCover, mediaId: number) {
+  async addCoverInfos(cover: INewCover, mediaId: number) {
     const media = await Media.find(mediaId)
     if (!media) {
       throw new Error("Le media n'existe pas")
@@ -30,33 +29,39 @@ export default class CoverService {
 
     const existingCover = await Cover.findBy('media_id', mediaId)
     if (existingCover) {
+      // add update logic
       throw new Error("La media a déjà des infos pour sa cover, redirection vers l'update")
     }
 
-    let coverResizedFilename = this.defaultCoverFilename
-    let coverRawFilename = this.defaultCoverFilename
-    let coverAltText = this.defaultCoverAltText
-    let coverTmpPath = null
-    if (datas.cover) {
-      const coverName = generateUniqueString()
-      coverResizedFilename = createFileName(coverName, this.coverExtension, false)
-      coverRawFilename = createFileName(coverName, this.coverExtension, true)
-      coverAltText = createAlternativeText(media.name)
-      coverTmpPath = datas.cover.tmpPath
+    // let coverResizedFilename = this.defaultCoverFilename
+    // let coverRawFilename = this.defaultCoverFilename
+    // let coverTmpPath = null
+    // if (cover.cover) {
+    const coverName = generateUniqueString()
+    const coverResizedFilename = createFileName(coverName, this.coverExtension, false)
+    const coverRawFilename = createFileName(coverName, this.coverExtension, true)
+    const coverTmpPath = cover.cover.tmpPath
+    // }
+
+    const coverInfos = {
+      resizedVersion: coverResizedFilename,
+      rawVersion: coverRawFilename,
     }
 
-    const cover = new Cover()
-    await db.transaction(async (trx) => {
-      cover.useTransaction(trx)
-      await cover
-        .merge({
-          mediaId: media.id,
-          resizedVersion: coverResizedFilename,
-          rawVersion: coverRawFilename,
-          alternativeText: coverAltText,
-        })
-        .save()
-    })
+    // const cover = new Cover()
+    // await db.transaction(async (trx) => {
+    //   cover.useTransaction(trx)
+    //   await cover
+    //     .merge({
+    //       mediaId: media.id,
+    //       resizedVersion: coverResizedFilename,
+    //       rawVersion: coverRawFilename,
+    //     })
+    //     .save()
+    // })
+
+    await media.related('cover').create(coverInfos)
+
     return { cover, coverPath: coverTmpPath }
   }
 
@@ -97,20 +102,17 @@ export default class CoverService {
     const saveNewCover = await this.saveCover(media.name, newCover.tmpPath)
     const newResizedCoverFilename = saveNewCover.coverResizedFilename
     const newRawCoverFilename = saveNewCover.coverRawFilename
-    const newCoverAltText = saveNewCover.coverAltText
 
     actualCover
       .merge({
         resizedVersion: newResizedCoverFilename,
         rawVersion: newRawCoverFilename,
-        alternativeText: newCoverAltText,
       })
       .save()
 
     return {
       resizedVersion: newResizedCoverFilename,
       filenameRaw: newRawCoverFilename,
-      alternative: newCoverAltText,
     }
   }
 
