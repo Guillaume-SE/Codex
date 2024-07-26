@@ -71,7 +71,8 @@ node ace migration:run
 ```
 
 ## Status
-20/06/24: I'm currently working on a v2 for the database, more complex but for greater flexibility!
+26/07/24: The database v2 is now completed, I adjust my code to match with her!
+I'll soon update the diagram show above :)  
 
 ## Other
 
