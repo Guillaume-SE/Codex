@@ -21,7 +21,7 @@ It also allows me to keep up to date with the ones I've planned to see, the ones
 
 ## Database diagram and relationship explanations  
 
-![diagram-codex](https://github.com/Guillaume-SE/Codex/assets/100344718/dc03c849-12af-4922-81d3-3bc9bb7ee33e)
+![db-diagram](https://github.com/user-attachments/assets/5a272f4c-681f-4060-bf05-01deef0e0f4c)
 
 
 - `Users`: As the project aims to contain only my media entries, I chose not to link the "users" table to "reviews". It will only be used for authentication.
