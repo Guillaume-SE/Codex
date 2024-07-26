@@ -19,10 +19,9 @@ It also allows me to keep up to date with the ones I've planned to see, the ones
 - Handles storing user-uploaded cover images with automatic resize ([Sharp](https://sharp.pixelplumbing.com/)).
 - Details page for each media, retrieved by media id.
 
-## Database diagram and relationship explanations  
+## Database diagram and relationship explanations
 
 ![diagram-codex](https://github.com/Guillaume-SE/Codex/assets/100344718/dc03c849-12af-4922-81d3-3bc9bb7ee33e)
-
 
 - `Users`: As the project aims to contain only my media entries, I chose not to link the "users" table to "reviews". It will only be used for authentication.
 
@@ -69,6 +68,11 @@ npm run dev
 # create the database
 node ace migration:run
 ```
+
+## Status
+
+26/07/24: The database v2 is now completed, I adjust my code to match with her!
+I'll soon update the diagram show above :)
 
 ## Other
 
