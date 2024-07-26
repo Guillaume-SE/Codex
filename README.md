@@ -71,8 +71,8 @@ node ace migration:run
 ```
 
 ## Status
-26/07/24: The database v2 is now completed, I adjust my code to match with her!
-I'll soon update the diagram show above :)  
+26/07/24: Version 2 of the database is complete, I'm updating the code to incorporate this v2!  
+I'll soon update the diagram above. 
 
 ## Other
 
