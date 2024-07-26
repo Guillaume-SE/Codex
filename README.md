@@ -27,7 +27,7 @@ It also allows me to keep up to date with the ones I've planned to see, the ones
 - `Users`: As the project aims to contain only my media entries, I chose not to link the "users" table to "reviews". It will only be used for authentication.
 
 - `Media`: Will contain every type of data the media I add may have, for example books, video games, movies and series all have a synopsis.  
-  The [media type](https://github.com/Guillaume-SE/Codex/blob/main/app/enums/MediaTypes.ts) will determine how the rest of the information is added to a dedicated table.
+  The media category (book, game, movies...) will determine how the rest of the information is added to a dedicated table.
 
 - `Reviews`: Reviews are created as soon as a media is added, and a review cannot exist without its associated media. This is one of the reasons why `rating` and `opinion` are one of the only nullable columns, because if I haven't yet seen the film, read the book, played the game, there is no reason to assign a value to these 2 columns.  
   The media will have the appropriate [status](https://github.com/Guillaume-SE/Codex/blob/main/app/enums/ReviewStatus.ts) for this specific case.
@@ -38,9 +38,15 @@ It also allows me to keep up to date with the ones I've planned to see, the ones
 
 - `games_infos`: contains all media information related to video games.
 
-- `seasons_infos`: contains all the information specific to media with a seasonal structure, such as series and anime.
+- `series_infos`: contains all the information related to series.
+
+- `anime_infos`: contains all the information related to animé, mainly japanese animation.
 
 - `books_infos`: contains all book-related media information.
+
+- `media_contributors`: people or companies involved in the creation of a media and the role they played in it.
+
+- `genres`: media genre (fantasy, action, comedy...) linked to a media category, allowing duplication and facilitating filter management.
 
 ## Future plans
 
