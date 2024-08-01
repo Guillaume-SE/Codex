@@ -1,9 +1,8 @@
-import { IMedia } from '#interfaces/media_interface'
-import { IReview } from '#interfaces/review_interface'
+import { IMedia, INewMediaPayload, IUpdatedMediaPayload } from '#interfaces/media_interface'
 import Media from '#models/media'
 import CoverService from '#services/cover_service'
 import MediaService from '#services/media_service'
-import { createMediaValidator } from '#validators/media_validator'
+import { createMediaValidator, updateMediaValidator } from '#validators/media_validator'
 import { inject } from '@adonisjs/core'
 import type { HttpContext } from '@adonisjs/core/http'
 
@@ -14,9 +13,9 @@ export default class MediasController {
     readonly coverService: CoverService
   ) {}
 
-  public async addOneMedia({ request, response }: HttpContext) {
+  async addOneMedia({ request, response }: HttpContext) {
     try {
-      const payloadValidation = await request.validateUsing(createMediaValidator)
+      const datas = await request.validateUsing(createMediaValidator)
       const {
         mediaParentId,
         categoryId,
@@ -27,7 +26,7 @@ export default class MediasController {
         synopsis,
         genresIds,
         ...mediaSpecificInfos
-      } = payloadValidation
+      }: INewMediaPayload = datas
 
       const generalMediaInfos: IMedia = {
         mediaParentId,
@@ -49,16 +48,43 @@ export default class MediasController {
     }
   }
 
-  public async updateOneMedia() {
-    // try {
-    //   const media = await Media.findOrFail(9)
-    //   await media.related('genres').sync([])
-    // } catch (e) {
-    //   console.log(e)
-    // }
+  async updateOneMedia({ params, response, request }: HttpContext) {
+    const mediaId = params.mediaId
+
+    try {
+      const datas = await request.validateUsing(updateMediaValidator)
+      const {
+        mediaParentId,
+        typeId,
+        name,
+        alternativeName,
+        released,
+        synopsis,
+        genresIds,
+        ...mediaSpecificInfos
+      }: IUpdatedMediaPayload = datas
+
+      const generalMediaInfos: IMedia = {
+        mediaParentId,
+        typeId,
+        name,
+        alternativeName,
+        released,
+        synopsis,
+      }
+      const media = await this.mediaService.updateOneMedia(
+        mediaId,
+        generalMediaInfos,
+        genresIds,
+        mediaSpecificInfos
+      )
+      return response.status(201).json(media)
+    } catch (error) {
+      return response.status(400).json({ error, customError: error.message })
+    }
   }
 
-  public async deleteOneMedia({ params, response }: HttpContext) {
+  async deleteOneMedia({ params, response }: HttpContext) {
     const mediaId = params.id
 
     try {
