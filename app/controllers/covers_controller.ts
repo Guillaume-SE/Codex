@@ -46,7 +46,7 @@ export default class CoversController {
     const mediaId = params.mediaId
 
     try {
-      const cover = await this.coverService.deleteOneCover(mediaId)
+      const cover = await this.coverService.deleteOneCoverByMediaId(mediaId)
       return response.status(201).json(cover)
     } catch (error) {
       return response.status(404).json(error)
