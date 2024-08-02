@@ -85,11 +85,12 @@ export default class MediasController {
   }
 
   async deleteOneMedia({ params, response }: HttpContext) {
-    const mediaId = params.id
+    const mediaId = params.mediaId
 
     try {
-      await this.coverService.deleteOneCover(mediaId)
+      const cover = await this.coverService.getOneCoverByMediaId(mediaId)
       await this.mediaService.deleteOneMedia(mediaId)
+      await this.coverService.deleteCoverByFilenames(cover.resizedVersion, cover.rawVersion)
       return response.status(200)
     } catch (error) {
       return response.status(404).json(error)
@@ -102,7 +103,7 @@ export default class MediasController {
   }
 
   public async getOneMediaById({ params, response }: HttpContext) {
-    const mediaId = params.id
+    const mediaId = params.mediaId
     try {
       const media = await Media.find(mediaId)
       return response.status(201).json(media)
