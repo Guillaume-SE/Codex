@@ -23,35 +23,32 @@ export default class MediaService {
     mediaGenres: Array<number>,
     specificInfos: IMediaSpecificInfos
   ) {
-    const isValidType = await MediaType.find(media.typeId)
-    if (!isValidType) {
+    const validSelectedType = await MediaType.find(media.typeId)
+    if (!validSelectedType) {
       throw new Error('Aucun type ne correspond')
     }
 
-    const isValidCategory = await MediaCategory.find(media.categoryId)
-    if (!isValidCategory) {
+    const validSelectedCategory = await MediaCategory.find(media.categoryId)
+    if (!validSelectedCategory) {
       throw new Error('Aucune catégorie ne correspond')
     }
-    const newMediaCategoryName = isValidCategory.name
+    const newMediaCategoryName = validSelectedCategory.name
 
-    const isValidTypeForCategory = await MediaType.findBy({
-      id: media.typeId,
-      categoryId: media.categoryId,
-    })
-    if (!isValidTypeForCategory) {
-      throw new Error("La catégorie du media n'a pas de type correspondant au type choisi")
+    const isValidTypeForSelectedCategory = validSelectedType.categoryId === media.categoryId
+    if (!isValidTypeForSelectedCategory) {
+      throw new Error("La catégorie du media n'a pas de type correspondant à celui choisi")
     }
 
-    const isAllGenresSelectedExist = await Genre.query()
+    const validSelectedGenres = await Genre.query()
       .select('*')
       .from('genres')
       .whereIn('id', mediaGenres)
-    const isSelectedGenresNotValid = mediaGenres.length !== isAllGenresSelectedExist.length
+    const isSelectedGenresNotValid = mediaGenres.length !== validSelectedGenres.length
     if (isSelectedGenresNotValid) {
       throw new Error("Un ou plusieurs genres selectionnés n'existe pas")
     }
 
-    const categoriesIdsForSelectedGenres = isAllGenresSelectedExist.map((genre) => genre.categoryId)
+    const categoriesIdsForSelectedGenres = validSelectedGenres.map((genre) => genre.categoryId)
     const isAllGenresMatchWithCategory = categoriesIdsForSelectedGenres.every(
       (id) => id === media.categoryId
     )
