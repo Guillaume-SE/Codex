@@ -98,46 +98,35 @@ export default class CoverService {
     }
   }
 
-  async deleteOneCover(mediaId: number) {
+  async deleteOneCoverByMediaId(mediaId: number) {
     const cover = await Cover.findBy('media_id', mediaId)
-
-    if (cover) {
-      const actualResizedCoverFilename = cover.resizedVersion
-      const actualRawCoverFilename = cover.rawVersion
-      const isNotDefaultCover = actualResizedCoverFilename !== this.defaultCoverFilename
-      if (isNotDefaultCover) {
-        const coverResizedFullpath = path.join(
-          `${this.coverResizedDir}${actualResizedCoverFilename}`
-        )
-        const coverRawFullpath = path.join(`${this.coverRawDir}${actualRawCoverFilename}`)
-        await rm(coverResizedFullpath, { force: true })
-        await rm(coverRawFullpath, { force: true })
-
-        cover
-          .merge({
-            resizedVersion: this.defaultCoverFilename,
-            rawVersion: null,
-            alternativeText: this.defaultCoverAltText,
-          })
-          .save()
-      }
+    if (!cover) {
+      throw new Error("Aucune cover n'a été trouvée pour ce media")
     }
+
+    const coverResizedFullpath = path.join(`${this.coverResizedDir}${cover.resizedVersion}`)
+    const coverRawFullpath = path.join(`${this.coverRawDir}${cover.rawVersion}`)
+    await rm(coverResizedFullpath, { force: true })
+    await rm(coverRawFullpath, { force: true })
   }
 
-  // async deleteCoverWithFilename(filename: string | null) {
-  //   const isNotDefaultCover = filename !== this.defaultCoverFilename
-  //   if (isNotDefaultCover) {
-  //     await rm(`${path}${filename}`)
-  //   }
-  // }
+  async deleteCoverByFilenames(resizedCoverfilename: string, rawCoverFilename: string) {
+    const coverResizedFullpath = path.join(`${this.coverResizedDir}${resizedCoverfilename}`)
+    const coverRawFullpath = path.join(`${this.coverRawDir}${rawCoverFilename}`)
+    await rm(coverResizedFullpath, { force: true })
+    await rm(coverRawFullpath, { force: true })
+  }
 
   async getAllCovers() {
     const covers = await Cover.all()
     return covers
   }
 
-  async getOneCoverById(mediaId: number) {
+  async getOneCoverByMediaId(mediaId: number) {
     const cover = await Cover.findBy('media_id', mediaId)
+    if (!cover) {
+      throw new Error("Aucune cover n'a été trouvée")
+    }
     return cover
   }
 }
