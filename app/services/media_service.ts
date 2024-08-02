@@ -7,12 +7,15 @@ import {
   ISeriesInfos,
 } from '#interfaces/media_infos_interface'
 import { IMedia } from '#interfaces/media_interface'
+import AnimeInfo from '#models/anime_info'
 import BookInfo from '#models/book_info'
 import GameInfo from '#models/game_info'
 import Genre from '#models/genre'
 import Media from '#models/media'
 import MediaCategory from '#models/media_category'
 import MediaType from '#models/media_type'
+import MovieInfo from '#models/movie_info'
+import SeriesInfo from '#models/series_info'
 import { inject } from '@adonisjs/core'
 import db from '@adonisjs/lucid/services/db'
 
@@ -101,7 +104,7 @@ export default class MediaService {
         (isSeries(specificInfos) && newMediaCategoryName !== 'Série') ||
         (isAnime(specificInfos) && newMediaCategoryName !== 'Animé')
       if (isMediaInfosNotMatchWithSelectedCategory) {
-        throw new Error('Aucune concordance entre les infos fournies et la catégorie choisie')
+        throw new Error('Les infos spécifiques du media ne correspondent pas à sa catégorie')
       }
     })
 
@@ -110,26 +113,17 @@ export default class MediaService {
 
   public async updateOneMedia(
     mediaId: number,
-    mediaInfos: IMedia,
-    mediaGenres: Array<number>,
-    specificInfos: IMediaSpecificInfos
+    updatedMediaInfos: IMedia,
+    updatedMediaGenres: Array<number>,
+    updatedSpecificInfos: IMediaSpecificInfos
   ) {
     const media = await Media.find(mediaId)
     if (!media) {
       throw new Error('Aucun media trouvé')
     }
-
-    const isValidType = await MediaType.find(mediaInfos.typeId)
-    if (!isValidType) {
-      throw new Error("Le type n'est pas valide")
-    }
-
-    const isValidTypeForCategory = await MediaType.findBy({
-      id: mediaInfos.typeId,
-      categoryId: media.categoryId,
-    })
-    if (!isValidTypeForCategory) {
-      throw new Error("La catégorie du media n'a pas de type correspondant au type choisi")
+    const validSelectedType = await MediaType.find(updatedMediaInfos.typeId)
+    if (!validSelectedType) {
+      throw new Error('Aucun type ne correspond')
     }
 
     const mediaCategory = await MediaCategory.find(media.categoryId)
@@ -137,6 +131,30 @@ export default class MediaService {
       throw new Error('Le media ne possède pas de catégorie')
     }
     const mediaCategoryName = mediaCategory.name
+
+    const isValidTypeForSelectedCategory = validSelectedType.categoryId === media.categoryId
+    if (!isValidTypeForSelectedCategory) {
+      throw new Error("La catégorie du media n'a pas de type correspondant à celui choisi")
+    }
+
+    const validSelectedGenres = await Genre.query()
+      .select('*')
+      .from('genres')
+      .whereIn('id', updatedMediaGenres)
+    const isSelectedGenresNotValid = updatedMediaGenres.length !== validSelectedGenres.length
+    if (isSelectedGenresNotValid) {
+      throw new Error("Un ou plusieurs genres selectionnés n'existe pas")
+    }
+
+    const categoriesIdsForSelectedGenres = validSelectedGenres.map((genre) => genre.categoryId)
+    const isAllGenresMatchWithCategory = categoriesIdsForSelectedGenres.every(
+      (id) => id === media.categoryId
+    )
+    if (!isAllGenresMatchWithCategory) {
+      throw new Error(
+        "Un ou plusieurs genres selectionnés n'appartiennent pas à la catégorie du media"
+      )
+    }
 
     const isBook = (specificInfos: any): specificInfos is IBookInfos => 'pages' in specificInfos
     const isGame = (specificInfos: any): specificInfos is IGameInfos =>
@@ -152,47 +170,59 @@ export default class MediaService {
       media.useTransaction(trx)
       await media
         .merge({
-          ...media,
+          ...updatedMediaInfos,
         })
         .save()
 
-      await media.related('genres').sync(mediaGenres)
+      await media.related('genres').sync(updatedMediaGenres)
 
-      if (isBook(specificInfos) && mediaCategoryName === 'Livre') {
+      if (isBook(updatedSpecificInfos) && mediaCategoryName === 'Livre') {
         const bookInfos = await BookInfo.findBy('media_id', mediaId)
         if (!bookInfos) {
           throw new Error("Le media n'a aucune info liées aux livres")
         }
-        await bookInfos.merge(specificInfos).save()
+        await bookInfos.merge(updatedSpecificInfos).save()
       }
-      if (isGame(specificInfos) && mediaCategoryName === 'Jeu vidéo') {
+      if (isGame(updatedSpecificInfos) && mediaCategoryName === 'Jeu vidéo') {
         const gameInfos = await GameInfo.findBy('media_id', mediaId)
         if (!gameInfos) {
           throw new Error("Le media n'a aucune info liées aux jeux vidéo")
         }
-        await gameInfos.merge(specificInfos).save()
+        await gameInfos.merge(updatedSpecificInfos).save()
       }
-      if (isMovie(specificInfos) && mediaCategoryName === 'Film') {
-        await media.related('movieInfo').create(specificInfos)
+      if (isMovie(updatedSpecificInfos) && mediaCategoryName === 'Film') {
+        const movieInfos = await MovieInfo.findBy('media_id', mediaId)
+        if (!movieInfos) {
+          throw new Error("Le media n'a aucune info liées aux films")
+        }
+        await movieInfos.merge(updatedSpecificInfos).save()
       }
-      if (isSeries(specificInfos) && mediaCategoryName === 'Série') {
-        await media.related('seriesInfo').create(specificInfos)
+      if (isSeries(updatedSpecificInfos) && mediaCategoryName === 'Série') {
+        const seriesInfos = await SeriesInfo.findBy('media_id', mediaId)
+        if (!seriesInfos) {
+          throw new Error("Le media n'a aucune info liées aux séries")
+        }
+        await seriesInfos.merge(updatedSpecificInfos).save()
       }
-      if (isAnime(specificInfos) && mediaCategoryName === 'Animé') {
-        await media.related('animeInfo').create(specificInfos)
+      if (isAnime(updatedSpecificInfos) && mediaCategoryName === 'Animé') {
+        const animeInfos = await AnimeInfo.findBy('media_id', mediaId)
+        if (!animeInfos) {
+          throw new Error("Le media n'a aucune info liées aux animé")
+        }
+        await animeInfos.merge(updatedSpecificInfos).save()
       }
       const isMediaInfosNotMatchWithSelectedCategory =
-        (isBook(specificInfos) && mediaCategoryName !== 'Livre') ||
-        (isGame(specificInfos) && mediaCategoryName !== 'Jeu vidéo') ||
-        (isMovie(specificInfos) && mediaCategoryName !== 'Film') ||
-        (isSeries(specificInfos) && mediaCategoryName !== 'Série') ||
-        (isAnime(specificInfos) && mediaCategoryName !== 'Animé')
+        (isBook(updatedSpecificInfos) && mediaCategoryName !== 'Livre') ||
+        (isGame(updatedSpecificInfos) && mediaCategoryName !== 'Jeu vidéo') ||
+        (isMovie(updatedSpecificInfos) && mediaCategoryName !== 'Film') ||
+        (isSeries(updatedSpecificInfos) && mediaCategoryName !== 'Série') ||
+        (isAnime(updatedSpecificInfos) && mediaCategoryName !== 'Animé')
       if (isMediaInfosNotMatchWithSelectedCategory) {
-        throw new Error('Les infos spécifiques du media ne correspondent pas à ça catégorie')
+        throw new Error('Les infos spécifiques du media ne correspondent pas à sa catégorie')
       }
     })
 
-    return { mediaInfos, specificInfos }
+    return { updatedMediaInfos, updatedSpecificInfos }
   }
 
   public async deleteOneMedia(mediaId: number) {
