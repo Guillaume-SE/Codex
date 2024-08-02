@@ -26,12 +26,12 @@ export default class MediaService {
     mediaGenres: Array<number>,
     specificInfos: IMediaSpecificInfos
   ) {
-    const validSelectedType = await MediaType.find(media.typeId)
+    const validSelectedType: MediaType | null = await MediaType.find(media.typeId)
     if (!validSelectedType) {
       throw new Error('Aucun type ne correspond')
     }
 
-    const validSelectedCategory = await MediaCategory.find(media.categoryId)
+    const validSelectedCategory: MediaCategory | null = await MediaCategory.find(media.categoryId)
     if (!validSelectedCategory) {
       throw new Error('Aucune catégorie ne correspond')
     }
