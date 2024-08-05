@@ -69,6 +69,6 @@ router.get('/anime/:mediaId', [AnimeController, 'getOneAnimeById']).as('anime.sh
  */
 router.get('/covers', [CoversController, 'getAllCovers'])
 //ADMIN
-router.post('media/:mediaId/cover', [CoversController, 'addOneCover']).as('cover.add')
-router.put('media/:mediaId/cover', [CoversController, 'updateOneCover']).as('cover.update')
+router.post('media/:mediaId/cover', [CoversController, 'manageOneCover']).as('cover.add')
+router.put('media/:mediaId/cover', [CoversController, 'manageOneCover']).as('cover.update')
 router.delete('media/:mediaId/cover', [CoversController, 'deleteOneCover']).as('cover.delete')
