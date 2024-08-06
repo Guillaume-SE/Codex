@@ -10,6 +10,7 @@ import { IMedia } from '#interfaces/media_interface'
 import AnimeInfo from '#models/anime_info'
 import BookInfo from '#models/book_info'
 import GameInfo from '#models/game_info'
+import GamePlatform from '#models/game_platform'
 import Genre from '#models/genre'
 import Media from '#models/media'
 import MediaCategory from '#models/media_category'
@@ -26,6 +27,13 @@ export default class MediaService {
     mediaGenres: Array<number>,
     specificInfos: IMediaSpecificInfos
   ) {
+    if (media.mediaParentId) {
+      const validSelectedMediaParent = await Media.find(media.mediaParentId)
+      if (!validSelectedMediaParent) {
+        throw new Error("Le media parent selectionné n'existe pas")
+      }
+    }
+
     const validSelectedType: MediaType | null = await MediaType.find(media.typeId)
     if (!validSelectedType) {
       throw new Error('Aucun type ne correspond')
@@ -86,6 +94,10 @@ export default class MediaService {
         await newMedia.related('bookInfo').create(specificInfos)
       }
       if (isGame(specificInfos) && newMediaCategoryName === 'Jeu vidéo') {
+        const validPlatform = await GamePlatform.find(specificInfos.platformId)
+        if (!validPlatform) {
+          throw new Error("La plateforme choisie n'existe pas")
+        }
         await newMedia.related('gameInfo').create(specificInfos)
       }
       if (isMovie(specificInfos) && newMediaCategoryName === 'Film') {
@@ -120,6 +132,17 @@ export default class MediaService {
     const media = await Media.find(mediaId)
     if (!media) {
       throw new Error('Aucun media trouvé')
+    }
+
+    if (updatedMediaInfos.mediaParentId) {
+      const validSelectedMediaParent = await Media.find(updatedMediaInfos.mediaParentId)
+      if (!validSelectedMediaParent) {
+        throw new Error("Le media parent selectionné n'existe pas")
+      }
+      const validSelectedMediaParentIsTheMediaUpdated = validSelectedMediaParent.id === media.id
+      if (validSelectedMediaParentIsTheMediaUpdated) {
+        throw new Error('Le media à mettre à jour ne peut être son propre parent')
+      }
     }
     const validSelectedType = await MediaType.find(updatedMediaInfos.typeId)
     if (!validSelectedType) {
@@ -188,6 +211,10 @@ export default class MediaService {
         if (!gameInfos) {
           throw new Error("Le media n'a aucune info liées aux jeux vidéo")
         }
+        const validPlatform = await GamePlatform.find(updatedSpecificInfos.platformId)
+        if (!validPlatform) {
+          throw new Error("La plateforme choisie n'existe pas")
+        }
         await gameInfos.merge(updatedSpecificInfos).save()
       }
       if (isMovie(updatedSpecificInfos) && mediaCategoryName === 'Film') {
@@ -228,7 +255,7 @@ export default class MediaService {
   public async deleteOneMedia(mediaId: number) {
     const media = await Media.find(mediaId)
     if (!media) {
-      throw new Error('pas de media')
+      throw new Error('Aucun media trouvé')
     }
     await media.delete()
   }
