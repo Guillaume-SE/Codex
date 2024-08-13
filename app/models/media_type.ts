@@ -20,5 +20,5 @@ export default class MediaType extends BaseModel {
   declare category: BelongsTo<typeof MediaCategory>
 
   @hasMany(() => Media)
-  declare media: HasMany<typeof Media>
+  declare medias: HasMany<typeof Media>
 }

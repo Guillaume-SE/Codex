@@ -10,7 +10,7 @@ export default class MediaCategory extends BaseModel {
   @column({ isPrimary: true })
   declare id: number
 
-  @column()
+  @column({})
   declare name: MediaCategories
   //RELATIONS
   @hasMany(() => Media)

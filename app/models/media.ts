@@ -14,6 +14,7 @@ import type { BelongsTo, HasMany, HasOne, ManyToMany } from '@adonisjs/lucid/typ
 
 export default class Media extends BaseModel {
   public static table = 'media'
+  // serializeExtras = true
 
   @column({ isPrimary: true })
   declare id: number
@@ -24,7 +25,7 @@ export default class Media extends BaseModel {
   @column({ columnName: 'category_id', serializeAs: 'categoryId' })
   declare categoryId: number
 
-  @column({ columnName: 'type_id', serializeAs: 'typeId' })
+  @column({ columnName: 'type_id' })
   declare typeId: number
 
   @column()
@@ -33,7 +34,7 @@ export default class Media extends BaseModel {
   @column({ columnName: 'alternative_name', serializeAs: 'alternativeName' })
   declare alternativeName: string | null
 
-  @column()
+  @column({ serializeAs: 'releasedDate' })
   declare released: string
 
   @column()
@@ -46,11 +47,15 @@ export default class Media extends BaseModel {
   @belongsTo(() => Media)
   declare childrenMedia: BelongsTo<typeof Media>
 
-  @belongsTo(() => MediaCategory)
-  declare category: BelongsTo<typeof MediaCategory>
+  @belongsTo(() => MediaCategory, {
+    foreignKey: 'categoryId',
+  })
+  declare mediaCategory: BelongsTo<typeof MediaCategory>
 
-  @belongsTo(() => MediaType)
-  declare type: BelongsTo<typeof MediaType>
+  @belongsTo(() => MediaType, {
+    foreignKey: 'typeId',
+  })
+  declare mediaType: BelongsTo<typeof MediaType>
 
   @hasOne(() => Review)
   declare review: HasOne<typeof Review>
@@ -79,6 +84,8 @@ export default class Media extends BaseModel {
   })
   declare genres: ManyToMany<typeof Genre>
 
-  @hasMany(() => MediaContributor, {})
+  @hasMany(() => MediaContributor, {
+    foreignKey: 'mediaId',
+  })
   declare mediaProject: HasMany<typeof MediaContributor>
 }

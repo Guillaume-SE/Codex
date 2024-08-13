@@ -20,12 +20,12 @@ export default class MediaContributor extends BaseModel {
   declare jobId: number
 
   // relations
-  @belongsTo(() => Media)
+  @belongsTo(() => Media, {})
   declare media: BelongsTo<typeof Media>
 
-  @belongsTo(() => Contributor)
+  @belongsTo(() => Contributor, {})
   declare contributor: BelongsTo<typeof Contributor>
 
-  @belongsTo(() => Job)
+  @belongsTo(() => Job, {})
   declare job: BelongsTo<typeof Job>
 }

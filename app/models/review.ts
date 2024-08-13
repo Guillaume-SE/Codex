@@ -5,7 +5,6 @@ import type { BelongsTo } from '@adonisjs/lucid/types/relations'
 
 export default class Review extends BaseModel {
   public static table = 'reviews'
-  serializeExtras = true
 
   @column({ isPrimary: true })
   declare id: number
@@ -32,7 +31,9 @@ export default class Review extends BaseModel {
   @belongsTo(() => Media)
   declare media: BelongsTo<typeof Media>
 
-  @belongsTo(() => ReviewStatuses)
+  @belongsTo(() => ReviewStatuses, {
+    foreignKey: 'statusId',
+  })
   declare reviewStatuses: BelongsTo<typeof ReviewStatuses>
 
   @beforeCreate()
