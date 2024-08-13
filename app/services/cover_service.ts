@@ -67,10 +67,9 @@ export default class CoverService {
       throw new Error("Aucune cover n'a été trouvée pour ce media")
     }
 
-    const coverResizedFullpath = path.join(`${this.coverResizedDir}${cover.resizedVersion}`)
-    const coverRawFullpath = path.join(`${this.coverRawDir}${cover.rawVersion}`)
-    await rm(coverResizedFullpath, { force: true })
-    await rm(coverRawFullpath, { force: true })
+    await this.deleteCoverByFilenames(cover.resizedVersion, cover.rawVersion)
+
+    await cover.delete()
   }
 
   async deleteCoverByFilenames(resizedCoverfilename: string, rawCoverFilename: string) {
