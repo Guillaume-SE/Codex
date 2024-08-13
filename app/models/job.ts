@@ -12,6 +12,8 @@ export default class Job extends BaseModel {
   declare name: string
 
   // relations
-  @hasMany(() => MediaContributor, {})
+  @hasMany(() => MediaContributor, {
+    foreignKey: 'jobId',
+  })
   declare contributorJob: HasMany<typeof MediaContributor>
 }
