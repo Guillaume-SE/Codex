@@ -29,6 +29,11 @@ export default class GenreSeeder extends BaseSeeder {
         name: 'Action',
         categoryId: 5,
       },
+      {
+        id: 6,
+        name: 'Action',
+        categoryId: 1,
+      },
     ])
   }
 }
