@@ -1,5 +1,4 @@
 import Media from '#models/media'
-import ReviewStatuses from '#models/review_statuses'
 import { BaseModel, beforeCreate, beforeUpdate, belongsTo, column } from '@adonisjs/lucid/orm'
 import type { BelongsTo } from '@adonisjs/lucid/types/relations'
 
@@ -11,9 +10,6 @@ export default class Review extends BaseModel {
 
   @column({ columnName: 'media_id', serializeAs: 'mediaId' })
   declare mediaId: number
-
-  @column()
-  declare statusId: number
 
   @column()
   declare rating: number | null
@@ -30,11 +26,6 @@ export default class Review extends BaseModel {
   //relations
   @belongsTo(() => Media)
   declare media: BelongsTo<typeof Media>
-
-  @belongsTo(() => ReviewStatuses, {
-    foreignKey: 'statusId',
-  })
-  declare reviewStatuses: BelongsTo<typeof ReviewStatuses>
 
   @beforeCreate()
   static async defaultTimeStampValueOnCreate(review: Review) {
