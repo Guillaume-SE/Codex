@@ -14,8 +14,8 @@ export default class extends BaseSchema {
         .onDelete('CASCADE')
         .onUpdate('CASCADE')
         .notNullable()
-      table.string('resized_version').notNullable()
-      table.string('raw_version').notNullable()
+      table.string('resized_cover_filename').notNullable()
+      table.string('original_cover_filename').notNullable()
     })
   }
 

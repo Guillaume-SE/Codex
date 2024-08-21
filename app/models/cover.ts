@@ -11,11 +11,11 @@ export default class Cover extends BaseModel {
   @column({ columnName: 'media_id' })
   declare mediaId: number
 
-  @column({ columnName: 'resized_version', serializeAs: 'resizedVersion' })
-  declare resizedVersion: string
+  @column({ columnName: 'resized_cover_filename', serializeAs: 'resizedCoverFilename' })
+  declare resizedCoverFilename: string
 
-  @column({ columnName: 'raw_version', serializeAs: 'rawVersion' })
-  declare rawVersion: string
+  @column({ columnName: 'original_cover_filename', serializeAs: 'originalCoverFilename' })
+  declare originalCoverFilename: string
 
   // relations
   @belongsTo(() => Media)

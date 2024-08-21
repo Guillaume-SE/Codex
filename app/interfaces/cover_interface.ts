@@ -5,6 +5,6 @@ export interface INewCover {
 }
 
 export interface ICover {
-  resizedVersion: string
-  rawVersion: string
+  resizedCoverFilename: string
+  originalCoverFilename: string
 }

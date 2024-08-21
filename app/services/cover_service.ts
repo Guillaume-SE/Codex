@@ -13,9 +13,8 @@ import path from 'node:path'
 @inject()
 export default class CoverService {
   protected coverResizedDir: string | PathLike = env.get('COVER_RESIZED_DIR')
-  protected coverRawDir: string | PathLike = env.get('COVER_RAW_DIR')
+  protected coverOriginalDir: string | PathLike = env.get('COVER_ORIGINAL_DIR')
   protected coverExtension: string | PathLike = env.get('DEFAULT_COVER_EXTENSION')
-  protected defaultCoverFilename = env.get('DEFAULT_COVER_FILENAME')
 
   async saveCoverDatas(datas: INewCover, mediaId: number) {
     const media = await Media.find(mediaId)
@@ -26,26 +25,33 @@ export default class CoverService {
     const existingCover = await Cover.findBy('media_id', mediaId)
 
     const coverName = generateUniqueString()
-    const coverResizedFilename = createFileName(coverName, this.coverExtension, false)
-    const coverRawFilename = createFileName(coverName, this.coverExtension, true)
+    const resizedCoverFilename = createFileName(coverName, this.coverExtension, false)
+    const originalCoverFilename = createFileName(coverName, this.coverExtension, true)
     const coverTmpPath = datas.cover.tmpPath
 
     const coverInfos: ICover = {
-      resizedVersion: coverResizedFilename,
-      rawVersion: coverRawFilename,
+      resizedCoverFilename: resizedCoverFilename,
+      originalCoverFilename: originalCoverFilename,
     }
 
     const searchPayload = { mediaId: media.id }
     await media.related('cover').updateOrCreate(searchPayload, coverInfos)
 
     if (existingCover) {
-      await this.deleteCoverByFilenames(existingCover.resizedVersion, existingCover.rawVersion)
+      await this.deleteCoverByFilenames(
+        existingCover.resizedCoverFilename,
+        existingCover.originalCoverFilename
+      )
     }
 
     return { coverInfos, coverTmpPath }
   }
 
-  async saveCoverFile(resizedFilename: string, rawFilename: string, tmpPath: string | undefined) {
+  async saveCoverFile(
+    resizedFilename: string,
+    originalFilename: string,
+    tmpPath: string | undefined
+  ) {
     if (tmpPath === undefined) {
       throw new Error("Aucun chemin disponible pour l'image")
     }
@@ -54,11 +60,11 @@ export default class CoverService {
     await writeFile(coverResizedFullPath, coverResized)
 
     //to keep a clean original version
-    const coverRaw = await toBuffer(tmpPath)
-    const coverRawFullPath = `${this.coverRawDir}${rawFilename}`
-    await writeFile(coverRawFullPath, coverRaw)
+    const coverOriginal = await toBuffer(tmpPath)
+    const coverOriginalFullPath = `${this.coverOriginalDir}${originalFilename}`
+    await writeFile(coverOriginalFullPath, coverOriginal)
 
-    return { coverResizedFullPath, coverRawFullPath }
+    return { coverResizedFullPath, coverOriginalFullPath }
   }
 
   async deleteOneCoverByMediaId(mediaId: number) {
@@ -67,16 +73,16 @@ export default class CoverService {
       throw new Error("Aucune cover n'a été trouvée pour ce media")
     }
 
-    await this.deleteCoverByFilenames(cover.resizedVersion, cover.rawVersion)
+    await this.deleteCoverByFilenames(cover.resizedCoverFilename, cover.originalCoverFilename)
 
     await cover.delete()
   }
 
-  async deleteCoverByFilenames(resizedCoverfilename: string, rawCoverFilename: string) {
+  async deleteCoverByFilenames(resizedCoverfilename: string, originalCoverFilename: string) {
     const coverResizedFullpath = path.join(`${this.coverResizedDir}${resizedCoverfilename}`)
-    const coverRawFullpath = path.join(`${this.coverRawDir}${rawCoverFilename}`)
+    const coverOriginalFullpath = path.join(`${this.coverOriginalDir}${originalCoverFilename}`)
     await rm(coverResizedFullpath, { force: true })
-    await rm(coverRawFullpath, { force: true })
+    await rm(coverOriginalFullpath, { force: true })
   }
 
   async getAllCovers() {

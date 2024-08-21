@@ -15,8 +15,8 @@ export default class CoversController {
       const newCover = await this.coverService.saveCoverDatas(datas, mediaId)
       const coverInfos = {
         tmpPath: newCover.coverTmpPath,
-        resizedFilename: newCover.coverInfos.resizedVersion,
-        rawFilename: newCover.coverInfos.rawVersion,
+        resizedFilename: newCover.coverInfos.resizedCoverFilename,
+        rawFilename: newCover.coverInfos.originalCoverFilename,
       }
       await this.coverService.saveCoverFile(
         coverInfos.resizedFilename,
