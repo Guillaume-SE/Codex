@@ -13,7 +13,7 @@ export default class Contributor extends BaseModel {
 
   // relations
   @hasMany(() => MediaContributor, {
-    // foreignKey: 'contributorId',
+    foreignKey: 'contributorId',
   })
   declare workedOn: HasMany<typeof MediaContributor>
 }

@@ -19,6 +19,8 @@ export default class GameInfo extends BaseModel {
   @belongsTo(() => Media)
   declare media: BelongsTo<typeof Media>
 
-  @belongsTo(() => GamePlatform)
+  @belongsTo(() => GamePlatform, {
+    foreignKey: 'platformId',
+  })
   declare gamePlatform: BelongsTo<typeof GamePlatform>
 }
