@@ -25,8 +25,8 @@ yarn-error.log
 .DS_Store
 
 # non important image uploaded
-uploads/covers
-uploads/covers-raw
+uploads/covers/original
+uploads/covers/resized
 
 # others
 test.html
