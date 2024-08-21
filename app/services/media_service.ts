@@ -14,6 +14,7 @@ import GamePlatform from '#models/game_platform'
 import Genre from '#models/genre'
 import Media from '#models/media'
 import MediaCategory from '#models/media_category'
+import MediaStatus from '#models/media_status'
 import MediaType from '#models/media_type'
 import MovieInfo from '#models/movie_info'
 import SeriesInfo from '#models/series_info'
@@ -32,6 +33,11 @@ export default class MediaService {
       if (!validSelectedMediaParent) {
         throw new Error("Le media parent selectionné n'existe pas")
       }
+    }
+
+    const validSelectedStatus: MediaStatus | null = await MediaStatus.find(media.statusId)
+    if (!validSelectedStatus) {
+      throw new Error('Aucun statut ne correspond')
     }
 
     const validSelectedType: MediaType | null = await MediaType.find(media.typeId)

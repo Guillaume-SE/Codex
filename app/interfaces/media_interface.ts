@@ -1,10 +1,11 @@
 export interface INewMediaPayload {
   mediaParentId: number | null
+  statusId: number
   categoryId: number
   typeId: number
   name: string
   alternativeName: string | null
-  released: string
+  released: string | null
   synopsis: string | null
   genresIds: Array<number>
   platformId?: number
@@ -16,10 +17,11 @@ export interface INewMediaPayload {
 
 export interface IUpdatedMediaPayload {
   mediaParentId: number | null
+  statusId: number
   typeId: number
   name: string
   alternativeName: string | null
-  released: string
+  released: string | null
   synopsis: string | null
   genresIds: Array<number>
   platformId?: number
@@ -31,10 +33,11 @@ export interface IUpdatedMediaPayload {
 
 export interface IMedia {
   mediaParentId: number | null
+  statusId: number
   categoryId?: number
   typeId: number
   name: string
   alternativeName: string | null
-  released: string
+  released: string | null
   synopsis: string | null
 }

@@ -11,6 +11,7 @@ import Review from '#models/review'
 import SeriesInfo from '#models/series_info'
 import { BaseModel, belongsTo, column, hasMany, hasOne, manyToMany } from '@adonisjs/lucid/orm'
 import type { BelongsTo, HasMany, HasOne, ManyToMany } from '@adonisjs/lucid/types/relations'
+import MediaStatus from './media_status.js'
 
 export default class Media extends BaseModel {
   public static table = 'media'
@@ -21,6 +22,9 @@ export default class Media extends BaseModel {
 
   @column({ columnName: 'media_parent_id', serializeAs: 'mediaParentId' })
   declare mediaParentId: number | null
+
+  @column({ columnName: 'status_id', serializeAs: 'statusId' })
+  declare statusId: number
 
   @column({ columnName: 'category_id', serializeAs: 'categoryId' })
   declare categoryId: number
@@ -35,7 +39,7 @@ export default class Media extends BaseModel {
   declare alternativeName: string | null
 
   @column({ serializeAs: 'releasedDate' })
-  declare released: string
+  declare released: string | null
 
   @column()
   declare synopsis: string | null
@@ -44,8 +48,15 @@ export default class Media extends BaseModel {
   @hasMany(() => Media)
   declare parentMedia: HasMany<typeof Media>
 
-  @belongsTo(() => Media)
+  @belongsTo(() => Media, {
+    foreignKey: 'mediaParentId',
+  })
   declare childrenMedia: BelongsTo<typeof Media>
+
+  @belongsTo(() => MediaStatus, {
+    foreignKey: 'statusId',
+  })
+  declare mediaStatus: BelongsTo<typeof MediaStatus>
 
   @belongsTo(() => MediaCategory, {
     foreignKey: 'categoryId',

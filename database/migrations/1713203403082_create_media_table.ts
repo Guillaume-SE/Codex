@@ -15,6 +15,14 @@ export default class extends BaseSchema {
         .onUpdate('CASCADE')
         .nullable()
       table
+        .integer('status_id')
+        .unsigned()
+        .references('id')
+        .inTable('media_statuses')
+        .onDelete('RESTRICT')
+        .onUpdate('CASCADE')
+        .notNullable()
+      table
         .integer('category_id')
         .unsigned()
         .references('id')
@@ -32,7 +40,7 @@ export default class extends BaseSchema {
         .notNullable()
       table.string('name').notNullable()
       table.string('alternative_name').nullable()
-      table.string('released').notNullable()
+      table.string('released').nullable()
       table.text('synopsis').nullable()
     })
   }

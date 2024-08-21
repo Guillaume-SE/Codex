@@ -18,6 +18,7 @@ export default class MediasController {
       const datas = await request.validateUsing(createMediaValidator)
       const {
         mediaParentId,
+        statusId,
         categoryId,
         typeId,
         name,
@@ -30,6 +31,7 @@ export default class MediasController {
 
       const generalMediaInfos: IMedia = {
         mediaParentId,
+        statusId,
         categoryId,
         typeId,
         name,
@@ -54,6 +56,7 @@ export default class MediasController {
       const datas = await request.validateUsing(updateMediaValidator)
       const {
         mediaParentId,
+        statusId,
         typeId,
         name,
         alternativeName,
@@ -65,6 +68,7 @@ export default class MediasController {
 
       const generalMediaInfos: IMedia = {
         mediaParentId,
+        statusId,
         typeId,
         name,
         alternativeName,
@@ -89,7 +93,10 @@ export default class MediasController {
     try {
       const cover = await this.coverService.getOneCoverByMediaId(mediaId)
       await this.mediaService.deleteOneMedia(mediaId)
-      await this.coverService.deleteCoverByFilenames(cover.resizedVersion, cover.rawVersion)
+      await this.coverService.deleteCoverByFilenames(
+        cover.resizedCoverFilename,
+        cover.originalCoverFilename
+      )
       return response.status(200)
     } catch (error) {
       return response.status(404).json(error)
@@ -101,6 +108,7 @@ export default class MediasController {
     // const formattedMedia = datas.map((media) => ({
     // id: media.id,
     // parentId: media.mediaParentId,
+    // statusId: media.mediaStatus.name,
     // category: media.mediaCategory.name,
     // type: media.mediaType.name,
     // name: media.name,
@@ -133,12 +141,19 @@ export default class MediasController {
 
       await validMedia.load((loader) => {
         loader
+          .load('mediaStatus')
           .load('mediaCategory')
           .load('mediaType')
           .load('genres')
           .load('mediaProject', (contributorsQuery) => {
             contributorsQuery.preload('job')
             contributorsQuery.preload('contributor')
+          })
+          .load('bookInfo')
+          .load('movieInfo')
+          .load('seriesInfo')
+          .load('gameInfo', (gamesQuery) => {
+            gamesQuery.preload('gamePlatform')
           })
           .load('review')
           .load('cover')
@@ -147,9 +162,11 @@ export default class MediasController {
       const formatedMedia = {
         id: validMedia.id,
         parentId: validMedia.mediaParentId,
+        status: validMedia.mediaStatus.name,
         category: validMedia.mediaCategory.name,
         type: validMedia.mediaType.name,
         name: validMedia.name,
+        alternativeName: validMedia.alternativeName,
         released: validMedia.released,
         synopsis: validMedia.synopsis ? validMedia.synopsis : null,
         genres: validMedia.genres.map((genre) => genre.name),
@@ -166,15 +183,30 @@ export default class MediasController {
           }
           return acc
         }, {}),
+        gameInfos: {
+          platform: validMedia.gameInfo?.gamePlatform.name,
+        },
+        bookInfos: {
+          pages: validMedia.bookInfo?.pages,
+        },
+        movieInfos: {
+          duration: validMedia.movieInfo?.duration,
+        },
+        animeInfos: {
+          seasonLength: validMedia.animeInfo?.animeSeasonLength,
+        },
+        seriesInfos: {
+          seasonLength: validMedia.seriesInfo?.seriesSeasonLength,
+        },
         review: {
-          reviewRating: validMedia.review ? validMedia.review.rating : null,
-          reviewOpinion: validMedia.review ? validMedia.review.opinion : null,
-          reviewIsFavorite: validMedia.review ? validMedia.review.isFavorite : null,
-          reviewLastUpdate: validMedia.review ? validMedia.review.updatedAt : null,
+          rating: validMedia.review ? validMedia.review.rating : null,
+          opinion: validMedia.review ? validMedia.review.opinion : null,
+          isFavorite: validMedia.review ? validMedia.review.isFavorite : null,
+          lastUpdate: validMedia.review ? validMedia.review.updatedAt : null,
         },
         cover: {
-          coverResized: validMedia.cover ? validMedia.cover.resizedVersion : null,
-          coverRaw: validMedia.cover ? validMedia.cover.rawVersion : null,
+          resized: validMedia.cover ? validMedia.cover.resizedCoverFilename : null,
+          raw: validMedia.cover ? validMedia.cover.originalCoverFilename : null,
         },
       }
 

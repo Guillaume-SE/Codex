@@ -3,11 +3,12 @@ import vine from '@vinejs/vine'
 export const createMediaValidator = vine.compile(
   vine.object({
     mediaParentId: vine.number().positive().nullable(),
+    statusId: vine.number().positive(),
     categoryId: vine.number().positive(),
     typeId: vine.number().positive(),
     name: vine.string().trim(),
     alternativeName: vine.string().trim().nullable(),
-    released: vine.string().trim(),
+    released: vine.string().trim().nullable(),
     genresIds: vine.array(vine.number()),
     synopsis: vine.string().trim(),
     // specific infos
@@ -22,10 +23,11 @@ export const createMediaValidator = vine.compile(
 export const updateMediaValidator = vine.compile(
   vine.object({
     mediaParentId: vine.number().positive().nullable(),
+    statusId: vine.number().positive(),
     typeId: vine.number().positive(),
     name: vine.string().trim(),
     alternativeName: vine.string().trim().nullable(),
-    released: vine.string().trim(),
+    released: vine.string().trim().nullable(),
     genresIds: vine.array(vine.number()),
     synopsis: vine.string().trim(),
     // specific infos
