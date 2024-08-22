@@ -53,7 +53,7 @@ export default class MediasController {
   async updateOneMedia({ params, response, request }: HttpContext) {
     const mediaId = params.mediaId
     try {
-      const datas = await request.validateUsing(updateMediaValidator)
+      const data = await request.validateUsing(updateMediaValidator)
       const {
         mediaParentId,
         statusId,
@@ -64,7 +64,7 @@ export default class MediasController {
         synopsis,
         genresIds,
         ...mediaSpecificInfos
-      }: IUpdatedMediaPayload = datas
+      }: IUpdatedMediaPayload = data
 
       const generalMediaInfos: IMedia = {
         mediaParentId,
@@ -104,111 +104,19 @@ export default class MediasController {
   }
 
   public async getAllMedia({ response }: HttpContext) {
-    const medias = await Media.all()
-    // const formattedMedia = datas.map((media) => ({
-    // id: media.id,
-    // parentId: media.mediaParentId,
-    // statusId: media.mediaStatus.name,
-    // category: media.mediaCategory.name,
-    // type: media.mediaType.name,
-    // name: media.name,
-    // released: media.released,
-    // synopsis: media.synopsis ? media.synopsis : null,
-    // genres: media.genres.map((genre) => genre.name),
-    // contributor: media.mediaProject,
-    // contributorJob: media.mediaProject,
-    // review: {
-    //   reviewRating: media.review ? media.review.rating : null,
-    //   reviewOpinion: media.review ? media.review.opinion : null,
-    //   reviewIsFavorite: media.review ? media.review.isFavorite : null,
-    //   reviewLastUpdate: media.review ? media.review.updatedAt : null,
-    // },
-    // cover: {
-    //   coverResized: media.cover ? media.cover.resizedVersion : null,
-    //   coverRaw: media.cover ? media.cover.rawVersion : null,
-    // },
-    // }))
-    return response.status(201).json(medias)
+    try {
+      const mediaList = await this.mediaService.getAllMedia()
+
+      return response.status(201).json(mediaList)
+    } catch (error) {
+      return response.status(404).json(error)
+    }
   }
 
   public async getOneMediaById({ params, response }: HttpContext) {
     const mediaId = params.mediaId
     try {
-      const validMedia = await Media.find(mediaId)
-      if (!validMedia) {
-        return
-      }
-
-      await validMedia.load((loader) => {
-        loader
-          .load('mediaStatus')
-          .load('mediaCategory')
-          .load('mediaType')
-          .load('genres')
-          .load('mediaProject', (contributorsQuery) => {
-            contributorsQuery.preload('job')
-            contributorsQuery.preload('contributor')
-          })
-          .load('bookInfo')
-          .load('movieInfo')
-          .load('seriesInfo')
-          .load('gameInfo', (gamesQuery) => {
-            gamesQuery.preload('gamePlatform')
-          })
-          .load('review')
-          .load('cover')
-      })
-
-      const formatedMedia = {
-        id: validMedia.id,
-        parentId: validMedia.mediaParentId,
-        status: validMedia.mediaStatus.name,
-        category: validMedia.mediaCategory.name,
-        type: validMedia.mediaType.name,
-        name: validMedia.name,
-        alternativeName: validMedia.alternativeName,
-        released: validMedia.released,
-        synopsis: validMedia.synopsis ? validMedia.synopsis : null,
-        genres: validMedia.genres.map((genre) => genre.name),
-        contributors: validMedia.mediaProject.reduce<Record<string, string[]>>((acc, project) => {
-          const jobName = project.job?.name
-          if (jobName) {
-            if (!acc[jobName]) {
-              acc[jobName] = []
-            }
-            const contributorName = project.contributor?.name
-            if (contributorName) {
-              acc[jobName].push(contributorName)
-            }
-          }
-          return acc
-        }, {}),
-        gameInfos: {
-          platform: validMedia.gameInfo?.gamePlatform.name,
-        },
-        bookInfos: {
-          pages: validMedia.bookInfo?.pages,
-        },
-        movieInfos: {
-          duration: validMedia.movieInfo?.duration,
-        },
-        animeInfos: {
-          seasonLength: validMedia.animeInfo?.animeSeasonLength,
-        },
-        seriesInfos: {
-          seasonLength: validMedia.seriesInfo?.seriesSeasonLength,
-        },
-        review: {
-          rating: validMedia.review ? validMedia.review.rating : null,
-          opinion: validMedia.review ? validMedia.review.opinion : null,
-          isFavorite: validMedia.review ? validMedia.review.isFavorite : null,
-          lastUpdate: validMedia.review ? validMedia.review.updatedAt : null,
-        },
-        cover: {
-          resized: validMedia.cover ? validMedia.cover.resizedCoverFilename : null,
-          raw: validMedia.cover ? validMedia.cover.originalCoverFilename : null,
-        },
-      }
+      const formatedMedia = await this.mediaService.getOneMediaById(mediaId)
 
       return response.status(201).json(formatedMedia)
     } catch (error) {
