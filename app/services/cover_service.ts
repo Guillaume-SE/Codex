@@ -86,15 +86,17 @@ export default class CoverService {
   }
 
   async getAllCovers() {
-    const covers = await Cover.all()
-    return covers
+    const coverList = await Cover.all()
+    return coverList
   }
 
   async getOneCoverByMediaId(mediaId: number) {
-    const cover = await Cover.findBy('media_id', mediaId)
-    if (!cover) {
-      throw new Error("Aucune cover n'a été trouvée")
+    const validMedia = await Media.find(mediaId)
+    if (!validMedia) {
+      throw new Error('Aucun media trouvé')
     }
+    const cover = await Cover.findBy('media_id', validMedia.id)
+
     return cover
   }
 }
