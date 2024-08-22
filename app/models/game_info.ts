@@ -13,7 +13,7 @@ export default class GameInfo extends BaseModel {
   declare mediaId: number
 
   @column({ columnName: 'platform_id', serializeAs: 'platformId' })
-  declare platformId: number
+  declare platformId: number | null
 
   // RELATIONS
   @belongsTo(() => Media)
