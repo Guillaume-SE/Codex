@@ -8,7 +8,7 @@ export interface INewMediaPayload {
   released: string | null
   synopsis: string | null
   genresIds: Array<number>
-  platformId?: number
+  platformId?: number | null
   duration?: number | null
   seriesSeasonLength?: number | null
   animeSeasonLength?: number | null
@@ -24,7 +24,7 @@ export interface IUpdatedMediaPayload {
   released: string | null
   synopsis: string | null
   genresIds: Array<number>
-  platformId?: number
+  platformId?: number | null
   duration?: number | null
   seriesSeasonLength?: number | null
   animeSeasonLength?: number | null

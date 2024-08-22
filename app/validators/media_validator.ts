@@ -12,7 +12,7 @@ export const createMediaValidator = vine.compile(
     genresIds: vine.array(vine.number()),
     synopsis: vine.string().trim(),
     // specific infos
-    platformId: vine.number().positive().optional(),
+    platformId: vine.number().positive().nullable().optional(),
     pages: vine.number().positive().nullable().optional(),
     duration: vine.number().positive().nullable().optional(),
     animeSeasonLength: vine.number().positive().nullable().optional(),
@@ -31,7 +31,7 @@ export const updateMediaValidator = vine.compile(
     genresIds: vine.array(vine.number()),
     synopsis: vine.string().trim(),
     // specific infos
-    platformId: vine.number().positive().optional(),
+    platformId: vine.number().positive().nullable().optional(),
     pages: vine.number().positive().nullable().optional(),
     duration: vine.number().positive().nullable().optional(),
     animeSeasonLength: vine.number().positive().nullable().optional(),

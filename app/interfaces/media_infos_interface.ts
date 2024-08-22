@@ -1,13 +1,13 @@
 export interface IMediaSpecificInfos {
-  platformId?: number
+  platformId?: number | null
+  duration?: number | null
   pages?: number | null
   animeSeasonLength?: number | null
   seriesSeasonLength?: number | null
-  duration?: number | null
 }
 
 export interface IGameInfos {
-  platformId: number
+  platformId: number | null
 }
 
 export interface IBookInfos {
