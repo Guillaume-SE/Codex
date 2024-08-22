@@ -21,7 +21,7 @@ export default class extends BaseSchema {
         .inTable('game_platforms')
         .onDelete('RESTRICT')
         .onUpdate('CASCADE')
-        .notNullable()
+        .nullable()
     })
   }
 
