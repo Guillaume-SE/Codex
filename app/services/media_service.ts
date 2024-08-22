@@ -100,9 +100,11 @@ export default class MediaService {
         await newMedia.related('bookInfo').create(specificInfos)
       }
       if (isGame(specificInfos) && newMediaCategoryName === 'Jeu vidéo') {
-        const validPlatform = await GamePlatform.find(specificInfos.platformId)
-        if (!validPlatform) {
-          throw new Error("La plateforme choisie n'existe pas")
+        if (specificInfos.platformId) {
+          const validPlatform = await GamePlatform.find(specificInfos.platformId)
+          if (!validPlatform) {
+            throw new Error("La plateforme choisie n'existe pas")
+          }
         }
         await newMedia.related('gameInfo').create(specificInfos)
       }
@@ -264,5 +266,155 @@ export default class MediaService {
       throw new Error('Aucun media trouvé')
     }
     await media.delete()
+  }
+
+  async getAllMedia() {
+    const mediaList = await Media.query()
+      .preload('mediaStatus')
+      .preload('mediaCategory')
+      .preload('mediaType')
+      .preload('genres')
+      .preload('mediaProject', (contributorsQuery) => {
+        contributorsQuery.preload('job')
+        contributorsQuery.preload('contributor')
+      })
+      .preload('bookInfo')
+      .preload('movieInfo')
+      .preload('seriesInfo')
+      .preload('gameInfo', (gamesQuery) => {
+        gamesQuery.preload('gamePlatform')
+      })
+      .preload('review')
+      .preload('cover')
+
+    const formattedMediaList = mediaList.map((media) => ({
+      id: media.id,
+      parentId: media.mediaParentId,
+      statusId: media.mediaStatus.name,
+      category: media.mediaCategory.name,
+      type: media.mediaType.name,
+      name: media.name,
+      released: media.released,
+      synopsis: media.synopsis ? media.synopsis : null,
+      genres: media.genres.map((genre) => genre.name),
+      contributors: media.mediaProject.reduce<Record<string, string[]>>((acc, project) => {
+        const jobName = project.job?.name
+        if (jobName) {
+          if (!acc[jobName]) {
+            acc[jobName] = []
+          }
+          const contributorName = project.contributor?.name
+          if (contributorName) {
+            acc[jobName].push(contributorName)
+          }
+        }
+        return acc
+      }, {}),
+      gameInfos: {
+        platform: media.gameInfo ? media.gameInfo.gamePlatform.name : null,
+      },
+      bookInfos: {
+        pages: media.bookInfo ? media.bookInfo?.pages : null,
+      },
+      movieInfos: {
+        duration: media.movieInfo ? media.movieInfo?.duration : null,
+      },
+      animeInfos: {
+        seasonLength: media.animeInfo ? media.animeInfo?.animeSeasonLength : null,
+      },
+      seriesInfos: {
+        seasonLength: media.seriesInfo ? media.seriesInfo?.seriesSeasonLength : null,
+      },
+      review: {
+        reviewRating: media.review ? media.review.rating : null,
+        reviewOpinion: media.review ? media.review.opinion : null,
+        reviewIsFavorite: media.review ? media.review.isFavorite : null,
+        reviewLastUpdate: media.review ? media.review.updatedAt : null,
+      },
+      cover: {
+        coverResized: media.cover ? media.cover.resizedCoverFilename : null,
+        coverRaw: media.cover ? media.cover.originalCoverFilename : null,
+      },
+    }))
+    return formattedMediaList
+  }
+
+  async getOneMediaById(mediaId: number) {
+    const validMedia = await Media.find(mediaId)
+    if (!validMedia) {
+      throw new Error('Aucun media trouvé')
+    }
+
+    await validMedia.load((loader) => {
+      loader
+        .load('mediaStatus')
+        .load('mediaCategory')
+        .load('mediaType')
+        .load('genres')
+        .load('mediaProject', (contributorsQuery) => {
+          contributorsQuery.preload('job')
+          contributorsQuery.preload('contributor')
+        })
+        .load('bookInfo')
+        .load('movieInfo')
+        .load('seriesInfo')
+        .load('gameInfo', (gamesQuery) => {
+          gamesQuery.preload('gamePlatform')
+        })
+        .load('review')
+        .load('cover')
+    })
+
+    const formatedMedia = {
+      id: validMedia.id,
+      parentId: validMedia.mediaParentId,
+      status: validMedia.mediaStatus.name,
+      category: validMedia.mediaCategory.name,
+      type: validMedia.mediaType.name,
+      name: validMedia.name,
+      alternativeName: validMedia.alternativeName ? validMedia.alternativeName : null,
+      released: validMedia.released ? validMedia.released : null,
+      synopsis: validMedia.synopsis ? validMedia.synopsis : null,
+      genres: validMedia.genres.map((genre) => genre.name),
+      contributors: validMedia.mediaProject.reduce<Record<string, string[]>>((acc, project) => {
+        const jobName = project.job?.name
+        if (jobName) {
+          if (!acc[jobName]) {
+            acc[jobName] = []
+          }
+          const contributorName = project.contributor?.name
+          if (contributorName) {
+            acc[jobName].push(contributorName)
+          }
+        }
+        return acc
+      }, {}),
+      gameInfos: {
+        platform: validMedia.gameInfo ? validMedia.gameInfo.gamePlatform.name : null,
+      },
+      bookInfos: {
+        pages: validMedia.bookInfo ? validMedia.bookInfo?.pages : null,
+      },
+      movieInfos: {
+        duration: validMedia.movieInfo ? validMedia.movieInfo?.duration : null,
+      },
+      animeInfos: {
+        seasonLength: validMedia.animeInfo ? validMedia.animeInfo?.animeSeasonLength : null,
+      },
+      seriesInfos: {
+        seasonLength: validMedia.seriesInfo ? validMedia.seriesInfo?.seriesSeasonLength : null,
+      },
+      review: {
+        rating: validMedia.review ? validMedia.review.rating : null,
+        opinion: validMedia.review ? validMedia.review.opinion : null,
+        isFavorite: validMedia.review ? validMedia.review.isFavorite : null,
+        lastUpdate: validMedia.review ? validMedia.review.updatedAt : null,
+      },
+      cover: {
+        resized: validMedia.cover ? validMedia.cover.resizedCoverFilename : null,
+        original: validMedia.cover ? validMedia.cover.originalCoverFilename : null,
+      },
+    }
+    return formatedMedia
   }
 }
