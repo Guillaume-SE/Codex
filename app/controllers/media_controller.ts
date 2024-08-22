@@ -1,5 +1,4 @@
 import { IMedia, INewMediaPayload, IUpdatedMediaPayload } from '#interfaces/media_interface'
-import Media from '#models/media'
 import CoverService from '#services/cover_service'
 import MediaService from '#services/media_service'
 import { createMediaValidator, updateMediaValidator } from '#validators/media_validator'
@@ -93,10 +92,13 @@ export default class MediasController {
     try {
       const cover = await this.coverService.getOneCoverByMediaId(mediaId)
       await this.mediaService.deleteOneMedia(mediaId)
-      await this.coverService.deleteCoverByFilenames(
-        cover.resizedCoverFilename,
-        cover.originalCoverFilename
-      )
+      if (cover) {
+        await this.coverService.deleteCoverByFilenames(
+          cover.resizedCoverFilename,
+          cover.originalCoverFilename
+        )
+      }
+
       return response.status(200)
     } catch (error) {
       return response.status(404).json(error)
