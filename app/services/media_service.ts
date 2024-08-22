@@ -56,6 +56,13 @@ export default class MediaService {
       throw new Error("La catégorie du media n'a pas de type correspondant à celui choisi")
     }
 
+    const isSelectedGenresUnique =
+      mediaGenres.filter((value, index, self) => self.indexOf(value) === index).length ===
+      mediaGenres.length
+    if (!isSelectedGenresUnique) {
+      throw new Error('Un ou plusieurs genres selectionnés sont en double')
+    }
+
     const validSelectedGenres = await Genre.query()
       .select('*')
       .from('genres')
