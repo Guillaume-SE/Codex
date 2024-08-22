@@ -21,18 +21,24 @@ It also allows me to keep up to date with the ones I've planned to see, the ones
 
 ## Database diagram and relationship explanations  
 
-![db-diagram](https://github.com/user-attachments/assets/5a272f4c-681f-4060-bf05-01deef0e0f4c)
+![diagram](https://github.com/user-attachments/assets/a71f22b9-907c-45ac-b73e-d1036bfbff8b)
 
 
-- `Users`: As the project aims to contain only my media entries, I chose not to link the "users" table to "reviews". It will only be used for authentication.
 
-- `Media`: Will contain every type of data the media I add may have, for example books, video games, movies and series all have a synopsis.  
+- `users`: As the project aims to contain only my media entries, I chose not to link the "users" table to "reviews". It will only be used for authentication.
+
+- `media`: Will contain every type of data the media I add may have, for example books, video games, movies and series all have a synopsis.  
   The media category (book, game, movies...) will determine how the rest of the information is added to a dedicated table.
 
-- `Reviews`: Reviews are created as soon as a media is added, and a review cannot exist without its associated media. This is one of the reasons why `rating` and `opinion` are one of the only nullable columns, because if I haven't yet seen the film, read the book, played the game, there is no reason to assign a value to these 2 columns.  
-  The media will have the appropriate [status](https://github.com/Guillaume-SE/Codex/blob/main/app/enums/ReviewStatus.ts) for this specific case.
+- `media_statuses`: A status to categorize each media item as Planned, Completed, Waiting, Paused, Abandoned for example.
 
-- `Covers`: Each media is associated with an official cover that easily identifies it. If an official cover has not been found on the internet (or in poor quality), a default cover is automatically assigned.
+- `media_categories`: Contains media categories (Movie for example) for filtering media.
+
+- `media_types`: Contains a sub-category to filter media more precisely within the same category. They are linked to a media category, allowing duplication and facilitating filter management.
+
+- `reviews`: A review is linked to a media and cannot exist without its associated media, but not all media have a review.
+
+- `covers`: Each media is associated with an official cover that easily identifies it. If an official cover has not been found on the internet (or in poor quality), a default cover is automatically assigned.
 
 - `movies_infos`: contains all media-specific information relating to the films.
 
@@ -78,9 +84,7 @@ node ace migration:run
 
 ## Status
 26/07/24: Version 2 of the database is complete, I'm updating the code to incorporate this v2!  
-I'll soon update the diagram above. 
 
 ## Other
 
-This repo is the new version of Codex now under Adonis v6.  
 The project is still under development, so I'll add more information as it becomes available :sunglasses:
