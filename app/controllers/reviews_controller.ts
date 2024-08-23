@@ -28,9 +28,6 @@ export default class ReviewsController {
 
       return response.status(201).json(review)
     } catch (error) {
-      if (error instanceof Error) {
-        return response.status(400).json({ error })
-      }
       return response.status(404).json(error)
     }
   }
