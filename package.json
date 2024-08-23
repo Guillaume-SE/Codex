@@ -22,6 +22,7 @@
     "#enums/*": "./app/enums/*.js",
     "#interfaces/*": "./app/interfaces/*.js",
     "#functions/*": "./app/functions/*.js",
+    "#classes/*": "./app/classes/*.js",
     "#listeners/*": "./app/listeners/*.js",
     "#events/*": "./app/events/*.js",
     "#middleware/*": "./app/middleware/*.js",
