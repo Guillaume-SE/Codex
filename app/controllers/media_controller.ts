@@ -1,4 +1,4 @@
-import { IMedia, INewMediaPayload, IUpdatedMediaPayload } from '#interfaces/media_interface'
+import { IMedia, IMediaPayload } from '#interfaces/media_interface'
 import CoverService from '#services/cover_service'
 import MediaService from '#services/media_service'
 import { createMediaValidator, updateMediaValidator } from '#validators/media_validator'
@@ -26,7 +26,7 @@ export default class MediasController {
         synopsis,
         genresIds,
         ...mediaSpecificInfos
-      }: INewMediaPayload = datas
+      }: IMediaPayload = datas
 
       const generalMediaInfos: IMedia = {
         mediaParentId,
@@ -63,7 +63,7 @@ export default class MediasController {
         synopsis,
         genresIds,
         ...mediaSpecificInfos
-      }: IUpdatedMediaPayload = data
+      }: IMediaPayload = data
 
       const generalMediaInfos: IMedia = {
         mediaParentId,
