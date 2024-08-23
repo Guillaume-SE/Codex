@@ -1,3 +1,4 @@
+import { MediaFormatter } from '#classes/MediaFormatter'
 import {
   IAnimeInfos,
   IBookInfos,
@@ -6,7 +7,7 @@ import {
   IMovieInfos,
   ISeriesInfos,
 } from '#interfaces/media_infos_interface'
-import { IMedia } from '#interfaces/media_interface'
+import { ICompleteMedia, IMedia } from '#interfaces/media_interface'
 import AnimeInfo from '#models/anime_info'
 import BookInfo from '#models/book_info'
 import GameInfo from '#models/game_info'
@@ -294,55 +295,8 @@ export default class MediaService {
       .preload('review')
       .preload('cover')
 
-    const formattedMediaList = mediaList.map((media) => ({
-      id: media.id,
-      parentId: media.mediaParentId,
-      statusId: media.mediaStatus.name,
-      category: media.mediaCategory.name,
-      type: media.mediaType.name,
-      name: media.name,
-      released: media.released,
-      synopsis: media.synopsis ? media.synopsis : null,
-      genres: media.genres.map((genre) => genre.name),
-      contributors: media.mediaProject.reduce<Record<string, string[]>>((acc, project) => {
-        const jobName = project.job?.name
-        if (jobName) {
-          if (!acc[jobName]) {
-            acc[jobName] = []
-          }
-          const contributorName = project.contributor?.name
-          if (contributorName) {
-            acc[jobName].push(contributorName)
-          }
-        }
-        return acc
-      }, {}),
-      gameInfos: {
-        platform: media.gameInfo ? media.gameInfo.gamePlatform.name : null,
-      },
-      bookInfos: {
-        pages: media.bookInfo ? media.bookInfo?.pages : null,
-      },
-      movieInfos: {
-        duration: media.movieInfo ? media.movieInfo?.duration : null,
-      },
-      animeInfos: {
-        seasonLength: media.animeInfo ? media.animeInfo?.animeSeasonLength : null,
-      },
-      seriesInfos: {
-        seasonLength: media.seriesInfo ? media.seriesInfo?.seriesSeasonLength : null,
-      },
-      review: {
-        reviewRating: media.review ? media.review.rating : null,
-        reviewOpinion: media.review ? media.review.opinion : null,
-        reviewIsFavorite: media.review ? media.review.isFavorite : null,
-        reviewLastUpdate: media.review ? media.review.updatedAt : null,
-      },
-      cover: {
-        coverResized: media.cover ? media.cover.resizedCoverFilename : null,
-        coverRaw: media.cover ? media.cover.originalCoverFilename : null,
-      },
-    }))
+    const formattedMediaList = MediaFormatter.formatMediaList(mediaList)
+
     return formattedMediaList
   }
 
@@ -374,7 +328,7 @@ export default class MediaService {
 
     const formatedMedia = {
       id: validMedia.id,
-      parentId: validMedia.mediaParentId,
+      mediaParent: validMedia.mediaParentId,
       status: validMedia.mediaStatus.name,
       category: validMedia.mediaCategory.name,
       type: validMedia.mediaType.name,
