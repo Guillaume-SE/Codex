@@ -42,6 +42,6 @@ export default class CoversController {
 
   public async getAllCovers({ response }: HttpContext) {
     const covers = await this.coverService.getAllCovers()
-    return response.status(201).json({ covers })
+    return response.status(201).json(covers)
   }
 }
