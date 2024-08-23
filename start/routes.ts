@@ -38,31 +38,26 @@ router.put('/media/:mediaId/critique', [ReviewsController, 'updateOneReview']).a
  * movies
  */
 router.get('/films', [MoviesController, 'getAllMovies']).as('movies.show')
-router.get('/film/:mediaId', [MoviesController, 'getOneMovieByMediaId']).as('movies.show.one')
 
 /**
  * games
  */
 router.get('/jeuxvideo', [GamesController, 'getAllGames']).as('games.show')
-router.get('/jeuvideo/:mediaId', [GamesController, 'getOneGameByMediaId']).as('games.show.one')
 
 /**
  * series
  */
 router.get('/series', [SeriesController, 'getAllSeries']).as('series.show')
-router.get('/serie/:mediaId', [SeriesController, 'getOneSeriesById']).as('series.show.one')
 
 /**
  * books
  */
 router.get('/livres', [BooksController, 'getAllBooks']).as('books.show')
-router.get('/livre/:mediaId', [BooksController, 'getOneBookByMediaId']).as('books.show.one')
 
 /**
  * anime
  */
-router.get('/animes', [AnimeController, 'getAllAnime']).as('anime.show')
-router.get('/anime/:mediaId', [AnimeController, 'getOneAnimeById']).as('anime.show.one')
+router.get('/anime', [AnimeController, 'getAllAnime']).as('anime.show')
 
 /**
  * covers
