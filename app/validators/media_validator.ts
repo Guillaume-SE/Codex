@@ -9,8 +9,8 @@ export const createMediaValidator = vine.compile(
     name: vine.string().trim(),
     alternativeName: vine.string().trim().nullable(),
     released: vine.string().trim().nullable(),
+    synopsis: vine.string().trim().nullable(),
     genresIds: vine.array(vine.number()),
-    synopsis: vine.string().trim(),
     // specific infos
     platformId: vine.number().positive().nullable().optional(),
     pages: vine.number().positive().nullable().optional(),
@@ -28,8 +28,8 @@ export const updateMediaValidator = vine.compile(
     name: vine.string().trim(),
     alternativeName: vine.string().trim().nullable(),
     released: vine.string().trim().nullable(),
+    synopsis: vine.string().trim().nullable(),
     genresIds: vine.array(vine.number()),
-    synopsis: vine.string().trim(),
     // specific infos
     platformId: vine.number().positive().nullable().optional(),
     pages: vine.number().positive().nullable().optional(),
