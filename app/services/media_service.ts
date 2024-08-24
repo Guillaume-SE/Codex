@@ -7,7 +7,7 @@ import {
   IMovieInfos,
   ISeriesInfos,
 } from '#interfaces/media_infos_interface'
-import { ICompleteMedia, IMedia } from '#interfaces/media_interface'
+import { ICompleteMediaCard, IMedia } from '#interfaces/media_interface'
 import AnimeInfo from '#models/anime_info'
 import BookInfo from '#models/book_info'
 import GameInfo from '#models/game_info'
@@ -326,56 +326,10 @@ export default class MediaService {
         .load('cover')
     })
 
-    const formatedMedia = {
-      id: validMedia.id,
-      mediaParent: validMedia.mediaParentId,
-      status: validMedia.mediaStatus.name,
-      category: validMedia.mediaCategory.name,
-      type: validMedia.mediaType.name,
-      name: validMedia.name,
-      alternativeName: validMedia.alternativeName ? validMedia.alternativeName : null,
-      released: validMedia.released ? validMedia.released : null,
-      synopsis: validMedia.synopsis ? validMedia.synopsis : null,
-      genres: validMedia.genres.map((genre) => genre.name),
-      contributors: validMedia.mediaProject.reduce<Record<string, string[]>>((acc, project) => {
-        const jobName = project.job?.name
-        if (jobName) {
-          if (!acc[jobName]) {
-            acc[jobName] = []
-          }
-          const contributorName = project.contributor?.name
-          if (contributorName) {
-            acc[jobName].push(contributorName)
-          }
-        }
-        return acc
-      }, {}),
-      gameInfos: {
-        platform: validMedia.gameInfo ? validMedia.gameInfo.gamePlatform.name : null,
-      },
-      bookInfos: {
-        pages: validMedia.bookInfo ? validMedia.bookInfo?.pages : null,
-      },
-      movieInfos: {
-        duration: validMedia.movieInfo ? validMedia.movieInfo?.duration : null,
-      },
-      animeInfos: {
-        seasonLength: validMedia.animeInfo ? validMedia.animeInfo?.animeSeasonLength : null,
-      },
-      seriesInfos: {
-        seasonLength: validMedia.seriesInfo ? validMedia.seriesInfo?.seriesSeasonLength : null,
-      },
-      review: {
-        rating: validMedia.review ? validMedia.review.rating : null,
-        opinion: validMedia.review ? validMedia.review.opinion : null,
-        isFavorite: validMedia.review ? validMedia.review.isFavorite : null,
-        lastUpdate: validMedia.review ? validMedia.review.updatedAt : null,
-      },
-      cover: {
-        resized: validMedia.cover ? validMedia.cover.resizedCoverFilename : null,
-        original: validMedia.cover ? validMedia.cover.originalCoverFilename : null,
-      },
-    }
+    console.log(validMedia.serialize())
+
+    const formatedMedia = MediaFormatter.formatMedia(validMedia)
+
     return formatedMedia
   }
 }
