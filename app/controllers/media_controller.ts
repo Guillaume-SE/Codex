@@ -1,4 +1,4 @@
-import { IMedia, IMediaPayload } from '#interfaces/media_interface'
+import { ICompleteMediaCard, IMedia, IMediaPayload } from '#interfaces/media_interface'
 import CoverService from '#services/cover_service'
 import MediaService from '#services/media_service'
 import { createMediaValidator, updateMediaValidator } from '#validators/media_validator'
@@ -101,28 +101,29 @@ export default class MediasController {
 
       return response.status(200)
     } catch (error) {
-      return response.status(404).json(error)
+      return response.status(404).json({ error, customError: error.message })
     }
   }
 
   public async getAllMedia({ response }: HttpContext) {
     try {
-      const mediaList = await this.mediaService.getAllMedia()
+      const mediaList: ICompleteMediaCard[] = await this.mediaService.getAllMedia()
 
       return response.status(201).json(mediaList)
     } catch (error) {
-      return response.status(404).json(error)
+      console.log(error)
+      return response.status(404).json({ error, customError: error.message })
     }
   }
 
   public async getOneMediaById({ params, response }: HttpContext) {
     const mediaId = params.mediaId
     try {
-      const formatedMedia = await this.mediaService.getOneMediaById(mediaId)
+      const media = await this.mediaService.getOneMediaById(mediaId)
 
-      return response.status(201).json(formatedMedia)
+      return response.status(201).json(media)
     } catch (error) {
-      return response.status(404).json(error)
+      return response.status(404).json({ error, customError: error.message })
     }
   }
 }
