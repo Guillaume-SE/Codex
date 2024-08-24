@@ -26,7 +26,7 @@ export interface IMedia {
   synopsis: string | null
 }
 
-export interface ICompleteMedia {
+export interface ICompleteMediaCard {
   id: number
   mediaParentId: number | null
   status: string
@@ -36,8 +36,8 @@ export interface ICompleteMedia {
   alternativeName: string | null
   released: string | null
   synopsis: string | null
-  genres?: Array<string>
-  contributors?: Record<string, string[]>
+  genres: Array<string>
+  contributors: Record<string, string[]>
   gameInfos?: {
     platform: string | null
   }
