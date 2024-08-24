@@ -13,8 +13,8 @@ export class MediaFormatter {
   alternativeName: string | null
   released: string | null
   synopsis: string | null
-  genres?: string[] | undefined
-  contributors?: Record<string, string[]>
+  genres: string[]
+  contributors: Record<string, string[]>
   gameInfos?: { platform: string | null }
   bookInfos?: { pages: number | null }
   movieInfos?: { duration: number | null }
@@ -35,35 +35,49 @@ export class MediaFormatter {
     this.category = media.mediaCategory.name
     this.type = media.mediaType.name
     this.name = media.name
-    this.alternativeName = media.alternativeName || null
-    this.released = media.released || null
-    this.synopsis = media.synopsis || null
+    this.alternativeName = media.alternativeName
+    this.released = media.released
+    this.synopsis = media.synopsis
     this.genres = media.genres.map((genre: IGenre) => genre.name)
     this.contributors = this.formatContributors(media.mediaProject)
-    this.gameInfos = {
-      platform: media.gameInfo ? media.gameInfo.gamePlatform.name : null,
+    if (media.gameInfo) {
+      this.gameInfos = {
+        platform: media.gameInfo.gamePlatform?.name ?? null,
+      }
     }
-    this.bookInfos = {
-      pages: media.bookInfo ? media.bookInfo.pages : null,
+    if (media.bookInfo) {
+      this.bookInfos = {
+        pages: media.bookInfo?.pages ?? null,
+      }
     }
-    this.movieInfos = {
-      duration: media.movieInfo ? media.movieInfo.duration : null,
+    if (media.movieInfo) {
+      this.movieInfos = {
+        duration: media.movieInfo.duration ?? null,
+      }
     }
-    this.animeInfos = {
-      seasonLength: media.animeInfo ? media.animeInfo.animeSeasonLength : null,
+    if (media.animeInfo) {
+      this.animeInfos = {
+        seasonLength: media.animeInfo.animeSeasonLength ?? null,
+      }
     }
-    this.seriesInfos = {
-      seasonLength: media.seriesInfo ? media.seriesInfo.seriesSeasonLength : null,
+    if (media.seriesInfo) {
+      this.seriesInfos = {
+        seasonLength: media.seriesInfo.seriesSeasonLength ?? null,
+      }
     }
-    this.review = {
-      rating: media.review ? media.review.rating : null,
-      opinion: media.review ? media.review.opinion : null,
-      isFavorite: media.review ? media.review.isFavorite : null,
-      lastUpdate: media.review ? media.review.updatedAt : null,
+    if (media.review) {
+      this.review = {
+        rating: media.review.rating,
+        opinion: media.review.opinion,
+        isFavorite: media.review.isFavorite,
+        lastUpdate: media.review.updatedAt,
+      }
     }
-    this.cover = {
-      resized: media.cover ? media.cover.resizedCoverFilename : null,
-      original: media.cover ? media.cover.originalCoverFilename : null,
+    if (media.cover) {
+      this.cover = {
+        resized: media.cover.resizedCoverFilename,
+        original: media.cover.originalCoverFilename,
+      }
     }
   }
 
@@ -85,5 +99,9 @@ export class MediaFormatter {
 
   static formatMediaList(mediaList: IMedia[]): MediaFormatter[] {
     return mediaList.map((media) => new MediaFormatter(media))
+  }
+
+  static formatMedia(media: IMedia): MediaFormatter {
+    return new MediaFormatter(media)
   }
 }
