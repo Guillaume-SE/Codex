@@ -7,7 +7,7 @@ export interface IMediaPayload {
   alternativeName: string | null
   released: string | null
   synopsis: string | null
-  genresIds: Array<number>
+  genresIds?: Array<number>
   platformId?: number | null
   duration?: number | null
   seriesSeasonLength?: number | null
@@ -16,17 +16,6 @@ export interface IMediaPayload {
 }
 
 export interface IMedia {
-  mediaParentId: number | null
-  statusId: number
-  categoryId?: number
-  typeId: number
-  name: string
-  alternativeName: string | null
-  released: string | null
-  synopsis: string | null
-}
-
-export interface ICompleteMediaCard {
   id: number
   mediaParentId: number | null
   status: string
@@ -38,9 +27,6 @@ export interface ICompleteMediaCard {
   synopsis: string | null
   genres: Array<string>
   contributors: Record<string, string[]>
-  gameInfos?: {
-    platform: string | null
-  }
   bookInfos?: {
     pages: number | null
   }
