@@ -11,8 +11,8 @@ export default class CoversController {
     const mediaId = params.mediaId
 
     try {
-      const datas = await request.validateUsing(manageCoverValidator)
-      const newCover = await this.coverService.saveCoverDatas(datas, mediaId)
+      const data = await request.validateUsing(manageCoverValidator)
+      const newCover = await this.coverService.saveCoverData(data, mediaId)
       const coverInfos = {
         tmpPath: newCover.coverTmpPath,
         resizedFilename: newCover.coverInfos.resizedCoverFilename,
