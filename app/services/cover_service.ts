@@ -1,6 +1,4 @@
-import { resize, toBuffer } from '#functions/cover_modification'
-import { createFileName } from '#functions/generate_cover_name'
-import { generateUniqueString } from '#functions/generate_unique_string'
+import { CoverUtils } from '#classes/CoverUtils'
 import { ICover, INewCover } from '#interfaces/cover_interface'
 import Cover from '#models/cover'
 import Media from '#models/media'
@@ -16,7 +14,7 @@ export default class CoverService {
   protected coverOriginalDir: string | PathLike = env.get('COVER_ORIGINAL_DIR')
   protected coverExtension: string | PathLike = env.get('DEFAULT_COVER_EXTENSION')
 
-  async saveCoverDatas(datas: INewCover, mediaId: number) {
+  async saveCoverData(data: INewCover, mediaId: number) {
     const media = await Media.find(mediaId)
     if (!media) {
       throw new Error("Le media n'existe pas")
@@ -24,10 +22,10 @@ export default class CoverService {
 
     const existingCover = await Cover.findBy('media_id', mediaId)
 
-    const coverName = generateUniqueString()
-    const resizedCoverFilename = createFileName(coverName, this.coverExtension, false)
-    const originalCoverFilename = createFileName(coverName, this.coverExtension, true)
-    const coverTmpPath = datas.cover.tmpPath
+    const coverName = CoverUtils.generateUniqueString()
+    const resizedCoverFilename = CoverUtils.createFileName(coverName, this.coverExtension, false)
+    const originalCoverFilename = CoverUtils.createFileName(coverName, this.coverExtension, true)
+    const coverTmpPath = data.cover.tmpPath
 
     const coverInfos: ICover = {
       resizedCoverFilename: resizedCoverFilename,
@@ -55,12 +53,12 @@ export default class CoverService {
     if (tmpPath === undefined) {
       throw new Error("Aucun chemin disponible pour l'image")
     }
-    const coverResized = await resize(tmpPath, 340)
+    const coverResized = await CoverUtils.resize(tmpPath, 340)
     const coverResizedFullPath = `${this.coverResizedDir}${resizedFilename}`
     await writeFile(coverResizedFullPath, coverResized)
 
     //to keep a clean original version
-    const coverOriginal = await toBuffer(tmpPath)
+    const coverOriginal = await CoverUtils.toBuffer(tmpPath)
     const coverOriginalFullPath = `${this.coverOriginalDir}${originalFilename}`
     await writeFile(coverOriginalFullPath, coverOriginal)
 
