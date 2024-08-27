@@ -21,25 +21,36 @@ It also allows me to keep up to date with the ones I've planned to see, the ones
 
 ## Database diagram and relationship explanations
 
-![diagram-codex](https://github.com/Guillaume-SE/Codex/assets/100344718/dc03c849-12af-4922-81d3-3bc9bb7ee33e)
+![diagram](https://github.com/user-attachments/assets/a71f22b9-907c-45ac-b73e-d1036bfbff8b)
 
-- `Users`: As the project aims to contain only my media entries, I chose not to link the "users" table to "reviews". It will only be used for authentication.
+- `users`: As the project aims to contain only my media entries, I chose not to link the "users" table to "reviews". It will only be used for authentication.
 
-- `Media`: Will contain every type of data the media I add may have, for example books, video games, movies and series all have a synopsis.  
-  The [media type](https://github.com/Guillaume-SE/Codex/blob/main/app/enums/MediaTypes.ts) will determine how the rest of the information is added to a dedicated table.
+- `media`: Will contain every type of data the media I add may have, for example books, video games, movies and series all have a synopsis.  
+  The media category (book, game, movies...) will determine how the rest of the information is added to a dedicated table.
 
-- `Reviews`: Reviews are created as soon as a media is added, and a review cannot exist without its associated media. This is one of the reasons why `rating` and `opinion` are one of the only nullable columns, because if I haven't yet seen the film, read the book, played the game, there is no reason to assign a value to these 2 columns.  
-  The media will have the appropriate [status](https://github.com/Guillaume-SE/Codex/blob/main/app/enums/ReviewStatus.ts) for this specific case.
+- `media_statuses`: A status to categorize each media item as Planned, Completed, Waiting, Paused, Abandoned for example.
 
-- `Covers`: Each media is associated with an official cover that easily identifies it. If an official cover has not been found on the internet (or in poor quality), a default cover is automatically assigned.
+- `media_categories`: Contains media categories (Movie for example) for filtering media.
+
+- `media_types`: Contains a sub-category to filter media more precisely within the same category. They are linked to a media category, allowing duplication and facilitating filter management.
+
+- `reviews`: A review is linked to a media and cannot exist without its associated media, but not all media have a review.
+
+- `covers`: Each media is associated with an official cover that easily identifies it. If an official cover has not been found on the internet (or in poor quality), a default cover is automatically assigned.
 
 - `movies_infos`: contains all media-specific information relating to the films.
 
 - `games_infos`: contains all media information related to video games.
 
-- `seasons_infos`: contains all the information specific to media with a seasonal structure, such as series and anime.
+- `series_infos`: contains all the information related to series.
+
+- `anime_infos`: contains all the information related to animé, mainly japanese animation.
 
 - `books_infos`: contains all book-related media information.
+
+- `media_contributors`: people or companies involved in the creation of a media and the role they played in it.
+
+- `genres`: media genre (fantasy, action, comedy...) linked to a media category, allowing duplication and facilitating filter management.
 
 ## Future plans
 
@@ -71,10 +82,8 @@ node ace migration:run
 
 ## Status
 
-26/07/24: The database v2 is now completed, I adjust my code to match with her!
-I'll soon update the diagram show above :)
+26/07/24: Version 2 of the database is complete, I'm updating the code to incorporate this v2!
 
 ## Other
 
-This repo is the new version of Codex now under Adonis v6.  
 The project is still under development, so I'll add more information as it becomes available :sunglasses:
