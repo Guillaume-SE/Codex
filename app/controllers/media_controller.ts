@@ -1,4 +1,4 @@
-import { ICompleteMediaCard, IMedia, IMediaPayload } from '#interfaces/media_interface'
+import type { IMedia, IMediaPayload } from '#interfaces/media_interface'
 import CoverService from '#services/cover_service'
 import MediaService from '#services/media_service'
 import { createMediaValidator, updateMediaValidator } from '#validators/media_validator'
@@ -28,7 +28,7 @@ export default class MediasController {
         ...mediaSpecificInfos
       }: IMediaPayload = datas
 
-      const generalMediaInfos: IMedia = {
+      const generalMediaInfos: IMediaPayload = {
         mediaParentId,
         statusId,
         categoryId,
@@ -65,7 +65,7 @@ export default class MediasController {
         ...mediaSpecificInfos
       }: IMediaPayload = data
 
-      const generalMediaInfos: IMedia = {
+      const generalMediaInfos: IMediaPayload = {
         mediaParentId,
         statusId,
         typeId,
@@ -107,11 +107,10 @@ export default class MediasController {
 
   public async getAllMedia({ response }: HttpContext) {
     try {
-      const mediaList: ICompleteMediaCard[] = await this.mediaService.getAllMedia()
+      const mediaList = await this.mediaService.getAllMedia()
 
       return response.status(201).json(mediaList)
     } catch (error) {
-      console.log(error)
       return response.status(404).json({ error, customError: error.message })
     }
   }
