@@ -56,17 +56,17 @@ export default class Media extends BaseModel {
   @belongsTo(() => MediaStatus, {
     foreignKey: 'statusId',
   })
-  declare mediaStatus: BelongsTo<typeof MediaStatus>
+  declare status: BelongsTo<typeof MediaStatus>
 
   @belongsTo(() => MediaCategory, {
     foreignKey: 'categoryId',
   })
-  declare mediaCategory: BelongsTo<typeof MediaCategory>
+  declare category: BelongsTo<typeof MediaCategory>
 
   @belongsTo(() => MediaType, {
     foreignKey: 'typeId',
   })
-  declare mediaType: BelongsTo<typeof MediaType>
+  declare type: BelongsTo<typeof MediaType>
 
   @hasOne(() => Review)
   declare review: HasOne<typeof Review>
@@ -98,5 +98,5 @@ export default class Media extends BaseModel {
   @hasMany(() => MediaContributor, {
     foreignKey: 'mediaId',
   })
-  declare mediaProject: HasMany<typeof MediaContributor>
+  declare contributors: HasMany<typeof MediaContributor>
 }
