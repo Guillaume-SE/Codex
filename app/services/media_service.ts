@@ -1,4 +1,4 @@
-import { MediaFormatter } from '#classes/MediaFormatter'
+import { MediaFormatterFactory } from '#classes/MediaFormatter'
 import {
   IAnimeInfos,
   IBookInfos,
@@ -7,7 +7,7 @@ import {
   IMovieInfos,
   ISeriesInfos,
 } from '#interfaces/media_infos_interface'
-import { ICompleteMediaCard, IMedia } from '#interfaces/media_interface'
+import { IMediaPayload } from '#interfaces/media_interface'
 import AnimeInfo from '#models/anime_info'
 import BookInfo from '#models/book_info'
 import GameInfo from '#models/game_info'
@@ -25,7 +25,7 @@ import db from '@adonisjs/lucid/services/db'
 @inject()
 export default class MediaService {
   public async addOneMedia(
-    media: IMedia,
+    media: IMediaPayload,
     mediaGenres: Array<number>,
     specificInfos: IMediaSpecificInfos
   ) {
@@ -141,7 +141,7 @@ export default class MediaService {
 
   public async updateOneMedia(
     mediaId: number,
-    updatedMediaInfos: IMedia,
+    updatedMediaInfos: IMediaPayload,
     updatedMediaGenres: Array<number>,
     updatedSpecificInfos: IMediaSpecificInfos
   ) {
@@ -278,11 +278,11 @@ export default class MediaService {
 
   async getAllMedia() {
     const mediaList = await Media.query()
-      .preload('mediaStatus')
-      .preload('mediaCategory')
-      .preload('mediaType')
+      .preload('status')
+      .preload('category')
+      .preload('type')
       .preload('genres')
-      .preload('mediaProject', (contributorsQuery) => {
+      .preload('contributors', (contributorsQuery) => {
         contributorsQuery.preload('job')
         contributorsQuery.preload('contributor')
       })
@@ -295,7 +295,7 @@ export default class MediaService {
       .preload('review')
       .preload('cover')
 
-    const formattedMediaList = MediaFormatter.formatMediaList(mediaList)
+    const formattedMediaList = MediaFormatterFactory.formatMediaList(mediaList)
 
     return formattedMediaList
   }
@@ -308,11 +308,11 @@ export default class MediaService {
 
     await validMedia.load((loader) => {
       loader
-        .load('mediaStatus')
-        .load('mediaCategory')
-        .load('mediaType')
+        .load('status')
+        .load('category')
+        .load('type')
         .load('genres')
-        .load('mediaProject', (contributorsQuery) => {
+        .load('contributors', (contributorsQuery) => {
           contributorsQuery.preload('job')
           contributorsQuery.preload('contributor')
         })
@@ -326,9 +326,7 @@ export default class MediaService {
         .load('cover')
     })
 
-    console.log(validMedia.serialize())
-
-    const formatedMedia = MediaFormatter.formatMedia(validMedia)
+    const formatedMedia = MediaFormatterFactory.formatMedia(validMedia)
 
     return formatedMedia
   }
