@@ -1,9 +1,8 @@
-import type { IAccumulator } from '#interfaces/accumulator_interface'
-import type { IGenre } from '#interfaces/genre_interface'
-import type { IMediaContributors } from '#interfaces/media_contributor_interface'
-import type { IMedia } from '#interfaces/media_interface'
+import { IGenre } from '#interfaces/genre_interface'
+import { IMediaContributors } from '#interfaces/media_contributor_interface'
+import Media from '#models/media'
 
-export class MediaFormatter {
+abstract class BaseMediaFormatter {
   id: number
   mediaParentId: number | null
   status: string
@@ -15,11 +14,6 @@ export class MediaFormatter {
   synopsis: string | null
   genres: string[]
   contributors: Record<string, string[]>
-  gameInfos?: { platform: string | null }
-  bookInfos?: { pages: number | null }
-  movieInfos?: { duration: number | null }
-  animeInfos?: { seasonLength: number | null }
-  seriesInfos?: { seasonLength: number | null }
   review?: {
     rating: number | null
     opinion: string | null
@@ -40,31 +34,7 @@ export class MediaFormatter {
     this.synopsis = media.synopsis
     this.genres = media.genres.map((genre: IGenre) => genre.name)
     this.contributors = this.formatContributors(media.mediaProject)
-    if (media.gameInfo) {
-      this.gameInfos = {
-        platform: media.gameInfo.gamePlatform?.name ?? null,
-      }
-    }
-    if (media.bookInfo) {
-      this.bookInfos = {
-        pages: media.bookInfo?.pages ?? null,
-      }
-    }
-    if (media.movieInfo) {
-      this.movieInfos = {
-        duration: media.movieInfo.duration ?? null,
-      }
-    }
-    if (media.animeInfo) {
-      this.animeInfos = {
-        seasonLength: media.animeInfo.animeSeasonLength ?? null,
-      }
-    }
-    if (media.seriesInfo) {
-      this.seriesInfos = {
-        seasonLength: media.seriesInfo.seriesSeasonLength ?? null,
-      }
-    }
+
     if (media.review) {
       this.review = {
         rating: media.review.rating,
@@ -73,6 +43,7 @@ export class MediaFormatter {
         lastUpdate: media.review.updatedAt,
       }
     }
+
     if (media.cover) {
       this.cover = {
         resized: media.cover.resizedCoverFilename,
@@ -81,8 +52,8 @@ export class MediaFormatter {
     }
   }
 
-  formatContributors(mediaProjects: IMediaContributors[]): IAccumulator {
-    return mediaProjects.reduce((acc: IAccumulator, project: IMediaContributors) => {
+  protected formatContributors(mediaProjects: IMediaContributors[]): Record<string, string[]> {
+    return mediaProjects.reduce((acc: Record<string, string[]>, project: IMediaContributors) => {
       const jobName = project.job?.name
       if (jobName) {
         if (!acc[jobName]) {
@@ -94,14 +65,89 @@ export class MediaFormatter {
         }
       }
       return acc
-    }, {} as IAccumulator)
+    }, {})
+  }
+}
+
+// Specific media type formatters
+class GameMediaFormatter extends BaseMediaFormatter {
+  gameInfos: { platform: string | null }
+
+  constructor(media: any) {
+    super(media)
+    this.gameInfos = {
+      platform: media.gameInfo?.gamePlatform?.name ?? null,
+    }
+  }
+}
+
+class BookMediaFormatter extends BaseMediaFormatter {
+  bookInfos: { pages: number | null }
+
+  constructor(media: any) {
+    super(media)
+    this.bookInfos = {
+      pages: media.bookInfo?.pages ?? null,
+    }
+  }
+}
+
+class MovieMediaFormatter extends BaseMediaFormatter {
+  movieInfos: { duration: number | null }
+
+  constructor(media: any) {
+    super(media)
+    this.movieInfos = {
+      duration: media.movieInfo?.duration ?? null,
+    }
+  }
+}
+
+class AnimeMediaFormatter extends BaseMediaFormatter {
+  animeInfos: { seasonLength: number | null }
+
+  constructor(media: any) {
+    super(media)
+    this.animeInfos = {
+      seasonLength: media.animeInfo?.animeSeasonLength ?? null,
+    }
+  }
+}
+
+class SeriesMediaFormatter extends BaseMediaFormatter {
+  seriesInfos: { seasonLength: number | null }
+
+  constructor(media: any) {
+    super(media)
+    this.seriesInfos = {
+      seasonLength: media.seriesInfo?.seriesSeasonLength ?? null,
+    }
+  }
+}
+
+export class MediaFormatterFactory {
+  static createFormatter(media: any): BaseMediaFormatter {
+    switch (media.mediaCategory.name) {
+      case 'Jeu vidéo':
+        return new GameMediaFormatter(media)
+      case 'Livre':
+        return new BookMediaFormatter(media)
+      case 'Film':
+        return new MovieMediaFormatter(media)
+      case 'Animé':
+        return new AnimeMediaFormatter(media)
+      case 'Série':
+        return new SeriesMediaFormatter(media)
+      default:
+        throw new Error('Catégorie du média inconnue')
+    }
   }
 
-  static formatMediaList(mediaList: IMedia[]): MediaFormatter[] {
-    return mediaList.map((media) => new MediaFormatter(media))
+  static formatMediaList(mediaList: Media[]): BaseMediaFormatter[] {
+    return mediaList.map((media) => this.createFormatter(media))
   }
 
-  static formatMedia(media: IMedia): MediaFormatter {
-    return new MediaFormatter(media)
+  static formatMedia(media: Media): BaseMediaFormatter {
+    return this.createFormatter(media)
   }
 }
