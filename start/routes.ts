@@ -31,8 +31,8 @@ router.delete('/media/:mediaId', [MediaController, 'deleteOneMedia']).as('media.
  * reviews
  */
 //ADMIN
-router.post('/media/:mediaId/critique', [ReviewsController, 'addOneReview']).as('reviews.add')
-router.put('/media/:mediaId/critique', [ReviewsController, 'updateOneReview']).as('reviews.update')
+router.post('/media/:mediaId/avis', [ReviewsController, 'manageReview']).as('reviews.add')
+router.put('/media/:mediaId/avis', [ReviewsController, 'manageReview']).as('reviews.update')
 
 /**
  * movies
