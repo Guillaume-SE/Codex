@@ -14,7 +14,7 @@ export default class MediasController {
 
   async addOneMedia({ request, response }: HttpContext) {
     try {
-      const datas = await request.validateUsing(createMediaValidator)
+      const data = await request.validateUsing(createMediaValidator)
       const {
         mediaParentId,
         statusId,
@@ -26,7 +26,7 @@ export default class MediasController {
         synopsis,
         genresIds,
         ...mediaSpecificInfos
-      }: IMediaPayload = datas
+      }: IMediaPayload = data
 
       const generalMediaInfos: IMediaPayload = {
         mediaParentId,
