@@ -9,6 +9,7 @@ const AnimeController = () => import('#controllers/anime_controller')
 const BooksController = () => import('#controllers/books_controller')
 const CoversController = () => import('#controllers/covers_controller')
 const ReviewsController = () => import('#controllers/reviews_controller')
+const GenresController = () => import('#controllers/genres_controller')
 
 router.on('/').render('pages/home')
 
@@ -67,3 +68,10 @@ router.get('/covers', [CoversController, 'getAllCovers'])
 router.post('media/:mediaId/cover', [CoversController, 'manageOneCover']).as('cover.add')
 router.put('media/:mediaId/cover', [CoversController, 'manageOneCover']).as('cover.update')
 router.delete('media/:mediaId/cover', [CoversController, 'deleteOneCover']).as('cover.delete')
+
+/**
+ * genres
+ */
+//ADMIN
+router.post('genre/', [GenresController, 'addOneGenre']).as('genre.add')
+router.put('genre/:genreId', [GenresController, 'updateOneGenre']).as('genre.update')
