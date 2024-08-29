@@ -20,17 +20,19 @@ export class CoverUtils {
     return sharp(path).toBuffer()
   }
 
-  static createFileName(name: string, fileExtension: string | PathLike, withRaw: boolean): string {
-    if (withRaw) {
-      return `${name}-raw${fileExtension}`
-    }
-    return `${name}${fileExtension}`
-  }
-
   static generateUniqueString() {
     const timestamp = new Date().getTime().toString()
-    const randomString = string.random(15)
+    const randomString = string.random(20)
 
     return `${timestamp}-${randomString}`
+  }
+
+  static createFilenames(fileExtension: string | PathLike) {
+    const uniqueString = this.generateUniqueString()
+
+    return {
+      original: `${uniqueString}${fileExtension}`,
+      resized: `${uniqueString}-resized${fileExtension}`,
+    }
   }
 }
