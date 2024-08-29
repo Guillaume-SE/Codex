@@ -25,22 +25,22 @@ export default class GenreService {
     return newGenre
   }
 
-  public async updateOneGenre(genre: IGenre, genreId: number) {
-    const existingGenre: Genre | null = await Genre.find(genreId)
-    if (!existingGenre) {
+  public async updateOneGenre(updatedGenre: IGenre, genreId: number) {
+    const validSelectedGenre: Genre | null = await Genre.find(genreId)
+    if (!validSelectedGenre) {
       throw new Error('Aucun genre trouvé')
     }
 
     const matchingGenres = await Genre.query()
       .select('*')
       .from('genres')
-      .whereIn(['name', 'categoryId'], [[genre.name, existingGenre.categoryId]])
+      .whereIn(['name', 'categoryId'], [[updatedGenre.name, validSelectedGenre.categoryId]])
     const isSelectedGenreAlreadyAdded = matchingGenres.length > 0
     if (isSelectedGenreAlreadyAdded) {
       throw new Error('Ce genre a déjà été ajouté pour cette catégorie')
     }
 
-    const updatedGenre = await existingGenre.merge(genre).save()
+    await validSelectedGenre.merge(updatedGenre).save()
 
     return updatedGenre
   }
