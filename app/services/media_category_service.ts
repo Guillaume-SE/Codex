@@ -6,8 +6,8 @@ import { inject } from '@adonisjs/core'
 @inject()
 export default class MediaCategoryService {
   public async addOne(category: IMediaCategory) {
-    const existingCategory = await MediaCategory.findBy('name', category.name)
-    if (existingCategory) {
+    const existingSameCategory = await MediaCategory.findBy('name', category.name)
+    if (existingSameCategory) {
       throw new Error('Cette catégorie existe déjà')
     }
 
