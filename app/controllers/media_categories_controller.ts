@@ -10,7 +10,7 @@ export default class MediaCategoriesController {
   public async addOneCategory({ request, response }: HttpContext) {
     try {
       const data = await request.validateUsing(manageMediaCategoryValidator)
-      const category = await this.mediaCategoryService.addOneCategory(data)
+      const category = await this.mediaCategoryService.addOne(data)
       return response.status(201).json(category)
     } catch (error) {
       return response.status(400).json({ error, customError: error.message })
@@ -22,8 +22,19 @@ export default class MediaCategoriesController {
 
     try {
       const data = await request.validateUsing(manageMediaCategoryValidator)
-      const category = await this.mediaCategoryService.updateOneCategory(data, categoryId)
+      const category = await this.mediaCategoryService.updateOne(data, categoryId)
       return response.status(201).json(category)
+    } catch (error) {
+      return response.status(400).json({ error, customError: error.message })
+    }
+  }
+
+  public async deleteOneCategory({ params, response }: HttpContext) {
+    const categoryId = params.categoryId
+
+    try {
+      await this.mediaCategoryService.deleteOne(categoryId)
+      return response.status(202)
     } catch (error) {
       return response.status(400).json({ error, customError: error.message })
     }

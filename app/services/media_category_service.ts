@@ -1,10 +1,11 @@
 import { IMediaCategory } from '#interfaces/media_category_interface'
+import Media from '#models/media'
 import MediaCategory from '#models/media_category'
 import { inject } from '@adonisjs/core'
 
 @inject()
 export default class MediaCategoryService {
-  public async addOneCategory(category: IMediaCategory) {
+  public async addOne(category: IMediaCategory) {
     const existingCategory = await MediaCategory.findBy('name', category.name)
     if (existingCategory) {
       throw new Error('Cette catégorie existe déjà')
@@ -15,7 +16,7 @@ export default class MediaCategoryService {
     return newCategory
   }
 
-  public async updateOneCategory(updatedCategory: IMediaCategory, categoryId: number) {
+  public async updateOne(updatedCategory: IMediaCategory, categoryId: number) {
     const validSelectedCategory = await MediaCategory.find(categoryId)
     if (!validSelectedCategory) {
       throw new Error("La catégorie n'existe pas")
@@ -29,5 +30,19 @@ export default class MediaCategoryService {
     await validSelectedCategory.merge(updatedCategory).save()
 
     return updatedCategory
+  }
+
+  public async deleteOne(categoryId: number) {
+    const validSelectedCategory = await MediaCategory.find(categoryId)
+    if (!validSelectedCategory) {
+      throw new Error("La catégorie selectionnée n'existe pas")
+    }
+
+    const mediaUsingSelectedCategory = await Media.findBy('categoryId', validSelectedCategory.id)
+    if (mediaUsingSelectedCategory) {
+      throw new Error('Impossible de supprimer car un ou plusieurs media utilisent cette catégorie')
+    }
+
+    await validSelectedCategory.delete()
   }
 }
