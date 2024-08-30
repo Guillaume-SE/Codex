@@ -11,6 +11,7 @@ const CoversController = () => import('#controllers/covers_controller')
 const ReviewsController = () => import('#controllers/reviews_controller')
 const GenresController = () => import('#controllers/genres_controller')
 const MediaCategoriesController = () => import('#controllers/media_categories_controller')
+const MediaStatusesController = () => import('#controllers/media_statuses_controller')
 
 router.on('/').render('pages/home')
 
@@ -76,12 +77,19 @@ router.put('genre/:genreId', [GenresController, 'updateOneGenre']).as('genre.upd
 router.delete('genre/:genreId', [GenresController, 'deleteOneGenre']).as('genre.delete')
 
 /**
- * catégories
+ * media categories
  */
 router.post('categorie/', [MediaCategoriesController, 'addOneCategory']).as('category.add')
 router
   .put('categorie/:categoryId', [MediaCategoriesController, 'updateOneCategory'])
   .as('category.update')
 router
-  .delete('category/:categoryId', [MediaCategoriesController, 'deleteOneCategory'])
+  .delete('categorie/:categoryId', [MediaCategoriesController, 'deleteOneCategory'])
   .as('category.delete')
+
+/**
+ * media statuses
+ */
+router.post('statut/', [MediaStatusesController, 'addOneStatus']).as('status.add')
+router.put('statut/:statusId', [MediaStatusesController, 'updateOneStatus']).as('status.update')
+router.delete('statut/:statusId', [MediaStatusesController, 'deleteOneStatus']).as('status.delete')
