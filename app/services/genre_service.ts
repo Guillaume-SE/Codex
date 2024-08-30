@@ -5,7 +5,7 @@ import { inject } from '@adonisjs/core'
 
 @inject()
 export default class GenreService {
-  public async addOneGenre(genre: IGenre) {
+  public async addOne(genre: IGenre) {
     const validSelectedCategory: MediaCategory | null = await MediaCategory.find(genre.categoryId)
     if (!validSelectedCategory) {
       throw new Error('Aucune catégorie ne correspond')
@@ -25,7 +25,7 @@ export default class GenreService {
     return newGenre
   }
 
-  public async updateOneGenre(updatedGenre: IGenre, genreId: number) {
+  public async updateOne(updatedGenre: IGenre, genreId: number) {
     const validSelectedGenre: Genre | null = await Genre.find(genreId)
     if (!validSelectedGenre) {
       throw new Error('Aucun genre trouvé')
@@ -43,5 +43,14 @@ export default class GenreService {
     await validSelectedGenre.merge(updatedGenre).save()
 
     return updatedGenre
+  }
+
+  public async deleteOne(genreId: number) {
+    const validSelectedGenre: Genre | null = await Genre.find(genreId)
+    if (!validSelectedGenre) {
+      throw new Error("Le genre selectionné n'existe pas")
+    }
+
+    await validSelectedGenre.delete()
   }
 }
