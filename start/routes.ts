@@ -73,6 +73,7 @@ router.delete('media/:mediaId/cover', [CoversController, 'deleteOneCover']).as('
  */
 router.post('genre/', [GenresController, 'addOneGenre']).as('genre.add')
 router.put('genre/:genreId', [GenresController, 'updateOneGenre']).as('genre.update')
+router.delete('genre/:genreId', [GenresController, 'deleteOneGenre']).as('genre.delete')
 
 /**
  * catégories
@@ -81,3 +82,6 @@ router.post('categorie/', [MediaCategoriesController, 'addOneCategory']).as('cat
 router
   .put('categorie/:categoryId', [MediaCategoriesController, 'updateOneCategory'])
   .as('category.update')
+router
+  .delete('category/:categoryId', [MediaCategoriesController, 'deleteOneCategory'])
+  .as('category.delete')
