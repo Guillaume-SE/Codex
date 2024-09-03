@@ -10,8 +10,8 @@ export default class MediaStatusesController {
   public async addOneStatus({ request, response }: HttpContext) {
     try {
       const data = await request.validateUsing(manageMediaStatusValidator)
-      const status = await this.mediaStatusService.addOne(data)
-      return response.status(201).json(status)
+      const mediaStatus = await this.mediaStatusService.addOneStatus(data)
+      return response.status(201).json(mediaStatus)
     } catch (error) {
       return response.status(400).json({ error, customError: error.message })
     }
@@ -22,8 +22,8 @@ export default class MediaStatusesController {
 
     try {
       const data = await request.validateUsing(manageMediaStatusValidator)
-      const status = await this.mediaStatusService.updateOne(data, statusId)
-      return response.status(201).json(status)
+      const mediaStatus = await this.mediaStatusService.updateOneStatus(data, statusId)
+      return response.status(201).json(mediaStatus)
     } catch (error) {
       return response.status(400).json({ error, customError: error.message })
     }
@@ -33,7 +33,7 @@ export default class MediaStatusesController {
     const statusId = params.statusId
 
     try {
-      await this.mediaStatusService.deleteOne(statusId)
+      await this.mediaStatusService.deleteOneStatus(statusId)
       return response.status(202)
     } catch (error) {
       return response.status(400).json({ error, customError: error.message })

@@ -5,7 +5,7 @@ import { inject } from '@adonisjs/core'
 
 @inject()
 export default class MediaStatusService {
-  public async addOne(status: IMediaStatus) {
+  public async addOneStatus(status: IMediaStatus) {
     const existingSameStatus = await MediaStatus.findBy('name', status.name)
     if (existingSameStatus) {
       throw new Error('Ce statut existe déjà')
@@ -16,7 +16,7 @@ export default class MediaStatusService {
     return newStatus
   }
 
-  public async updateOne(updatedStatus: IMediaStatus, statusId: number) {
+  public async updateOneStatus(updatedStatus: IMediaStatus, statusId: number) {
     const validSelectedStatus = await MediaStatus.find(statusId)
     if (!validSelectedStatus) {
       throw new Error("Le statut selectionnée n'existe pas")
@@ -30,7 +30,7 @@ export default class MediaStatusService {
     return updatedStatus
   }
 
-  public async deleteOne(statusId: number) {
+  public async deleteOneStatus(statusId: number) {
     const validSelectedStatus = await MediaStatus.find(statusId)
     if (!validSelectedStatus) {
       throw new Error("Le statut selectionnée n'existe pas")
