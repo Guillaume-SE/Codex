@@ -1,4 +1,4 @@
-import type { IMedia, IMediaPayload } from '#interfaces/media_interface'
+import type { IMediaPayload } from '#interfaces/media_interface'
 import CoverService from '#services/cover_service'
 import MediaService from '#services/media_service'
 import { createMediaValidator, updateMediaValidator } from '#validators/media_validator'
@@ -6,7 +6,7 @@ import { inject } from '@adonisjs/core'
 import type { HttpContext } from '@adonisjs/core/http'
 
 @inject()
-export default class MediasController {
+export default class MediaController {
   constructor(
     readonly mediaService: MediaService,
     readonly coverService: CoverService
