@@ -12,6 +12,7 @@ const ReviewsController = () => import('#controllers/reviews_controller')
 const GenresController = () => import('#controllers/genres_controller')
 const MediaCategoriesController = () => import('#controllers/media_categories_controller')
 const MediaStatusesController = () => import('#controllers/media_statuses_controller')
+const MediaTypesController = () => import('#controllers/media_types_controller')
 
 router.on('/').render('pages/home')
 
@@ -93,3 +94,10 @@ router
 router.post('statut/', [MediaStatusesController, 'addOneStatus']).as('status.add')
 router.put('statut/:statusId', [MediaStatusesController, 'updateOneStatus']).as('status.update')
 router.delete('statut/:statusId', [MediaStatusesController, 'deleteOneStatus']).as('status.delete')
+
+/**
+ * types
+ */
+router.post('type/', [MediaTypesController, 'addOneType']).as('type.add')
+router.put('type/:typeId', [MediaTypesController, 'updateOneType']).as('type.update')
+router.delete('type/:typeId', [MediaTypesController, 'deleteOneType']).as('type.delete')
