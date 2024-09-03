@@ -1,7 +1,6 @@
 import type { IGamePlatform } from '#interfaces/game_platform_interface'
 import GameInfo from '#models/game_info'
 import GamePlatform from '#models/game_platform'
-import Media from '#models/media'
 import { inject } from '@adonisjs/core'
 
 @inject()
