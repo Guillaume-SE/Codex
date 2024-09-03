@@ -10,9 +10,9 @@ const BooksController = () => import('#controllers/books_controller')
 const CoversController = () => import('#controllers/covers_controller')
 const ReviewsController = () => import('#controllers/reviews_controller')
 const GenresController = () => import('#controllers/genres_controller')
-const MediaCategoriesController = () => import('#controllers/media_categories_controller')
 const MediaStatusesController = () => import('#controllers/media_statuses_controller')
 const MediaTypesController = () => import('#controllers/media_types_controller')
+const GamePlatformsController = () => import('#controllers/game_platforms_controller')
 
 router.on('/').render('pages/home')
 
@@ -78,17 +78,6 @@ router.put('genre/:genreId', [GenresController, 'updateOneGenre']).as('genre.upd
 router.delete('genre/:genreId', [GenresController, 'deleteOneGenre']).as('genre.delete')
 
 /**
- * media categories
- */
-router.post('categorie/', [MediaCategoriesController, 'addOneCategory']).as('category.add')
-router
-  .put('categorie/:categoryId', [MediaCategoriesController, 'updateOneCategory'])
-  .as('category.update')
-router
-  .delete('categorie/:categoryId', [MediaCategoriesController, 'deleteOneCategory'])
-  .as('category.delete')
-
-/**
  * media statuses
  */
 router.post('statut/', [MediaStatusesController, 'addOneStatus']).as('status.add')
@@ -101,3 +90,14 @@ router.delete('statut/:statusId', [MediaStatusesController, 'deleteOneStatus']).
 router.post('type/', [MediaTypesController, 'addOneType']).as('type.add')
 router.put('type/:typeId', [MediaTypesController, 'updateOneType']).as('type.update')
 router.delete('type/:typeId', [MediaTypesController, 'deleteOneType']).as('type.delete')
+
+/**
+ * game platforms
+ */
+router.post('plateforme/', [GamePlatformsController, 'addOnePlatform']).as('platform.add')
+router
+  .put('plateforme/:platformId', [GamePlatformsController, 'updateOnePlatform'])
+  .as('platform.update')
+router
+  .delete('plateforme/:platformId', [GamePlatformsController, 'deleteOnePlatform'])
+  .as('platform.delete')
