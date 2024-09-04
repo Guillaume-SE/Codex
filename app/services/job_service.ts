@@ -33,7 +33,7 @@ export default class JobService {
   public async deleteOneJob(jobId: number) {
     const validSelectedJob = await Job.find(jobId)
     if (!validSelectedJob) {
-      throw new Error("La plateforme selectionnée n'existe pass")
+      throw new Error("Le job selectionné n'existe pass")
     }
     const mediaUsingSelectedJob = await MediaContributor.findBy('jobId', validSelectedJob.id)
     if (mediaUsingSelectedJob) {
