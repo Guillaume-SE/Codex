@@ -14,6 +14,7 @@ const MediaStatusesController = () => import('#controllers/media_statuses_contro
 const MediaTypesController = () => import('#controllers/media_types_controller')
 const GamePlatformsController = () => import('#controllers/game_platforms_controller')
 const JobsController = () => import('#controllers/jobs_controller')
+const ContributorsController = () => import('#controllers/contributors_controller')
 
 router.on('/').render('pages/home')
 
@@ -109,3 +110,14 @@ router
 router.post('job/', [JobsController, 'addOneJob']).as('job.add')
 router.put('job/:jobId', [JobsController, 'updateOneJob']).as('job.update')
 router.delete('job/:jobId', [JobsController, 'deleteOneJob']).as('job.delete')
+
+/**
+ * contributors
+ */
+router.post('contributeur/', [ContributorsController, 'addOneContributor']).as('contributor.add')
+router
+  .put('contributeur/:contributorId', [ContributorsController, 'updateOneContributor'])
+  .as('contributor.update')
+router
+  .delete('contributeur/:contributorId', [ContributorsController, 'deleteOneContributor'])
+  .as('contributor.delete')
