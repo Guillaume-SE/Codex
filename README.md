@@ -82,7 +82,7 @@ node ace migration:run
 
 ## Status
 
-26/07/24: Version 2 of the database is complete, I'm updating the code to incorporate this v2!
+5/9/24: All basic crud are complete, i'll start to add template and more advanced request.
 
 ## Other
 
