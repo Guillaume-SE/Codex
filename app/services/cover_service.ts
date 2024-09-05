@@ -22,14 +22,12 @@ export default class CoverService {
 
     const existingCover = await Cover.findBy('media_id', mediaId)
 
-    const coverName = CoverUtils.generateUniqueString()
-    const resizedCoverFilename = CoverUtils.createFileName(coverName, this.coverExtension, false)
-    const originalCoverFilename = CoverUtils.createFileName(coverName, this.coverExtension, true)
+    const coverFilenames = CoverUtils.createFilenames(this.coverExtension)
     const coverTmpPath = data.cover.tmpPath
 
     const coverInfos: ICover = {
-      resizedCoverFilename: resizedCoverFilename,
-      originalCoverFilename: originalCoverFilename,
+      resizedCoverFilename: coverFilenames.resized,
+      originalCoverFilename: coverFilenames.original,
     }
 
     const searchPayload = { mediaId: media.id }

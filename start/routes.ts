@@ -9,6 +9,12 @@ const AnimeController = () => import('#controllers/anime_controller')
 const BooksController = () => import('#controllers/books_controller')
 const CoversController = () => import('#controllers/covers_controller')
 const ReviewsController = () => import('#controllers/reviews_controller')
+const GenresController = () => import('#controllers/genres_controller')
+const MediaStatusesController = () => import('#controllers/media_statuses_controller')
+const MediaTypesController = () => import('#controllers/media_types_controller')
+const GamePlatformsController = () => import('#controllers/game_platforms_controller')
+const JobsController = () => import('#controllers/jobs_controller')
+const ContributorsController = () => import('#controllers/contributors_controller')
 
 router.on('/').render('pages/home')
 
@@ -30,9 +36,8 @@ router.delete('/media/:mediaId', [MediaController, 'deleteOneMedia']).as('media.
 /**
  * reviews
  */
-//ADMIN
-router.post('/media/:mediaId/critique', [ReviewsController, 'addOneReview']).as('reviews.add')
-router.put('/media/:mediaId/critique', [ReviewsController, 'updateOneReview']).as('reviews.update')
+router.post('/media/:mediaId/avis', [ReviewsController, 'manageReview']).as('reviews.add')
+router.put('/media/:mediaId/avis', [ReviewsController, 'manageReview']).as('reviews.update')
 
 /**
  * movies
@@ -63,7 +68,56 @@ router.get('/anime', [AnimeController, 'getAllAnime']).as('anime.show')
  * covers
  */
 router.get('/covers', [CoversController, 'getAllCovers'])
-//ADMIN
 router.post('media/:mediaId/cover', [CoversController, 'manageOneCover']).as('cover.add')
 router.put('media/:mediaId/cover', [CoversController, 'manageOneCover']).as('cover.update')
 router.delete('media/:mediaId/cover', [CoversController, 'deleteOneCover']).as('cover.delete')
+
+/**
+ * genres
+ */
+router.post('genre/', [GenresController, 'addOneGenre']).as('genre.add')
+router.put('genre/:genreId', [GenresController, 'updateOneGenre']).as('genre.update')
+router.delete('genre/:genreId', [GenresController, 'deleteOneGenre']).as('genre.delete')
+
+/**
+ * media statuses
+ */
+router.post('statut/', [MediaStatusesController, 'addOneStatus']).as('status.add')
+router.put('statut/:statusId', [MediaStatusesController, 'updateOneStatus']).as('status.update')
+router.delete('statut/:statusId', [MediaStatusesController, 'deleteOneStatus']).as('status.delete')
+
+/**
+ * types
+ */
+router.post('type/', [MediaTypesController, 'addOneType']).as('type.add')
+router.put('type/:typeId', [MediaTypesController, 'updateOneType']).as('type.update')
+router.delete('type/:typeId', [MediaTypesController, 'deleteOneType']).as('type.delete')
+
+/**
+ * game platforms
+ */
+router.post('plateforme/', [GamePlatformsController, 'addOnePlatform']).as('platform.add')
+router
+  .put('plateforme/:platformId', [GamePlatformsController, 'updateOnePlatform'])
+  .as('platform.update')
+router
+  .delete('plateforme/:platformId', [GamePlatformsController, 'deleteOnePlatform'])
+  .as('platform.delete')
+
+/**
+ * jobs
+ */
+router.post('job/', [JobsController, 'addOneJob']).as('job.add')
+router.put('job/:jobId', [JobsController, 'updateOneJob']).as('job.update')
+router.delete('job/:jobId', [JobsController, 'deleteOneJob']).as('job.delete')
+
+/**
+ * contributors
+ */
+router.post('contributeur/', [ContributorsController, 'addOneContributor']).as('contributor.add')
+router
+  .put('contributeur/:contributorId', [ContributorsController, 'updateOneContributor'])
+  .as('contributor.update')
+router
+  .delete('contributeur/:contributorId', [ContributorsController, 'deleteOneContributor'])
+  .as('contributor.delete')

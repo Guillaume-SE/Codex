@@ -1,4 +1,4 @@
-import type { IMedia, IMediaPayload } from '#interfaces/media_interface'
+import type { IMediaPayload } from '#interfaces/media_interface'
 import CoverService from '#services/cover_service'
 import MediaService from '#services/media_service'
 import { createMediaValidator, updateMediaValidator } from '#validators/media_validator'
@@ -6,7 +6,7 @@ import { inject } from '@adonisjs/core'
 import type { HttpContext } from '@adonisjs/core/http'
 
 @inject()
-export default class MediasController {
+export default class MediaController {
   constructor(
     readonly mediaService: MediaService,
     readonly coverService: CoverService
@@ -14,7 +14,7 @@ export default class MediasController {
 
   async addOneMedia({ request, response }: HttpContext) {
     try {
-      const datas = await request.validateUsing(createMediaValidator)
+      const data = await request.validateUsing(createMediaValidator)
       const {
         mediaParentId,
         statusId,
@@ -26,7 +26,7 @@ export default class MediasController {
         synopsis,
         genresIds,
         ...mediaSpecificInfos
-      }: IMediaPayload = datas
+      }: IMediaPayload = data
 
       const generalMediaInfos: IMediaPayload = {
         mediaParentId,
