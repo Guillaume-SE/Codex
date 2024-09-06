@@ -1,5 +1,5 @@
 import Contributor from '#models/contributor'
-import Job from '#models/job'
+import ContributorRole from '#models/contributor_role'
 import Media from '#models/media'
 import { BaseModel, belongsTo, column } from '@adonisjs/lucid/orm'
 import type { BelongsTo } from '@adonisjs/lucid/types/relations'
@@ -16,8 +16,8 @@ export default class MediaContributor extends BaseModel {
   @column({ columnName: 'contributor_id', serializeAs: 'contributorId' })
   declare contributorId: number
 
-  @column({ columnName: 'job_id', serializeAs: 'jobId' })
-  declare jobId: number
+  @column({ columnName: 'role_id', serializeAs: 'roleId' })
+  declare roleId: number
 
   // relations
   @belongsTo(() => Media, {
@@ -30,8 +30,8 @@ export default class MediaContributor extends BaseModel {
   })
   declare contributor: BelongsTo<typeof Contributor>
 
-  @belongsTo(() => Job, {
-    foreignKey: 'jobId',
+  @belongsTo(() => ContributorRole, {
+    foreignKey: 'roleId',
   })
-  declare job: BelongsTo<typeof Job>
+  declare role: BelongsTo<typeof ContributorRole>
 }

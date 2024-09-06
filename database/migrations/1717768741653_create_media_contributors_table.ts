@@ -23,10 +23,10 @@ export default class extends BaseSchema {
         .onUpdate('CASCADE')
         .notNullable()
       table
-        .integer('job_id')
+        .integer('role_id')
         .unsigned()
         .references('id')
-        .inTable('jobs')
+        .inTable('contributors_roles')
         .onDelete('RESTRICT')
         .onUpdate('CASCADE')
         .notNullable()

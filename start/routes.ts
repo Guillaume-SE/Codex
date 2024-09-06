@@ -13,7 +13,7 @@ const GenresController = () => import('#controllers/genres_controller')
 const MediaStatusesController = () => import('#controllers/media_statuses_controller')
 const MediaTypesController = () => import('#controllers/media_types_controller')
 const GamePlatformsController = () => import('#controllers/game_platforms_controller')
-const JobsController = () => import('#controllers/jobs_controller')
+const ContributorsRolesController = () => import('#controllers/contributors_roles_controller')
 const ContributorsController = () => import('#controllers/contributors_controller')
 
 router.on('/').render('pages/home')
@@ -107,9 +107,15 @@ router
 /**
  * jobs
  */
-router.post('job/', [JobsController, 'addOneJob']).as('job.add')
-router.put('job/:jobId', [JobsController, 'updateOneJob']).as('job.update')
-router.delete('job/:jobId', [JobsController, 'deleteOneJob']).as('job.delete')
+router
+  .post('role/', [ContributorsRolesController, 'addOneContributorRole'])
+  .as('contributor-role.add')
+router
+  .put('role/:contributorRoleId', [ContributorsRolesController, 'updateOneContributorRole'])
+  .as('contributor-role.update')
+router
+  .delete('role/:contributorRoleId', [ContributorsRolesController, 'deleteOneContributorRole'])
+  .as('contributor-role.delete')
 
 /**
  * contributors
