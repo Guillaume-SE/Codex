@@ -8,3 +8,16 @@ body {
   height: 100%;
   width: 100%;
 }
+
+img {
+  /* width: 6rem; */
+  height: 9rem;
+  border-radius: 3px;
+}
+
+.navbar {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
