@@ -1,0 +1,44 @@
+<div>
+    @include('components/navigation')
+</div>
+
+<div>
+    @if(gamesList)
+    @each(game in gamesList)
+    <div>
+        @if(game.cover)
+        <div>
+            <img loading="lazy" src="{{ asset(`uploads/covers/resized/${game.cover.resized}`) }}"
+                alt="jaquette du jeu {{game.name}}">
+        </div>
+        @else
+        <div>
+            <img src="{{ asset('uploads/covers/original/default.jpg') }}" alt="Image indisponible">
+        </div>
+        @endif
+        <h4>
+            {{ game.name }}
+        </h4>
+        @if(game.gameInfos)
+        @if(game.gameInfos.platform)
+        <div>
+            {{game.gameInfos.platform}}
+        </div>
+        @end
+        @endif
+        @if(game.review)
+        <div>
+            {{ game.review.rating }}
+        </div>
+        @if(game.review.isFavorite)
+        <span><img src="{{asset('/public/images/icons/like-icon-relief.svg')}}" alt=""></span>
+        @endif
+        @endif
+    </div>
+    @endeach
+    @else
+    <p>
+        Aucun jeu à afficher
+    </p>
+    @endif
+</div>
