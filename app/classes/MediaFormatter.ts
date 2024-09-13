@@ -25,15 +25,15 @@ abstract class BaseMediaFormatter {
   constructor(media: any) {
     this.id = media.id
     this.mediaParentId = media.mediaParentId
-    this.status = media.mediaStatus.name
-    this.category = media.mediaCategory.name
-    this.type = media.mediaType.name
+    this.status = media.status.name
+    this.category = media.category.name
+    this.type = media.type.name
     this.name = media.name
     this.alternativeName = media.alternativeName
     this.released = media.released
     this.synopsis = media.synopsis
     this.genres = media.genres.map((genre: IGenre) => genre.name)
-    this.contributors = this.formatContributors(media.mediaProject)
+    this.contributors = this.formatContributors(media.contributors)
 
     if (media.review) {
       this.review = {
@@ -52,20 +52,23 @@ abstract class BaseMediaFormatter {
     }
   }
 
-  protected formatContributors(mediaProjects: IMediaContributors[]): Record<string, string[]> {
-    return mediaProjects.reduce((acc: Record<string, string[]>, project: IMediaContributors) => {
-      const jobName = project.job?.name
-      if (jobName) {
-        if (!acc[jobName]) {
-          acc[jobName] = []
+  protected formatContributors(mediaContributors: IMediaContributors[]): Record<string, string[]> {
+    return mediaContributors.reduce(
+      (acc: Record<string, string[]>, mediaContributor: IMediaContributors) => {
+        const roleName = mediaContributor.role?.name
+        if (roleName) {
+          if (!acc[roleName]) {
+            acc[roleName] = []
+          }
+          const contributorName = mediaContributor.contributor?.name
+          if (contributorName) {
+            acc[roleName].push(contributorName)
+          }
         }
-        const contributorName = project.contributor?.name
-        if (contributorName) {
-          acc[jobName].push(contributorName)
-        }
-      }
-      return acc
-    }, {})
+        return acc
+      },
+      {}
+    )
   }
 }
 
@@ -127,7 +130,7 @@ class SeriesMediaFormatter extends BaseMediaFormatter {
 
 export class MediaFormatterFactory {
   static createFormatter(media: any): BaseMediaFormatter {
-    switch (media.mediaCategory.name) {
+    switch (media.category.name) {
       case 'Jeu vidéo':
         return new GameMediaFormatter(media)
       case 'Livre':
