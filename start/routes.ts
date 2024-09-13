@@ -15,8 +15,9 @@ const MediaTypesController = () => import('#controllers/media_types_controller')
 const GamePlatformsController = () => import('#controllers/game_platforms_controller')
 const ContributorsRolesController = () => import('#controllers/contributors_roles_controller')
 const ContributorsController = () => import('#controllers/contributors_controller')
+const HomeController = () => import('#controllers/home_controller')
 
-router.on('/').render('pages/home')
+router.get('/', [HomeController, 'showHome']).as('home')
 
 /**
  * users
