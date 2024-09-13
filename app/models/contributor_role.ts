@@ -15,5 +15,5 @@ export default class ContributorRole extends BaseModel {
   @hasMany(() => MediaContributor, {
     foreignKey: 'roleId',
   })
-  declare contributorRole: HasMany<typeof MediaContributor>
+  declare role: HasMany<typeof MediaContributor>
 }

@@ -283,7 +283,7 @@ export default class MediaService {
       .preload('type')
       .preload('genres')
       .preload('contributors', (contributorsQuery) => {
-        contributorsQuery.preload('job')
+        contributorsQuery.preload('role')
         contributorsQuery.preload('contributor')
       })
       .preload('bookInfo')
@@ -313,7 +313,7 @@ export default class MediaService {
         .load('type')
         .load('genres')
         .load('contributors', (contributorsQuery) => {
-          contributorsQuery.preload('job')
+          contributorsQuery.preload('role')
           contributorsQuery.preload('contributor')
         })
         .load('bookInfo')

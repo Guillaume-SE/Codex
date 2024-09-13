@@ -3,7 +3,7 @@ import { IMedia } from './media_interface.js'
 export interface IMediaContributors {
   id?: number
   media?: IMedia
-  job?: {
+  role?: {
     id?: number
     name?: string
   }
