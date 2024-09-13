@@ -10,11 +10,11 @@ export default class GamesController {
     readonly mediaService: MediaService
   ) {}
 
-  public async getAllGames({ response }: HttpContext) {
+  public async getAllGames({ view, response }: HttpContext) {
     try {
       const mediaList = await this.mediaService.getAllMedia()
       const gamesList = await this.gameService.getAllGames(mediaList)
-      return response.status(200).json(gamesList)
+      return view.render('pages/games/show-all', { gamesList })
     } catch (error) {
       return response.status(404).json(error)
     }
