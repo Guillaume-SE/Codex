@@ -1,19 +1,20 @@
+@layout()
+
 <div>
     @include('components/navigation')
 </div>
 
-<div>
+<div class="cards-container">
     @if(gamesList)
     @each(game in gamesList)
-    <div>
+    <div class="card">
         @if(game.cover)
         <div>
-            <img loading="lazy" src="{{ asset(`uploads/covers/resized/${game.cover.resized}`) }}"
-                alt="jaquette du jeu {{game.name}}">
+            <img loading="lazy" src="{{ asset(`${game.cover.resizedUrl}`) }}" alt="jaquette du jeu {{game.name}}">
         </div>
         @else
         <div>
-            <img src="{{ asset('uploads/covers/original/default.jpg') }}" alt="Image indisponible">
+            <img src="{{ asset('public/images/default-cover.jpg') }}" alt="Image indisponible">
         </div>
         @endif
         <h4>
@@ -31,7 +32,8 @@
             {{ game.review.rating }}
         </div>
         @if(game.review.isFavorite)
-        <span><img src="{{asset('/public/images/icons/like-icon-relief.svg')}}" alt=""></span>
+        <img class="icon-favorite" src="{{asset('public/images/icons/favorite-icon-relief.svg')}}"
+            alt="ce jeu est un coup de cœur" title="Coup de cœur">
         @endif
         @endif
     </div>
@@ -42,3 +44,5 @@
     </p>
     @endif
 </div>
+
+@end
