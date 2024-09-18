@@ -21,6 +21,7 @@ import MovieInfo from '#models/movie_info'
 import SeriesInfo from '#models/series_info'
 import { inject } from '@adonisjs/core'
 import db from '@adonisjs/lucid/services/db'
+import { serialize } from 'v8'
 
 @inject()
 export default class MediaService {
