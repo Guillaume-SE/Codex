@@ -20,7 +20,12 @@ abstract class BaseMediaFormatter {
     isFavorite: boolean | null
     lastUpdate: number | null
   }
-  cover?: { resized: string | null; original: string | null }
+  cover?: {
+    resizedFilename: string | null
+    resizedUrl: string | null
+    originalFilename: string | null
+    originalUrl: string | null
+  }
 
   constructor(media: any) {
     this.id = media.id
@@ -46,8 +51,10 @@ abstract class BaseMediaFormatter {
 
     if (media.cover) {
       this.cover = {
-        resized: media.cover.resizedCoverFilename,
-        original: media.cover.originalCoverFilename,
+        resizedFilename: media.cover.resizedCoverFilename,
+        resizedUrl: media.cover.resizedCoverUrl,
+        originalFilename: media.cover.originalCoverFilename,
+        originalUrl: media.cover.originalCoverUrl,
       }
     }
   }

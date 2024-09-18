@@ -46,7 +46,9 @@ export interface IMedia {
     lastUpdate: number | null
   }
   cover?: {
-    resized: string | null
-    original: string | null
+    resizedFilename: string | null
+    resizedUrl: string | null
+    originalFilename: string | null
+    originalUrl: string | null
   }
 }
