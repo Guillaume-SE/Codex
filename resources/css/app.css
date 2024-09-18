@@ -9,10 +9,32 @@ body {
   width: 100%;
 }
 
+a {
+  text-decoration: none;
+}
+
+.cards-container {
+  display: flex;
+  margin: 5px;
+}
+
+.card {
+  margin: 10px;
+  position: relative;
+}
+
 img {
-  /* width: 6rem; */
-  height: 9rem;
+  width: 150px;
+  height: calc(150px * 1.5);
   border-radius: 3px;
+}
+
+.icon-favorite {
+  width: 30px;
+  height: auto;
+  position: absolute;
+  top: -8px;
+  right: -8px;
 }
 
 .navbar {
