@@ -1,9 +1,13 @@
 import Media from '#models/media'
-import { BaseModel, belongsTo, column } from '@adonisjs/lucid/orm'
+import env from '#start/env'
+import { BaseModel, belongsTo, column, computed } from '@adonisjs/lucid/orm'
 import type { BelongsTo } from '@adonisjs/lucid/types/relations'
+import { PathLike } from 'node:fs'
 
 export default class Cover extends BaseModel {
   public static table = 'covers'
+  protected RESIZED_COVER_DIR: string | PathLike = env.get('RESIZED_COVER_DIR')
+  protected ORIGINAL_COVER_DIR: string | PathLike = env.get('ORIGINAL_COVER_DIR')
 
   @column({ isPrimary: true })
   declare id: number
@@ -16,6 +20,17 @@ export default class Cover extends BaseModel {
 
   @column({ columnName: 'original_cover_filename', serializeAs: 'originalCoverFilename' })
   declare originalCoverFilename: string
+
+  // additional logic
+  @computed()
+  get resizedCoverUrl() {
+    return `${this.RESIZED_COVER_DIR}${this.resizedCoverFilename}`
+  }
+
+  @computed()
+  get originalCoverUrl() {
+    return `${this.ORIGINAL_COVER_DIR}${this.originalCoverFilename}`
+  }
 
   // relations
   @belongsTo(() => Media)
