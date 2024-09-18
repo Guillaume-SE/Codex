@@ -9,21 +9,23 @@ export default class CoversController {
 
   async manageOneCover({ params, response, request }: HttpContext) {
     const mediaId = params.mediaId
-
+    // upload de l'image:
+    // fait ses modifs puis à la fin return les filenames des fichiers stockés
+    // persiste les noms en db
     try {
-      const data = await request.validateUsing(manageCoverValidator)
-      const newCover = await this.coverService.saveCoverData(data, mediaId)
+      const { cover } = await request.validateUsing(manageCoverValidator)
+      const newCover = await this.coverService.saveStoredCoverFilenames(cover, mediaId)
       const coverInfos = {
         tmpPath: newCover.coverTmpPath,
         resizedFilename: newCover.coverInfos.resizedCoverFilename,
         rawFilename: newCover.coverInfos.originalCoverFilename,
       }
-      await this.coverService.saveCoverFile(
+      await this.coverService.storeCover(
         coverInfos.resizedFilename,
         coverInfos.rawFilename,
         coverInfos.tmpPath
       )
-      return response.status(201).json(newCover)
+      return response.status(201)
     } catch (error) {
       return response.status(404).json({ error, customError: error.message })
     }
