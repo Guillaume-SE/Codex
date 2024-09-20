@@ -21,10 +21,14 @@ abstract class BaseMediaFormatter {
     lastUpdate: number | null
   }
   cover?: {
-    resizedFilename: string | null
-    resizedUrl: string | null
     originalFilename: string | null
     originalUrl: string | null
+    smallFilename: string | null
+    smallUrl: string | null
+    mediumFilename: string | null
+    mediumUrl: string | null
+    largeFilename: string | null
+    largeUrl: string | null
   }
 
   constructor(media: any) {
@@ -51,10 +55,14 @@ abstract class BaseMediaFormatter {
 
     if (media.cover) {
       this.cover = {
-        resizedFilename: media.cover.resizedCoverFilename,
-        resizedUrl: media.cover.resizedCoverUrl,
         originalFilename: media.cover.originalCoverFilename,
         originalUrl: media.cover.originalCoverUrl,
+        smallFilename: media.cover.smallCoverFilename,
+        smallUrl: media.cover.smallCoverUrl,
+        mediumFilename: media.cover.mediumCoverFilename,
+        mediumUrl: media.cover.mediumCoverUrl,
+        largeFilename: media.cover.largeCoverFilename,
+        largeUrl: media.cover.largeCoverUrl,
       }
     }
   }
