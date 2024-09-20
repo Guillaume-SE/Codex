@@ -1,60 +1,61 @@
+import type { ICoverFilenames } from '#interfaces/cover_interface'
 import env from '#start/env'
-import { MultipartFile } from '@adonisjs/core/bodyparser'
 import { cuid } from '@adonisjs/core/helpers'
 import { PathLike } from 'fs'
 import sharp from 'sharp'
 
-interface ProcessImageOptions {
-  width: number
-  height: number
+interface IProcessImageOptions {
+  width?: number
+  height?: number
   format: keyof sharp.FormatEnum
 }
 
 export class CoverUtils {
-  static DEFAULT_COVER_EXTENSION: string | PathLike = env.get('DEFAULT_COVER_EXTENSION')
+  protected DEFAULT_COVER_EXTENSION: string | PathLike = env.get('DEFAULT_COVER_EXTENSION')
+  protected ORIGINAL_COVER_DIR: string | PathLike = env.get('ORIGINAL_COVER_DIR')
+  protected SMALL_COVER_DIR: string | PathLike = env.get('SMALL_COVER_DIR')
+  protected MEDIUM_COVER_DIR: string | PathLike = env.get('MEDIUM_COVER_DIR')
+  protected LARGE_COVER_DIR: string | PathLike = env.get('LARGE_COVER_DIR')
 
-  static resize(path: string, width: number) {
-    const coverResized = sharp(path)
-      .resize({
-        height: 450,
-        width: width,
+  async processImage(filepath: string, options?: IProcessImageOptions) {
+    const image = sharp(filepath)
+
+    if (options?.width || options?.height) {
+      image.resize({
+        width: options.width,
+        height: options.height,
+        fit: 'cover',
       })
-      .toFormat('jpg', { mozjpeg: true })
-      .toBuffer()
-    return coverResized
+    }
+
+    if (options?.format) {
+      if (options.format === 'jpg') {
+        image.toFormat(options.format, { mozjpeg: true })
+      } else {
+        image.toFormat(options.format)
+      }
+    }
+    image.toBuffer()
+
+    return image
   }
 
-  static toBuffer(path: string) {
-    return sharp(path).toBuffer()
-  }
-
-  // static async processImage(file: MultipartFile, options?: ProcessImageOptions) {
-  //   if (file.tmpPath) {
-  //     const image = sharp(file.tmpPath)
-
-  //     if (options?.width || options?.height) {
-  //       image.resize({
-  //         width: options.width,
-  //         height: options.height,
-  //         fit: 'cover',
-  //       })
-  //     }
-
-  //     if (options?.format) {
-  //       image.toFormat(options.format)
-  //     }
-
-  //     const buffer = await image.toBuffer()
-  //     await sharp(buffer).toFile(file.tmpPath)
-  //   }
-  // }
-
-  static createFilenames() {
+  createFilenames(): ICoverFilenames {
     const key = cuid()
-
     return {
       original: `${key}${this.DEFAULT_COVER_EXTENSION}`,
-      resized: `${key}-resized${this.DEFAULT_COVER_EXTENSION}`,
+      small: `${key}-150x225${this.DEFAULT_COVER_EXTENSION}`,
+      medium: `${key}-300x450${this.DEFAULT_COVER_EXTENSION}`,
+      large: `${key}-600x900${this.DEFAULT_COVER_EXTENSION}`,
+    }
+  }
+
+  getFullPaths(filenames: ICoverFilenames) {
+    return {
+      original: `${this.ORIGINAL_COVER_DIR}${filenames.original}`,
+      small: `${this.SMALL_COVER_DIR}${filenames.small}`,
+      medium: `${this.MEDIUM_COVER_DIR}${filenames.medium}`,
+      large: `${this.LARGE_COVER_DIR}${filenames.large}`,
     }
   }
 }
