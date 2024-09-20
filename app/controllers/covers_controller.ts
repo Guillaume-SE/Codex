@@ -1,3 +1,4 @@
+import Cover from '#models/cover'
 import CoverService from '#services/cover_service'
 import { manageCoverValidator } from '#validators/cover_validator'
 import { inject } from '@adonisjs/core'
@@ -9,22 +10,10 @@ export default class CoversController {
 
   async manageOneCover({ params, response, request }: HttpContext) {
     const mediaId = params.mediaId
-    // upload de l'image:
-    // fait ses modifs puis à la fin return les filenames des fichiers stockés
-    // persiste les noms en db
     try {
       const { cover } = await request.validateUsing(manageCoverValidator)
-      const newCover = await this.coverService.saveStoredCoverFilenames(cover, mediaId)
-      const coverInfos = {
-        tmpPath: newCover.coverTmpPath,
-        resizedFilename: newCover.coverInfos.resizedCoverFilename,
-        rawFilename: newCover.coverInfos.originalCoverFilename,
-      }
-      await this.coverService.storeCover(
-        coverInfos.resizedFilename,
-        coverInfos.rawFilename,
-        coverInfos.tmpPath
-      )
+      const uploadedCover = await this.coverService.storeCover(cover)
+      await this.coverService.saveStoredCoverFilenames(uploadedCover, mediaId)
       return response.status(201)
     } catch (error) {
       return response.status(404).json({ error, customError: error.message })
@@ -35,8 +24,21 @@ export default class CoversController {
     const mediaId = params.mediaId
 
     try {
-      const cover = await this.coverService.deleteOneCoverByMediaId(mediaId)
-      return response.status(201).json(cover)
+      const cover = await Cover.findBy('media_id', mediaId)
+      if (!cover) {
+        throw new Error("Aucune cover n'a été trouvée pour ce media")
+      }
+
+      await this.coverService.deleteCover({
+        original: cover.originalCoverFilename,
+        small: cover.smallCoverFilename,
+        medium: cover.mediumCoverFilename,
+        large: cover.largeCoverFilename,
+      })
+
+      await cover.delete()
+
+      return response.status(201)
     } catch (error) {
       return response.status(404).json(error)
     }
