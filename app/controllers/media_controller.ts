@@ -93,10 +93,12 @@ export default class MediaController {
       const cover = await this.coverService.getOneCoverByMediaId(mediaId)
       await this.mediaService.deleteOneMedia(mediaId)
       if (cover) {
-        await this.coverService.deleteCoverByFilenames(
-          cover.resizedCoverFilename,
-          cover.originalCoverFilename
-        )
+        await this.coverService.deleteCover({
+          original: cover.originalCoverFilename,
+          small: cover.smallCoverFilename,
+          medium: cover.mediumCoverFilename,
+          large: cover.largeCoverFilename,
+        })
       }
 
       return response.status(200)
