@@ -16,6 +16,8 @@ export default await Env.create(new URL('../', import.meta.url), {
   DB_DATABASE: Env.schema.string(),
 
   DEFAULT_COVER_EXTENSION: Env.schema.string(),
-  RESIZED_COVER_DIR: Env.schema.string(),
   ORIGINAL_COVER_DIR: Env.schema.string(),
+  SMALL_COVER_DIR: Env.schema.string(),
+  MEDIUM_COVER_DIR: Env.schema.string(),
+  LARGE_COVER_DIR: Env.schema.string(),
 })
