@@ -5,15 +5,14 @@
 </div>
 
 <div class="cards-container">
-    @if(gamesList)
     @each(game in gamesList)
     <div class="card">
         @if(game.cover)
         <div>
 
             <img loading="lazy"
-                srcset="{{ route('storage.show' ,[`${game.cover.smallUrl}`]) }}, {{ route('storage.show' ,[`${game.cover.mediumUrl}`]) }} 2x"
-                src="{{ route('storage.show' ,[`${game.cover.mediumUrl}`]) }}" alt="jaquette du jeu {{game.name}}">
+                srcset="{{ route('storage.show' ,[`${ game.cover.smallUrl }`]) }}, {{ route('storage.show' ,[`${ game.cover.mediumUrl }`]) }} 2x"
+                src="{{ route('storage.show' ,[`${ game.cover.mediumUrl }`]) }}" alt="jaquette du jeu {{ game.name }}">
         </div>
         @else
         <div>
@@ -26,7 +25,7 @@
         @if(game.gameInfos)
         @if(game.gameInfos.platform)
         <div>
-            {{game.gameInfos.platform}}
+            {{ game.gameInfos.platform }}
         </div>
         @end
         @endif
@@ -41,9 +40,9 @@
         @endif
     </div>
     @endeach
-    @else
+    @if(gamesList.length === 0)
     <p>
-        Aucun jeu à afficher
+        C'est vide par ici
     </p>
     @endif
 </div>
