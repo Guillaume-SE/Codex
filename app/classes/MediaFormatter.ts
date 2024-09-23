@@ -17,18 +17,14 @@ abstract class BaseMediaFormatter {
   review?: {
     rating: number | null
     opinion: string | null
-    isFavorite: boolean | null
-    lastUpdate: number | null
+    isFavorite: boolean
+    lastUpdate: number
   }
   cover?: {
-    originalFilename: string | null
-    originalUrl: string | null
-    smallFilename: string | null
-    smallUrl: string | null
-    mediumFilename: string | null
-    mediumUrl: string | null
-    largeFilename: string | null
-    largeUrl: string | null
+    originalUrl: string
+    smallUrl: string
+    mediumUrl: string
+    largeUrl: string
   }
 
   constructor(media: any) {
@@ -55,13 +51,9 @@ abstract class BaseMediaFormatter {
 
     if (media.cover) {
       this.cover = {
-        originalFilename: media.cover.originalCoverFilename,
         originalUrl: media.cover.originalCoverUrl,
-        smallFilename: media.cover.smallCoverFilename,
         smallUrl: media.cover.smallCoverUrl,
-        mediumFilename: media.cover.mediumCoverFilename,
         mediumUrl: media.cover.mediumCoverUrl,
-        largeFilename: media.cover.largeCoverFilename,
         largeUrl: media.cover.largeCoverUrl,
       }
     }

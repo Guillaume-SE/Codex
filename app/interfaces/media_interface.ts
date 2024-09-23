@@ -42,13 +42,13 @@ export interface IMedia {
   review?: {
     rating: number | null
     opinion: string | null
-    isFavorite: boolean | null
-    lastUpdate: number | null
+    isFavorite: boolean
+    lastUpdate: number
   }
   cover?: {
-    resizedFilename: string | null
-    resizedUrl: string | null
-    originalFilename: string | null
-    originalUrl: string | null
+    originalUrl: string
+    smallUrl: string
+    mediumUrl: string
+    largeUrl: string
   }
 }
