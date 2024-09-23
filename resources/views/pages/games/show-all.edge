@@ -10,9 +10,10 @@
     <div class="card">
         @if(game.cover)
         <div>
+
             <img loading="lazy"
-                srcset="{{ asset(`${game.cover.smallUrl}`) }}, {{ asset(`${game.cover.mediumUrl}`) }} 2x"
-                src="{{ asset(`${game.cover.mediumUrl}`) }}" alt="jaquette du jeu {{game.name}}">
+                srcset="{{ route('storage.show' ,[`${game.cover.smallUrl}`]) }}, {{ route('storage.show' ,[`${game.cover.mediumUrl}`]) }} 2x"
+                src="{{ route('storage.show' ,[`${game.cover.mediumUrl}`]) }}" alt="jaquette du jeu {{game.name}}">
         </div>
         @else
         <div>
