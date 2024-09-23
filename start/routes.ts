@@ -16,8 +16,11 @@ const GamePlatformsController = () => import('#controllers/game_platforms_contro
 const ContributorsRolesController = () => import('#controllers/contributors_roles_controller')
 const ContributorsController = () => import('#controllers/contributors_controller')
 const HomeController = () => import('#controllers/home_controller')
+const StorageController = () => import('#controllers/storage_controller')
 
 router.get('/', [HomeController, 'showHome']).as('home')
+
+router.get('/storage/*', [StorageController, 'show']).as('storage.show')
 /**
  * users
  */
