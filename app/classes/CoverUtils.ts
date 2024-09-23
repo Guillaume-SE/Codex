@@ -17,27 +17,15 @@ export class CoverUtils {
   protected MEDIUM_COVER_DIR: string | PathLike = env.get('MEDIUM_COVER_DIR')
   protected LARGE_COVER_DIR: string | PathLike = env.get('LARGE_COVER_DIR')
 
-  async processImage(filepath: string, options?: IProcessImageOptions) {
-    const image = sharp(filepath)
-
-    if (options?.width || options?.height) {
-      image.resize({
+  async processImage(filePath: string, options: IProcessImageOptions) {
+    return sharp(filePath)
+      .resize({
         width: options.width,
         height: options.height,
         fit: 'cover',
       })
-    }
-
-    if (options?.format) {
-      if (options.format === 'jpg') {
-        image.toFormat(options.format, { mozjpeg: true })
-      } else {
-        image.toFormat(options.format)
-      }
-    }
-    image.toBuffer()
-
-    return image
+      .toFormat('jpg', { mozjpeg: true })
+      .toBuffer()
   }
 
   createFilenames(): ICoverFilenames {
