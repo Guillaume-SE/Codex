@@ -1,19 +1,13 @@
 import { CoverUtils } from '#classes/CoverUtils'
-import type { ICover, ICoverFilenames } from '#interfaces/cover_interface'
+import type { ICoverFilenames } from '#interfaces/cover_interface'
 import Cover from '#models/cover'
 import Media from '#models/media'
-import env from '#start/env'
 import { inject } from '@adonisjs/core'
 import { MultipartFile } from '@adonisjs/core/bodyparser'
-import { PathLike } from 'node:fs'
-import { rm, writeFile } from 'node:fs/promises'
-import path from 'node:path'
+import drive from '@adonisjs/drive/services/main'
 
 @inject()
 export default class CoverService {
-  protected ORIGINAL_COVER_DIR: string | PathLike = env.get('ORIGINAL_COVER_DIR')
-  protected MEDIUM_COVER_DIR: string | PathLike = env.get('MEDIUM_COVER_DIR')
-
   async storeCover(file: MultipartFile) {
     if (file.tmpPath === undefined) {
       throw new Error("Aucun chemin disponible pour l'image")
@@ -47,10 +41,11 @@ export default class CoverService {
       large: coverFilenames.large,
     })
 
-    await writeFile(coverFullPaths.original, coverOriginal)
-    await writeFile(coverFullPaths.small, coverSmall)
-    await writeFile(coverFullPaths.medium, coverMedium)
-    await writeFile(coverFullPaths.large, coverLarge)
+    const disk = drive.use()
+    await disk.put(coverFullPaths.original, coverOriginal)
+    await disk.put(coverFullPaths.small, coverSmall)
+    await disk.put(coverFullPaths.medium, coverMedium)
+    await disk.put(coverFullPaths.large, coverLarge)
 
     return coverFilenames
   }
@@ -91,15 +86,12 @@ export default class CoverService {
       medium: filenames.medium,
       large: filenames.large,
     })
-    await rm(coverFullPaths.original, { force: true })
-    await rm(coverFullPaths.small, { force: true })
-    await rm(coverFullPaths.medium, { force: true })
-    await rm(coverFullPaths.large, { force: true })
-  }
 
-  async getAllCovers() {
-    const coverList = await Cover.all()
-    return coverList
+    const disk = drive.use()
+    await disk.delete(`${coverFullPaths.original}`)
+    await disk.delete(`${coverFullPaths.small}`)
+    await disk.delete(`${coverFullPaths.medium}`)
+    await disk.delete(`${coverFullPaths.large}`)
   }
 
   async getOneCoverByMediaId(mediaId: number) {
