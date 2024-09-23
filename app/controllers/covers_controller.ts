@@ -14,6 +14,7 @@ export default class CoversController {
       const { cover } = await request.validateUsing(manageCoverValidator)
       const uploadedCover = await this.coverService.storeCover(cover)
       await this.coverService.saveStoredCoverFilenames(uploadedCover, mediaId)
+
       return response.status(201)
     } catch (error) {
       return response.status(404).json({ error, customError: error.message })
@@ -45,7 +46,7 @@ export default class CoversController {
   }
 
   public async getAllCovers({ response }: HttpContext) {
-    const covers = await this.coverService.getAllCovers()
-    return response.status(201).json(covers)
+    const coverList = await Cover.all()
+    return response.status(201).json(coverList)
   }
 }
