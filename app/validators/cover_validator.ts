@@ -6,5 +6,11 @@ export const manageCoverValidator = vine.compile(
       size: '2mb',
       extnames: ['png', 'webp', 'jpg', 'jpeg'],
     }),
+    params: vine.object({
+      mediaId: vine.number().exists(async (db, value) => {
+        const mediaExist = await db.from('media').where('id', value).first()
+        return !!mediaExist
+      }),
+    }),
   })
 )
