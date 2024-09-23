@@ -9,7 +9,7 @@ import drive from '@adonisjs/drive/services/main'
 @inject()
 export default class CoverService {
   async storeCover(file: MultipartFile) {
-    if (file.tmpPath === undefined) {
+    if (!file.tmpPath) {
       throw new Error("Aucun chemin disponible pour l'image")
     }
 
@@ -51,12 +51,7 @@ export default class CoverService {
   }
 
   async saveStoredCoverFilenames(filenames: ICoverFilenames, mediaId: number) {
-    const media = await Media.find(mediaId)
-    if (!media) {
-      throw new Error("Le media n'existe pas")
-    }
-
-    const existingCover = await Cover.findBy('media_id', mediaId)
+    const media = await Media.findOrFail(mediaId)
 
     const coverFilenames = {
       originalCoverFilename: filenames.original,
@@ -68,6 +63,7 @@ export default class CoverService {
     const searchPayload = { mediaId: media.id }
     await media.related('cover').updateOrCreate(searchPayload, coverFilenames)
 
+    const existingCover = await Cover.findBy('media_id', mediaId)
     if (existingCover) {
       await this.deleteCover({
         original: existingCover.originalCoverFilename,
@@ -92,15 +88,5 @@ export default class CoverService {
     await disk.delete(`${coverFullPaths.small}`)
     await disk.delete(`${coverFullPaths.medium}`)
     await disk.delete(`${coverFullPaths.large}`)
-  }
-
-  async getOneCoverByMediaId(mediaId: number) {
-    const validMedia = await Media.find(mediaId)
-    if (!validMedia) {
-      throw new Error('Aucun media trouvé')
-    }
-    const cover = await Cover.findBy('media_id', validMedia.id)
-
-    return cover
   }
 }
