@@ -9,7 +9,7 @@ import drive from '@adonisjs/drive/services/main'
 @inject()
 export default class CoverService {
   async storeCover(file: MultipartFile) {
-    if (!file.tmpPath) {
+    if (file.tmpPath === undefined) {
       throw new Error("Aucun chemin disponible pour l'image")
     }
 
@@ -53,6 +53,8 @@ export default class CoverService {
   async saveStoredCoverFilenames(filenames: ICoverFilenames, mediaId: number) {
     const media = await Media.findOrFail(mediaId)
 
+    const existingCover = await Cover.findBy('media_id', mediaId)
+
     const coverFilenames = {
       originalCoverFilename: filenames.original,
       smallCoverFilename: filenames.small,
@@ -63,9 +65,8 @@ export default class CoverService {
     const searchPayload = { mediaId: media.id }
     await media.related('cover').updateOrCreate(searchPayload, coverFilenames)
 
-    const existingCover = await Cover.findBy('media_id', mediaId)
     if (existingCover) {
-      await this.deleteCover({
+      await this.deleteCoverFile({
         original: existingCover.originalCoverFilename,
         small: existingCover.smallCoverFilename,
         medium: existingCover.mediumCoverFilename,
@@ -74,7 +75,7 @@ export default class CoverService {
     }
   }
 
-  async deleteCover(filenames: ICoverFilenames) {
+  async deleteCoverFile(filenames: ICoverFilenames) {
     const coverUtils = new CoverUtils()
     const coverFullPaths = coverUtils.getFullPaths({
       original: filenames.original,
@@ -84,9 +85,9 @@ export default class CoverService {
     })
 
     const disk = drive.use()
-    await disk.delete(`${coverFullPaths.original}`)
-    await disk.delete(`${coverFullPaths.small}`)
-    await disk.delete(`${coverFullPaths.medium}`)
-    await disk.delete(`${coverFullPaths.large}`)
+    await disk.delete(coverFullPaths.original)
+    await disk.delete(coverFullPaths.small)
+    await disk.delete(coverFullPaths.medium)
+    await disk.delete(coverFullPaths.large)
   }
 }
