@@ -1,7 +1,12 @@
 import type { IMediaPayload } from '#interfaces/media_interface'
+import Cover from '#models/cover'
 import CoverService from '#services/cover_service'
 import MediaService from '#services/media_service'
-import { createMediaValidator, updateMediaValidator } from '#validators/media_validator'
+import {
+  createMediaValidator,
+  deleteMediaValidator,
+  updateMediaValidator,
+} from '#validators/media_validator'
 import { inject } from '@adonisjs/core'
 import type { HttpContext } from '@adonisjs/core/http'
 
@@ -86,19 +91,24 @@ export default class MediaController {
     }
   }
 
-  async deleteOneMedia({ params, response }: HttpContext) {
+  async deleteOneMedia({ request, params, response }: HttpContext) {
     const mediaId = params.mediaId
 
     try {
-      const cover = await this.coverService.getOneCoverByMediaId(mediaId)
+      await request.validateUsing(deleteMediaValidator)
+      const cover = await Cover.findBy('mediaId', mediaId)
+
       await this.mediaService.deleteOneMedia(mediaId)
+
       if (cover) {
-        await this.coverService.deleteCover({
+        await this.coverService.deleteCoverFile({
           original: cover.originalCoverFilename,
           small: cover.smallCoverFilename,
           medium: cover.mediumCoverFilename,
           large: cover.largeCoverFilename,
         })
+
+        await cover.delete()
       }
 
       return response.status(200)

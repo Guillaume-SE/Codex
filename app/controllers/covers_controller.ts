@@ -1,6 +1,6 @@
 import Cover from '#models/cover'
 import CoverService from '#services/cover_service'
-import { manageCoverValidator } from '#validators/cover_validator'
+import { deleteCoverValidator, manageCoverValidator } from '#validators/cover_validator'
 import { inject } from '@adonisjs/core'
 import type { HttpContext } from '@adonisjs/core/http'
 
@@ -21,16 +21,14 @@ export default class CoversController {
     }
   }
 
-  public async deleteOneCover({ params, response }: HttpContext) {
+  public async deleteOneCover({ request, params, response }: HttpContext) {
     const mediaId = params.mediaId
 
     try {
-      const cover = await Cover.findBy('media_id', mediaId)
-      if (!cover) {
-        throw new Error("Aucune cover n'a été trouvée pour ce media")
-      }
+      await request.validateUsing(deleteCoverValidator)
+      const cover = await Cover.findByOrFail('media_id', mediaId)
 
-      await this.coverService.deleteCover({
+      await this.coverService.deleteCoverFile({
         original: cover.originalCoverFilename,
         small: cover.smallCoverFilename,
         medium: cover.mediumCoverFilename,
@@ -41,7 +39,7 @@ export default class CoversController {
 
       return response.status(201)
     } catch (error) {
-      return response.status(404).json(error)
+      return response.status(404).json({ error, customError: error.message })
     }
   }
 
