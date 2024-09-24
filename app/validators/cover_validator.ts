@@ -14,3 +14,14 @@ export const manageCoverValidator = vine.compile(
     }),
   })
 )
+
+export const deleteCoverValidator = vine.compile(
+  vine.object({
+    params: vine.object({
+      mediaId: vine.number().exists(async (db, value) => {
+        const mediaExist = await db.from('media').where('id', value).first()
+        return !!mediaExist
+      }),
+    }),
+  })
+)
