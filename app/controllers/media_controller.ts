@@ -1,6 +1,3 @@
-import type { IMediaPayload } from '#interfaces/media_interface'
-import Cover from '#models/cover'
-import CoverService from '#services/cover_service'
 import MediaService from '#services/media_service'
 import {
   createMediaValidator,
@@ -12,42 +9,16 @@ import type { HttpContext } from '@adonisjs/core/http'
 
 @inject()
 export default class MediaController {
-  constructor(
-    readonly mediaService: MediaService,
-    readonly coverService: CoverService
-  ) {}
+  constructor(readonly mediaService: MediaService) {}
 
   async addOneMedia({ request, response }: HttpContext) {
     try {
-      const data = await request.validateUsing(createMediaValidator)
-      const {
-        mediaParentId,
-        statusId,
-        categoryId,
-        typeId,
-        name,
-        alternativeName,
-        released,
-        synopsis,
-        genresIds,
-        ...mediaSpecificInfos
-      }: IMediaPayload = data
-
-      const generalMediaInfos: IMediaPayload = {
-        mediaParentId,
-        statusId,
-        categoryId,
-        typeId,
-        name,
-        alternativeName,
-        released,
-        synopsis,
-      }
-      const newMedia = await this.mediaService.addOneMedia(
-        generalMediaInfos,
-        genresIds,
-        mediaSpecificInfos
-      )
+      const selectedCategoryId = request.body().categoryId
+      // meta needed to get data passed in the form to perform queries in the validator
+      const data = await request.validateUsing(createMediaValidator, {
+        meta: { categoryId: selectedCategoryId },
+      })
+      const newMedia = await this.mediaService.addOneMedia(data)
       return response.status(201).json(newMedia)
     } catch (error) {
       return response.status(400).json({ error, customError: error.message })
@@ -57,34 +28,12 @@ export default class MediaController {
   async updateOneMedia({ params, response, request }: HttpContext) {
     const mediaId = params.mediaId
     try {
-      const data = await request.validateUsing(updateMediaValidator)
-      const {
-        mediaParentId,
-        statusId,
-        typeId,
-        name,
-        alternativeName,
-        released,
-        synopsis,
-        genresIds,
-        ...mediaSpecificInfos
-      }: IMediaPayload = data
+      const selectedCategoryId = request.body().categoryId
+      const { params, ...data } = await request.validateUsing(updateMediaValidator, {
+        meta: { mediaId: mediaId, categoryId: selectedCategoryId },
+      })
+      const media = await this.mediaService.updateOneMedia(data, mediaId)
 
-      const generalMediaInfos: IMediaPayload = {
-        mediaParentId,
-        statusId,
-        typeId,
-        name,
-        alternativeName,
-        released,
-        synopsis,
-      }
-      const media = await this.mediaService.updateOneMedia(
-        mediaId,
-        generalMediaInfos,
-        genresIds,
-        mediaSpecificInfos
-      )
       return response.status(201).json(media)
     } catch (error) {
       return response.status(400).json({ error, customError: error.message })
@@ -96,20 +45,8 @@ export default class MediaController {
 
     try {
       await request.validateUsing(deleteMediaValidator)
-      const cover = await Cover.findBy('mediaId', mediaId)
 
       await this.mediaService.deleteOneMedia(mediaId)
-
-      if (cover) {
-        await this.coverService.deleteCoverFile({
-          original: cover.originalCoverFilename,
-          small: cover.smallCoverFilename,
-          medium: cover.mediumCoverFilename,
-          large: cover.largeCoverFilename,
-        })
-
-        await cover.delete()
-      }
 
       return response.status(200)
     } catch (error) {
