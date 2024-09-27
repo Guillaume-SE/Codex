@@ -1,4 +1,4 @@
-export interface IMediaSpecificInfos {
+export interface ICategoryRelatedMediaData {
   platformId?: number | null
   duration?: number | null
   pages?: number | null
