@@ -1,13 +1,13 @@
 export interface IMediaPayload {
   mediaParentId: number | null
   statusId: number
-  categoryId?: number
+  categoryId: number
   typeId: number
   name: string
   alternativeName: string | null
   released: string | null
   synopsis: string | null
-  genresIds?: Array<number>
+  genreId: Array<number>
   platformId?: number | null
   duration?: number | null
   seriesSeasonLength?: number | null
