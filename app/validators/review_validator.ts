@@ -5,5 +5,8 @@ export const manageReviewValidator = vine.compile(
     rating: vine.number().range([0, 10]).nullable(),
     opinion: vine.string().trim().nullable(),
     isFavorite: vine.boolean(),
+    params: vine.object({
+      mediaId: vine.number().isExists({ table: 'media', column: 'id' }),
+    }),
   })
 )
