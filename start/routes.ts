@@ -28,8 +28,8 @@ router.get('/users/:id', [UsersController, 'show']).as('users.show')
 /**
  * medias
  */
-router.get('/media', [MediaController, 'getAllMedia']).as('media.show')
-router.get('/media/:mediaId', [MediaController, 'getOneMediaById']).as('media.show.one')
+router.get('/media', [MediaController, 'show']).as('media.show')
+router.get('/media/:mediaId', [MediaController, 'showOne']).as('media.show.one')
 //ADMIN
 router.post('/media', [MediaController, 'addOneMedia']).as('media.add')
 router.put('/media/:mediaId', [MediaController, 'updateOneMedia']).as('media.update')
@@ -46,7 +46,7 @@ router.get('/films', [MoviesController, 'getAllMovies']).as('movies.show')
 /**
  * games
  */
-router.get('/jeuxvideo', [GamesController, 'getAllGames']).as('games.show')
+router.get('/jeuxvideo', [GamesController, 'show']).as('games.show')
 /**
  * series
  */
@@ -62,57 +62,57 @@ router.get('/anime', [AnimeController, 'getAllAnime']).as('anime.show')
 /**
  * covers
  */
-router.get('/covers', [CoversController, 'getAllCovers'])
-router.post('media/:mediaId/cover', [CoversController, 'manageOneCover']).as('cover.add')
-router.put('media/:mediaId/cover', [CoversController, 'manageOneCover']).as('cover.update')
-router.delete('media/:mediaId/cover', [CoversController, 'deleteOneCover']).as('cover.delete')
+router.get('/covers', [CoversController, 'show']).as('covers.show')
+router.post('/media/:mediaId/cover', [CoversController, 'manageOne']).as('covers.add')
+router.put('/media/:mediaId/cover', [CoversController, 'manageOne']).as('covers.update')
+router.delete('/media/:mediaId/cover', [CoversController, 'deleteOne']).as('covers.delete')
 /**
  * genres
  */
-router.post('genre/', [GenresController, 'addOneGenre']).as('genre.add')
-router.put('genre/:genreId', [GenresController, 'updateOneGenre']).as('genre.update')
-router.delete('genre/:genreId', [GenresController, 'deleteOneGenre']).as('genre.delete')
+router.post('/genre', [GenresController, 'addOneGenre']).as('genres.add')
+router.put('/genre/:genreId', [GenresController, 'updateOneGenre']).as('genres.update')
+router.delete('/genre/:genreId', [GenresController, 'deleteOneGenre']).as('genres.delete')
 /**
  * media statuses
  */
-router.post('statut/', [MediaStatusesController, 'addOneStatus']).as('status.add')
-router.put('statut/:statusId', [MediaStatusesController, 'updateOneStatus']).as('status.update')
-router.delete('statut/:statusId', [MediaStatusesController, 'deleteOneStatus']).as('status.delete')
+router.post('/statut', [MediaStatusesController, 'addOneStatus']).as('status.add')
+router.put('/statut/:statusId', [MediaStatusesController, 'updateOneStatus']).as('status.update')
+router.delete('/statut/:statusId', [MediaStatusesController, 'deleteOneStatus']).as('status.delete')
 /**
  * types
  */
-router.post('type/', [MediaTypesController, 'addOneType']).as('type.add')
-router.put('type/:typeId', [MediaTypesController, 'updateOneType']).as('type.update')
-router.delete('type/:typeId', [MediaTypesController, 'deleteOneType']).as('type.delete')
+router.post('/type', [MediaTypesController, 'addOneType']).as('types.add')
+router.put('/type/:typeId', [MediaTypesController, 'updateOneType']).as('types.update')
+router.delete('/type/:typeId', [MediaTypesController, 'deleteOneType']).as('types.delete')
 /**
  * game platforms
  */
-router.post('plateforme/', [GamePlatformsController, 'addOnePlatform']).as('platform.add')
+router.post('/plateforme', [GamePlatformsController, 'addOnePlatform']).as('platforms.add')
 router
-  .put('plateforme/:platformId', [GamePlatformsController, 'updateOnePlatform'])
-  .as('platform.update')
+  .put('/plateforme/:platformId', [GamePlatformsController, 'updateOnePlatform'])
+  .as('platforms.update')
 router
-  .delete('plateforme/:platformId', [GamePlatformsController, 'deleteOnePlatform'])
-  .as('platform.delete')
+  .delete('/plateforme/:platformId', [GamePlatformsController, 'deleteOnePlatform'])
+  .as('platforms.delete')
 /**
  * contributors roles
  */
 router
-  .post('role/', [ContributorsRolesController, 'addOneContributorRole'])
+  .post('/role', [ContributorsRolesController, 'addOneContributorRole'])
   .as('contributor-role.add')
 router
-  .put('role/:contributorRoleId', [ContributorsRolesController, 'updateOneContributorRole'])
+  .put('/role/:contributorRoleId', [ContributorsRolesController, 'updateOneContributorRole'])
   .as('contributor-role.update')
 router
-  .delete('role/:contributorRoleId', [ContributorsRolesController, 'deleteOneContributorRole'])
+  .delete('/role/:contributorRoleId', [ContributorsRolesController, 'deleteOneContributorRole'])
   .as('contributor-role.delete')
 /**
  * contributors
  */
-router.post('contributeur/', [ContributorsController, 'addOneContributor']).as('contributor.add')
+router.post('/contributeur', [ContributorsController, 'addOneContributor']).as('contributor.add')
 router
-  .put('contributeur/:contributorId', [ContributorsController, 'updateOneContributor'])
+  .put('/contributeur/:contributorId', [ContributorsController, 'updateOneContributor'])
   .as('contributor.update')
 router
-  .delete('contributeur/:contributorId', [ContributorsController, 'deleteOneContributor'])
+  .delete('/contributeur/:contributorId', [ContributorsController, 'deleteOneContributor'])
   .as('contributor.delete')

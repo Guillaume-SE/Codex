@@ -2,6 +2,7 @@ import MediaService from '#services/media_service'
 import {
   createMediaValidator,
   deleteMediaValidator,
+  getMediaValidator,
   updateMediaValidator,
 } from '#validators/media_validator'
 import { inject } from '@adonisjs/core'
@@ -14,7 +15,7 @@ export default class MediaController {
   async addOneMedia({ request, response }: HttpContext) {
     try {
       const selectedCategoryId = request.body().categoryId
-      // meta needed to get data passed in the form to perform queries in the validator
+      // meta needed to get data passed in the form and you them in queries
       const data = await request.validateUsing(createMediaValidator, {
         meta: { categoryId: selectedCategoryId },
       })
@@ -30,7 +31,7 @@ export default class MediaController {
     try {
       const selectedCategoryId = request.body().categoryId
       const { params, ...data } = await request.validateUsing(updateMediaValidator, {
-        meta: { mediaId: mediaId, categoryId: selectedCategoryId },
+        meta: { categoryId: selectedCategoryId },
       })
       const media = await this.mediaService.updateOneMedia(data, mediaId)
 
@@ -54,9 +55,9 @@ export default class MediaController {
     }
   }
 
-  public async getAllMedia({ response }: HttpContext) {
+  public async show({ response }: HttpContext) {
     try {
-      const mediaList = await this.mediaService.getAllMedia()
+      const mediaList = await this.mediaService.getMediaList()
 
       return response.status(201).json(mediaList)
     } catch (error) {
@@ -64,10 +65,12 @@ export default class MediaController {
     }
   }
 
-  public async getOneMediaById({ params, response }: HttpContext) {
+  public async showOne({ request, params, response }: HttpContext) {
     const mediaId = params.mediaId
+
     try {
-      const media = await this.mediaService.getOneMediaById(mediaId)
+      await request.validateUsing(getMediaValidator)
+      const media = await this.mediaService.getMedia(mediaId)
 
       return response.status(201).json(media)
     } catch (error) {

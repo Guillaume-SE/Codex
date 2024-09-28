@@ -8,7 +8,7 @@ import type { HttpContext } from '@adonisjs/core/http'
 export default class CoversController {
   constructor(readonly coverService: CoverService) {}
 
-  async manageOneCover({ params, response, request }: HttpContext) {
+  async manageOne({ params, response, request }: HttpContext) {
     const mediaId = params.mediaId
     try {
       const { cover } = await request.validateUsing(manageCoverValidator)
@@ -21,7 +21,7 @@ export default class CoversController {
     }
   }
 
-  public async deleteOneCover({ request, params, response }: HttpContext) {
+  public async deleteOne({ request, params, response }: HttpContext) {
     const mediaId = params.mediaId
 
     try {
@@ -43,7 +43,7 @@ export default class CoversController {
     }
   }
 
-  public async getAllCovers({ response }: HttpContext) {
+  public async show({ response }: HttpContext) {
     const coverList = await Cover.all()
     return response.status(201).json(coverList)
   }

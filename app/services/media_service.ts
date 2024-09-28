@@ -156,7 +156,7 @@ export default class MediaService {
     }
   }
 
-  async getAllMedia() {
+  async getMediaList() {
     const mediaList = await Media.query()
       .preload('status')
       .preload('category')
@@ -166,12 +166,12 @@ export default class MediaService {
         contributorsQuery.preload('role')
         contributorsQuery.preload('contributor')
       })
-      .preload('bookInfo')
-      .preload('movieInfo')
-      .preload('seriesInfo')
       .preload('gameInfo', (gamesQuery) => {
         gamesQuery.preload('gamePlatform')
       })
+      .preload('movieInfo')
+      .preload('bookInfo')
+      .preload('seriesInfo')
       .preload('review')
       .preload('cover')
 
@@ -180,13 +180,10 @@ export default class MediaService {
     return formattedMediaList
   }
 
-  async getOneMediaById(mediaId: number) {
-    const validMedia = await Media.find(mediaId)
-    if (!validMedia) {
-      throw new Error('Aucun media trouvé')
-    }
+  async getMedia(mediaId: number) {
+    const media = await Media.findOrFail(mediaId)
 
-    await validMedia.load((loader) => {
+    await media.load((loader) => {
       loader
         .load('status')
         .load('category')
@@ -206,7 +203,7 @@ export default class MediaService {
         .load('cover')
     })
 
-    const formatedMedia = MediaFormatterFactory.formatMedia(validMedia)
+    const formatedMedia = MediaFormatterFactory.formatMedia(media)
 
     return formatedMedia
   }
