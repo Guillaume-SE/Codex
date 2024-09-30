@@ -12,7 +12,7 @@ export default class ReviewsController {
 
     try {
       const { params, ...data } = await request.validateUsing(manageReviewValidator)
-      const review = await this.reviewService.manageOne(data, mediaId)
+      const review = await this.reviewService.storeOrUpdate(data, mediaId)
       return response.status(201).json(review)
     } catch (error) {
       return response.status(404).json(error)

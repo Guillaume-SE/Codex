@@ -12,28 +12,28 @@ import type { HttpContext } from '@adonisjs/core/http'
 export default class MediaController {
   constructor(readonly mediaService: MediaService) {}
 
-  async addOneMedia({ request, response }: HttpContext) {
+  async addOne({ request, response }: HttpContext) {
     try {
       const selectedCategoryId = request.body().categoryId
       // meta needed to get data passed in the form and you them in queries
       const data = await request.validateUsing(createMediaValidator, {
         meta: { categoryId: selectedCategoryId },
       })
-      const newMedia = await this.mediaService.addOneMedia(data)
+      const newMedia = await this.mediaService.store(data)
       return response.status(201).json(newMedia)
     } catch (error) {
       return response.status(400).json({ error, customError: error.message })
     }
   }
 
-  async updateOneMedia({ params, response, request }: HttpContext) {
+  async updateOne({ params, response, request }: HttpContext) {
     const mediaId = params.mediaId
     try {
       const selectedCategoryId = request.body().categoryId
       const { params, ...data } = await request.validateUsing(updateMediaValidator, {
         meta: { categoryId: selectedCategoryId },
       })
-      const media = await this.mediaService.updateOneMedia(data, mediaId)
+      const media = await this.mediaService.update(data, mediaId)
 
       return response.status(201).json(media)
     } catch (error) {
@@ -41,13 +41,13 @@ export default class MediaController {
     }
   }
 
-  async deleteOneMedia({ request, params, response }: HttpContext) {
+  async deleteOne({ request, params, response }: HttpContext) {
     const mediaId = params.mediaId
 
     try {
       await request.validateUsing(deleteMediaValidator)
 
-      await this.mediaService.deleteOneMedia(mediaId)
+      await this.mediaService.delete(mediaId)
 
       return response.status(200)
     } catch (error) {

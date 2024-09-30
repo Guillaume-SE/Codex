@@ -4,7 +4,7 @@ import { inject } from '@adonisjs/core'
 
 @inject()
 export default class ReviewsController {
-  async manageOne(review: IReview, mediaId: number) {
+  async storeOrUpdate(review: IReview, mediaId: number) {
     const media = await Media.findOrFail(mediaId)
 
     const searchPayload = { mediaId: media.id }

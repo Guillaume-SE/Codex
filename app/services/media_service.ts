@@ -10,7 +10,7 @@ import db from '@adonisjs/lucid/services/db'
 @inject()
 export default class MediaService {
   constructor(readonly coverService: CoverService) {}
-  public async addOneMedia(data: IMediaPayload) {
+  public async store(data: IMediaPayload) {
     const {
       mediaParentId,
       statusId,
@@ -79,7 +79,7 @@ export default class MediaService {
     return media
   }
 
-  public async updateOneMedia(data: IMediaPayload, mediaId: number) {
+  public async update(data: IMediaPayload, mediaId: number) {
     const {
       mediaParentId,
       statusId,
@@ -139,7 +139,7 @@ export default class MediaService {
     return media
   }
 
-  public async deleteOneMedia(mediaId: number) {
+  public async delete(mediaId: number) {
     const media = await Media.findOrFail(mediaId)
     const cover = await Cover.findBy('mediaId', mediaId)
 

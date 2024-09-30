@@ -31,9 +31,9 @@ router.get('/users/:id', [UsersController, 'show']).as('users.show')
 router.get('/media', [MediaController, 'show']).as('media.show')
 router.get('/media/:mediaId', [MediaController, 'showOne']).as('media.show.one')
 //ADMIN
-router.post('/media', [MediaController, 'addOneMedia']).as('media.add')
-router.put('/media/:mediaId', [MediaController, 'updateOneMedia']).as('media.update')
-router.delete('/media/:mediaId', [MediaController, 'deleteOneMedia']).as('media.delete')
+router.post('/media', [MediaController, 'addOne']).as('media.add')
+router.put('/media/:mediaId', [MediaController, 'updateOne']).as('media.update')
+router.delete('/media/:mediaId', [MediaController, 'deleteOne']).as('media.delete')
 /**
  * reviews
  */
