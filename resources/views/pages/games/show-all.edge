@@ -30,12 +30,14 @@
         @end
         @endif
         @if(game.review)
+        @if(game.review.rating)
         <div>
             {{ game.review.rating }}
         </div>
+        @endif
         @if(game.review.isFavorite)
-        <img class="icon-favorite" src="{{asset('public/images/icons/favorite-icon-relief.svg')}}"
-            alt="ce jeu est un coup de cœur" title="Coup de cœur">
+        <img class="icon-favorite" src="{{asset('public/images/icons/favorite-icon-relief.svg')}}" alt="coup de cœur"
+            title="Coup de cœur">
         @endif
         @endif
     </div>
