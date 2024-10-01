@@ -71,13 +71,11 @@ router.delete('/media/:mediaId/cover', [CoversController, 'deleteOne']).as('cove
 router.post('/genre', [GenresController, 'addOne']).as('genres.add')
 router.put('/genre/:genreId', [GenresController, 'updateOne']).as('genres.update')
 router.delete('/genre/:genreId', [GenresController, 'deleteOne']).as('genres.delete')
-
 /**
  * types
  */
-router.post('/type', [MediaTypesController, 'addOneType']).as('types.add')
-router.put('/type/:typeId', [MediaTypesController, 'updateOneType']).as('types.update')
-router.delete('/type/:typeId', [MediaTypesController, 'deleteOneType']).as('types.delete')
+router.post('/type', [MediaTypesController, 'addOne']).as('types.add')
+router.put('/type/:typeId', [MediaTypesController, 'updateOne']).as('types.update')
 /**
  * game platforms
  */
