@@ -69,9 +69,9 @@ router.delete('/media/:mediaId/cover', [CoversController, 'deleteOne']).as('cove
 /**
  * genres
  */
-router.post('/genre', [GenresController, 'addOneGenre']).as('genres.add')
-router.put('/genre/:genreId', [GenresController, 'updateOneGenre']).as('genres.update')
-router.delete('/genre/:genreId', [GenresController, 'deleteOneGenre']).as('genres.delete')
+router.post('/genre', [GenresController, 'addOne']).as('genres.add')
+router.put('/genre/:genreId', [GenresController, 'updateOne']).as('genres.update')
+router.delete('/genre/:genreId', [GenresController, 'deleteOne']).as('genres.delete')
 /**
  * media statuses
  */
