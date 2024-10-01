@@ -6,7 +6,6 @@ import { inject } from '@adonisjs/core'
 export default class GenreService {
   public async store(genre: IGenre) {
     const newGenre = await Genre.create(genre)
-
     return newGenre
   }
 
