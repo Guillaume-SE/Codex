@@ -10,6 +10,7 @@ const messages = {
   'file.extname': 'Fichier invalide. Seuls les formats png, webp, jpg, jpeg sont autorisés',
   'file.size': 'Fichier trop lourd. Seuls les fichiers de 2mb maximum sont autorisés',
   'isExists': "Le {{ field }} choisi n'existe pas",
+  'name.database.unique': 'Ce nom existe déjà',
   'categoryId.isExists': "La {{ field }} choisie n'existe pas",
   'typeId.isAssociatedTo': 'Ce {{ field }} est indisponible pour cette catégorie',
   'genreId.distinct': 'Les genres doivent être uniques',
@@ -21,6 +22,7 @@ const messages = {
 
 const fields = {
   mediaId: 'media',
+  genreId: 'genre',
   mediaParentId: 'media',
   categoryId: 'catégorie',
   statusId: 'statut',
