@@ -17,8 +17,13 @@ export const createGenreValidator = vine.withMetaData<{ categoryId: number }>().
   })
 )
 
-export const updateGenreValidator = vine.compile(
+export const updateGenreValidator = vine.withMetaData<{ categoryId: number }>().compile(
   vine.object({
+    // params
+    params: vine.object({
+      genreId: vine.number().isExists({ table: 'genres', column: 'id' }),
+    }),
+    // body
     name: vine
       .string()
       .trim()
@@ -31,10 +36,6 @@ export const updateGenreValidator = vine.compile(
         return !genreIsUnique
       }),
     categoryId: vine.number().isExists({ table: 'media_categories', column: 'id' }),
-    // params
-    params: vine.object({
-      genreId: vine.number().isExists({ table: 'genres', column: 'id' }),
-    }),
   })
 )
 
