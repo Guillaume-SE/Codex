@@ -36,6 +36,11 @@ export const createMediaValidator = vine.withMetaData<{ categoryId: number }>().
 
 export const updateMediaValidator = vine.withMetaData<{ categoryId: number }>().compile(
   vine.object({
+    //params
+    params: vine.object({
+      mediaId: vine.number().isExists({ table: 'media', column: 'id' }),
+    }),
+    //body
     mediaParentId: vine.number().isExists({ table: 'media', column: 'id' }).nullable(),
     categoryId: vine.number().isExists({ table: 'media_categories', column: 'id' }),
     statusId: vine.number().isExists({ table: 'media_statuses', column: 'id' }),
@@ -65,10 +70,6 @@ export const updateMediaValidator = vine.withMetaData<{ categoryId: number }>().
     duration: vine.number().positive().nullable().optional(),
     animeSeasonLength: vine.number().positive().nullable().optional(),
     seriesSeasonLength: vine.number().positive().nullable().optional(),
-    //params
-    params: vine.object({
-      mediaId: vine.number().isExists({ table: 'media', column: 'id' }),
-    }),
   })
 )
 
