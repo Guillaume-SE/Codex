@@ -10,7 +10,6 @@ const BooksController = () => import('#controllers/books_controller')
 const CoversController = () => import('#controllers/covers_controller')
 const ReviewsController = () => import('#controllers/reviews_controller')
 const GenresController = () => import('#controllers/genres_controller')
-const MediaStatusesController = () => import('#controllers/media_statuses_controller')
 const MediaTypesController = () => import('#controllers/media_types_controller')
 const GamePlatformsController = () => import('#controllers/game_platforms_controller')
 const ContributorsRolesController = () => import('#controllers/contributors_roles_controller')
@@ -72,12 +71,7 @@ router.delete('/media/:mediaId/cover', [CoversController, 'deleteOne']).as('cove
 router.post('/genre', [GenresController, 'addOne']).as('genres.add')
 router.put('/genre/:genreId', [GenresController, 'updateOne']).as('genres.update')
 router.delete('/genre/:genreId', [GenresController, 'deleteOne']).as('genres.delete')
-/**
- * media statuses
- */
-router.post('/statut', [MediaStatusesController, 'addOneStatus']).as('status.add')
-router.put('/statut/:statusId', [MediaStatusesController, 'updateOneStatus']).as('status.update')
-router.delete('/statut/:statusId', [MediaStatusesController, 'deleteOneStatus']).as('status.delete')
+
 /**
  * types
  */
