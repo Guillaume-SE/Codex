@@ -10,32 +10,30 @@ import type { HttpContext } from '@adonisjs/core/http'
 export default class MediaTypesController {
   constructor(readonly mediaTypeService: MediaTypeService) {}
 
-  public async addOneType({ request, response }: HttpContext) {
+  public async addOne({ request, response }: HttpContext) {
     try {
-      const data = await request.validateUsing(createMediaTypeValidator)
-      const type = await this.mediaTypeService.addOneType(data)
+      const selectedCategoryId = request.body().categoryId
+      const data = await request.validateUsing(createMediaTypeValidator, {
+        meta: { categoryId: selectedCategoryId },
+      })
+      const type = await this.mediaTypeService.store(data)
+
       return response.status(201).json(type)
     } catch (error) {
       return response.status(400).json({ error, customError: error.message })
     }
   }
 
-  public async updateOneType({ params, request, response }: HttpContext) {
+  public async updateOne({ params, request, response }: HttpContext) {
     const typeId = params.typeId
     try {
-      const data = await request.validateUsing(updateMediaTypeValidator)
-      const type = await this.mediaTypeService.updateOneType(data, typeId)
-      return response.status(201).json(type)
-    } catch (error) {
-      return response.status(400).json({ error, customError: error.message })
-    }
-  }
+      const selectedCategoryId = request.body().categoryId
+      const { params, ...data } = await request.validateUsing(updateMediaTypeValidator, {
+        meta: { categoryId: selectedCategoryId },
+      })
+      const type = await this.mediaTypeService.update(data, typeId)
 
-  public async deleteOneType({ params, response }: HttpContext) {
-    const typeId = params.typeId
-    try {
-      await this.mediaTypeService.deleteOneType(typeId)
-      return response.status(202)
+      return response.status(201).json(type)
     } catch (error) {
       return response.status(400).json({ error, customError: error.message })
     }
