@@ -34,7 +34,7 @@ export class CoverUtils {
       original: `${key}${this.DEFAULT_COVER_EXTENSION}`,
       small: `${key}-150x225${this.DEFAULT_COVER_EXTENSION}`,
       medium: `${key}-300x450${this.DEFAULT_COVER_EXTENSION}`,
-      large: `${key}-600x900${this.DEFAULT_COVER_EXTENSION}`,
+      large: `${key}-450x675${this.DEFAULT_COVER_EXTENSION}`,
     }
   }
 
