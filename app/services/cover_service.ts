@@ -28,8 +28,8 @@ export default class CoverService {
       format: 'jpg',
     })
     const coverLarge = await coverUtils.processImage(file.tmpPath, {
-      width: 600,
-      height: 900,
+      width: 450,
+      height: 675,
       format: 'jpg',
     })
 
