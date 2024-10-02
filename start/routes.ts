@@ -36,16 +36,16 @@ router.delete('/media/:mediaId', [MediaController, 'deleteOne']).as('media.delet
 /**
  * reviews
  */
-router.post('/media/:mediaId/avis', [ReviewsController, 'manageReview']).as('reviews.add')
-router.put('/media/:mediaId/avis', [ReviewsController, 'manageReview']).as('reviews.update')
-/**
- * movies
- */
-router.get('/films', [MoviesController, 'getAllMovies']).as('movies.show')
+router.post('/media/:mediaId/review', [ReviewsController, 'manageReview']).as('reviews.add')
+router.put('/media/:mediaId/review', [ReviewsController, 'manageReview']).as('reviews.update')
 /**
  * games
  */
-router.get('/jeuxvideo', [GamesController, 'show']).as('games.show')
+router.get('/games', [GamesController, 'show']).as('games.show')
+/**
+ * movies
+ */
+router.get('/movies', [MoviesController, 'getAllMovies']).as('movies.show')
 /**
  * series
  */
@@ -53,7 +53,7 @@ router.get('/series', [SeriesController, 'getAllSeries']).as('series.show')
 /**
  * books
  */
-router.get('/livres', [BooksController, 'getAllBooks']).as('books.show')
+router.get('/books', [BooksController, 'getAllBooks']).as('books.show')
 /**
  * anime
  */
@@ -79,12 +79,12 @@ router.put('/type/:typeId', [MediaTypesController, 'updateOne']).as('types.updat
 /**
  * game platforms
  */
-router.post('/plateforme', [GamePlatformsController, 'addOnePlatform']).as('platforms.add')
+router.post('/platform', [GamePlatformsController, 'addOnePlatform']).as('platforms.add')
 router
-  .put('/plateforme/:platformId', [GamePlatformsController, 'updateOnePlatform'])
+  .put('/platform/:platformId', [GamePlatformsController, 'updateOnePlatform'])
   .as('platforms.update')
 router
-  .delete('/plateforme/:platformId', [GamePlatformsController, 'deleteOnePlatform'])
+  .delete('/platform/:platformId', [GamePlatformsController, 'deleteOnePlatform'])
   .as('platforms.delete')
 /**
  * contributors roles
@@ -101,10 +101,10 @@ router
 /**
  * contributors
  */
-router.post('/contributeur', [ContributorsController, 'addOneContributor']).as('contributor.add')
+router.post('/contributor', [ContributorsController, 'addOneContributor']).as('contributor.add')
 router
-  .put('/contributeur/:contributorId', [ContributorsController, 'updateOneContributor'])
+  .put('/contributor/:contributorId', [ContributorsController, 'updateOneContributor'])
   .as('contributor.update')
 router
-  .delete('/contributeur/:contributorId', [ContributorsController, 'deleteOneContributor'])
+  .delete('/contributor/:contributorId', [ContributorsController, 'deleteOneContributor'])
   .as('contributor.delete')
