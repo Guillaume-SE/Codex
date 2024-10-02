@@ -79,12 +79,10 @@ router.put('/type/:typeId', [MediaTypesController, 'updateOne']).as('types.updat
 /**
  * game platforms
  */
-router.post('/platform', [GamePlatformsController, 'addOnePlatform']).as('platforms.add')
+router.post('/platform', [GamePlatformsController, 'addOne']).as('platforms.add')
+router.put('/platform/:platformId', [GamePlatformsController, 'updateOne']).as('platforms.update')
 router
-  .put('/platform/:platformId', [GamePlatformsController, 'updateOnePlatform'])
-  .as('platforms.update')
-router
-  .delete('/platform/:platformId', [GamePlatformsController, 'deleteOnePlatform'])
+  .delete('/platform/:platformId', [GamePlatformsController, 'deleteOne'])
   .as('platforms.delete')
 /**
  * contributors roles
