@@ -88,21 +88,21 @@ router
  * contributors roles
  */
 router
-  .post('/role', [ContributorsRolesController, 'addOneContributorRole'])
-  .as('contributor-role.add')
+  .post('/contributor-role', [ContributorsRolesController, 'addOne'])
+  .as('contributors-roles.add')
 router
-  .put('/role/:contributorRoleId', [ContributorsRolesController, 'updateOneContributorRole'])
-  .as('contributor-role.update')
+  .put('/contributor-role/:roleId', [ContributorsRolesController, 'updateOne'])
+  .as('contributors-roles.update')
 router
-  .delete('/role/:contributorRoleId', [ContributorsRolesController, 'deleteOneContributorRole'])
-  .as('contributor-role.delete')
+  .delete('/contributor-role/:roleId', [ContributorsRolesController, 'deleteOne'])
+  .as('contributors-roles.delete')
 /**
  * contributors
  */
-router.post('/contributor', [ContributorsController, 'addOneContributor']).as('contributor.add')
+router.post('/contributor', [ContributorsController, 'addOneContributor']).as('contributors.add')
 router
   .put('/contributor/:contributorId', [ContributorsController, 'updateOneContributor'])
-  .as('contributor.update')
+  .as('contributors.update')
 router
   .delete('/contributor/:contributorId', [ContributorsController, 'deleteOneContributor'])
-  .as('contributor.delete')
+  .as('contributors.delete')
