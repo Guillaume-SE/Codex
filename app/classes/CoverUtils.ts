@@ -17,6 +17,14 @@ export class CoverUtils {
   protected MEDIUM_COVER_DIR: string | PathLike = env.get('MEDIUM_COVER_DIR')
   protected LARGE_COVER_DIR: string | PathLike = env.get('LARGE_COVER_DIR')
 
+  async getFileDimensions(filepath: string) {
+    const dimensions = await sharp(filepath).metadata()
+    return {
+      width: dimensions.width,
+      height: dimensions.height,
+    }
+  }
+
   async processImage(filePath: string, options: IProcessImageOptions) {
     return sharp(filePath)
       .resize({
@@ -34,7 +42,7 @@ export class CoverUtils {
       original: `${key}${this.DEFAULT_COVER_EXTENSION}`,
       small: `${key}-150x225${this.DEFAULT_COVER_EXTENSION}`,
       medium: `${key}-300x450${this.DEFAULT_COVER_EXTENSION}`,
-      large: `${key}-450x675${this.DEFAULT_COVER_EXTENSION}`,
+      large: `${key}-600x900${this.DEFAULT_COVER_EXTENSION}`,
     }
   }
 
