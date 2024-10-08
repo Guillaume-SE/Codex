@@ -28,6 +28,7 @@ const fields = {
   statusId: 'statut',
   typeId: 'type',
   platformId: 'plateforme',
+  roleId: 'rôle',
 }
 
 vine.messagesProvider = new SimpleMessagesProvider(messages, fields)
