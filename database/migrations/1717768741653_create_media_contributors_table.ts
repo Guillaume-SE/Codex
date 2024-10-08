@@ -27,7 +27,7 @@ export default class extends BaseSchema {
         .unsigned()
         .references('id')
         .inTable('contributors_roles')
-        .onDelete('RESTRICT')
+        .onDelete('CASCADE')
         .onUpdate('CASCADE')
         .notNullable()
     })
