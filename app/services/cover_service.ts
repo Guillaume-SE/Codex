@@ -28,8 +28,8 @@ export default class CoverService {
       format: 'jpg',
     })
     const coverLarge = await coverUtils.processImage(file.tmpPath, {
-      width: 450,
-      height: 675,
+      width: 600,
+      height: 900,
       format: 'jpg',
     })
 
@@ -42,10 +42,21 @@ export default class CoverService {
     })
 
     const disk = drive.use()
-    await disk.put(coverFullPaths.original, coverOriginal)
-    await disk.put(coverFullPaths.small, coverSmall)
-    await disk.put(coverFullPaths.medium, coverMedium)
-    await disk.put(coverFullPaths.large, coverLarge)
+    const files = [coverOriginal, coverSmall, coverMedium, coverLarge]
+    const paths = [
+      coverFullPaths.original,
+      coverFullPaths.small,
+      coverFullPaths.medium,
+      coverFullPaths.large,
+    ]
+
+    // Buffer -> Uint8Array needed for disk method strict type
+    const promises = files.map((file, index) => {
+      const uint8Array = new Uint8Array(file)
+      return disk.put(paths[index], uint8Array)
+    })
+
+    await Promise.all(promises)
 
     return coverFilenames
   }
