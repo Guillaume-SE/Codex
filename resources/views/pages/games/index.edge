@@ -1,0 +1,14 @@
+@layout()
+
+<div>
+    @include('components/navigation')
+</div>
+
+<div class="cards-container">
+    @each(game in gamesList)
+    <div class="card">
+        @!games.card({game})
+    </div>
+
+    @endeach
+    @end
