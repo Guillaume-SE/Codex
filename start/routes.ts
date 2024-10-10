@@ -99,10 +99,10 @@ router
 /**
  * contributors
  */
-router.post('/contributor', [ContributorsController, 'addOneContributor']).as('contributors.add')
+router.post('/contributor', [ContributorsController, 'addOne']).as('contributors.add')
 router
-  .put('/contributor/:contributorId', [ContributorsController, 'updateOneContributor'])
+  .put('/contributor/:contributorId', [ContributorsController, 'updateOne'])
   .as('contributors.update')
 router
-  .delete('/contributor/:contributorId', [ContributorsController, 'deleteOneContributor'])
+  .delete('/contributor/:contributorId', [ContributorsController, 'deleteOne'])
   .as('contributors.delete')
