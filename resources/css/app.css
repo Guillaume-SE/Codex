@@ -8,3 +8,48 @@ body {
   height: 100%;
   width: 100%;
 }
+
+a {
+  text-decoration: none;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  text-wrap: balance;
+}
+
+.cards-container {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 5px;
+}
+
+.card {
+  margin: 10px;
+  position: relative;
+}
+
+img {
+  width: 150px;
+  aspect-ratio: 2/3 auto;
+  border-radius: 3px;
+}
+
+.icon-favorite {
+  width: 30px;
+  height: auto;
+  position: absolute;
+  top: -10px;
+  right: -2px;
+}
+
+.navbar {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}

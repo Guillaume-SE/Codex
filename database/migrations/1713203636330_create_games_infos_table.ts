@@ -19,7 +19,7 @@ export default class extends BaseSchema {
         .unsigned()
         .references('id')
         .inTable('game_platforms')
-        .onDelete('RESTRICT')
+        .onDelete('SET NULL')
         .onUpdate('CASCADE')
         .nullable()
     })

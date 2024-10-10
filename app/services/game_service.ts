@@ -3,7 +3,7 @@ import { inject } from '@adonisjs/core'
 
 @inject()
 export default class GameService {
-  public async getAllGames(mediaList: IMedia[]) {
+  public async getList(mediaList: IMedia[]) {
     const gamesList = mediaList.filter((media) => media.category === 'Jeu vidéo')
 
     return gamesList

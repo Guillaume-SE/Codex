@@ -2,8 +2,8 @@ import MediaContributor from '#models/media_contributor'
 import { BaseModel, column, hasMany } from '@adonisjs/lucid/orm'
 import type { HasMany } from '@adonisjs/lucid/types/relations'
 
-export default class Job extends BaseModel {
-  public static table = 'jobs'
+export default class ContributorRole extends BaseModel {
+  public static table = 'contributors_roles'
 
   @column({ isPrimary: true })
   declare id: number
@@ -13,7 +13,7 @@ export default class Job extends BaseModel {
 
   // relations
   @hasMany(() => MediaContributor, {
-    foreignKey: 'jobId',
+    foreignKey: 'roleId',
   })
-  declare contributorJob: HasMany<typeof MediaContributor>
+  declare role: HasMany<typeof MediaContributor>
 }

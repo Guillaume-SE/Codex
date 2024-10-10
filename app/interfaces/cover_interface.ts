@@ -1,10 +1,15 @@
-import { MultipartFile } from '@adonisjs/core/bodyparser'
-
-export interface INewCover {
-  cover: MultipartFile
+export interface ICover {
+  id?: number
+  mediaId?: number
+  originalCoverFilename: string
+  smallCoverFilename: string
+  mediumCoverFilename: string
+  largeCoverFilename: string
 }
 
-export interface ICover {
-  resizedCoverFilename: string
-  originalCoverFilename: string
+export interface ICoverFilenames {
+  original: string
+  small: string
+  medium: string
+  large: string
 }

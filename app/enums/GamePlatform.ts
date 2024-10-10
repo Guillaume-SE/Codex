@@ -3,6 +3,7 @@ const platform = [
   'Xbox 360',
   'Xbox One',
   'Xbox Series X',
+  'Xbox Series S',
   'PlayStation',
   'PlayStation 2',
   'PlayStation 3',
@@ -15,9 +16,7 @@ const platform = [
   'Nintendo DS',
   'Nintendo Switch',
   'PC',
-  'Android',
-  'iOS',
-  'Emulateur',
+  'Mobile',
 ] as const
 
 export type GamePlatform = (typeof platform)[number]
