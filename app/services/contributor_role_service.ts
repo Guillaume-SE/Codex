@@ -15,7 +15,7 @@ export default class ContributorRoleService {
 
     await role.merge(updatedRole).save()
 
-    return updatedRole
+    return role
   }
 
   public async delete(roleId: number) {
