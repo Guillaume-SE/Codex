@@ -14,6 +14,14 @@ export default class CoverService {
     }
 
     const coverUtils = new CoverUtils()
+    const fileDimensions = await coverUtils.getFileDimensions(file.tmpPath)
+    const fileWidth = fileDimensions.width!
+    const fileHeight = fileDimensions.height!
+
+    if (fileWidth < 300 || fileHeight < 450) {
+      throw new Error("L'image ne respecte pas les dimensions minimales (300x450)")
+    }
+
     const coverOriginal = await coverUtils.processImage(file.tmpPath, {
       format: 'jpg',
     })
@@ -27,11 +35,14 @@ export default class CoverService {
       height: 450,
       format: 'jpg',
     })
-    const coverLarge = await coverUtils.processImage(file.tmpPath, {
-      width: 600,
-      height: 900,
-      format: 'jpg',
-    })
+
+    let coverLarge = coverOriginal
+    if (fileWidth > 600 && fileHeight > 900)
+      coverLarge = await coverUtils.processImage(file.tmpPath, {
+        width: 600,
+        height: 900,
+        format: 'jpg',
+      })
 
     const coverFilenames = coverUtils.createFilenames()
     const coverFullPaths = coverUtils.getFullPaths({
