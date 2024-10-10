@@ -41,23 +41,23 @@ router.put('/media/:mediaId/review', [ReviewsController, 'manageReview']).as('re
 /**
  * games
  */
-router.get('/games', [GamesController, 'show']).as('games.show')
+router.get('/games', [GamesController, 'index']).as('games.index')
 /**
  * movies
  */
-router.get('/movies', [MoviesController, 'getAllMovies']).as('movies.show')
+router.get('/movies', [MoviesController, 'getAllMovies']).as('movies.index')
 /**
  * series
  */
-router.get('/series', [SeriesController, 'getAllSeries']).as('series.show')
+router.get('/series', [SeriesController, 'getAllSeries']).as('series.index')
 /**
  * books
  */
-router.get('/books', [BooksController, 'getAllBooks']).as('books.show')
+router.get('/books', [BooksController, 'getAllBooks']).as('books.index')
 /**
  * anime
  */
-router.get('/anime', [AnimeController, 'getAllAnime']).as('anime.show')
+router.get('/anime', [AnimeController, 'getAllAnime']).as('anime.index')
 /**
  * covers
  */
