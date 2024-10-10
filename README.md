@@ -23,7 +23,6 @@ It also allows me to keep up to date with the ones I've planned to see, the ones
 
 ![diagram](https://github.com/user-attachments/assets/608cbe55-68bc-431d-80f1-7fe6eeb7c6df)
 
-
 - `users`: As the project aims to contain only my media entries, I chose not to link the "users" table to "reviews". It will only be used for authentication.
 
 - `media`: Will contain every type of data the media I add may have, for example books, video games, movies and series all have a synopsis.  
