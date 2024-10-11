@@ -3,12 +3,18 @@
 <div>
     @include('components/navigation')
 </div>
-
+@each(game in gamesList)
 <div class="cards-container">
-    @each(game in gamesList)
     <div class="card">
         @!games.card({game})
     </div>
-
-    @endeach
-    @end
+</div>
+@endeach
+@if(gamesList.length === 0)
+<div>
+    <p>
+        C'est vide par ici
+    </p>
+</div>
+@endif
+@end

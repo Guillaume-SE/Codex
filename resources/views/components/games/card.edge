@@ -17,7 +17,7 @@
 <div>
     {{ game.gameInfos.platform }}
 </div>
-@end
+@endif
 @endif
 @if(game.review)
 @if(game.review.rating)
@@ -31,8 +31,3 @@
 @endif
 @endif
 </div>
-@if(game.length === 0)
-<p>
-    C'est vide par ici
-</p>
-@endif
