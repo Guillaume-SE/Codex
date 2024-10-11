@@ -12,7 +12,7 @@ export default class SeriesController {
 
   public async getAllSeries({ response }: HttpContext) {
     try {
-      const mediaList = await this.mediaService.getAllMedia()
+      const mediaList = await this.mediaService.getMediaList()
       const seriesList = await this.seriesService.getAllSeries(mediaList)
       return response.status(200).json(seriesList)
     } catch (error) {

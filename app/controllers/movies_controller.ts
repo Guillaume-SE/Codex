@@ -12,7 +12,7 @@ export default class MoviesController {
 
   public async getAllMovies({ response }: HttpContext) {
     try {
-      const mediaList = await this.mediaService.getAllMedia()
+      const mediaList = await this.mediaService.getMediaList()
       const moviesList = await this.movieService.getAllMovies(mediaList)
       return response.status(200).json(moviesList)
     } catch (error) {

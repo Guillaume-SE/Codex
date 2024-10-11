@@ -12,7 +12,7 @@ export default class BooksController {
 
   public async getAllBooks({ response }: HttpContext) {
     try {
-      const mediaList = await this.mediaService.getAllMedia()
+      const mediaList = await this.mediaService.getMediaList()
       const booksList = await this.bookService.getAllBooks(mediaList)
       return response.status(200).json(booksList)
     } catch (error) {

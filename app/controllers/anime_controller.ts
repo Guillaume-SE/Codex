@@ -12,7 +12,7 @@ export default class AnimeController {
 
   public async getAllAnime({ response }: HttpContext) {
     try {
-      const mediaList = await this.mediaService.getAllMedia()
+      const mediaList = await this.mediaService.getMediaList()
       const animeList = await this.animeService.getAllAnime(mediaList)
       return response.status(200).json(animeList)
     } catch (error) {
