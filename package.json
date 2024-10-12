@@ -46,6 +46,7 @@
     "@swc/core": "1.7.26",
     "@types/luxon": "^3.4.2",
     "@types/node": "^20.12.7",
+    "@vitejs/plugin-vue": "^5.1.4",
     "eslint": "^8.57.0",
     "pino-pretty": "^11.2.2",
     "prettier": "^3.3.3",
@@ -57,17 +58,21 @@
     "@adonisjs/auth": "^9.2.3",
     "@adonisjs/core": "^6.14.1",
     "@adonisjs/drive": "^3.2.0",
+    "@adonisjs/inertia": "^1.2.2",
     "@adonisjs/lucid": "^21.3.0",
     "@adonisjs/session": "^7.5.0",
     "@adonisjs/shield": "^8.1.1",
     "@adonisjs/static": "^1.1.1",
     "@adonisjs/vite": "^3.0.0",
+    "@inertiajs/vue3": "^1.2.0",
     "@vinejs/vine": "^2.1.0",
+    "@vue/server-renderer": "^3.5.12",
     "edge.js": "^6.2.0",
     "luxon": "^3.5.0",
     "mysql2": "^3.11.3",
     "reflect-metadata": "^0.2.2",
-    "sharp": "^0.33.5"
+    "sharp": "^0.33.5",
+    "vue": "^3.5.12"
   },
   "eslintConfig": {
     "extends": "@adonisjs/eslint-config/app"
