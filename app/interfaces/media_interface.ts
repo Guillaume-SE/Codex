@@ -27,6 +27,9 @@ export interface IMedia {
   synopsis: string | null
   genres: Array<string>
   contributors: Record<string, string[]>
+  gameInfos?: {
+    platformId: number | null
+  }
   bookInfos?: {
     pages: number | null
   }
