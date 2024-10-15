@@ -91,17 +91,6 @@ class GameMediaFormatter extends BaseMediaFormatter {
   }
 }
 
-class BookMediaFormatter extends BaseMediaFormatter {
-  bookInfos: { pages: number | null }
-
-  constructor(media: any) {
-    super(media)
-    this.bookInfos = {
-      pages: media.bookInfo?.pages ?? null,
-    }
-  }
-}
-
 class MovieMediaFormatter extends BaseMediaFormatter {
   movieInfos: { duration: number | null }
 
@@ -109,6 +98,17 @@ class MovieMediaFormatter extends BaseMediaFormatter {
     super(media)
     this.movieInfos = {
       duration: media.movieInfo?.duration ?? null,
+    }
+  }
+}
+
+class BookMediaFormatter extends BaseMediaFormatter {
+  bookInfos: { pages: number | null }
+
+  constructor(media: any) {
+    super(media)
+    this.bookInfos = {
+      pages: media.bookInfo?.pages ?? null,
     }
   }
 }
