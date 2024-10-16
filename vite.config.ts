@@ -1,3 +1,4 @@
+import { getDirname } from '@adonisjs/core/helpers'
 import inertia from '@adonisjs/inertia/client'
 import adonisjs from '@adonisjs/vite/client'
 import vue from '@vitejs/plugin-vue'
@@ -17,4 +18,9 @@ export default defineConfig({
       reload: ['resources/views/**/*.edge'],
     }),
   ],
+  resolve: {
+    alias: {
+      '~/': `${getDirname(import.meta.url)}/inertia/`,
+    },
+  },
 })
