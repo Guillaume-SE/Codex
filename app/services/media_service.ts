@@ -22,7 +22,7 @@ export default class MediaService {
       synopsis,
       genreId,
       ...categoryRelatedMediaData
-    }: IMediaPayload = data
+    } = data
 
     const generalMediaData = {
       mediaParentId,
@@ -38,17 +38,6 @@ export default class MediaService {
     const selectedCategory = await MediaCategory.findOrFail(categoryId)
     const selectedCategoryName = selectedCategory.name
 
-    // const isBook = (categoryRelatedMediaData: any): categoryRelatedMediaData is IBookInfos =>
-    //   'pages' in categoryRelatedMediaData
-    // const isGame = (categoryRelatedMediaData: any): categoryRelatedMediaData is IGameInfos =>
-    //   'platformId' in categoryRelatedMediaData
-    // const isMovie = (categoryRelatedMediaData: any): categoryRelatedMediaData is IMovieInfos =>
-    //   'duration' in categoryRelatedMediaData
-    // const isSeries = (categoryRelatedMediaData: any): categoryRelatedMediaData is ISeriesInfos =>
-    //   'seriesSeasonLength' in categoryRelatedMediaData
-    // const isAnime = (categoryRelatedMediaData: any): categoryRelatedMediaData is IAnimeInfos =>
-    //   'animeSeasonLength' in categoryRelatedMediaData
-
     const media = new Media()
     await db.transaction(async (trx) => {
       media.useTransaction(trx)
@@ -60,7 +49,7 @@ export default class MediaService {
 
       await media.related('genres').sync(genreId)
 
-      if (selectedCategoryName === 'Jeu vidéo') {
+      if (selectedCategoryName === 'Jeu') {
         await media.related('gameInfo').create(categoryRelatedMediaData)
       }
       if (selectedCategoryName === 'Livre') {
@@ -91,7 +80,7 @@ export default class MediaService {
       synopsis,
       genreId,
       ...categoryRelatedMediaData
-    }: IMediaPayload = data
+    } = data
 
     const generalMediaData = {
       mediaParentId,
@@ -119,7 +108,7 @@ export default class MediaService {
 
       await media.related('genres').sync(genreId)
 
-      if (categoryName === 'Jeu vidéo') {
+      if (categoryName === 'Jeu') {
         await media.related('gameInfo').updateOrCreate(searchPayload, categoryRelatedMediaData)
       }
       if (categoryName === 'Film') {
@@ -170,8 +159,9 @@ export default class MediaService {
         gamesQuery.preload('gamePlatform')
       })
       .preload('movieInfo')
-      .preload('bookInfo')
       .preload('seriesInfo')
+      .preload('animeInfo')
+      .preload('bookInfo')
       .preload('review')
       .preload('cover')
 
@@ -193,12 +183,13 @@ export default class MediaService {
           contributorsQuery.preload('role')
           contributorsQuery.preload('contributor')
         })
-        .load('bookInfo')
-        .load('movieInfo')
-        .load('seriesInfo')
         .load('gameInfo', (gamesQuery) => {
           gamesQuery.preload('gamePlatform')
         })
+        .load('movieInfo')
+        .load('seriesInfo')
+        .load('animeInfo')
+        .load('bookInfo')
         .load('review')
         .load('cover')
     })
