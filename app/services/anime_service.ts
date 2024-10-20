@@ -3,7 +3,7 @@ import { inject } from '@adonisjs/core'
 
 @inject()
 export default class AnimeService {
-  public async getAllAnime(mediaList: IBaseMediaFormatted[]) {
+  public async getList(mediaList: IBaseMediaFormatted[]) {
     const animeList = mediaList.filter((media) => media.category === 'Anime')
 
     return animeList
