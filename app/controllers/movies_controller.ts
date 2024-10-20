@@ -10,11 +10,12 @@ export default class MoviesController {
     readonly mediaService: MediaService
   ) {}
 
-  public async getAllMovies({ response }: HttpContext) {
+  public async index({ inertia, response }: HttpContext) {
     try {
       const mediaList = await this.mediaService.getMediaList()
-      const moviesList = await this.movieService.getAllMovies(mediaList)
-      return response.status(200).json(moviesList)
+      const moviesList = await this.movieService.getList(mediaList)
+
+      return inertia.render('movies/MoviesList', { moviesList })
     } catch (error) {
       return response.status(404).json(error)
     }

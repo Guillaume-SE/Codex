@@ -10,11 +10,12 @@ export default class SeriesController {
     readonly seriesService: SeriesService
   ) {}
 
-  public async getAllSeries({ response }: HttpContext) {
+  public async index({ inertia, response }: HttpContext) {
     try {
       const mediaList = await this.mediaService.getMediaList()
-      const seriesList = await this.seriesService.getAllSeries(mediaList)
-      return response.status(200).json(seriesList)
+      const seriesList = await this.seriesService.getList(mediaList)
+
+      return inertia.render('series/SeriesList', { seriesList })
     } catch (error) {
       return response.status(404).json(error)
     }
