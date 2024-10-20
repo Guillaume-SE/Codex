@@ -29,8 +29,10 @@ h6 {
 }
 
 .card {
+  width: 150px;
   margin: 10px;
   position: relative;
+  cursor: pointer;
 }
 
 img {
