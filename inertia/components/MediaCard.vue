@@ -1,11 +1,37 @@
-<script setup>
-media: Object
-mediaType: string
-mediaInfos: Object
+<script setup lang="ts">
+import type {
+  IAnimeMediaFormatted,
+  IBookMediaFormatted,
+  IGameMediaFormatted,
+  IMovieMediaFormatted,
+  ISeriesMediaFormatted,
+} from '#interfaces/media_formatted_interface'
+import { computed } from 'vue'
+import { useFormattedDuration } from '~/composables/useFormatDuration'
+
+const props = defineProps<{
+  media:
+    | IGameMediaFormatted
+    | IMovieMediaFormatted
+    | ISeriesMediaFormatted
+    | IAnimeMediaFormatted
+    | IBookMediaFormatted
+  mediaType: string
+}>()
+
+const isGameMedia = (media: Object): media is IGameMediaFormatted => 'gameInfos' in media
+const isMovieMedia = (media: Object): media is IMovieMediaFormatted => 'movieInfos' in media
+const isSeriesMedia = (media: Object): media is ISeriesMediaFormatted => 'seriesInfos' in media
+const isAnimeMedia = (media: Object): media is IAnimeMediaFormatted => 'animeInfos' in media
+const isBookMedia = (media: Object): media is IBookMediaFormatted => 'bookInfos' in media
+
+const formattedDuration = computed(() =>
+  isMovieMedia(props.media) ? useFormattedDuration(props.media.movieInfos.duration) : null
+)
 </script>
 
 <template>
-  <div class="card">
+  <Link as="div" class="card" href="/">
     <div v-if="media.cover">
       <img
         loading="lazy"
@@ -17,21 +43,33 @@ mediaInfos: Object
     <div v-else>
       <img :src="'public/images/default-cover.jpg'" alt="Image indisponible" />
     </div>
-    <h4>
+    <a :href="'/'">
       {{ media.name }}
-    </h4>
-    <div v-if="media.mediaInfos && media.mediaInfos.platform">
-      {{ media.mediaInfos.platform }}
-    </div>
-    <div v-if="media.review && media.review.rating">
+    </a>
+    <p v-if="isGameMedia(media) && media.gameInfos.platform">
+      {{ media.gameInfos.platform }}
+    </p>
+    <p v-if="isMovieMedia(media) && media.movieInfos.duration">
+      {{ formattedDuration }}
+    </p>
+    <p v-if="isSeriesMedia(media) && media.seriesInfos.seasonLength">
+      {{ media.seriesInfos.seasonLength }} ep{{ media.seriesInfos.seasonLength > 1 ? 's' : '' }}
+    </p>
+    <p v-if="isAnimeMedia(media) && media.animeInfos.seasonLength">
+      {{ media.animeInfos.seasonLength }} ep{{ media.animeInfos.seasonLength > 1 ? 's' : '' }}
+    </p>
+    <p v-if="isBookMedia(media) && media.bookInfos.pages">{{ media.bookInfos.pages }} pages</p>
+    <p v-if="media.review && media.review.rating">
       {{ media.review.rating }}
+    </p>
+    <div>
+      <img
+        v-if="media.review?.isFavorite"
+        class="icon-favorite"
+        :src="'public/images/icons/favorite-icon-relief.svg'"
+        alt="coup de cœur"
+        title="Coup de cœur"
+      />
     </div>
-    <img
-      v-if="media.review?.isFavorite"
-      class="icon-favorite"
-      :src="'public/images/icons/favorite-icon-relief.svg'"
-      alt="coup de cœur"
-      title="Coup de cœur"
-    />
-  </div>
+  </Link>
 </template>
