@@ -5,15 +5,15 @@ import { resolvePageComponent } from '@adonisjs/inertia/helpers'
 import { createInertiaApp, Link } from '@inertiajs/vue3'
 import type { DefineComponent } from 'vue'
 import { createSSRApp, h } from 'vue'
+import AppLayout from '~/layouts/AppLayout.vue'
 import '../css/app.css'
-import AppLayout from '../layouts/AppLayout.vue'
 
-const appName = import.meta.env.VITE_APP_NAME || 'AdonisJS'
+const appName = import.meta.env.VITE_APP_NAME || 'Codex'
 
 createInertiaApp({
   progress: { color: '#5468FF' },
 
-  title: (title) => `${title} - ${appName}`,
+  title: (title) => `${appName} - ${title}`,
 
   resolve: async (name) => {
     const page = await resolvePageComponent(
