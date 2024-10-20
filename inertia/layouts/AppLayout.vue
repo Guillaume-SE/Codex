@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { Link } from '@inertiajs/vue3'
-</script>
-
 <template>
   <main>
     <header>
@@ -10,7 +6,7 @@ import { Link } from '@inertiajs/vue3'
           <Link href="/">Accueil</Link>
         </div>
         <div>
-          <Link href="/games">Jeux vidéo</Link>
+          <Link href="/games">Jeux</Link>
         </div>
         <div>
           <Link href="/movies">Films</Link>
