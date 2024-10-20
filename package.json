@@ -21,7 +21,7 @@
     "#mails/*": "./app/mails/*.js",
     "#enums/*": "./app/enums/*.js",
     "#interfaces/*": "./app/interfaces/*.js",
-    "#functions/*": "./app/functions/*.js",
+    "#utils/*": "./app/utils/*.js",
     "#classes/*": "./app/classes/*.js",
     "#listeners/*": "./app/listeners/*.js",
     "#events/*": "./app/events/*.js",
