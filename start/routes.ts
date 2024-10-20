@@ -45,19 +45,19 @@ router.get('/games', [GamesController, 'index']).as('games.index')
 /**
  * movies
  */
-router.get('/movies', [MoviesController, 'getAllMovies']).as('movies.index')
+router.get('/movies', [MoviesController, 'index']).as('movies.index')
 /**
  * series
  */
-router.get('/series', [SeriesController, 'getAllSeries']).as('series.index')
-/**
- * books
- */
-router.get('/books', [BooksController, 'getAllBooks']).as('books.index')
+router.get('/series', [SeriesController, 'index']).as('series.index')
 /**
  * anime
  */
-router.get('/anime', [AnimeController, 'getAllAnime']).as('anime.index')
+router.get('/anime', [AnimeController, 'index']).as('anime.index')
+/**
+ * books
+ */
+router.get('/books', [BooksController, 'index']).as('books.index')
 /**
  * covers
  */

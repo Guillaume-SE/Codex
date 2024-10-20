@@ -6,7 +6,7 @@ export default class MediaCategorySeeder extends BaseSeeder {
     await MediaCategory.createMany([
       {
         id: 1,
-        name: 'Jeu vidéo',
+        name: 'Jeu',
       },
       {
         id: 2,
@@ -14,7 +14,7 @@ export default class MediaCategorySeeder extends BaseSeeder {
       },
       {
         id: 3,
-        name: 'Animé',
+        name: 'Anime',
       },
       {
         id: 4,

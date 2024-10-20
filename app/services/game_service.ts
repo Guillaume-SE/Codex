@@ -1,10 +1,10 @@
-import type { IMedia } from '#interfaces/media_interface'
+import { IBaseMediaFormatted } from '#interfaces/media_formatted_interface'
 import { inject } from '@adonisjs/core'
 
 @inject()
 export default class GameService {
-  public async getList(mediaList: IMedia[]) {
-    const gamesList = mediaList.filter((media) => media.category === 'Jeu vidéo')
+  public async getList(mediaList: IBaseMediaFormatted[]) {
+    const gamesList = mediaList.filter((media) => media.category === 'Jeu')
 
     return gamesList
   }

@@ -10,11 +10,12 @@ export default class BooksController {
     readonly bookService: BookService
   ) {}
 
-  public async getAllBooks({ response }: HttpContext) {
+  public async index({ inertia, response }: HttpContext) {
     try {
-      const mediaList = await this.mediaService.getAllMedia()
-      const booksList = await this.bookService.getAllBooks(mediaList)
-      return response.status(200).json(booksList)
+      const mediaList = await this.mediaService.getMediaList()
+      const booksList = await this.bookService.getList(mediaList)
+
+      return inertia.render('books/BooksList', { booksList })
     } catch (error) {
       return response.status(404).json(error)
     }

@@ -18,6 +18,7 @@ export default defineConfig({
     () => import('@adonisjs/static/static_provider'),
     () => import('@adonisjs/lucid/database_provider'),
     () => import('@adonisjs/drive/drive_provider'),
+    () => import('@adonisjs/inertia/inertia_provider')
   ],
 
   preloads: [
