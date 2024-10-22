@@ -12,7 +12,7 @@ export default class GamesController {
 
   public async index({ inertia, response }: HttpContext) {
     try {
-      const mediaList = await this.mediaService.getMediaList()
+      const mediaList = await this.mediaService.getAll()
       const gamesList = await this.gameService.getList(mediaList)
 
       return inertia.render('games/GamesList', { gamesList })

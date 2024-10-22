@@ -12,7 +12,7 @@ export default class SeriesController {
 
   public async index({ inertia, response }: HttpContext) {
     try {
-      const mediaList = await this.mediaService.getMediaList()
+      const mediaList = await this.mediaService.getAll()
       const seriesList = await this.seriesService.getList(mediaList)
 
       return inertia.render('series/SeriesList', { seriesList })

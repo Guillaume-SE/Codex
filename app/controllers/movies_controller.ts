@@ -12,7 +12,7 @@ export default class MoviesController {
 
   public async index({ inertia, response }: HttpContext) {
     try {
-      const mediaList = await this.mediaService.getMediaList()
+      const mediaList = await this.mediaService.getAll()
       const moviesList = await this.movieService.getList(mediaList)
 
       return inertia.render('movies/MoviesList', { moviesList })

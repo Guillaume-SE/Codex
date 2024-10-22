@@ -12,7 +12,7 @@ export default class BooksController {
 
   public async index({ inertia, response }: HttpContext) {
     try {
-      const mediaList = await this.mediaService.getMediaList()
+      const mediaList = await this.mediaService.getAll()
       const booksList = await this.bookService.getList(mediaList)
 
       return inertia.render('books/BooksList', { booksList })
