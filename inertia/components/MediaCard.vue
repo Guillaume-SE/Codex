@@ -6,6 +6,7 @@ import type {
   IMovieMediaFormatted,
   ISeriesMediaFormatted,
 } from '#interfaces/media_formatted_interface'
+import { Link } from '@inertiajs/vue3'
 import { computed } from 'vue'
 import { useFormattedDuration } from '~/composables/useFormatDuration'
 
@@ -31,21 +32,24 @@ const formattedDuration = computed(() =>
 </script>
 
 <template>
-  <Link as="div" class="card" href="/">
-    <div v-if="media.cover">
-      <img
-        loading="lazy"
-        :src="`storage/${media.cover.smallUrl}`"
-        :srcset="`storage/${media.cover.smallUrl}, storage/${media.cover.mediumUrl} 2x`"
-        :alt="`jaquette du ${mediaType} ${media.name}`"
-      />
-    </div>
-    <div v-else>
-      <img :src="'public/images/default-cover.jpg'" alt="Image indisponible" />
-    </div>
-    <a :href="'/'">
-      {{ media.name }}
-    </a>
+  <div class="media-card">
+    <Link :href="`/media/${media.id}`">
+      <div v-if="media.cover">
+        <img
+          class="img-medium"
+          loading="lazy"
+          :src="`/storage/${media.cover.smallUrl}`"
+          :srcset="`/storage/${media.cover.smallUrl}, /storage/${media.cover.mediumUrl} 2x`"
+          :alt="`jaquette du ${mediaType} ${media.name}`"
+        />
+      </div>
+      <div v-else>
+        <img :src="'public/images/default-cover.jpg'" alt="Image indisponible" />
+      </div>
+      <h4>
+        {{ media.name }}
+      </h4>
+    </Link>
     <p v-if="isGameMedia(media) && media.gameInfos.platform">
       {{ media.gameInfos.platform }}
     </p>
@@ -71,5 +75,5 @@ const formattedDuration = computed(() =>
         title="Coup de cœur"
       />
     </div>
-  </Link>
+  </div>
 </template>
