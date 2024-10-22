@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { IBookMediaFormatted } from '#interfaces/media_formatted_interface'
-import MediaCard from '~/components/MediaCard.vue'
+import MediaList from '~/components/MediaList.vue'
 
 defineProps<{
   booksList: IBookMediaFormatted[]
@@ -8,7 +8,5 @@ defineProps<{
 </script>
 
 <template>
-  <div class="cards-container">
-    <MediaCard v-for="book in booksList" :key="book.id" :media="book" :mediaType="'livre'" />
-  </div>
+  <MediaList title="Liste des livres" :mediaList="booksList" mediaType="livre" />
 </template>

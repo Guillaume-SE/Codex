@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { IGameMediaFormatted } from '#interfaces/media_formatted_interface'
-import MediaCard from '~/components/MediaCard.vue'
+import MediaList from '~/components/MediaList.vue'
 
 defineProps<{
   gamesList: IGameMediaFormatted[]
@@ -8,7 +8,5 @@ defineProps<{
 </script>
 
 <template>
-  <div class="cards-container">
-    <MediaCard v-for="game in gamesList" :key="game.id" :media="game" :mediaType="'jeu'" />
-  </div>
+  <MediaList title="Liste des jeux" :mediaList="gamesList" mediaType="jeu" />
 </template>

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { IMovieMediaFormatted } from '#interfaces/media_formatted_interface'
-import MediaCard from '~/components/MediaCard.vue'
+import MediaList from '~/components/MediaList.vue'
 
 defineProps<{
   moviesList: IMovieMediaFormatted[]
@@ -8,7 +8,5 @@ defineProps<{
 </script>
 
 <template>
-  <div class="cards-container">
-    <MediaCard v-for="movie in moviesList" :key="movie.id" :media="movie" :mediaType="'film'" />
-  </div>
+  <MediaList title="Liste des films" :mediaList="moviesList" mediaType="film" />
 </template>
