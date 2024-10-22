@@ -9,7 +9,7 @@
 # What's Codex ?
 
 Codex is a site where I list the things I've read, seen and played, to which I give a rating.
-This can be series, films, video games and books.
+This can be video games, films, series, anime and books.
 It also allows me to keep up to date with the ones I've planned to see, the ones I've left out and my favorites.
 
 ## Functionalities
@@ -46,12 +46,13 @@ It also allows me to keep up to date with the ones I've planned to see, the ones
 - Restrict access to certain pages and functions to non-administrator users.
 - Search medias by title and a number of filters (genre, rating, name, etc).
 - Statistical display of media distribution according to various criteria.
-- Setting up a front end with Vue.js.
+- Setting up a front end with Inertia/Vue.js.
+- A card game with these covers :eyes:
 
 ## How to start
 
 Node version > 18.18  
-AdonisJS v5
+AdonisJS v6
 
 Set up the database informations in the `.env` like the `.env.example`. The project use a MySQL database.
 
@@ -71,10 +72,8 @@ node ace migration:run
 
 ## Status
 
-26/07/24: The database v2 is now completed, I adjust my code to match with her!
-I'll soon update the diagram show above :)
+21/10/24: Started the front with Inertia and Vue.
 
 ## Other
 
-This repo is the new version of Codex now under Adonis v6.  
-The project is still under development, so I'll add more information as it becomes available :sunglasses:
+The project is still under development, so I'll add more informations as it becomes available :sunglasses:
