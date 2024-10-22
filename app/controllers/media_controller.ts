@@ -15,7 +15,7 @@ export default class MediaController {
   async addOne({ request, response }: HttpContext) {
     try {
       const selectedCategoryId = request.body().categoryId
-      // meta needed to get data passed in the form and you them in queries
+      // meta used to pass data to use them in queries in validation process
       const data = await request.validateUsing(createMediaValidator, {
         meta: { categoryId: selectedCategoryId },
       })
@@ -57,7 +57,7 @@ export default class MediaController {
 
   public async show({ response }: HttpContext) {
     try {
-      const mediaList = await this.mediaService.getMediaList()
+      const mediaList = await this.mediaService.getAll()
 
       return response.status(201).json(mediaList)
     } catch (error) {
@@ -65,14 +65,14 @@ export default class MediaController {
     }
   }
 
-  public async showOne({ request, params, response }: HttpContext) {
+  public async showOne({ inertia, request, params, response }: HttpContext) {
     const mediaId = params.mediaId
 
     try {
       await request.validateUsing(getMediaValidator)
       const media = await this.mediaService.getMedia(mediaId)
 
-      return response.status(201).json(media)
+      return inertia.render('MediaProfile', { media })
     } catch (error) {
       return response.status(404).json({ error, customError: error.message })
     }
