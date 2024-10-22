@@ -145,7 +145,7 @@ export default class MediaService {
     }
   }
 
-  async getMediaList() {
+  async getAll() {
     const mediaList = await Media.query()
       .preload('status')
       .preload('category')
@@ -190,8 +190,8 @@ export default class MediaService {
         .load('seriesInfo')
         .load('animeInfo')
         .load('bookInfo')
-        .load('review')
         .load('cover')
+        .load('review')
     })
 
     const formatedMedia = MediaFormatterFactory.formatMedia(media)
