@@ -37,7 +37,7 @@ router.put('/media/:mediaId/review', [ReviewsController, 'manageReview'])
 /**
  * covers
  */
-router.get('/covers', [CoversController, 'show'])
+router.get('/media/covers', [CoversController, 'show'])
 router.post('/media/:mediaId/cover', [CoversController, 'manageOne'])
 router.put('/media/:mediaId/cover', [CoversController, 'manageOne'])
 router.delete('/media/:mediaId/cover', [CoversController, 'deleteOne'])
