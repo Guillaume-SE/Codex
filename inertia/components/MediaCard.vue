@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { MediaCategories } from '#enums/MediaCategories'
 import type {
   IAnimeMediaFormatted,
   IBookMediaFormatted,
@@ -18,6 +19,7 @@ const props = defineProps<{
     | IAnimeMediaFormatted
     | IBookMediaFormatted
   mediaType: string
+  mediaCategory: MediaCategories
 }>()
 
 const isGameMedia = (media: Object): media is IGameMediaFormatted => 'gameInfos' in media
@@ -33,7 +35,7 @@ const formattedDuration = computed(() =>
 
 <template>
   <div class="media-card">
-    <Link :href="`/media/${media.id}`">
+    <Link :href="`/media/${mediaCategory}/${media.id}`">
       <div v-if="media.cover">
         <img
           class="img-medium"
@@ -44,7 +46,7 @@ const formattedDuration = computed(() =>
         />
       </div>
       <div v-else>
-        <img :src="'public/images/default-cover.jpg'" alt="Image indisponible" />
+        <img :src="'/public/images/default-cover.jpg'" alt="Image indisponible" />
       </div>
       <h4>
         {{ media.name }}
@@ -70,7 +72,7 @@ const formattedDuration = computed(() =>
       <img
         v-if="media.review?.isFavorite"
         class="icon-favorite"
-        :src="'public/images/icons/favorite-icon-relief.svg'"
+        :src="'/public/images/icons/favorite-icon-relief.svg'"
         alt="coup de cœur"
         title="Coup de cœur"
       />
