@@ -49,19 +49,19 @@ export default class MediaService {
 
       await media.related('genres').sync(genreId)
 
-      if (selectedCategoryName === 'Jeu') {
+      if (selectedCategoryName === 'game') {
         await media.related('gameInfo').create(categoryRelatedMediaData)
       }
-      if (selectedCategoryName === 'Livre') {
+      if (selectedCategoryName === 'book') {
         await media.related('bookInfo').create(categoryRelatedMediaData)
       }
-      if (selectedCategoryName === 'Film') {
+      if (selectedCategoryName === 'movie') {
         await media.related('movieInfo').create(categoryRelatedMediaData)
       }
-      if (selectedCategoryName === 'Série') {
+      if (selectedCategoryName === 'series') {
         await media.related('seriesInfo').create(categoryRelatedMediaData)
       }
-      if (selectedCategoryName === 'Anime') {
+      if (selectedCategoryName === 'anime') {
         await media.related('animeInfo').create(categoryRelatedMediaData)
       }
     })
@@ -108,19 +108,19 @@ export default class MediaService {
 
       await media.related('genres').sync(genreId)
 
-      if (categoryName === 'Jeu') {
+      if (categoryName === 'game') {
         await media.related('gameInfo').updateOrCreate(searchPayload, categoryRelatedMediaData)
       }
-      if (categoryName === 'Film') {
+      if (categoryName === 'movie') {
         await media.related('movieInfo').updateOrCreate(searchPayload, categoryRelatedMediaData)
       }
-      if (categoryName === 'Livre') {
+      if (categoryName === 'book') {
         await media.related('bookInfo').updateOrCreate(searchPayload, categoryRelatedMediaData)
       }
-      if (categoryName === 'Série') {
+      if (categoryName === 'series') {
         await media.related('seriesInfo').updateOrCreate(searchPayload, categoryRelatedMediaData)
       }
-      if (categoryName === 'Anime') {
+      if (categoryName === 'anime') {
         await media.related('animeInfo').updateOrCreate(searchPayload, categoryRelatedMediaData)
       }
     })
@@ -170,7 +170,7 @@ export default class MediaService {
     return formattedMediaList
   }
 
-  async getMedia(mediaId: number) {
+  async getOne(mediaId: number) {
     const media = await Media.findOrFail(mediaId)
 
     await media.load((loader) => {
@@ -197,5 +197,33 @@ export default class MediaService {
     const formatedMedia = MediaFormatterFactory.formatMedia(media)
 
     return formatedMedia
+  }
+
+  async getByCategory(category: string) {
+    const mediaList = await Media.query()
+      .whereHas('category', (categoryQuery) => {
+        categoryQuery.where('name', category)
+      })
+      .preload('status')
+      .preload('category')
+      .preload('type')
+      .preload('genres')
+      .preload('contributors', (contributorsQuery) => {
+        contributorsQuery.preload('role')
+        contributorsQuery.preload('contributor')
+      })
+      .preload('gameInfo', (gamesQuery) => {
+        gamesQuery.preload('gamePlatform')
+      })
+      .preload('movieInfo')
+      .preload('seriesInfo')
+      .preload('animeInfo')
+      .preload('bookInfo')
+      .preload('review')
+      .preload('cover')
+
+    const formattedMediaList = MediaFormatterFactory.formatMediaList(mediaList)
+
+    return formattedMediaList
   }
 }

@@ -138,15 +138,15 @@ class SeriesMediaFormatter extends BaseMediaFormatter {
 export class MediaFormatterFactory {
   static createFormatter(media: any): BaseMediaFormatter {
     switch (media.category.name) {
-      case 'Jeu':
+      case 'game':
         return new GameMediaFormatter(media)
-      case 'Livre':
+      case 'book':
         return new BookMediaFormatter(media)
-      case 'Film':
+      case 'movie':
         return new MovieMediaFormatter(media)
-      case 'Anime':
+      case 'anime':
         return new AnimeMediaFormatter(media)
-      case 'Série':
+      case 'series':
         return new SeriesMediaFormatter(media)
       default:
         throw new Error('Catégorie du média inconnue')
