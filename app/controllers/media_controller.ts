@@ -1,8 +1,10 @@
+import type { MediaCategories } from '#enums/MediaCategories'
 import MediaService from '#services/media_service'
 import {
   createMediaValidator,
   deleteMediaValidator,
-  getMediaValidator,
+  showByCategoryMediaValidator,
+  showOneMediaValidator,
   updateMediaValidator,
 } from '#validators/media_validator'
 import { inject } from '@adonisjs/core'
@@ -69,10 +71,36 @@ export default class MediaController {
     const mediaId = params.mediaId
 
     try {
-      await request.validateUsing(getMediaValidator)
-      const media = await this.mediaService.getMedia(mediaId)
+      await request.validateUsing(showOneMediaValidator)
+      const media = await this.mediaService.getOne(mediaId)
 
-      return inertia.render('MediaProfile', { media })
+      return inertia.render('media/MediaProfile', { media })
+    } catch (error) {
+      return response.status(404).json({ error, customError: error.message })
+    }
+  }
+
+  public async showByCategory({ inertia, request, params, response }: HttpContext) {
+    const category = params.categoryName as MediaCategories
+    const categoryConfig: Record<MediaCategories, { title: string; mediaType: string }> = {
+      game: { title: 'Liste des jeux', mediaType: 'jeu' },
+      movie: { title: 'Liste des films', mediaType: 'film' },
+      series: { title: 'Liste des séries', mediaType: 'série' },
+      book: { title: 'Liste des livres', mediaType: 'livre' },
+      anime: { title: 'Liste des anime', mediaType: 'anime' },
+    }
+
+    try {
+      await request.validateUsing(showByCategoryMediaValidator)
+      const mediaList = await this.mediaService.getByCategory(category)
+      const config = categoryConfig[category]
+
+      return inertia.render('media/MediaList', {
+        mediaList,
+        title: config.title,
+        mediaType: config.mediaType,
+        mediaCategory: category,
+      })
     } catch (error) {
       return response.status(404).json({ error, customError: error.message })
     }
