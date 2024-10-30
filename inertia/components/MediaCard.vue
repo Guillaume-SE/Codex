@@ -9,7 +9,7 @@ import type {
 } from '#interfaces/media_formatted_interface'
 import { Link } from '@inertiajs/vue3'
 import { computed } from 'vue'
-import { useFormattedDuration } from '~/composables/useFormatDuration'
+import { useFormattedDuration } from '~/composables/useFormattedDuration'
 
 const props = defineProps<{
   media:
