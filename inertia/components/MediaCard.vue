@@ -8,12 +8,10 @@ import type {
   ISeriesMediaFormatted,
 } from '#interfaces/media_formatted_interface'
 import { Link } from '@inertiajs/vue3'
-import { computed } from 'vue'
 import RatingBox from '~/components/RatingBox.vue'
 import StatusProgressBadge from '~/components/StatusProgressBadge.vue'
-import { useFormattedDuration } from '~/composables/useFormattedDuration'
 
-const props = defineProps<{
+defineProps<{
   media:
     | IGameMediaFormatted
     | IMovieMediaFormatted
@@ -23,16 +21,6 @@ const props = defineProps<{
   mediaType: string
   mediaCategory: MediaCategories
 }>()
-
-const isGameMedia = (media: Object): media is IGameMediaFormatted => 'gameInfos' in media
-const isMovieMedia = (media: Object): media is IMovieMediaFormatted => 'movieInfos' in media
-const isSeriesMedia = (media: Object): media is ISeriesMediaFormatted => 'seriesInfos' in media
-const isAnimeMedia = (media: Object): media is IAnimeMediaFormatted => 'animeInfos' in media
-const isBookMedia = (media: Object): media is IBookMediaFormatted => 'bookInfos' in media
-
-const formattedDuration = computed(() =>
-  isMovieMedia(props.media) ? useFormattedDuration(props.media.movieInfos.duration) : null
-)
 </script>
 
 <template>
