@@ -9,6 +9,8 @@ import type {
 } from '#interfaces/media_formatted_interface'
 import { Link } from '@inertiajs/vue3'
 import { computed } from 'vue'
+import RatingBox from '~/components/RatingBox.vue'
+import StatusProgressBadge from '~/components/StatusProgressBadge.vue'
 import { useFormattedDuration } from '~/composables/useFormattedDuration'
 
 const props = defineProps<{
@@ -52,22 +54,8 @@ const formattedDuration = computed(() =>
         {{ media.name }}
       </h4>
     </Link>
-    <p v-if="isGameMedia(media) && media.gameInfos.platform">
-      {{ media.gameInfos.platform }}
-    </p>
-    <p v-if="isMovieMedia(media) && media.movieInfos.duration">
-      {{ formattedDuration }}
-    </p>
-    <p v-if="isSeriesMedia(media) && media.seriesInfos.seasonLength">
-      {{ media.seriesInfos.seasonLength }} ep{{ media.seriesInfos.seasonLength > 1 ? 's' : '' }}
-    </p>
-    <p v-if="isAnimeMedia(media) && media.animeInfos.seasonLength">
-      {{ media.animeInfos.seasonLength }} ep{{ media.animeInfos.seasonLength > 1 ? 's' : '' }}
-    </p>
-    <p v-if="isBookMedia(media) && media.bookInfos.pages">{{ media.bookInfos.pages }} pages</p>
-    <p v-if="media.review && media.review.rating">
-      {{ media.review.rating }}
-    </p>
+    <StatusProgressBadge :status="media.status" />
+    <RatingBox :rating="media.review?.rating" />
     <div>
       <img
         v-if="media.review?.isFavorite"
