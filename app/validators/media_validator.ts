@@ -81,10 +81,18 @@ export const deleteMediaValidator = vine.compile(
   })
 )
 
-export const getMediaValidator = vine.compile(
+export const showOneMediaValidator = vine.compile(
   vine.object({
     params: vine.object({
       mediaId: vine.number().isExists({ table: 'media', column: 'id' }),
+    }),
+  })
+)
+
+export const showByCategoryMediaValidator = vine.compile(
+  vine.object({
+    params: vine.object({
+      categoryName: vine.string().isExists({ table: 'media_categories', column: 'name' }),
     }),
   })
 )

@@ -1,8 +1,10 @@
+import type { MediaCategories } from '#enums/MediaCategories'
 import MediaService from '#services/media_service'
 import {
   createMediaValidator,
   deleteMediaValidator,
-  getMediaValidator,
+  showByCategoryMediaValidator,
+  showOneMediaValidator,
   updateMediaValidator,
 } from '#validators/media_validator'
 import { inject } from '@adonisjs/core'
@@ -15,7 +17,7 @@ export default class MediaController {
   async addOne({ request, response }: HttpContext) {
     try {
       const selectedCategoryId = request.body().categoryId
-      // meta needed to get data passed in the form and you them in queries
+      // meta used to pass data to use them in queries in validation process
       const data = await request.validateUsing(createMediaValidator, {
         meta: { categoryId: selectedCategoryId },
       })
@@ -57,7 +59,7 @@ export default class MediaController {
 
   public async show({ response }: HttpContext) {
     try {
-      const mediaList = await this.mediaService.getMediaList()
+      const mediaList = await this.mediaService.getAll()
 
       return response.status(201).json(mediaList)
     } catch (error) {
@@ -65,14 +67,40 @@ export default class MediaController {
     }
   }
 
-  public async showOne({ request, params, response }: HttpContext) {
+  public async showOne({ inertia, request, params, response }: HttpContext) {
     const mediaId = params.mediaId
 
     try {
-      await request.validateUsing(getMediaValidator)
-      const media = await this.mediaService.getMedia(mediaId)
+      await request.validateUsing(showOneMediaValidator)
+      const media = await this.mediaService.getOne(mediaId)
 
-      return response.status(201).json(media)
+      return inertia.render('media/MediaProfile', { media })
+    } catch (error) {
+      return response.status(404).json({ error, customError: error.message })
+    }
+  }
+
+  public async showByCategory({ inertia, request, params, response }: HttpContext) {
+    const category = params.categoryName as MediaCategories
+    const categoryConfig: Record<MediaCategories, { title: string; mediaType: string }> = {
+      game: { title: 'Liste des jeux', mediaType: 'jeu' },
+      movie: { title: 'Liste des films', mediaType: 'film' },
+      series: { title: 'Liste des séries', mediaType: 'série' },
+      book: { title: 'Liste des livres', mediaType: 'livre' },
+      anime: { title: 'Liste des anime', mediaType: 'anime' },
+    }
+
+    try {
+      await request.validateUsing(showByCategoryMediaValidator)
+      const mediaList = await this.mediaService.getByCategory(category)
+      const config = categoryConfig[category]
+
+      return inertia.render('media/MediaList', {
+        mediaList,
+        title: config.title,
+        mediaType: config.mediaType,
+        mediaCategory: category,
+      })
     } catch (error) {
       return response.status(404).json({ error, customError: error.message })
     }

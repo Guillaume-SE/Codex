@@ -22,23 +22,44 @@ h6 {
   text-wrap: balance;
 }
 
-.cards-container {
+.navbar {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+.media-card-container {
   display: flex;
   flex-wrap: wrap;
   margin: 5px;
 }
 
-.card {
+.media-card {
   width: 150px;
   margin: 10px;
   position: relative;
-  cursor: pointer;
 }
 
-img {
+img-medium {
   width: 150px;
   aspect-ratio: 2/3 auto;
   border-radius: 3px;
+}
+
+.no-cover-large {
+  width: 100%;
+  max-width: 300px;
+  aspect-ratio: 2/3;
+  max-height: 450px;
+  display: flex;
+  align-items: center;
+}
+
+.default-cover {
+  width: 80%;
+  height: auto;
+  margin: auto;
 }
 
 .icon-favorite {
@@ -49,9 +70,81 @@ img {
   right: -2px;
 }
 
-.navbar {
+.media-profile-title-container {
   display: flex;
-  justify-content: space-around;
-  margin-top: 20px;
-  margin-bottom: 20px;
+  align-items: center;
+}
+
+.status-progress-container {
+  display: flex;
+  align-items: center;
+}
+
+.status-progress-icon {
+  margin-bottom: -0.1em;
+}
+
+.rating-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 100px;
+  min-height: 80px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  border-radius: 5px;
+  /* background-color: #e2e8f0; */
+}
+
+.rating-title {
+  align-items: center;
+  margin-bottom: 5px;
+}
+
+.rating-number-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 150px;
+}
+
+.rating-default {
+  background-color: #cbd5e1;
+}
+.rating-good {
+  background-color: #13d75b;
+}
+.rating-mid {
+  background-color: #eab308;
+}
+.rating-bad {
+  background-color: #f87171;
+}
+
+.rating-number {
+  font-weight: 700;
+  font-size: 1.7rem;
+}
+
+.rating-label {
+  margin-top: 5px;
+}
+
+.review-container {
+  width: 40%;
+  max-width: 400px;
+  min-height: 100px;
+  padding: 10px;
+  background-color: #f8fafc;
+}
+.review-heading {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.review-title {
+  margin-left: 10px;
 }
