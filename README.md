@@ -9,7 +9,7 @@
 # What's Codex ?
 
 Codex is a site where I list the things I've read, seen and played, to which I give a rating.
-This can be series, films, video games and books.
+This can be video games, films, series, anime and books.
 It also allows me to keep up to date with the ones I've planned to see, the ones I've left out and my favorites.
 
 ## Functionalities
@@ -21,48 +21,38 @@ It also allows me to keep up to date with the ones I've planned to see, the ones
 
 ## Database diagram and relationship explanations
 
-![diagram](https://github.com/user-attachments/assets/608cbe55-68bc-431d-80f1-7fe6eeb7c6df)
+![diagram](https://github.com/user-attachments/assets/a905400b-8a68-4644-8e5d-810b4c4cc415)
 
-- `users`: As the project aims to contain only my media entries, I chose not to link the "users" table to "reviews". It will only be used for authentication.
+- `Users`: As the project aims to contain only my media entries, I chose not to link the "users" table to "reviews". It will only be used for authentication.
 
-- `media`: Will contain every type of data the media I add may have, for example books, video games, movies and series all have a synopsis.  
-  The media category (book, game, movies...) will determine how the rest of the information is added to a dedicated table.
+- `Media`: Will contain every type of data the media I add may have, for example books, video games, movies and series all have a synopsis.  
+  The [media type](https://github.com/Guillaume-SE/Codex/blob/main/app/enums/MediaTypes.ts) will determine how the rest of the information is added to a dedicated table.
 
-- `media_statuses`: A status to categorize each media item as Planned, Completed, Waiting, Paused, Abandoned for example.
+- `Reviews`: Reviews are created as soon as a media is added, and a review cannot exist without its associated media. This is one of the reasons why `rating` and `opinion` are one of the only nullable columns, because if I haven't yet seen the film, read the book, played the game, there is no reason to assign a value to these 2 columns.  
+  The media will have the appropriate [status](https://github.com/Guillaume-SE/Codex/blob/main/app/enums/ReviewStatus.ts) for this specific case.
 
-- `media_categories`: Contains media categories (Movie for example) for filtering media.
-
-- `media_types`: Contains a sub-category to filter media more precisely within the same category. They are linked to a media category, allowing duplication and facilitating filter management.
-
-- `reviews`: A review is linked to a media and cannot exist without its associated media, but not all media have a review.
-
-- `covers`: Each media is associated with an official cover that easily identifies it. If an official cover has not been found on the internet (or in poor quality), a default cover is automatically assigned.
+- `Covers`: Each media is associated with an official cover that easily identifies it. If an official cover has not been found on the internet (or in poor quality), a default cover is automatically assigned.
 
 - `movies_infos`: contains all media-specific information relating to the films.
 
 - `games_infos`: contains all media information related to video games.
 
-- `series_infos`: contains all the information related to series.
-
-- `anime_infos`: contains all the information related to animé, mainly japanese animation.
+- `seasons_infos`: contains all the information specific to media with a seasonal structure, such as series and anime.
 
 - `books_infos`: contains all book-related media information.
-
-- `media_contributors`: people or companies involved in the creation of a media and the role they played in it.
-
-- `genres`: media genre (fantasy, action, comedy...) linked to a media category, allowing duplication and facilitating filter management.
 
 ## Future plans
 
 - Restrict access to certain pages and functions to non-administrator users.
 - Search medias by title and a number of filters (genre, rating, name, etc).
 - Statistical display of media distribution according to various criteria.
-- Setting up a front end with Vue.js.
+- Setting up a front end with Inertia/Vue.js.
+- A card game with these covers :eyes:
 
 ## How to start
 
 Node version > 18.18  
-AdonisJS v5
+AdonisJS v6
 
 Set up the database informations in the `.env` like the `.env.example`. The project use a MySQL database.
 
@@ -82,8 +72,8 @@ node ace migration:run
 
 ## Status
 
-5/9/24: All basic crud are complete, i'll start to add template and more advanced request.
+21/10/24: Started the front with Inertia and Vue.
 
 ## Other
 
-The project is still under development, so I'll add more information as it becomes available :sunglasses:
+The project is still under development, so I'll add more informations as it becomes available :sunglasses:
