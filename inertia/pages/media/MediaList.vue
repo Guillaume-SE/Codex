@@ -9,6 +9,7 @@ import {
 } from '#interfaces/media_formatted_interface'
 import AppHead from '~/components/AppHead.vue'
 import MediaCard from '~/components/MediaCard.vue'
+import AppLayout from '~/layouts/AppLayout.vue'
 
 defineProps<{
   title: string
@@ -25,16 +26,18 @@ defineProps<{
 
 <template>
   <AppHead :title="title" />
-  <div v-if="mediaList.length > 0" class="media-card-container">
-    <MediaCard
-      v-for="media in mediaList"
-      :key="media.id"
-      :media="media"
-      :mediaType="mediaType"
-      :mediaCategory="mediaCategory"
-    />
-  </div>
-  <div v-else>
-    <p>Aucun résultat à afficher</p>
-  </div>
+  <AppLayout>
+    <div v-if="mediaList.length > 0" class="media-card-container">
+      <MediaCard
+        v-for="media in mediaList"
+        :key="media.id"
+        :media="media"
+        :mediaType="mediaType"
+        :mediaCategory="mediaCategory"
+      />
+    </div>
+    <div v-else>
+      <p>Aucun résultat à afficher</p>
+    </div>
+  </AppLayout>
 </template>
