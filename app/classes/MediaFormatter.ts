@@ -4,7 +4,6 @@ import Media from '#models/media'
 
 abstract class BaseMediaFormatter {
   id: number
-  mediaParentId: number | null
   status: string
   category: string
   type: string
@@ -12,6 +11,7 @@ abstract class BaseMediaFormatter {
   alternativeName: string | null
   released: string | null
   synopsis: string | null
+  tag: string
   genres: string[]
   contributors: Record<string, string[]>
   review?: {
@@ -29,7 +29,6 @@ abstract class BaseMediaFormatter {
 
   constructor(media: any) {
     this.id = media.id
-    this.mediaParentId = media.mediaParentId
     this.status = media.status.name
     this.category = media.category.name
     this.type = media.type.name
@@ -37,6 +36,7 @@ abstract class BaseMediaFormatter {
     this.alternativeName = media.alternativeName
     this.released = media.released
     this.synopsis = media.synopsis
+    this.tag = media.tag.name
     this.genres = media.genres.map((genre: IGenre) => genre.name)
     this.contributors = this.formatContributors(media.contributors)
 

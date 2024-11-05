@@ -2,7 +2,6 @@ import vine from '@vinejs/vine'
 
 export const createMediaValidator = vine.withMetaData<{ categoryId: number }>().compile(
   vine.object({
-    mediaParentId: vine.number().isExists({ table: 'media', column: 'id' }).nullable(),
     categoryId: vine.number().isExists({ table: 'media_categories', column: 'id' }),
     statusId: vine.number().isExists({ table: 'media_statuses', column: 'id' }),
     typeId: vine
@@ -13,6 +12,7 @@ export const createMediaValidator = vine.withMetaData<{ categoryId: number }>().
     alternativeName: vine.string().trim().nullable(),
     released: vine.string().trim().nullable(),
     synopsis: vine.string().trim().nullable(),
+    tagId: vine.number().isExists({ table: 'tags', column: 'id' }),
     genreId: vine
       .array(
         vine
@@ -41,7 +41,6 @@ export const updateMediaValidator = vine.withMetaData<{ categoryId: number }>().
       mediaId: vine.number().isExists({ table: 'media', column: 'id' }),
     }),
     //body
-    mediaParentId: vine.number().isExists({ table: 'media', column: 'id' }).nullable(),
     categoryId: vine.number().isExists({ table: 'media_categories', column: 'id' }),
     statusId: vine.number().isExists({ table: 'media_statuses', column: 'id' }),
     typeId: vine
@@ -52,6 +51,7 @@ export const updateMediaValidator = vine.withMetaData<{ categoryId: number }>().
     alternativeName: vine.string().trim().nullable(),
     released: vine.string().trim().nullable(),
     synopsis: vine.string().trim().nullable(),
+    tagId: vine.number().isExists({ table: 'tags', column: 'id' }),
     genreId: vine
       .array(
         vine

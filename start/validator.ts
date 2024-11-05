@@ -27,6 +27,7 @@ const fields = {
   categoryId: 'catégorie',
   statusId: 'statut',
   typeId: 'type',
+  tagId: 'tag',
   platformId: 'plateforme',
   roleId: 'rôle',
   contributorId: 'contributeur',

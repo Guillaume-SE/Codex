@@ -57,24 +57,19 @@ export default class MediaController {
     }
   }
 
-  public async show({ response }: HttpContext) {
-    try {
-      const mediaList = await this.mediaService.getAll()
-
-      return response.status(201).json(mediaList)
-    } catch (error) {
-      return response.status(404).json({ error, customError: error.message })
-    }
-  }
-
   public async showOne({ inertia, request, params, response }: HttpContext) {
     const mediaId = params.mediaId
 
     try {
       await request.validateUsing(showOneMediaValidator)
       const media = await this.mediaService.getOne(mediaId)
+      const tagRelatedList = await this.mediaService.getTagRelated(
+        media.category,
+        media.id,
+        media.tag
+      )
 
-      return inertia.render('media/MediaProfile', { media })
+      return inertia.render('media/MediaProfile', { media, tagRelatedList })
     } catch (error) {
       return response.status(404).json({ error, customError: error.message })
     }

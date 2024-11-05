@@ -7,19 +7,10 @@ export default class extends BaseSchema {
     this.schema.createTable(this.tableName, (table) => {
       table.increments('id')
       table
-        .integer('media_parent_id')
-        .unsigned()
-        .references('id')
-        .inTable(this.tableName)
-        .onDelete('SET NULL')
-        .onUpdate('CASCADE')
-        .nullable()
-      table
         .integer('status_id')
         .unsigned()
         .references('id')
         .inTable('media_statuses')
-        .onDelete('RESTRICT')
         .onUpdate('CASCADE')
         .notNullable()
       table
@@ -27,7 +18,6 @@ export default class extends BaseSchema {
         .unsigned()
         .references('id')
         .inTable('media_categories')
-        .onDelete('RESTRICT')
         .onUpdate('CASCADE')
         .notNullable()
       table
@@ -35,13 +25,19 @@ export default class extends BaseSchema {
         .unsigned()
         .references('id')
         .inTable('media_types')
-        .onDelete('RESTRICT')
         .onUpdate('CASCADE')
         .notNullable()
       table.string('name').notNullable()
       table.string('alternative_name').nullable()
       table.string('released').nullable()
       table.text('synopsis').nullable()
+      table
+        .integer('tag_id')
+        .unsigned()
+        .references('id')
+        .inTable('tags')
+        .onUpdate('CASCADE')
+        .notNullable()
     })
   }
 
