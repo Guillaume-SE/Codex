@@ -12,7 +12,6 @@ export default class MediaService {
   constructor(readonly coverService: CoverService) {}
   public async store(data: IMediaPayload) {
     const {
-      mediaParentId,
       statusId,
       categoryId,
       typeId,
@@ -20,12 +19,12 @@ export default class MediaService {
       alternativeName,
       released,
       synopsis,
+      tagId,
       genreId,
       ...categoryRelatedMediaData
     } = data
 
     const generalMediaData = {
-      mediaParentId,
       statusId,
       categoryId,
       typeId,
@@ -33,6 +32,7 @@ export default class MediaService {
       alternativeName,
       released,
       synopsis,
+      tagId,
     }
 
     const selectedCategory = await MediaCategory.findOrFail(categoryId)
@@ -70,7 +70,6 @@ export default class MediaService {
 
   public async update(data: IMediaPayload, mediaId: number) {
     const {
-      mediaParentId,
       statusId,
       categoryId,
       typeId,
@@ -78,12 +77,12 @@ export default class MediaService {
       alternativeName,
       released,
       synopsis,
+      tagId,
       genreId,
       ...categoryRelatedMediaData
     } = data
 
     const generalMediaData = {
-      mediaParentId,
       statusId,
       categoryId,
       typeId,
@@ -91,6 +90,7 @@ export default class MediaService {
       alternativeName,
       released,
       synopsis,
+      tagId,
     }
 
     const media = await Media.findOrFail(mediaId)
@@ -145,11 +145,15 @@ export default class MediaService {
     }
   }
 
-  async getAll() {
+  async getByCategory(category: string) {
     const mediaList = await Media.query()
+      .whereHas('category', (categoryQuery) => {
+        categoryQuery.where('name', category)
+      })
       .preload('status')
       .preload('category')
       .preload('type')
+      .preload('tag')
       .preload('genres')
       .preload('contributors', (contributorsQuery) => {
         contributorsQuery.preload('role')
@@ -178,6 +182,7 @@ export default class MediaService {
         .load('status')
         .load('category')
         .load('type')
+        .load('tag')
         .load('genres')
         .load('contributors', (contributorsQuery) => {
           contributorsQuery.preload('role')
@@ -199,26 +204,26 @@ export default class MediaService {
     return formatedMedia
   }
 
-  async getByCategory(category: string) {
+  async getTagRelated(category: string, mediaId: number, tag: string) {
     const mediaList = await Media.query()
+      .whereNot('id', mediaId)
       .whereHas('category', (categoryQuery) => {
         categoryQuery.where('name', category)
       })
+      .andWhereHas('tag', (tagQuery) => {
+        tagQuery.where('name', tag)
+      })
+      .orderByRaw('RAND()')
+      .limit(10)
       .preload('status')
       .preload('category')
       .preload('type')
+      .preload('tag')
       .preload('genres')
       .preload('contributors', (contributorsQuery) => {
         contributorsQuery.preload('role')
         contributorsQuery.preload('contributor')
       })
-      .preload('gameInfo', (gamesQuery) => {
-        gamesQuery.preload('gamePlatform')
-      })
-      .preload('movieInfo')
-      .preload('seriesInfo')
-      .preload('animeInfo')
-      .preload('bookInfo')
       .preload('review')
       .preload('cover')
 
