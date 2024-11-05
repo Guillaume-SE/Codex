@@ -46,8 +46,7 @@ It also allows me to keep up to date with the ones I've planned to see, the ones
 - Restrict access to certain pages and functions to non-administrator users.
 - Search medias by title and a number of filters (genre, rating, name, etc).
 - Statistical display of media distribution according to various criteria.
-- Setting up a front end with Inertia/Vue.js.
-- A card game with these covers :eyes:
+- Adding a feature to track "collections".
 
 ## How to start
 
