@@ -41,6 +41,12 @@ h6 {
   position: relative;
 }
 
+.media-card-title {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 img-medium {
   width: 150px;
   aspect-ratio: 2/3 auto;
@@ -52,6 +58,13 @@ img-medium {
   max-width: 300px;
   aspect-ratio: 2/3;
   max-height: 450px;
+  display: flex;
+  align-items: center;
+}
+.no-cover-small {
+  width: 100%;
+  width: 150px;
+  height: 225px;
   display: flex;
   align-items: center;
 }
@@ -74,10 +87,31 @@ img-medium {
   display: flex;
   align-items: center;
 }
+.media-profile-name {
+  margin-right: 10px;
+}
 
 .status-progress-container {
   display: flex;
   align-items: center;
+  width: 120px;
+  border-radius: 10px;
+  background-color: #0f172a;
+}
+.status-progress-container-small {
+  display: flex;
+  align-items: center;
+  width: 100px;
+  border-radius: 10px;
+  background-color: #0f172a;
+}
+
+.status-progress-text {
+  color: #fafafa;
+  font-weight: 700;
+}
+.status-progress-text-small {
+  font-size: 0.8rem;
 }
 
 .status-progress-icon {
@@ -122,10 +156,29 @@ img-medium {
 .rating-bad {
   background-color: #f87171;
 }
+.in-progress {
+  color: #0ea5e9;
+}
+.completed {
+  color: #13d75b;
+}
+.paused {
+  color: #f6bb09;
+}
+.dropped {
+  color: #f87171;
+}
+.planned {
+  color: #cbd5e1;
+}
+.anticipated {
+  color: #d946ef;
+}
 
 .rating-number {
   font-weight: 700;
   font-size: 1.7rem;
+  color: #0f172a;
 }
 
 .rating-label {
