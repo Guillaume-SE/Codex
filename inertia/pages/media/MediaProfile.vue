@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type {
   IAnimeMediaFormatted,
+  IBaseMediaFormatted,
   IBookMediaFormatted,
   IGameMediaFormatted,
   IMovieMediaFormatted,
@@ -9,6 +10,7 @@ import type {
 import { computed } from 'vue'
 import AppHead from '~/components/AppHead.vue'
 import ImageNotAvailableIcon from '~/components/icons/ImageNotAvailableIcon.vue'
+import MediaCard from '~/components/MediaCard.vue'
 import RatingBadge from '~/components/RatingBadge.vue'
 import StatusProgressBadge from '~/components/StatusProgressBadge.vue'
 import { useFormattedDuration } from '~/composables/useFormattedDuration'
@@ -21,6 +23,7 @@ const props = defineProps<{
     | ISeriesMediaFormatted
     | IAnimeMediaFormatted
     | IBookMediaFormatted
+  tagRelatedList: IBaseMediaFormatted[]
 }>()
 
 const isGameMedia = (media: Object): media is IGameMediaFormatted => 'gameInfos' in media
@@ -40,7 +43,7 @@ const formattedDuration = computed(() =>
     <div class="media-profile-container">
       <!-- name -->
       <div class="media-profile-title-container">
-        <h2>{{ media.name }}</h2>
+        <h2 class="media-profile-name">{{ media.name }}</h2>
         <StatusProgressBadge :status="media.status" />
       </div>
       <!-- cover -->
@@ -116,6 +119,19 @@ const formattedDuration = computed(() =>
           </p>
         </div>
       </div>
+    </div>
+    <div>
+      <h3>Similaire</h3>
+      <div v-if="tagRelatedList.length > 0">
+        <MediaCard
+          v-for="media in tagRelatedList"
+          :key="media.id"
+          :media="media"
+          :mediaType="media.type"
+          :mediaCategory="media.category"
+        />
+      </div>
+      <div v-else>Aucun élément similaire pour le moment</div>
     </div>
   </AppLayout>
 </template>
