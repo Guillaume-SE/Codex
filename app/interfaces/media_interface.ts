@@ -1,5 +1,4 @@
 export interface IMediaPayload {
-  mediaParentId: number | null
   statusId: number
   categoryId: number
   typeId: number
@@ -7,6 +6,7 @@ export interface IMediaPayload {
   alternativeName: string | null
   released: string | null
   synopsis: string | null
+  tagId: number
   genreId: Array<number>
   platformId?: number | null
   duration?: number | null
@@ -17,7 +17,6 @@ export interface IMediaPayload {
 
 export interface IMedia {
   id: number
-  mediaParentId: number | null
   status: string
   category: string
   type: string
@@ -25,6 +24,7 @@ export interface IMedia {
   alternativeName: string | null
   released: string | null
   synopsis: string | null
+  tag: string
   genres: Array<string>
   contributors: Record<string, string[]>
   gameInfos?: {
