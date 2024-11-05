@@ -6,6 +6,7 @@ const CoversController = () => import('#controllers/covers_controller')
 const ReviewsController = () => import('#controllers/reviews_controller')
 const GenresController = () => import('#controllers/genres_controller')
 const MediaTypesController = () => import('#controllers/media_types_controller')
+const TagsController = () => import('#controllers/tags_controller')
 const GamePlatformsController = () => import('#controllers/game_platforms_controller')
 const ContributorsRolesController = () => import('#controllers/contributors_roles_controller')
 const ContributorsController = () => import('#controllers/contributors_controller')
@@ -22,7 +23,7 @@ router.get('/users/:id', [UsersController, 'show'])
 /**
  * medias
  */
-router.get('/media', [MediaController, 'show']).as('media.show')
+// router.get('/media', [MediaController, 'showLastAdded']).as('media.show')
 router.get('/media/:categoryName', [MediaController, 'showByCategory'])
 router.get('/media/:categoryName/:mediaId', [MediaController, 'showOne'])
 //ADMIN
@@ -52,6 +53,12 @@ router.delete('/genre/:genreId', [GenresController, 'deleteOne'])
  */
 router.post('/type', [MediaTypesController, 'addOne'])
 router.put('/type/:typeId', [MediaTypesController, 'updateOne'])
+/**
+ * tags
+ */
+router.post('/tag', [TagsController, 'addOne'])
+router.put('/tag/:tagId', [TagsController, 'updateOne'])
+router.delete('/tag/:tagId', [TagsController, 'deleteOne'])
 /**
  * game platforms
  */
