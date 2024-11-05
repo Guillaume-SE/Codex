@@ -5,23 +5,20 @@ import GameInfo from '#models/game_info'
 import Genre from '#models/genre'
 import MediaCategory from '#models/media_category'
 import MediaContributor from '#models/media_contributor'
+import MediaStatus from '#models/media_status'
 import MediaType from '#models/media_type'
 import MovieInfo from '#models/movie_info'
 import Review from '#models/review'
 import SeriesInfo from '#models/series_info'
+import Tag from '#models/tag'
 import { BaseModel, belongsTo, column, hasMany, hasOne, manyToMany } from '@adonisjs/lucid/orm'
 import type { BelongsTo, HasMany, HasOne, ManyToMany } from '@adonisjs/lucid/types/relations'
-import MediaStatus from './media_status.js'
 
 export default class Media extends BaseModel {
   public static table = 'media'
-  // serializeExtras = true
 
   @column({ isPrimary: true })
   declare id: number
-
-  @column({ columnName: 'media_parent_id', serializeAs: 'mediaParentId' })
-  declare mediaParentId: number | null
 
   @column({ columnName: 'status_id', serializeAs: 'statusId' })
   declare statusId: number
@@ -44,14 +41,10 @@ export default class Media extends BaseModel {
   @column()
   declare synopsis: string | null
 
-  //relations
-  @hasMany(() => Media)
-  declare parentMedia: HasMany<typeof Media>
+  @column({ columnName: 'tag_id', serializeAs: 'tagId' })
+  declare tagId: number
 
-  @belongsTo(() => Media, {
-    foreignKey: 'mediaParentId',
-  })
-  declare childrenMedia: BelongsTo<typeof Media>
+  //relations
 
   @belongsTo(() => MediaStatus, {
     foreignKey: 'statusId',
@@ -67,6 +60,11 @@ export default class Media extends BaseModel {
     foreignKey: 'typeId',
   })
   declare type: BelongsTo<typeof MediaType>
+
+  @belongsTo(() => Tag, {
+    foreignKey: 'tagId',
+  })
+  declare tag: BelongsTo<typeof Tag>
 
   @hasOne(() => Review)
   declare review: HasOne<typeof Review>
