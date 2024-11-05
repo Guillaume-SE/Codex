@@ -2,6 +2,7 @@
 import type { MediaCategories } from '#enums/MediaCategories'
 import type {
   IAnimeMediaFormatted,
+  IBaseMediaFormatted,
   IBookMediaFormatted,
   IGameMediaFormatted,
   IMovieMediaFormatted,
@@ -10,9 +11,11 @@ import type {
 import { Link } from '@inertiajs/vue3'
 import RatingBox from '~/components/RatingBox.vue'
 import StatusProgressBadge from '~/components/StatusProgressBadge.vue'
+import ImageNotAvailableIcon from '~/components/icons/ImageNotAvailableIcon.vue'
 
 defineProps<{
   media:
+    | IBaseMediaFormatted
     | IGameMediaFormatted
     | IMovieMediaFormatted
     | ISeriesMediaFormatted
@@ -35,14 +38,17 @@ defineProps<{
           :alt="`jaquette du ${mediaType} ${media.name}`"
         />
       </div>
-      <div v-else>
-        <img :src="'/public/images/default-cover.jpg'" alt="Image indisponible" />
+      <div v-else class="no-cover-small">
+        <ImageNotAvailableIcon />
       </div>
-      <h4>
+      <p class="media-card-title">
         {{ media.name }}
-      </h4>
+      </p>
     </Link>
-    <StatusProgressBadge :status="media.status" />
+    <StatusProgressBadge
+      :status="media.status"
+      :class="'status-progress-text-small status-progress-container-small'"
+    />
     <RatingBox :rating="media.review?.rating" />
     <div>
       <img
