@@ -15,6 +15,8 @@ export default class BookInfo extends BaseModel {
   declare pages: number | null
 
   // RELATIONS
-  @belongsTo(() => Media)
+  @belongsTo(() => Media, {
+    foreignKey: 'mediaId',
+  })
   declare media: BelongsTo<typeof Media>
 }

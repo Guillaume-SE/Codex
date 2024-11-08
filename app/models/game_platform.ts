@@ -12,6 +12,8 @@ export default class GamePlatform extends BaseModel {
   declare name: string
 
   //relations
-  @hasMany(() => GameInfo)
+  @hasMany(() => GameInfo, {
+    foreignKey: 'platformId',
+  })
   declare gameInfo: HasMany<typeof GameInfo>
 }

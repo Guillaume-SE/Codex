@@ -12,7 +12,9 @@ export default class Tag extends BaseModel {
   declare name: string
 
   //relations
-  @hasMany(() => Media)
+  @hasMany(() => Media, {
+    foreignKey: 'mediaId',
+  })
   declare media: HasMany<typeof Media>
 
   //hook

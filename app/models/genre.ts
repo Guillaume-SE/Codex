@@ -16,7 +16,9 @@ export default class Genre extends BaseModel {
   declare categoryId: number
 
   //RELATIONS
-  @belongsTo(() => MediaCategory)
+  @belongsTo(() => MediaCategory, {
+    foreignKey: 'categoryId',
+  })
   declare category: BelongsTo<typeof MediaCategory>
 
   @manyToMany(() => Media, {

@@ -16,9 +16,13 @@ export default class MediaType extends BaseModel {
   declare categoryId: number
 
   // RELATIONS
-  @belongsTo(() => MediaCategory)
+  @belongsTo(() => MediaCategory, {
+    foreignKey: 'categoryId',
+  })
   declare category: BelongsTo<typeof MediaCategory>
 
-  @hasMany(() => Media)
-  declare medias: HasMany<typeof Media>
+  @hasMany(() => Media, {
+    foreignKey: 'mediaId',
+  })
+  declare media: HasMany<typeof Media>
 }
