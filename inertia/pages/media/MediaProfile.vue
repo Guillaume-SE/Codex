@@ -53,7 +53,7 @@ const formattedDuration = computed(() =>
           loading="lazy"
           :src="`/storage/${media.cover.mediumUrl}`"
           :srcset="`/storage/${media.cover.mediumUrl}, /storage/${media.cover.largeUrl} 2x`"
-          :alt="`affiche du ${media.name}`"
+          :alt="`cover de ${media.name}`"
         />
       </div>
       <div v-else class="no-cover-large">
