@@ -15,6 +15,8 @@ export default class AnimeInfo extends BaseModel {
   declare animeSeasonLength: number | null
 
   // RELATIONS
-  @belongsTo(() => Media)
+  @belongsTo(() => Media, {
+    foreignKey: 'mediaId',
+  })
   declare media: BelongsTo<typeof Media>
 }

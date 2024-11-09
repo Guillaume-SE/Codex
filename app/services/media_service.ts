@@ -1,11 +1,14 @@
 import { MediaFormatterFactory } from '#classes/MediaFormatter'
+import { MediaCategories } from '#enums/MediaCategories'
 import type { IMediaPayload } from '#interfaces/media_interface'
 import Cover from '#models/cover'
 import Media from '#models/media'
 import MediaCategory from '#models/media_category'
 import CoverService from '#services/cover_service'
+import { showByCategoryMediaValidator } from '#validators/media_validator'
 import { inject } from '@adonisjs/core'
 import db from '@adonisjs/lucid/services/db'
+import { Infer } from '@vinejs/vine/types'
 
 @inject()
 export default class MediaService {
@@ -51,17 +54,13 @@ export default class MediaService {
 
       if (selectedCategoryName === 'game') {
         await media.related('gameInfo').create(categoryRelatedMediaData)
-      }
-      if (selectedCategoryName === 'book') {
+      } else if (selectedCategoryName === 'book') {
         await media.related('bookInfo').create(categoryRelatedMediaData)
-      }
-      if (selectedCategoryName === 'movie') {
+      } else if (selectedCategoryName === 'movie') {
         await media.related('movieInfo').create(categoryRelatedMediaData)
-      }
-      if (selectedCategoryName === 'series') {
+      } else if (selectedCategoryName === 'series') {
         await media.related('seriesInfo').create(categoryRelatedMediaData)
-      }
-      if (selectedCategoryName === 'anime') {
+      } else if (selectedCategoryName === 'anime') {
         await media.related('animeInfo').create(categoryRelatedMediaData)
       }
     })
@@ -110,17 +109,13 @@ export default class MediaService {
 
       if (categoryName === 'game') {
         await media.related('gameInfo').updateOrCreate(searchPayload, categoryRelatedMediaData)
-      }
-      if (categoryName === 'movie') {
+      } else if (categoryName === 'movie') {
         await media.related('movieInfo').updateOrCreate(searchPayload, categoryRelatedMediaData)
-      }
-      if (categoryName === 'book') {
+      } else if (categoryName === 'book') {
         await media.related('bookInfo').updateOrCreate(searchPayload, categoryRelatedMediaData)
-      }
-      if (categoryName === 'series') {
+      } else if (categoryName === 'series') {
         await media.related('seriesInfo').updateOrCreate(searchPayload, categoryRelatedMediaData)
-      }
-      if (categoryName === 'anime') {
+      } else if (categoryName === 'anime') {
         await media.related('animeInfo').updateOrCreate(searchPayload, categoryRelatedMediaData)
       }
     })
@@ -145,10 +140,37 @@ export default class MediaService {
     }
   }
 
-  async getByCategory(category: string) {
-    const mediaList = await Media.query()
+  async getByCategory(
+    category: MediaCategories,
+    filters: Infer<typeof showByCategoryMediaValidator>
+  ) {
+    const mediaQuery = await Media.query()
       .whereHas('category', (categoryQuery) => {
         categoryQuery.where('name', category)
+      })
+      // searchbar term
+      .if(filters.search, (q) => {
+        q.where((subQuery) => {
+          subQuery
+            .where('name', 'like', `%${filters.search}%`)
+            .orWhere('alternative_name', 'like', `%${filters.search}%`)
+        })
+      })
+      // status
+      .if(filters.status, (q) => {
+        q.where((subQuery) => {
+          subQuery.whereIn('status_id', filters.status!)
+        })
+      })
+      .if(filters.types, (q) => {
+        q.where((subQuery) => {
+          subQuery.whereIn('category_id', filters.types!)
+        })
+      })
+      .if(filters.genres, (q) => {
+        q.whereHas('genres', (genreQuery) => {
+          genreQuery.whereIn('genre_id', filters.genres!)
+        })
       })
       .preload('status')
       .preload('category')
@@ -169,7 +191,7 @@ export default class MediaService {
       .preload('review')
       .preload('cover')
 
-    const formattedMediaList = MediaFormatterFactory.formatMediaList(mediaList)
+    const formattedMediaList = MediaFormatterFactory.formatMediaList(mediaQuery)
 
     return formattedMediaList
   }

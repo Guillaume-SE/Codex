@@ -51,6 +51,8 @@ export default class Cover extends BaseModel {
   }
 
   // relations
-  @belongsTo(() => Media)
+  @belongsTo(() => Media, {
+    foreignKey: 'mediaId',
+  })
   declare media: BelongsTo<typeof Media>
 }

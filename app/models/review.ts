@@ -24,9 +24,12 @@ export default class Review extends BaseModel {
   declare updatedAt: number
 
   //relations
-  @belongsTo(() => Media)
+  @belongsTo(() => Media, {
+    foreignKey: 'mediaId',
+  })
   declare media: BelongsTo<typeof Media>
 
+  // hooks
   @beforeCreate()
   static async defaultTimeStampValueOnCreate(review: Review) {
     review.updatedAt = Date.now()

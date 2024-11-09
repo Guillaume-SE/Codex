@@ -21,7 +21,6 @@ defineProps<{
     | ISeriesMediaFormatted
     | IAnimeMediaFormatted
     | IBookMediaFormatted
-  mediaType: string
   mediaCategory: MediaCategories
 }>()
 </script>
@@ -35,7 +34,7 @@ defineProps<{
           loading="lazy"
           :src="`/storage/${media.cover.smallUrl}`"
           :srcset="`/storage/${media.cover.smallUrl}, /storage/${media.cover.mediumUrl} 2x`"
-          :alt="`jaquette du ${mediaType} ${media.name}`"
+          :alt="`cover de ${media.name}`"
         />
       </div>
       <div v-else class="no-cover-small">
@@ -45,11 +44,13 @@ defineProps<{
         {{ media.name }}
       </p>
     </Link>
-    <StatusProgressBadge
-      :status="media.status"
-      :class="'status-progress-text-small status-progress-container-small'"
-    />
-    <RatingBox :rating="media.review?.rating" />
+    <div class="media-card-info-container">
+      <StatusProgressBadge
+        :status="media.status"
+        :class="'status-progress-text-small status-progress-container-small'"
+      />
+      <RatingBox :rating="media.review?.rating" />
+    </div>
     <div>
       <img
         v-if="media.review?.isFavorite"

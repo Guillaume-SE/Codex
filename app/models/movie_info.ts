@@ -15,6 +15,8 @@ export default class MovieInfo extends BaseModel {
   declare duration: number | null
 
   // RELATIONS
-  @belongsTo(() => Media)
+  @belongsTo(() => Media, {
+    foreignKey: 'mediaId',
+  })
   declare media: BelongsTo<typeof Media>
 }

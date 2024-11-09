@@ -66,29 +66,45 @@ export default class Media extends BaseModel {
   })
   declare tag: BelongsTo<typeof Tag>
 
-  @hasOne(() => Review)
+  @hasOne(() => Review, {
+    foreignKey: 'mediaId',
+  })
   declare review: HasOne<typeof Review>
 
-  @hasOne(() => Cover)
+  @hasOne(() => Cover, {
+    foreignKey: 'mediaId',
+  })
   declare cover: HasOne<typeof Cover>
 
-  @hasOne(() => GameInfo)
+  @hasOne(() => GameInfo, {
+    foreignKey: 'mediaId',
+  })
   declare gameInfo: HasOne<typeof GameInfo>
 
-  @hasOne(() => MovieInfo)
+  @hasOne(() => MovieInfo, {
+    foreignKey: 'mediaId',
+  })
   declare movieInfo: HasOne<typeof MovieInfo>
 
-  @hasOne(() => BookInfo)
+  @hasOne(() => BookInfo, {
+    foreignKey: 'mediaId',
+  })
   declare bookInfo: HasOne<typeof BookInfo>
 
-  @hasOne(() => AnimeInfo)
+  @hasOne(() => AnimeInfo, {
+    foreignKey: 'mediaId',
+  })
   declare animeInfo: HasOne<typeof AnimeInfo>
 
-  @hasOne(() => SeriesInfo)
+  @hasOne(() => SeriesInfo, {
+    foreignKey: 'mediaId',
+  })
   declare seriesInfo: HasOne<typeof SeriesInfo>
 
   @manyToMany(() => Genre, {
     pivotTable: 'media_genres',
+    pivotForeignKey: 'media_id',
+    pivotRelatedForeignKey: 'genre_id',
     pivotTimestamps: false,
   })
   declare genres: ManyToMany<typeof Genre>

@@ -94,5 +94,21 @@ export const showByCategoryMediaValidator = vine.compile(
     params: vine.object({
       categoryName: vine.string().isExists({ table: 'media_categories', column: 'name' }),
     }),
+    search: vine.string().optional(),
+    // status: vine
+    //   .number()
+    //   .exists(async (db, value) => {
+    //     if (!value) {
+    //       return true
+    //     }
+    //     const statusExists = await db.from('media_statuses').select('id').where('id', value).first()
+    //     return !!statusExists
+    //   })
+    //   .optional(),
+    status: vine
+      .array(vine.number().isExists({ table: 'media_statuses', column: 'id' }))
+      .optional(),
+    types: vine.array(vine.number().isExists({ table: 'media_types', column: 'id' })).optional(),
+    genres: vine.array(vine.number().isExists({ table: 'genres', column: 'id' })).optional(),
   })
 )

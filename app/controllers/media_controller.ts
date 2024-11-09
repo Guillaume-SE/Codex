@@ -1,4 +1,7 @@
 import type { MediaCategories } from '#enums/MediaCategories'
+import Genre from '#models/genre'
+import MediaStatus from '#models/media_status'
+import MediaType from '#models/media_type'
 import MediaService from '#services/media_service'
 import {
   createMediaValidator,
@@ -75,29 +78,45 @@ export default class MediaController {
     }
   }
 
-  public async showByCategory({ inertia, request, params, response }: HttpContext) {
-    const category = params.categoryName as MediaCategories
-    const categoryConfig: Record<MediaCategories, { title: string; mediaType: string }> = {
-      game: { title: 'Liste des jeux', mediaType: 'jeu' },
-      movie: { title: 'Liste des films', mediaType: 'film' },
-      series: { title: 'Liste des séries', mediaType: 'série' },
-      book: { title: 'Liste des livres', mediaType: 'livre' },
-      anime: { title: 'Liste des anime', mediaType: 'anime' },
+  public async showByCategory({ inertia, request, response }: HttpContext) {
+    const categoryConfig: Record<MediaCategories, { title: string; categoryFr: string }> = {
+      game: { title: 'Liste des jeux', categoryFr: 'jeu' },
+      movie: { title: 'Liste des films', categoryFr: 'film' },
+      series: { title: 'Liste des séries', categoryFr: 'série' },
+      book: { title: 'Liste des livres', categoryFr: 'livre' },
+      anime: { title: 'Liste des anime', categoryFr: 'anime' },
     }
 
     try {
-      await request.validateUsing(showByCategoryMediaValidator)
-      const mediaList = await this.mediaService.getByCategory(category)
+      const filters = await request.validateUsing(showByCategoryMediaValidator)
+      const category = filters.params.categoryName
+      const mediaList = await this.mediaService.getByCategory(category, filters)
       const config = categoryConfig[category]
+      const mediaStatusesList = await MediaStatus.query().select('id', 'name').orderBy('id')
+      const mediaTypesList = await MediaType.query()
+        .select('id', 'name')
+        .whereHas('category', (categoryQuery) => {
+          categoryQuery.where('name', category)
+        })
+        .orderBy('name')
+      const mediaGenresList = await Genre.query()
+        .select('id', 'name')
+        .whereHas('category', (categoryQuery) => {
+          categoryQuery.where('name', category)
+        })
+        .orderBy('name')
 
       return inertia.render('media/MediaList', {
         mediaList,
         title: config.title,
-        mediaType: config.mediaType,
         mediaCategory: category,
+        mediaCategoryFr: config.categoryFr,
+        mediaStatusesList,
+        mediaTypesList,
+        mediaGenresList,
       })
     } catch (error) {
-      return response.status(404).json({ error, customError: error.message })
+      return response.redirect('/')
     }
   }
 }

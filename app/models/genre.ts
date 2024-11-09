@@ -16,11 +16,15 @@ export default class Genre extends BaseModel {
   declare categoryId: number
 
   //RELATIONS
-  @belongsTo(() => MediaCategory)
+  @belongsTo(() => MediaCategory, {
+    foreignKey: 'categoryId',
+  })
   declare category: BelongsTo<typeof MediaCategory>
 
   @manyToMany(() => Media, {
     pivotTable: 'media_genres',
+    pivotForeignKey: 'genre_id',
+    pivotRelatedForeignKey: 'media_id',
     pivotTimestamps: false,
   })
   declare media: ManyToMany<typeof Media>

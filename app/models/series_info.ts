@@ -15,6 +15,8 @@ export default class SeriesInfo extends BaseModel {
   declare seriesSeasonLength: number | null
 
   // RELATIONS
-  @belongsTo(() => Media)
+  @belongsTo(() => Media, {
+    foreignKey: 'mediaId',
+  })
   declare media: BelongsTo<typeof Media>
 }

@@ -13,13 +13,20 @@ export default class MediaCategory extends BaseModel {
 
   @column({})
   declare name: MediaCategories
+
   //RELATIONS
-  @hasMany(() => Media)
+  @hasMany(() => Media, {
+    foreignKey: 'mediaId',
+  })
   declare media: HasMany<typeof Media>
 
-  @hasMany(() => MediaType)
+  @hasMany(() => MediaType, {
+    foreignKey: 'categoryId',
+  })
   declare types: HasMany<typeof MediaType>
 
-  @hasMany(() => Genre)
+  @hasMany(() => Genre, {
+    foreignKey: 'categoryId',
+  })
   declare genres: HasMany<typeof Genre>
 }
