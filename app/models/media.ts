@@ -103,6 +103,8 @@ export default class Media extends BaseModel {
 
   @manyToMany(() => Genre, {
     pivotTable: 'media_genres',
+    pivotForeignKey: 'media_id',
+    pivotRelatedForeignKey: 'genre_id',
     pivotTimestamps: false,
   })
   declare genres: ManyToMany<typeof Genre>
