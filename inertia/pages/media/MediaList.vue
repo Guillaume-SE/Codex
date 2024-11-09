@@ -15,6 +15,7 @@ import { reactive } from 'vue'
 import AppHead from '~/components/AppHead.vue'
 import MediaCard from '~/components/MediaCard.vue'
 import InputComp from '~/components/ui/InputComp.vue'
+import LabelComp from '~/components/ui/LabelComp.vue'
 import { useCapitalizeFirstLetter } from '~/composables/useCapitalizeFirstLetter'
 import AppLayout from '~/layouts/AppLayout.vue'
 
@@ -55,14 +56,13 @@ const capitalizeFirstLetter = useCapitalizeFirstLetter
           @submit.prevent="router.get(`/media/${mediaCategory}`, filters, { preserveState: true })"
         >
           <div>
-            <label>
-              Recherche
-              <input
+            <LabelComp text="Recherche" textPosition="up">
+              <InputComp
                 v-model="filters.search"
                 type="search"
                 :placeholder="`Rechercher un${mediaCategoryFr === 'série' ? 'e' : ''} ${mediaCategoryFr}...`"
               />
-            </label>
+            </LabelComp>
             <button type="submit">Rechercher</button>
           </div>
 
@@ -73,15 +73,9 @@ const capitalizeFirstLetter = useCapitalizeFirstLetter
               <div>
                 <ul>
                   <li v-for="status in mediaStatusesList" :key="status.id">
-                    <InputComp
-                      v-model="filters.status"
-                      type="checkbox"
-                      :id="`status-${status.id}`"
-                      :value="status.id"
-                    />
-                    <label :for="`status-${status.id}`">
-                      {{ capitalizeFirstLetter(status.name) }}
-                    </label>
+                    <LabelComp :text="capitalizeFirstLetter(status.name)" textPosition="down">
+                      <InputComp v-model="filters.status" type="checkbox" :value="status.id" />
+                    </LabelComp>
                   </li>
                 </ul>
               </div>
@@ -91,13 +85,14 @@ const capitalizeFirstLetter = useCapitalizeFirstLetter
               <span>Types</span>
               <ul>
                 <li v-for="type in mediaTypesList" :key="type.id">
-                  <InputComp
-                    v-model="filters.types"
-                    type="checkbox"
-                    :id="`type-${type.id}`"
-                    :value="type.id"
-                  />
-                  <label :for="`type-${type.id}`"> {{ capitalizeFirstLetter(type.name) }} </label>
+                  <LabelComp :text="capitalizeFirstLetter(type.name)" textPosition="down">
+                    <InputComp
+                      v-model="filters.types"
+                      type="checkbox"
+                      :id="`type-${type.id}`"
+                      :value="type.id"
+                    />
+                  </LabelComp>
                 </li>
               </ul>
             </div>
@@ -106,15 +101,9 @@ const capitalizeFirstLetter = useCapitalizeFirstLetter
               <span>Genres</span>
               <ul>
                 <li v-for="genre in mediaGenresList" :key="genre.id">
-                  <InputComp
-                    v-model="filters.genres"
-                    type="checkbox"
-                    :id="`genre-${genre.id}`"
-                    :value="genre.id"
-                  />
-                  <label :for="`genre-${genre.id}`">
-                    {{ capitalizeFirstLetter(genre.name) }}
-                  </label>
+                  <LabelComp :text="capitalizeFirstLetter(genre.name)" textPosition="down">
+                    <InputComp v-model="filters.genres" type="checkbox" :value="genre.id" />
+                  </LabelComp>
                 </li>
               </ul>
             </div>
