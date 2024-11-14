@@ -10,9 +10,10 @@ export const createMediaValidator = vine.compile(
     alternativeName: vine.string().trim().nullable(),
     released: vine
       .date()
-      .nullable()
       .transform((value) => {
-        if (!value) return
+        if (value === undefined || !value) {
+          return null
+        }
         return DateTime.fromJSDate(value)
       })
       .nullable(),
@@ -44,7 +45,15 @@ export const updateMediaValidator = vine.compile(
     typeId: vine.number().isExists({ table: 'media_types', column: 'id' }),
     name: vine.string().trim(),
     alternativeName: vine.string().trim().nullable(),
-    released: vine.string().trim().nullable(),
+    released: vine
+      .date()
+      .transform((value) => {
+        if (value === undefined || !value) {
+          return null
+        }
+        return DateTime.fromJSDate(value)
+      })
+      .nullable(),
     synopsis: vine.string().trim().nullable(),
     tagId: vine.number().isExists({ table: 'tags', column: 'id' }),
     genreId: vine.array(vine.number().isExists({ table: 'genres', column: 'id' })).distinct(),
