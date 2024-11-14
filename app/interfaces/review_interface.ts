@@ -1,8 +1,11 @@
-export interface IReview {
-  id?: number
-  mediaId?: number
+export interface IReviewPayload {
   rating: number | null
   opinion: string | null
   isFavorite: boolean
-  updatedAt?: number
+}
+
+export interface IReview extends IReviewPayload {
+  id: number
+  mediaId: number
+  updatedAt: number
 }
