@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import type { MediaCategories, MediaCategoriesFr } from '#enums/MediaCategories'
-import { IGenre } from '#interfaces/genre_interface'
+import type { IGenre } from '#interfaces/genre_interface'
 import {
   IAnimeMediaFormatted,
   IBookMediaFormatted,
@@ -10,6 +9,7 @@ import {
 } from '#interfaces/media_formatted_interface'
 import type { IMediaStatus } from '#interfaces/media_status_interface'
 import { IMediaType } from '#interfaces/media_type_interface'
+import type { MediaCategories, MediaCategoriesFr } from '#types/MediaCategories'
 import { router } from '@inertiajs/vue3'
 import { reactive } from 'vue'
 import AppHead from '~/components/AppHead.vue'
