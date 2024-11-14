@@ -1,10 +1,10 @@
 import { MediaFormatterFactory } from '#classes/MediaFormatter'
-import { MediaCategories } from '#enums/MediaCategories'
 import type { IMediaPayload } from '#interfaces/media_interface'
 import Cover from '#models/cover'
 import Media from '#models/media'
 import MediaCategory from '#models/media_category'
 import CoverService from '#services/cover_service'
+import type { MediaCategories } from '#types/MediaCategories'
 import { showByCategoryMediaValidator } from '#validators/media_validator'
 import { inject } from '@adonisjs/core'
 import db from '@adonisjs/lucid/services/db'
@@ -12,7 +12,7 @@ import { Infer } from '@vinejs/vine/types'
 
 @inject()
 export default class MediaService {
-  constructor(readonly coverService: CoverService) {}
+  constructor(protected coverService: CoverService) {}
   public async store(data: IMediaPayload) {
     const {
       statusId,
@@ -164,7 +164,7 @@ export default class MediaService {
       })
       .if(filters.types, (q) => {
         q.where((subQuery) => {
-          subQuery.whereIn('category_id', filters.types!)
+          subQuery.whereIn('type_id', filters.types!)
         })
       })
       .if(filters.genres, (q) => {
