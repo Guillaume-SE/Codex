@@ -29,7 +29,7 @@ export default class extends BaseSchema {
         .notNullable()
       table.string('name').notNullable()
       table.string('alternative_name').nullable()
-      table.string('released').nullable()
+      table.timestamp('released').nullable()
       table.text('synopsis').nullable()
       table
         .integer('tag_id')

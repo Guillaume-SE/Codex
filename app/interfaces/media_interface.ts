@@ -1,10 +1,12 @@
+import { DateTime } from 'luxon'
+
 export interface IMediaPayload {
   statusId: number
   categoryId: number
   typeId: number
   name: string
   alternativeName: string | null
-  released: string | null
+  released: DateTime | null
   synopsis: string | null
   tagId: number
   genreId: Array<number>
@@ -22,7 +24,7 @@ export interface IMedia {
   type: string
   name: string
   alternativeName: string | null
-  released: string | null
+  released: DateTime | null
   synopsis: string | null
   tag: string
   genres: Array<string>
