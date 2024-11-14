@@ -1,23 +1,18 @@
 import vine from '@vinejs/vine'
 
-export const createGenreValidator = vine.withMetaData<{ categoryId: number }>().compile(
+export const createGenreValidator = vine.compile(
   vine.object({
     name: vine
       .string()
       .trim()
-      .unique(async (db, value, field) => {
-        const genreIsUnique = await db
-          .from('genres')
-          .where('name', value)
-          .andWhere('category_id', '=', field.meta.categoryId)
-          .first()
+      .unique(async (db, value) => {
+        const genreIsUnique = await db.from('genres').where('name', value).first()
         return !genreIsUnique
       }),
-    categoryId: vine.number().isExists({ table: 'media_categories', column: 'id' }),
   })
 )
 
-export const updateGenreValidator = vine.withMetaData<{ categoryId: number }>().compile(
+export const updateGenreValidator = vine.compile(
   vine.object({
     // params
     params: vine.object({
@@ -27,15 +22,10 @@ export const updateGenreValidator = vine.withMetaData<{ categoryId: number }>().
     name: vine
       .string()
       .trim()
-      .unique(async (db, value, field) => {
-        const genreIsUnique = await db
-          .from('genres')
-          .where('name', value)
-          .andWhere('category_id', '=', field.meta.categoryId)
-          .first()
+      .unique(async (db, value) => {
+        const genreIsUnique = await db.from('genres').where('name', value).first()
         return !genreIsUnique
       }),
-    categoryId: vine.number().isExists({ table: 'media_categories', column: 'id' }),
   })
 )
 
