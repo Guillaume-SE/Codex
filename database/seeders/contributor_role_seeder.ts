@@ -3,21 +3,31 @@ import { BaseSeeder } from '@adonisjs/lucid/seeders'
 
 export default class extends BaseSeeder {
   async run() {
-    await ContributorRole.createMany([
+    const uniqueKey = 'name'
+
+    await ContributorRole.updateOrCreateMany(uniqueKey, [
       {
-        id: 1,
         name: 'Réalisateur',
       },
       {
-        id: 2,
-        name: 'Studio de développement',
+        name: 'Scénariste',
       },
       {
-        id: 3,
-        name: "Studio d'animation",
+        name: 'Producteur',
       },
       {
-        id: 4,
+        name: 'Développeur',
+      },
+      {
+        name: 'Editeur',
+      },
+      {
+        name: 'Animation',
+      },
+      {
+        name: 'Edition',
+      },
+      {
         name: 'Auteur',
       },
     ])
