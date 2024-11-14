@@ -5,20 +5,34 @@ export default class extends BaseSeeder {
   async run() {
     await Contributor.createMany([
       {
-        id: 1,
         name: 'Steven Spielberg',
       },
       {
-        id: 2,
         name: 'Bungie',
       },
       {
-        id: 3,
         name: 'Mappa',
       },
       {
-        id: 4,
         name: 'Masashi Kishimoto',
+      },
+      {
+        name: 'Microsoft',
+      },
+      {
+        name: 'Kana',
+      },
+      {
+        name: 'Rocksteady',
+      },
+      {
+        name: 'Christopher Nolan',
+      },
+      {
+        name: 'Gearbox',
+      },
+      {
+        name: 'Marvel Studios',
       },
     ])
   }
