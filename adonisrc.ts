@@ -18,7 +18,7 @@ export default defineConfig({
     () => import('@adonisjs/static/static_provider'),
     () => import('@adonisjs/lucid/database_provider'),
     () => import('@adonisjs/drive/drive_provider'),
-    () => import('@adonisjs/inertia/inertia_provider')
+    () => import('@adonisjs/inertia/inertia_provider'),
   ],
 
   preloads: [
@@ -26,7 +26,6 @@ export default defineConfig({
     () => import('#start/kernel'),
     () => import('#start/validator'),
     () => import('#start/rules/is_exists'),
-    () => import('#start/rules/is_associated_to'),
   ],
 
   tests: {
