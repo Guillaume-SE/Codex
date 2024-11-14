@@ -1,13 +1,15 @@
 import { DateTime } from 'luxon'
 
-export interface IMediaPayload {
-  statusId: number
-  categoryId: number
-  typeId: number
+interface IBaseMedia {
   name: string
   alternativeName: string | null
   released: DateTime | null
   synopsis: string | null
+}
+export interface IMediaPayload extends IBaseMedia {
+  statusId: number
+  categoryId: number
+  typeId: number
   tagId: number
   genreId: Array<number>
   platformId?: number | null
@@ -16,34 +18,19 @@ export interface IMediaPayload {
   animeSeasonLength?: number | null
   pages?: number | null
 }
-
-export interface IMedia {
+export interface IMedia extends IBaseMedia {
   id: number
   status: string
   category: string
   type: string
-  name: string
-  alternativeName: string | null
-  released: DateTime | null
-  synopsis: string | null
   tag: string
   genres: Array<string>
   contributors: Record<string, string[]>
-  gameInfos?: {
-    platformId: number | null
-  }
-  bookInfos?: {
-    pages: number | null
-  }
-  movieInfos?: {
-    duration: number | null
-  }
-  animeInfos?: {
-    seasonLength: number | null
-  }
-  seriesInfos?: {
-    seasonLength: number | null
-  }
+  gameInfos?: { platformId: number | null }
+  bookInfos?: { pages: number | null }
+  movieInfos?: { duration: number | null }
+  animeInfos?: { seasonLength: number | null }
+  seriesInfos?: { seasonLength: number | null }
   review?: {
     rating: number | null
     opinion: string | null
