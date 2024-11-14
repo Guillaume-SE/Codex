@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import type { MediaCategories } from '#enums/MediaCategories'
 import type {
   IAnimeMediaFormatted,
   IBaseMediaFormatted,
@@ -8,6 +7,7 @@ import type {
   IMovieMediaFormatted,
   ISeriesMediaFormatted,
 } from '#interfaces/media_formatted_interface'
+import type { MediaCategories } from '#types/MediaCategories'
 import { Link } from '@inertiajs/vue3'
 import RatingBox from '~/components/RatingBox.vue'
 import StatusProgressBadge from '~/components/StatusProgressBadge.vue'
@@ -49,7 +49,7 @@ defineProps<{
         :status="media.status"
         :class="'status-progress-text-small status-progress-container-small'"
       />
-      <RatingBox :rating="media.review?.rating" />
+      <RatingBox :rating="media.review?.rating ? media.review.rating : null" />
     </div>
     <div>
       <img

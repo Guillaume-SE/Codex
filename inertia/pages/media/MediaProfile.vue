@@ -111,7 +111,7 @@ const formattedDuration = computed(() =>
       <div class="review-container">
         <div class="review-heading">
           <h3 class="review-title">Avis</h3>
-          <RatingBadge :rating="media.review?.rating" />
+          <RatingBadge :rating="media.review?.rating ? media.review.rating : null" />
         </div>
         <div v-if="media.review && media.review.opinion">
           <p>
