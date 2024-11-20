@@ -1,4 +1,5 @@
 import { MediaFactory } from '#database/factories/media_factory'
+import Contributor from '#models/contributor'
 import Media from '#models/media'
 import { BaseSeeder } from '@adonisjs/lucid/seeders'
 
@@ -67,21 +68,22 @@ export default class extends BaseSeeder {
       .with('bookInfo')
       .createMany(5)
 
-    const genresAndMedia = [
-      { genres: [1, 7, 9, 10], media: gamesReleased },
-      { genres: [1, 7, 9, 10], media: gamesReleasingSoon },
-      { genres: [2, 4, 5, 7], media: moviesReleased },
-      { genres: [2, 4, 5, 7], media: moviesReleasingSoon },
-      { genres: [4, 5, 7, 8], media: seriesReleased },
-      { genres: [4, 5, 7, 8], media: seriesReleasingSoon },
-      { genres: [2, 3, 5, 7], media: animeReleased },
-      { genres: [2, 3, 5, 7], media: animeReleasingSoon },
-      { genres: [2, 6, 7, 8], media: booksReleased },
-      { genres: [2, 6, 7, 8], media: booksReleasingSoon },
+    const mediaOptions = [
+      { genres: [1, 7, 9, 10], contributorRoles: [4, 5], media: gamesReleased },
+      { genres: [1, 7, 9, 10], contributorRoles: [4, 5], media: gamesReleasingSoon },
+      { genres: [2, 4, 5, 7], contributorRoles: [1, 2], media: moviesReleased },
+      { genres: [2, 4, 5, 7], contributorRoles: [1, 2], media: moviesReleasingSoon },
+      { genres: [4, 5, 7, 8], contributorRoles: [3], media: seriesReleased },
+      { genres: [4, 5, 7, 8], contributorRoles: [3], media: seriesReleasingSoon },
+      { genres: [2, 3, 5, 7], contributorRoles: [6], media: animeReleased },
+      { genres: [2, 3, 5, 7], contributorRoles: [6], media: animeReleasingSoon },
+      { genres: [2, 6, 7, 8], contributorRoles: [7, 8], media: booksReleased },
+      { genres: [2, 6, 7, 8], contributorRoles: [7, 8], media: booksReleasingSoon },
     ]
 
-    for (const { genres, media } of genresAndMedia) {
+    for (const { genres, contributorRoles, media } of mediaOptions) {
       await this.#attachGenres(genres, media)
+      await this.#attachContributors(contributorRoles, media)
     }
   }
 
@@ -92,9 +94,31 @@ export default class extends BaseSeeder {
     }
   }
 
+  async #attachContributors(contributorRoleIds: number[], mediaList: Media[]) {
+    const contributors = await Contributor.all()
+    const contributorIds = contributors.map((contributor) => contributor.id)
+    for (const media of mediaList) {
+      const randomContributors = this.#getRandomContributors(contributorIds, contributorRoleIds)
+      await media.related('contributors').createMany(randomContributors)
+    }
+  }
+
+  #getRandomElements<T>(elements: T[], numElements: number): T[] {
+    const shuffled = elements.sort(() => 0.5 - Math.random())
+    return shuffled.slice(0, numElements)
+  }
+
   #getRandomGenres(genreIds: number[]) {
     const numGenres = Math.floor(Math.random() * (genreIds.length + 1))
-    const shuffled = genreIds.sort(() => 0.5 - Math.random())
-    return shuffled.slice(0, numGenres)
+    return this.#getRandomElements(genreIds, numGenres)
+  }
+
+  #getRandomContributors(contributorIds: number[], roleIds: number[]) {
+    const numContributors = Math.floor(Math.random() * 4) + 1
+    const randomContributors = this.#getRandomElements(contributorIds, numContributors)
+    return randomContributors.map((contributorId) => {
+      const randomRole = roleIds[Math.floor(Math.random() * roleIds.length)]
+      return { contributorId, roleId: randomRole }
+    })
   }
 }
