@@ -8,7 +8,6 @@ const defaultImages = [
   'default_03.jpg',
   'default_04.jpg',
   'default_05.jpg',
-  'default_06.jpg',
 ]
 const defaultSmallImages = [
   'default_01-150x225.jpg',
@@ -16,7 +15,6 @@ const defaultSmallImages = [
   'default_03-150x225.jpg',
   'default_04-150x225.jpg',
   'default_05-150x225.jpg',
-  'default_06-150x225.jpg',
 ]
 const defaultMediumImages = [
   'default_01-300x450.jpg',
@@ -24,7 +22,6 @@ const defaultMediumImages = [
   'default_03-300x450.jpg',
   'default_04-300x450.jpg',
   'default_05-300x450.jpg',
-  'default_06-300x450.jpg',
 ]
 const defaultLargeImages = [
   'default_01-600x900.jpg',
@@ -32,7 +29,6 @@ const defaultLargeImages = [
   'default_03-600x900.jpg',
   'default_04-600x900.jpg',
   'default_05-600x900.jpg',
-  'default_06-600x900.jpg',
 ]
 
 export const CoverFactory = factory
