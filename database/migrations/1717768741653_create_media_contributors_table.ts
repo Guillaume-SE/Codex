@@ -26,7 +26,7 @@ export default class extends BaseSchema {
         .integer('role_id')
         .unsigned()
         .references('id')
-        .inTable('contributors_roles')
+        .inTable('contributor_roles')
         .onDelete('CASCADE')
         .onUpdate('CASCADE')
         .notNullable()

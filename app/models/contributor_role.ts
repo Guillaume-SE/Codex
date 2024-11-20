@@ -3,7 +3,7 @@ import { BaseModel, column, hasMany } from '@adonisjs/lucid/orm'
 import type { HasMany } from '@adonisjs/lucid/types/relations'
 
 export default class ContributorRole extends BaseModel {
-  public static table = 'contributors_roles'
+  public static table = 'contributor_roles'
 
   @column({ isPrimary: true })
   declare id: number
