@@ -43,6 +43,7 @@ h6 {
 
 .media-card {
   width: 150px;
+  min-height: 290px;
   margin: 10px;
   position: relative;
 }
