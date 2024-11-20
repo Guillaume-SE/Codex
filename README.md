@@ -25,23 +25,31 @@ It also allows me to keep up to date with the ones I've planned to see, the ones
 
 ![diagram](https://github.com/user-attachments/assets/fef2a5f2-a2c3-48db-bbad-e6b3017a8dac)
 
-- `Users`: As the project aims to contain only my media entries, I chose not to link the "users" table to "reviews". It will only be used for authentication.
+- `users`: as the project aims to contain only my media entries, I chose not to link the "users" table to "reviews". It will only be used for authentication.
 
-- `Media`: Will contain every type of data the media I add may have, for example books, video games, movies and series all have a synopsis.  
-  The [media type](https://github.com/Guillaume-SE/Codex/blob/main/app/enums/MediaTypes.ts) will determine how the rest of the information is added to a dedicated table.
+- `media`: contains every type of data the media I add may have. But also information specific to them, enabling them to be categorized within my application.
 
-- `Reviews`: Reviews are created as soon as a media is added, and a review cannot exist without its associated media. This is one of the reasons why `rating` and `opinion` are one of the only nullable columns, because if I haven't yet seen the film, read the book, played the game, there is no reason to assign a value to these 2 columns.  
-  The media will have the appropriate [status](https://github.com/Guillaume-SE/Codex/blob/main/app/enums/ReviewStatus.ts) for this specific case.
+- `reviews`: contains everything related to my opinion about a media.
 
-- `Covers`: Each media is associated with an official cover that easily identifies it. If an official cover has not been found on the internet (or in poor quality), a default cover is automatically assigned.
+- `covers`: contains the official covers in good quality, making it easy to identify each media.
 
-- `movies_infos`: contains all media-specific information relating to the films.
+- `games_infos`: contains all video games related media information.
 
-- `games_infos`: contains all media information related to video games.
+- `movies_infos`: contains all movies related media information.
 
-- `seasons_infos`: contains all the information specific to media with a seasonal structure, such as series and anime.
+- `series_infos`: contains all series related media information.
 
-- `books_infos`: contains all book-related media information.
+- `anime_infos`: contains all anime related media information.
+
+- `books_infos`: contains all book related media information.
+
+- `tags`: allow to give to each media a tag who can be used to show related result.
+
+- `media_contributors`: allows to know who worked on the related media and what their role was.
+
+- `category_types`: allows to assign one media types to multiple categories and avoid types names duplication.
+
+- `category_genres`: allows to assign one media genres to multiple categories and avoid genres names duplication.
 
 ## Future plans
 
