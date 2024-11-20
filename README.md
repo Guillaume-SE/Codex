@@ -5,6 +5,8 @@
 ![Static Badge](https://img.shields.io/badge/node.js-6DA55F?style=for-the-badge&logo=node.js&logoColor=white)
 ![Static Badge](https://img.shields.io/badge/adonis-4031A9?style=for-the-badge&logo=adonisjs&logoColor=white)
 ![Static Badge](https://img.shields.io/badge/MySQL-F29111?style=for-the-badge&logo=mysql&logoColor=marine)
+![Static Badge](https://img.shields.io/badge/Inertia-black?style=for-the-badge&logo=inertia&color=white)
+![Static Badge](https://img.shields.io/badge/Vue.JS-68C575?style=for-the-badge&logo=vuedotjs&color=black)
 
 # What's Codex ?
 
@@ -44,7 +46,7 @@ It also allows me to keep up to date with the ones I've planned to see, the ones
 ## Future plans
 
 - Restrict access to certain pages and functions to non-administrator users.
-- Search medias by title and a number of filters (genre, rating, name, etc).
+- Pilot all data with a dashboard.
 - Statistical display of media distribution according to various criteria.
 - Adding a feature to track "collections".
 
@@ -67,11 +69,16 @@ npm run dev
 
 # create the database
 node ace migration:run
+
+# seed the db with fake data
+node ace db:seed
+# can also choose wich seed to run with
+node ace db:seed -i
 ```
 
 ## Status
 
-21/10/24: Started the front with Inertia and Vue.
+20/11/24: Factories completed, now plan to complete the filters options for users.
 
 ## Other
 
