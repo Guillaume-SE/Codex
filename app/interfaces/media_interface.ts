@@ -1,4 +1,5 @@
 import { DateTime } from 'luxon'
+import { IMediaContributor } from './media_contributor_interface.js'
 
 interface IBaseMedia {
   name: string
@@ -12,6 +13,7 @@ export interface IMediaPayload extends IBaseMedia {
   typeId: number
   tagId: number
   genreId: Array<number>
+  contributors: IMediaContributor[]
   platformId?: number | null
   duration?: number | null
   seriesSeasonLength?: number | null
