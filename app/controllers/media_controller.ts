@@ -34,7 +34,6 @@ export default class MediaController {
     try {
       const { params, ...data } = await request.validateUsing(updateMediaValidator)
       const media = await this.mediaService.update(data, mediaId)
-
       return response.status(201).json(media)
     } catch (error) {
       return response.status(400).json({ error, customError: error.message })
