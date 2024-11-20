@@ -13,6 +13,7 @@ import SeriesInfo from '#models/series_info'
 import Tag from '#models/tag'
 import { BaseModel, belongsTo, column, hasMany, hasOne, manyToMany } from '@adonisjs/lucid/orm'
 import type { BelongsTo, HasMany, HasOne, ManyToMany } from '@adonisjs/lucid/types/relations'
+import { DateTime } from 'luxon'
 
 export default class Media extends BaseModel {
   public static table = 'media'
@@ -35,8 +36,8 @@ export default class Media extends BaseModel {
   @column({ columnName: 'alternative_name', serializeAs: 'alternativeName' })
   declare alternativeName: string | null
 
-  @column({ serializeAs: 'releasedDate' })
-  declare released: string | null
+  @column.dateTime()
+  declare released: DateTime | null
 
   @column()
   declare synopsis: string | null

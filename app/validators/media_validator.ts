@@ -1,26 +1,31 @@
 import vine from '@vinejs/vine'
+import { DateTime } from 'luxon'
 
-export const createMediaValidator = vine.withMetaData<{ categoryId: number }>().compile(
+export const createMediaValidator = vine.compile(
   vine.object({
     categoryId: vine.number().isExists({ table: 'media_categories', column: 'id' }),
     statusId: vine.number().isExists({ table: 'media_statuses', column: 'id' }),
-    typeId: vine
-      .number()
-      .isExists({ table: 'media_types', column: 'id' })
-      .isAssociatedTo({ table: 'media_types', pk_column: 'id', fk_column: 'category_id' }),
+    typeId: vine.number().isExists({ table: 'media_types', column: 'id' }),
     name: vine.string().trim(),
     alternativeName: vine.string().trim().nullable(),
-    released: vine.string().trim().nullable(),
+    released: vine
+      .date()
+      .transform((value) => {
+        if (value === undefined || !value) {
+          return null
+        }
+        return DateTime.fromJSDate(value)
+      })
+      .nullable(),
     synopsis: vine.string().trim().nullable(),
     tagId: vine.number().isExists({ table: 'tags', column: 'id' }),
-    genreId: vine
-      .array(
-        vine
-          .number()
-          .isExists({ table: 'genres', column: 'id' })
-          .isAssociatedTo({ table: 'genres', pk_column: 'id', fk_column: 'category_id' })
-      )
-      .distinct(),
+    genreId: vine.array(vine.number().isExists({ table: 'genres', column: 'id' })).distinct(),
+    contributors: vine.array(
+      vine.object({
+        contributorId: vine.number().isExists({ table: 'contributors', column: 'id' }),
+        roleId: vine.number().isExists({ table: 'contributor_roles', column: 'id' }),
+      })
+    ),
     // specific infos
     platformId: vine
       .number()
@@ -34,7 +39,7 @@ export const createMediaValidator = vine.withMetaData<{ categoryId: number }>().
   })
 )
 
-export const updateMediaValidator = vine.withMetaData<{ categoryId: number }>().compile(
+export const updateMediaValidator = vine.compile(
   vine.object({
     //params
     params: vine.object({
@@ -43,23 +48,27 @@ export const updateMediaValidator = vine.withMetaData<{ categoryId: number }>().
     //body
     categoryId: vine.number().isExists({ table: 'media_categories', column: 'id' }),
     statusId: vine.number().isExists({ table: 'media_statuses', column: 'id' }),
-    typeId: vine
-      .number()
-      .isExists({ table: 'media_types', column: 'id' })
-      .isAssociatedTo({ table: 'media_types', pk_column: 'id', fk_column: 'category_id' }),
+    typeId: vine.number().isExists({ table: 'media_types', column: 'id' }),
     name: vine.string().trim(),
     alternativeName: vine.string().trim().nullable(),
-    released: vine.string().trim().nullable(),
+    released: vine
+      .date()
+      .transform((value) => {
+        if (value === undefined || !value) {
+          return null
+        }
+        return DateTime.fromJSDate(value)
+      })
+      .nullable(),
     synopsis: vine.string().trim().nullable(),
     tagId: vine.number().isExists({ table: 'tags', column: 'id' }),
-    genreId: vine
-      .array(
-        vine
-          .number()
-          .isExists({ table: 'genres', column: 'id' })
-          .isAssociatedTo({ table: 'genres', pk_column: 'id', fk_column: 'category_id' })
-      )
-      .distinct(),
+    genreId: vine.array(vine.number().isExists({ table: 'genres', column: 'id' })).distinct(),
+    contributors: vine.array(
+      vine.object({
+        contributorId: vine.number().isExists({ table: 'contributors', column: 'id' }),
+        roleId: vine.number().isExists({ table: 'contributor_roles', column: 'id' }),
+      })
+    ),
     // specific infos
     platformId: vine
       .number()

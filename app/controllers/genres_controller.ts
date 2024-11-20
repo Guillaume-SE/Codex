@@ -13,10 +13,7 @@ export default class GenresController {
 
   public async addOne({ request, response }: HttpContext) {
     try {
-      const selectedCategoryId = request.body().categoryId
-      const data = await request.validateUsing(createGenreValidator, {
-        meta: { categoryId: selectedCategoryId },
-      })
+      const data = await request.validateUsing(createGenreValidator)
       const genre = await this.genreService.store(data)
 
       return response.status(201).json(genre)
@@ -29,10 +26,7 @@ export default class GenresController {
     const genreId = params.genreId
 
     try {
-      const selectedCategoryId = request.body().categoryId
-      const { params, ...data } = await request.validateUsing(updateGenreValidator, {
-        meta: { categoryId: selectedCategoryId },
-      })
+      const { params, ...data } = await request.validateUsing(updateGenreValidator)
       const genre = await this.genreService.update(data, genreId)
 
       return response.status(201).json(genre)

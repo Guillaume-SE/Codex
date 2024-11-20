@@ -6,11 +6,11 @@ export default class MediaStatusSeeder extends BaseSeeder {
     await MediaStatus.createMany([
       {
         id: 1,
-        name: 'terminé',
+        name: 'en cours',
       },
       {
         id: 2,
-        name: 'en cours',
+        name: 'terminé',
       },
       {
         id: 3,

@@ -1,6 +1,7 @@
 import { IGenre } from '#interfaces/genre_interface'
 import { IMediaContributors } from '#interfaces/media_contributor_interface'
 import Media from '#models/media'
+import { DateTime } from 'luxon'
 
 abstract class BaseMediaFormatter {
   id: number
@@ -9,7 +10,7 @@ abstract class BaseMediaFormatter {
   type: string
   name: string
   alternativeName: string | null
-  released: string | null
+  released: DateTime | null
   synopsis: string | null
   tag: string
   genres: string[]
@@ -149,7 +150,7 @@ export class MediaFormatterFactory {
       case 'series':
         return new SeriesMediaFormatter(media)
       default:
-        throw new Error('Catégorie du média inconnue')
+        throw new Error('Catégorie du media inconnue')
     }
   }
 

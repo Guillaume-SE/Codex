@@ -1,10 +1,11 @@
 import { MediaFormatterFactory } from '#classes/MediaFormatter'
-import { MediaCategories } from '#enums/MediaCategories'
 import type { IMediaPayload } from '#interfaces/media_interface'
 import Cover from '#models/cover'
 import Media from '#models/media'
 import MediaCategory from '#models/media_category'
+import MediaContributor from '#models/media_contributor'
 import CoverService from '#services/cover_service'
+import type { MediaCategories } from '#types/MediaCategories'
 import { showByCategoryMediaValidator } from '#validators/media_validator'
 import { inject } from '@adonisjs/core'
 import db from '@adonisjs/lucid/services/db'
@@ -12,7 +13,7 @@ import { Infer } from '@vinejs/vine/types'
 
 @inject()
 export default class MediaService {
-  constructor(readonly coverService: CoverService) {}
+  constructor(protected coverService: CoverService) {}
   public async store(data: IMediaPayload) {
     const {
       statusId,
@@ -24,6 +25,7 @@ export default class MediaService {
       synopsis,
       tagId,
       genreId,
+      contributors,
       ...categoryRelatedMediaData
     } = data
 
@@ -52,6 +54,15 @@ export default class MediaService {
 
       await media.related('genres').sync(genreId)
 
+      for (const contributor of contributors) {
+        await media.related('contributors').createMany([
+          {
+            contributorId: contributor.contributorId,
+            roleId: contributor.roleId,
+          },
+        ])
+      }
+
       if (selectedCategoryName === 'game') {
         await media.related('gameInfo').create(categoryRelatedMediaData)
       } else if (selectedCategoryName === 'book') {
@@ -78,6 +89,7 @@ export default class MediaService {
       synopsis,
       tagId,
       genreId,
+      contributors,
       ...categoryRelatedMediaData
     } = data
 
@@ -93,6 +105,7 @@ export default class MediaService {
     }
 
     const media = await Media.findOrFail(mediaId)
+    // const mediaContributors = await MediaContributor.findManyBy('media_id', mediaId)
     const category = await MediaCategory.findOrFail(categoryId)
     const categoryName = category.name
     const searchPayload = { mediaId: mediaId }
@@ -106,6 +119,18 @@ export default class MediaService {
         .save()
 
       await media.related('genres').sync(genreId)
+
+      // simpler to delete all actual contributors
+      await MediaContributor.query({ client: trx }).where('media_id', mediaId).delete()
+      // and add fresh one
+      for (const contributor of contributors) {
+        await media.related('contributors').createMany([
+          {
+            contributorId: contributor.contributorId,
+            roleId: contributor.roleId,
+          },
+        ])
+      }
 
       if (categoryName === 'game') {
         await media.related('gameInfo').updateOrCreate(searchPayload, categoryRelatedMediaData)
@@ -164,7 +189,7 @@ export default class MediaService {
       })
       .if(filters.types, (q) => {
         q.where((subQuery) => {
-          subQuery.whereIn('category_id', filters.types!)
+          subQuery.whereIn('type_id', filters.types!)
         })
       })
       .if(filters.genres, (q) => {

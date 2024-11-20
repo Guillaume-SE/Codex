@@ -1,23 +1,18 @@
 import vine from '@vinejs/vine'
 
-export const createMediaTypeValidator = vine.withMetaData<{ categoryId: number }>().compile(
+export const createMediaTypeValidator = vine.compile(
   vine.object({
     name: vine
       .string()
       .trim()
-      .unique(async (db, value, field) => {
-        const typeIsUnique = await db
-          .from('media_types')
-          .where('name', value)
-          .andWhere('category_id', '=', field.meta.categoryId)
-          .first()
+      .unique(async (db, value) => {
+        const typeIsUnique = await db.from('media_types').where('name', value).first()
         return !typeIsUnique
       }),
-    categoryId: vine.number().isExists({ table: 'media_categories', column: 'id' }),
   })
 )
 
-export const updateMediaTypeValidator = vine.withMetaData<{ categoryId: number }>().compile(
+export const updateMediaTypeValidator = vine.compile(
   vine.object({
     // params
     params: vine.object({
@@ -27,14 +22,9 @@ export const updateMediaTypeValidator = vine.withMetaData<{ categoryId: number }
     name: vine
       .string()
       .trim()
-      .unique(async (db, value, field) => {
-        const typeIsUnique = await db
-          .from('media_types')
-          .where('name', value)
-          .andWhere('category_id', '=', field.meta.categoryId)
-          .first()
+      .unique(async (db, value) => {
+        const typeIsUnique = await db.from('media_types').where('name', value).first()
         return !typeIsUnique
       }),
-    categoryId: vine.number().isExists({ table: 'media_categories', column: 'id' }),
   })
 )

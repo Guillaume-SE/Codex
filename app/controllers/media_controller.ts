@@ -1,8 +1,7 @@
-import type { MediaCategories } from '#enums/MediaCategories'
-import Genre from '#models/genre'
 import MediaStatus from '#models/media_status'
-import MediaType from '#models/media_type'
+import MediaCategoryService from '#services/media_category_service'
 import MediaService from '#services/media_service'
+import type { MediaCategories } from '#types/MediaCategories'
 import {
   createMediaValidator,
   deleteMediaValidator,
@@ -15,15 +14,14 @@ import type { HttpContext } from '@adonisjs/core/http'
 
 @inject()
 export default class MediaController {
-  constructor(readonly mediaService: MediaService) {}
+  constructor(
+    protected mediaService: MediaService,
+    protected mediaCategoryService: MediaCategoryService
+  ) {}
 
   async addOne({ request, response }: HttpContext) {
     try {
-      const selectedCategoryId = request.body().categoryId
-      // meta used to pass data to use them in queries in validation process
-      const data = await request.validateUsing(createMediaValidator, {
-        meta: { categoryId: selectedCategoryId },
-      })
+      const data = await request.validateUsing(createMediaValidator)
       const newMedia = await this.mediaService.store(data)
       return response.status(201).json(newMedia)
     } catch (error) {
@@ -34,12 +32,8 @@ export default class MediaController {
   async updateOne({ params, response, request }: HttpContext) {
     const mediaId = params.mediaId
     try {
-      const selectedCategoryId = request.body().categoryId
-      const { params, ...data } = await request.validateUsing(updateMediaValidator, {
-        meta: { categoryId: selectedCategoryId },
-      })
+      const { params, ...data } = await request.validateUsing(updateMediaValidator)
       const media = await this.mediaService.update(data, mediaId)
-
       return response.status(201).json(media)
     } catch (error) {
       return response.status(400).json({ error, customError: error.message })
@@ -90,21 +84,12 @@ export default class MediaController {
     try {
       const filters = await request.validateUsing(showByCategoryMediaValidator)
       const category = filters.params.categoryName
-      const mediaList = await this.mediaService.getByCategory(category, filters)
+
       const config = categoryConfig[category]
-      const mediaStatusesList = await MediaStatus.query().select('id', 'name').orderBy('id')
-      const mediaTypesList = await MediaType.query()
-        .select('id', 'name')
-        .whereHas('category', (categoryQuery) => {
-          categoryQuery.where('name', category)
-        })
-        .orderBy('name')
-      const mediaGenresList = await Genre.query()
-        .select('id', 'name')
-        .whereHas('category', (categoryQuery) => {
-          categoryQuery.where('name', category)
-        })
-        .orderBy('name')
+      const mediaList = await this.mediaService.getByCategory(category, filters)
+      const mediaStatusesList = await MediaStatus.all()
+      const mediaTypesList = await this.mediaCategoryService.getCategoryTypes(category)
+      const mediaGenresList = await this.mediaCategoryService.getCategoryGenres(category)
 
       return inertia.render('media/MediaList', {
         mediaList,

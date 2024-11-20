@@ -5,11 +5,9 @@ export function useRatingColorClass(rating: number | null | undefined): string {
 
   if (rating >= 0 && rating <= 4) {
     return 'rating-bad'
-  }
-  if (rating >= 5 && rating <= 7) {
+  } else if (rating >= 5 && rating <= 7) {
     return 'rating-mid'
-  }
-  if (rating >= 8 && rating <= 10) {
+  } else if (rating >= 8 && rating <= 10) {
     return 'rating-good'
   }
 

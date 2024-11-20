@@ -8,14 +8,11 @@ import type { HttpContext } from '@adonisjs/core/http'
 
 @inject()
 export default class MediaTypesController {
-  constructor(readonly mediaTypeService: MediaTypeService) {}
+  constructor(protected mediaTypeService: MediaTypeService) {}
 
   public async addOne({ request, response }: HttpContext) {
     try {
-      const selectedCategoryId = request.body().categoryId
-      const data = await request.validateUsing(createMediaTypeValidator, {
-        meta: { categoryId: selectedCategoryId },
-      })
+      const data = await request.validateUsing(createMediaTypeValidator)
       const type = await this.mediaTypeService.store(data)
 
       return response.status(201).json(type)
@@ -27,10 +24,7 @@ export default class MediaTypesController {
   public async updateOne({ params, request, response }: HttpContext) {
     const typeId = params.typeId
     try {
-      const selectedCategoryId = request.body().categoryId
-      const { params, ...data } = await request.validateUsing(updateMediaTypeValidator, {
-        meta: { categoryId: selectedCategoryId },
-      })
+      const { params, ...data } = await request.validateUsing(updateMediaTypeValidator)
       const type = await this.mediaTypeService.update(data, typeId)
 
       return response.status(201).json(type)

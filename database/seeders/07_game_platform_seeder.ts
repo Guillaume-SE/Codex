@@ -3,26 +3,29 @@ import { BaseSeeder } from '@adonisjs/lucid/seeders'
 
 export default class GamePlatformSeeder extends BaseSeeder {
   async run() {
-    await GamePlatform.createMany([
+    const uniqueKey = 'name'
+
+    await GamePlatform.updateOrCreateMany(uniqueKey, [
       {
-        id: 1,
         name: 'Xbox',
       },
       {
-        id: 2,
         name: 'PC',
       },
       {
-        id: 3,
-        name: 'PlayStation 5',
+        name: 'PlayStation 2',
       },
       {
-        id: 4,
-        name: 'Mobile',
+        name: 'Game Boy Advance',
       },
       {
-        id: 5,
-        name: 'Nintendo Switch',
+        name: 'PSP',
+      },
+      {
+        name: 'Xbox 360',
+      },
+      {
+        name: 'Xbox One',
       },
     ])
   }

@@ -3,36 +3,48 @@ import { BaseSeeder } from '@adonisjs/lucid/seeders'
 
 export default class GenreSeeder extends BaseSeeder {
   async run() {
-    await Genre.createMany([
+    const uniqueKey = 'name'
+
+    await Genre.updateOrCreateMany(uniqueKey, [
       {
         id: 1,
         name: 'FPS',
-        categoryId: 1,
       },
       {
         id: 2,
         name: 'Comédie',
-        categoryId: 2,
       },
       {
         id: 3,
         name: 'Isekai',
-        categoryId: 3,
       },
       {
         id: 4,
         name: 'Suspense',
-        categoryId: 4,
       },
       {
         id: 5,
         name: 'Action',
-        categoryId: 5,
       },
       {
         id: 6,
-        name: 'Action',
-        categoryId: 1,
+        name: 'Shonen',
+      },
+      {
+        id: 7,
+        name: 'Aventure',
+      },
+      {
+        id: 8,
+        name: 'Horreur',
+      },
+      {
+        id: 9,
+        name: 'RPG',
+      },
+      {
+        id: 10,
+        name: 'Course',
       },
     ])
   }

@@ -1,7 +1,7 @@
 import Media from '#models/media'
 import MediaCategory from '#models/media_category'
-import { BaseModel, belongsTo, column, manyToMany } from '@adonisjs/lucid/orm'
-import type { BelongsTo, ManyToMany } from '@adonisjs/lucid/types/relations'
+import { BaseModel, column, manyToMany } from '@adonisjs/lucid/orm'
+import type { ManyToMany } from '@adonisjs/lucid/types/relations'
 
 export default class Genre extends BaseModel {
   public static table = 'genres'
@@ -12,15 +12,7 @@ export default class Genre extends BaseModel {
   @column()
   declare name: string
 
-  @column({ columnName: 'category_id', serializeAs: 'categoryId' })
-  declare categoryId: number
-
   //RELATIONS
-  @belongsTo(() => MediaCategory, {
-    foreignKey: 'categoryId',
-  })
-  declare category: BelongsTo<typeof MediaCategory>
-
   @manyToMany(() => Media, {
     pivotTable: 'media_genres',
     pivotForeignKey: 'genre_id',
@@ -28,4 +20,12 @@ export default class Genre extends BaseModel {
     pivotTimestamps: false,
   })
   declare media: ManyToMany<typeof Media>
+
+  @manyToMany(() => MediaCategory, {
+    pivotTable: 'category_genres',
+    pivotForeignKey: 'genre_id',
+    pivotRelatedForeignKey: 'category_id',
+    pivotTimestamps: false,
+  })
+  declare categories: ManyToMany<typeof MediaCategory>
 }
