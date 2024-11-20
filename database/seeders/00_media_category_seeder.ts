@@ -5,6 +5,7 @@ import { BaseSeeder } from '@adonisjs/lucid/seeders'
 export default class MediaCategorySeeder extends BaseSeeder {
   async run() {
     await MediaCategory.createMany([
+      // all mandatory
       {
         id: MediaCategoriesEnum.GAME,
         name: 'game',
