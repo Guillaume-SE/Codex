@@ -5,7 +5,7 @@ defineProps<{
   type: string
   placeholder?: string
   id?: string
-  value?: string | number
+  value?: string | number | object
 }>()
 </script>
 <template>
