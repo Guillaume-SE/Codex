@@ -1,9 +1,11 @@
 import { IGenre } from '#interfaces/genre_interface'
 import { IMediaContributors } from '#interfaces/media_contributor_interface'
+import { IPaginated } from '#interfaces/paginated_interface'
 import Media from '#models/media'
+import { ModelPaginatorContract } from '@adonisjs/lucid/types/model'
 import { DateTime } from 'luxon'
 
-abstract class BaseMediaFormatter {
+export abstract class BaseMediaPresenter {
   id: number
   status: string
   category: string
@@ -39,7 +41,7 @@ abstract class BaseMediaFormatter {
     this.synopsis = media.synopsis
     this.tag = media.tag.name
     this.genres = media.genres.map((genre: IGenre) => genre.name)
-    this.contributors = this.formatContributors(media.contributors)
+    this.contributors = BaseMediaPresenter.formatContributors(media.contributors)
 
     if (media.review) {
       this.review = {
@@ -60,7 +62,9 @@ abstract class BaseMediaFormatter {
     }
   }
 
-  protected formatContributors(mediaContributors: IMediaContributors[]): Record<string, string[]> {
+  public static formatContributors(
+    mediaContributors: IMediaContributors[]
+  ): Record<string, string[]> {
     return mediaContributors.reduce(
       (acc: Record<string, string[]>, mediaContributor: IMediaContributors) => {
         const roleName = mediaContributor.role?.name
@@ -80,8 +84,7 @@ abstract class BaseMediaFormatter {
   }
 }
 
-// Specific media type formatters
-class GameMediaFormatter extends BaseMediaFormatter {
+class GameMediaPresenter extends BaseMediaPresenter {
   gameInfos: { platform: string | null }
 
   constructor(media: any) {
@@ -92,7 +95,7 @@ class GameMediaFormatter extends BaseMediaFormatter {
   }
 }
 
-class MovieMediaFormatter extends BaseMediaFormatter {
+class MovieMediaPresenter extends BaseMediaPresenter {
   movieInfos: { duration: number | null }
 
   constructor(media: any) {
@@ -103,7 +106,7 @@ class MovieMediaFormatter extends BaseMediaFormatter {
   }
 }
 
-class BookMediaFormatter extends BaseMediaFormatter {
+class BookMediaPresenter extends BaseMediaPresenter {
   bookInfos: { pages: number | null }
 
   constructor(media: any) {
@@ -114,7 +117,7 @@ class BookMediaFormatter extends BaseMediaFormatter {
   }
 }
 
-class AnimeMediaFormatter extends BaseMediaFormatter {
+class AnimeMediaPresenter extends BaseMediaPresenter {
   animeInfos: { seasonLength: number | null }
 
   constructor(media: any) {
@@ -125,7 +128,7 @@ class AnimeMediaFormatter extends BaseMediaFormatter {
   }
 }
 
-class SeriesMediaFormatter extends BaseMediaFormatter {
+class SeriesMediaPresenter extends BaseMediaPresenter {
   seriesInfos: { seasonLength: number | null }
 
   constructor(media: any) {
@@ -136,29 +139,38 @@ class SeriesMediaFormatter extends BaseMediaFormatter {
   }
 }
 
-export class MediaFormatterFactory {
-  static createFormatter(media: any): BaseMediaFormatter {
+export class MediaPresenterFactory {
+  static createPresenter(media: any): BaseMediaPresenter {
     switch (media.category.name) {
       case 'game':
-        return new GameMediaFormatter(media)
+        return new GameMediaPresenter(media)
       case 'book':
-        return new BookMediaFormatter(media)
+        return new BookMediaPresenter(media)
       case 'movie':
-        return new MovieMediaFormatter(media)
+        return new MovieMediaPresenter(media)
       case 'anime':
-        return new AnimeMediaFormatter(media)
+        return new AnimeMediaPresenter(media)
       case 'series':
-        return new SeriesMediaFormatter(media)
+        return new SeriesMediaPresenter(media)
       default:
         throw new Error('Catégorie du media inconnue')
     }
   }
 
-  static formatMediaList(mediaList: Media[]): BaseMediaFormatter[] {
-    return mediaList.map((media) => this.createFormatter(media))
+  static presentPaginatedMediaList(
+    paginatorContract: ModelPaginatorContract<Media>
+  ): IPaginated<BaseMediaPresenter> {
+    return {
+      meta: paginatorContract.getMeta(),
+      data: paginatorContract.all().map((data) => this.createPresenter(data)),
+    }
   }
 
-  static formatMedia(media: Media): BaseMediaFormatter {
-    return this.createFormatter(media)
+  static presentMediaList(mediaList: Media[]): BaseMediaPresenter[] {
+    return mediaList.map((data) => this.createPresenter(data))
+  }
+
+  static presentMedia(data: Media): BaseMediaPresenter {
+    return this.createPresenter(data)
   }
 }
