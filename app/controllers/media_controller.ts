@@ -1,4 +1,7 @@
+import { MediaPresenterFactory } from '#classes/MediaPresenter'
+import GamePlatform from '#models/game_platform'
 import MediaStatus from '#models/media_status'
+import ContributorService from '#services/contributor_service'
 import MediaCategoryService from '#services/media_category_service'
 import MediaService from '#services/media_service'
 import type { MediaCategories } from '#types/MediaCategories'
@@ -16,7 +19,8 @@ import type { HttpContext } from '@adonisjs/core/http'
 export default class MediaController {
   constructor(
     protected mediaService: MediaService,
-    protected mediaCategoryService: MediaCategoryService
+    protected mediaCategoryService: MediaCategoryService,
+    protected contributorService: ContributorService
   ) {}
 
   async addOne({ request, response }: HttpContext) {
@@ -82,23 +86,30 @@ export default class MediaController {
     }
 
     try {
+      const page = request.input('page')
       const filters = await request.validateUsing(showByCategoryMediaValidator)
       const category = filters.params.categoryName
 
       const config = categoryConfig[category]
-      const mediaList = await this.mediaService.getByCategory(category, filters)
+      const mediaList = await this.mediaService.getByCategory(category, filters, page)
       const mediaStatusesList = await MediaStatus.all()
       const mediaTypesList = await this.mediaCategoryService.getCategoryTypes(category)
       const mediaGenresList = await this.mediaCategoryService.getCategoryGenres(category)
+      const gamePlatformsList = await GamePlatform.all()
+
+      mediaList.baseUrl(`/media/${category}`)
+
+      const paginatedMediaList = MediaPresenterFactory.presentPaginatedMediaList(mediaList)
 
       return inertia.render('media/MediaList', {
-        mediaList,
+        mediaList: paginatedMediaList,
         title: config.title,
         mediaCategory: category,
         mediaCategoryFr: config.categoryFr,
         mediaStatusesList,
         mediaTypesList,
         mediaGenresList,
+        gamePlatformsList,
       })
     } catch (error) {
       return response.redirect('/')

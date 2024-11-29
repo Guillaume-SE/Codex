@@ -1,17 +1,8 @@
 <script setup lang="ts">
-import type { IGenre } from '#interfaces/genre_interface'
-import {
-  IAnimeMediaFormatted,
-  IBookMediaFormatted,
-  IGameMediaFormatted,
-  IMovieMediaFormatted,
-  ISeriesMediaFormatted,
-} from '#interfaces/media_formatted_interface'
-import type { IMediaStatus } from '#interfaces/media_status_interface'
-import { IMediaType } from '#interfaces/media_type_interface'
+import MediaController from '#controllers/media_controller'
 import type { MediaCategories, MediaCategoriesFr } from '#types/MediaCategories'
-import { router } from '@inertiajs/vue3'
-import { reactive } from 'vue'
+import { InferPageProps } from '@adonisjs/inertia/types'
+import { useForm } from '@inertiajs/vue3'
 import AppHead from '~/components/AppHead.vue'
 import MediaCard from '~/components/MediaCard.vue'
 import InputComp from '~/components/ui/InputComp.vue'
@@ -19,29 +10,56 @@ import LabelComp from '~/components/ui/LabelComp.vue'
 import { useCapitalizeFirstLetter } from '~/composables/useCapitalizeFirstLetter'
 import AppLayout from '~/layouts/AppLayout.vue'
 
-defineProps<{
+const props = defineProps<{
   title: string
-  mediaList:
-    | IGameMediaFormatted[]
-    | IMovieMediaFormatted[]
-    | ISeriesMediaFormatted[]
-    | IAnimeMediaFormatted[]
-    | IBookMediaFormatted[]
+  mediaList: InferPageProps<MediaController, 'showByCategory'>['mediaList']
   mediaCategory: MediaCategories
   mediaCategoryFr: MediaCategoriesFr
-  mediaStatusesList: IMediaStatus[]
-  mediaTypesList: IMediaType[]
-  mediaGenresList: IGenre[]
+  mediaStatusesList: InferPageProps<MediaController, 'showByCategory'>['mediaStatusesList']
+  mediaTypesList: InferPageProps<MediaController, 'showByCategory'>['mediaTypesList']
+  mediaGenresList: InferPageProps<MediaController, 'showByCategory'>['mediaGenresList']
+  gamePlatformsList: InferPageProps<MediaController, 'showByCategory'>['gamePlatformsList']
 }>()
 
-const filters = reactive({
+interface IFilters {
+  search: string
+  status: number[]
+  types: number[]
+  genres: number[]
+  platforms: number[]
+}
+
+const filters = useForm<IFilters>({
   search: '',
   status: [],
   types: [],
   genres: [],
+  platforms: [],
 })
 
 const capitalizeFirstLetter = useCapitalizeFirstLetter
+
+function fetchNewPageData(url: string | null) {
+  filters.get(`${url}`, { preserveState: true })
+}
+
+function handlePrevClick(toFirstPage: boolean) {
+  if (props.mediaList.meta.currentPage > props.mediaList.meta.firstPage) {
+    if (toFirstPage) {
+      return fetchNewPageData(props.mediaList.meta.firstPageUrl)
+    }
+    return fetchNewPageData(props.mediaList.meta.previousPageUrl)
+  }
+}
+
+function handleNextClick(toLastPage: boolean) {
+  if (props.mediaList.meta.currentPage < props.mediaList.meta.lastPage) {
+    if (toLastPage) {
+      return fetchNewPageData(props.mediaList.meta.lastPageUrl)
+    }
+    return fetchNewPageData(props.mediaList.meta.nextPageUrl)
+  }
+}
 </script>
 
 <template>
@@ -52,8 +70,7 @@ const capitalizeFirstLetter = useCapitalizeFirstLetter
       <div>
         <form
           method="GET"
-          type="search"
-          @submit.prevent="router.get(`/media/${mediaCategory}`, filters, { preserveState: true })"
+          @submit.prevent="filters.get(`/media/${props.mediaCategory}`, { preserveState: true })"
         >
           <div>
             <LabelComp text="Recherche" textPosition="up">
@@ -107,15 +124,27 @@ const capitalizeFirstLetter = useCapitalizeFirstLetter
                 </li>
               </ul>
             </div>
+
+            <div v-if="props.mediaCategory === 'game'">
+              <span>Plateformes</span>
+              <ul>
+                <li v-for="plateforme in gamePlatformsList" :key="plateforme.id">
+                  <LabelComp :text="capitalizeFirstLetter(plateforme.name)" textPosition="down">
+                    <InputComp v-model="filters.platforms" type="checkbox" :value="plateforme.id" />
+                  </LabelComp>
+                </li>
+              </ul>
+            </div>
+
             <button type="submit">Appliquer</button>
           </div>
         </form>
       </div>
 
       <!-- cards -->
-      <div v-if="mediaList.length > 0" class="media-card-container">
+      <div v-if="mediaList.data.length > 0" class="media-card-container">
         <MediaCard
-          v-for="media in mediaList"
+          v-for="media in mediaList.data"
           :key="media.id"
           :media="media"
           :mediaCategory="mediaCategory"
@@ -125,6 +154,35 @@ const capitalizeFirstLetter = useCapitalizeFirstLetter
       <div v-else>
         <p>Aucun résultat</p>
       </div>
+    </div>
+    <div>
+      <nav>
+        <button
+          :disabled="props.mediaList.meta.currentPage === props.mediaList.meta.firstPage"
+          @click="handlePrevClick(true)"
+        >
+          <<
+        </button>
+        <button
+          :disabled="props.mediaList.meta.currentPage === props.mediaList.meta.firstPage"
+          @click="handlePrevClick(false)"
+        >
+          <
+        </button>
+        <span>{{ props.mediaList.meta.currentPage }} / {{ props.mediaList.meta.lastPage }}</span>
+        <button
+          :disabled="props.mediaList.meta.currentPage === props.mediaList.meta.lastPage"
+          @click="handleNextClick(false)"
+        >
+          >
+        </button>
+        <button
+          :disabled="props.mediaList.meta.currentPage === props.mediaList.meta.lastPage"
+          @click="handleNextClick(true)"
+        >
+          >>
+        </button>
+      </nav>
     </div>
   </AppLayout>
 </template>

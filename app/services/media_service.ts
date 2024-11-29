@@ -1,4 +1,4 @@
-import { MediaFormatterFactory } from '#classes/MediaFormatter'
+import { MediaPresenterFactory } from '#classes/MediaPresenter'
 import type { IMediaPayload } from '#interfaces/media_interface'
 import Cover from '#models/cover'
 import Media from '#models/media'
@@ -167,7 +167,8 @@ export default class MediaService {
 
   async getByCategory(
     category: MediaCategories,
-    filters: Infer<typeof showByCategoryMediaValidator>
+    filters: Infer<typeof showByCategoryMediaValidator>,
+    page: number = 1
   ) {
     const mediaQuery = await Media.query()
       .whereHas('category', (categoryQuery) => {
@@ -197,6 +198,11 @@ export default class MediaService {
           genreQuery.whereIn('genre_id', filters.genres!)
         })
       })
+      .if(filters.platforms, (q) => {
+        q.whereHas('gameInfo', (genreQuery) => {
+          genreQuery.whereIn('platform_id', filters.platforms!)
+        })
+      })
       .preload('status')
       .preload('category')
       .preload('type')
@@ -215,10 +221,10 @@ export default class MediaService {
       .preload('bookInfo')
       .preload('review')
       .preload('cover')
+      .orderBy('id')
+      .paginate(page, 5)
 
-    const formattedMediaList = MediaFormatterFactory.formatMediaList(mediaQuery)
-
-    return formattedMediaList
+    return mediaQuery
   }
 
   async getOne(mediaId: number) {
@@ -246,7 +252,7 @@ export default class MediaService {
         .load('review')
     })
 
-    const formatedMedia = MediaFormatterFactory.formatMedia(media)
+    const formatedMedia = MediaPresenterFactory.presentMedia(media)
 
     return formatedMedia
   }
@@ -274,7 +280,7 @@ export default class MediaService {
       .preload('review')
       .preload('cover')
 
-    const formattedMediaList = MediaFormatterFactory.formatMediaList(mediaList)
+    const formattedMediaList = MediaPresenterFactory.presentMediaList(mediaList)
 
     return formattedMediaList
   }

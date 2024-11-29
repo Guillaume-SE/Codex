@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import type {
-  IAnimeMediaFormatted,
-  IBaseMediaFormatted,
-  IBookMediaFormatted,
-  IGameMediaFormatted,
-  IMovieMediaFormatted,
-  ISeriesMediaFormatted,
-} from '#interfaces/media_formatted_interface'
+  IAnimeMediaPresented,
+  IBaseMediaPresented,
+  IBookMediaPresented,
+  IGameMediaPresented,
+  IMovieMediaPresented,
+  ISeriesMediaPresented,
+} from '#interfaces/media_presented_interface'
 import { computed } from 'vue'
 import AppHead from '~/components/AppHead.vue'
 import ImageNotAvailableIcon from '~/components/icons/ImageNotAvailableIcon.vue'
@@ -18,19 +18,19 @@ import AppLayout from '~/layouts/AppLayout.vue'
 
 const props = defineProps<{
   media:
-    | IGameMediaFormatted
-    | IMovieMediaFormatted
-    | ISeriesMediaFormatted
-    | IAnimeMediaFormatted
-    | IBookMediaFormatted
-  tagRelatedList: IBaseMediaFormatted[]
+    | IGameMediaPresented
+    | IMovieMediaPresented
+    | ISeriesMediaPresented
+    | IAnimeMediaPresented
+    | IBookMediaPresented
+  tagRelatedList: IBaseMediaPresented[]
 }>()
 
-const isGameMedia = (media: Object): media is IGameMediaFormatted => 'gameInfos' in media
-const isMovieMedia = (media: Object): media is IMovieMediaFormatted => 'movieInfos' in media
-const isSeriesMedia = (media: Object): media is ISeriesMediaFormatted => 'seriesInfos' in media
-const isAnimeMedia = (media: Object): media is IAnimeMediaFormatted => 'animeInfos' in media
-const isBookMedia = (media: Object): media is IBookMediaFormatted => 'bookInfos' in media
+const isGameMedia = (media: Object): media is IGameMediaPresented => 'gameInfos' in media
+const isMovieMedia = (media: Object): media is IMovieMediaPresented => 'movieInfos' in media
+const isSeriesMedia = (media: Object): media is ISeriesMediaPresented => 'seriesInfos' in media
+const isAnimeMedia = (media: Object): media is IAnimeMediaPresented => 'animeInfos' in media
+const isBookMedia = (media: Object): media is IBookMediaPresented => 'bookInfos' in media
 
 const formattedDuration = computed(() =>
   isMovieMedia(props.media) ? useFormattedDuration(props.media.movieInfos.duration) : null

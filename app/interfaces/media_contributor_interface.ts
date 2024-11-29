@@ -1,5 +1,3 @@
-import type { IMedia } from '#interfaces/media_interface'
-
 export interface IMediaContributor {
   contributorId: number
   roleId: number
@@ -7,13 +5,12 @@ export interface IMediaContributor {
 
 export interface IMediaContributors {
   id?: number
-  media?: IMedia
-  contributor?: {
+  contributor: {
     id: number
-    name?: string
+    name: string
   }
-  role?: {
-    id?: number
-    name?: string
+  role: {
+    id: number
+    name: string
   }
 }

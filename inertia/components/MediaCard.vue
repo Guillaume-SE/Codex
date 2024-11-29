@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import type {
-  IAnimeMediaFormatted,
-  IBaseMediaFormatted,
-  IBookMediaFormatted,
-  IGameMediaFormatted,
-  IMovieMediaFormatted,
-  ISeriesMediaFormatted,
-} from '#interfaces/media_formatted_interface'
+  IAnimeMediaPresented,
+  IBaseMediaPresented,
+  IBookMediaPresented,
+  IGameMediaPresented,
+  IMovieMediaPresented,
+  ISeriesMediaPresented,
+} from '#interfaces/media_presented_interface'
 import type { MediaCategories } from '#types/MediaCategories'
 import { Link } from '@inertiajs/vue3'
 import RatingBox from '~/components/RatingBox.vue'
@@ -15,12 +15,12 @@ import ImageNotAvailableIcon from '~/components/icons/ImageNotAvailableIcon.vue'
 
 defineProps<{
   media:
-    | IBaseMediaFormatted
-    | IGameMediaFormatted
-    | IMovieMediaFormatted
-    | ISeriesMediaFormatted
-    | IAnimeMediaFormatted
-    | IBookMediaFormatted
+    | IBaseMediaPresented
+    | IGameMediaPresented
+    | IMovieMediaPresented
+    | ISeriesMediaPresented
+    | IAnimeMediaPresented
+    | IBookMediaPresented
   mediaCategory: MediaCategories
 }>()
 </script>

@@ -1,6 +1,5 @@
-export interface IBaseMediaFormatted {
+export interface IBaseMediaPresented {
   id: number
-  mediaParentId: number | null
   status: string
   category: string
   type: string
@@ -24,31 +23,31 @@ export interface IBaseMediaFormatted {
   }
 }
 
-export interface IGameMediaFormatted extends IBaseMediaFormatted {
+export interface IGameMediaPresented extends IBaseMediaPresented {
   gameInfos: {
     platform: string | null
   }
 }
 
-export interface IMovieMediaFormatted extends IBaseMediaFormatted {
+export interface IMovieMediaPresented extends IBaseMediaPresented {
   movieInfos: {
     duration: number | null
   }
 }
 
-export interface IBookMediaFormatted extends IBaseMediaFormatted {
+export interface IBookMediaPresented extends IBaseMediaPresented {
   bookInfos: {
     pages: number | null
   }
 }
 
-export interface ISeriesMediaFormatted extends IBaseMediaFormatted {
+export interface ISeriesMediaPresented extends IBaseMediaPresented {
   seriesInfos: {
     seasonLength: number | null
   }
 }
 
-export interface IAnimeMediaFormatted extends IBaseMediaFormatted {
+export interface IAnimeMediaPresented extends IBaseMediaPresented {
   animeInfos: {
     seasonLength: number | null
   }
