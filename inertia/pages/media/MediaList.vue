@@ -3,6 +3,7 @@ import MediaController from '#controllers/media_controller'
 import type { MediaCategories, MediaCategoriesFr } from '#types/MediaCategories'
 import { InferPageProps } from '@adonisjs/inertia/types'
 import { useForm } from '@inertiajs/vue3'
+import { onMounted } from 'vue'
 import AppHead from '~/components/AppHead.vue'
 import MediaCard from '~/components/MediaCard.vue'
 import InputComp from '~/components/ui/InputComp.vue'
@@ -27,15 +28,29 @@ interface IFilters {
   types: number[]
   genres: number[]
   platforms: number[]
+  duration: string | undefined
 }
 
-const filters = useForm<IFilters>({
+const filters = useForm<IFilters>('filterResults', {
   search: '',
   status: [],
   types: [],
   genres: [],
   platforms: [],
+  duration: '',
 })
+
+const moviedurationOptions = [
+  { text: 'Toute durée', value: '' },
+  { text: '1h00', value: 60 },
+  { text: '1h30', value: 90 },
+  { text: '2h00', value: 120 },
+  { text: '2h30', value: 160 },
+  { text: '3h00', value: 180 },
+  { text: '3h30', value: 210 },
+  { text: '4h00', value: 240 },
+  { text: '4h30', value: 270 },
+]
 
 const capitalizeFirstLetter = useCapitalizeFirstLetter
 
@@ -43,23 +58,53 @@ function fetchNewPageData(url: string | null) {
   filters.get(`${url}`, { preserveState: true })
 }
 
-function handlePrevClick(toFirstPage: boolean) {
-  if (props.mediaList.meta.currentPage > props.mediaList.meta.firstPage) {
-    if (toFirstPage) {
+interface IHandlePaginationOptions {
+  toFirstPage?: boolean
+  toPreviousPage?: boolean
+  toNextPage?: boolean
+  toLastPage?: boolean
+}
+
+function handlePaginationClick(navigationOptions: IHandlePaginationOptions) {
+  const currentPageIsNotFirstPage =
+    props.mediaList.meta.currentPage > props.mediaList.meta.firstPage
+  const currentPageIsNotLastPage = props.mediaList.meta.currentPage < props.mediaList.meta.lastPage
+
+  if (currentPageIsNotFirstPage) {
+    if (navigationOptions.toFirstPage) {
       return fetchNewPageData(props.mediaList.meta.firstPageUrl)
+    } else if (navigationOptions.toPreviousPage) {
+      return fetchNewPageData(props.mediaList.meta.previousPageUrl)
     }
-    return fetchNewPageData(props.mediaList.meta.previousPageUrl)
+  }
+  if (currentPageIsNotLastPage) {
+    if (navigationOptions.toLastPage) {
+      return fetchNewPageData(props.mediaList.meta.lastPageUrl)
+    } else if (navigationOptions.toNextPage) {
+      return fetchNewPageData(props.mediaList.meta.nextPageUrl)
+    }
   }
 }
 
-function handleNextClick(toLastPage: boolean) {
-  if (props.mediaList.meta.currentPage < props.mediaList.meta.lastPage) {
-    if (toLastPage) {
-      return fetchNewPageData(props.mediaList.meta.lastPageUrl)
-    }
-    return fetchNewPageData(props.mediaList.meta.nextPageUrl)
+function resetFormValues() {
+  filters.defaults({
+    status: [],
+    types: [],
+    genres: [],
+    platforms: [],
+    duration: '',
+  })
+  if (props.mediaCategory !== 'movie') {
+    filters.defaults('duration', undefined)
   }
+  filters.reset()
 }
+
+onMounted(() => {
+  if (props.mediaCategory !== 'movie') {
+    filters.duration = undefined
+  }
+})
 </script>
 
 <template>
@@ -77,14 +122,16 @@ function handleNextClick(toLastPage: boolean) {
               <InputComp
                 v-model="filters.search"
                 type="search"
-                :placeholder="`Rechercher un${mediaCategoryFr === 'série' ? 'e' : ''} ${mediaCategoryFr}...`"
+                :placeholder="`Rechercher un${mediaCategoryFr === 'série' ? 'e' : ''} ${mediaCategoryFr}`"
               />
             </LabelComp>
             <button type="submit">Rechercher</button>
           </div>
 
+          <!-- filters -->
           <div>
             <h3>Filtrer</h3>
+            <button type="submit" @click="resetFormValues">Réinitialiser les filtres</button>
             <div>
               <span>Progression</span>
               <div>
@@ -136,6 +183,15 @@ function handleNextClick(toLastPage: boolean) {
               </ul>
             </div>
 
+            <div v-if="props.mediaCategory === 'movie'">
+              <span>Durée maximale</span>
+              <select v-model="filters.duration">
+                <option v-for="option in moviedurationOptions" :value="option.value">
+                  {{ option.text }}
+                </option>
+              </select>
+            </div>
+
             <button type="submit">Appliquer</button>
           </div>
         </form>
@@ -155,30 +211,31 @@ function handleNextClick(toLastPage: boolean) {
         <p>Aucun résultat</p>
       </div>
     </div>
+    <!-- pagination -->
     <div>
       <nav>
         <button
           :disabled="props.mediaList.meta.currentPage === props.mediaList.meta.firstPage"
-          @click="handlePrevClick(true)"
+          @click="handlePaginationClick({ toFirstPage: true })"
         >
           <<
         </button>
         <button
           :disabled="props.mediaList.meta.currentPage === props.mediaList.meta.firstPage"
-          @click="handlePrevClick(false)"
+          @click="handlePaginationClick({ toPreviousPage: true })"
         >
           <
         </button>
         <span>{{ props.mediaList.meta.currentPage }} / {{ props.mediaList.meta.lastPage }}</span>
         <button
           :disabled="props.mediaList.meta.currentPage === props.mediaList.meta.lastPage"
-          @click="handleNextClick(false)"
+          @click="handlePaginationClick({ toNextPage: true })"
         >
           >
         </button>
         <button
           :disabled="props.mediaList.meta.currentPage === props.mediaList.meta.lastPage"
-          @click="handleNextClick(true)"
+          @click="handlePaginationClick({ toLastPage: true })"
         >
           >>
         </button>
