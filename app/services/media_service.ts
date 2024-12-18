@@ -171,8 +171,8 @@ export default class MediaService {
     page: number = 1
   ) {
     const mediaQuery = await Media.query()
-      .whereHas('category', (categoryQuery) => {
-        categoryQuery.where('name', category)
+      .whereHas('category', (subQuery) => {
+        subQuery.where('name', category)
       })
       // searchbar term
       .if(filters.search, (q) => {
@@ -194,13 +194,18 @@ export default class MediaService {
         })
       })
       .if(filters.genres, (q) => {
-        q.whereHas('genres', (genreQuery) => {
-          genreQuery.whereIn('genre_id', filters.genres!)
+        q.whereHas('genres', (subQuery) => {
+          subQuery.whereIn('genre_id', filters.genres!)
         })
       })
       .if(filters.platforms, (q) => {
-        q.whereHas('gameInfo', (genreQuery) => {
-          genreQuery.whereIn('platform_id', filters.platforms!)
+        q.whereHas('gameInfo', (subQuery) => {
+          subQuery.whereIn('platform_id', filters.platforms!)
+        })
+      })
+      .if(filters.duration, (q) => {
+        q.whereHas('movieInfo', (subQuery) => {
+          subQuery.where('duration', '<=', filters.duration!)
         })
       })
       .preload('status')
