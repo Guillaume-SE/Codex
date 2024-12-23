@@ -6,9 +6,9 @@ import { useForm } from '@inertiajs/vue3'
 import { onMounted } from 'vue'
 import AppHead from '~/components/AppHead.vue'
 import MediaCard from '~/components/MediaCard.vue'
+import MediaFilters from '~/components/MediaFilters.vue'
 import InputComp from '~/components/ui/InputComp.vue'
 import LabelComp from '~/components/ui/LabelComp.vue'
-import { useCapitalizeFirstLetter } from '~/composables/useCapitalizeFirstLetter'
 import AppLayout from '~/layouts/AppLayout.vue'
 
 const props = defineProps<{
@@ -31,6 +31,7 @@ interface IFilters {
   duration: string | undefined
 }
 
+// argument passed to conserve values when navigate between pages
 const filters = useForm<IFilters>('filterResults', {
   search: '',
   status: [],
@@ -39,20 +40,6 @@ const filters = useForm<IFilters>('filterResults', {
   platforms: [],
   duration: '',
 })
-
-const moviedurationOptions = [
-  { text: 'Toute durée', value: '' },
-  { text: '1h00', value: 60 },
-  { text: '1h30', value: 90 },
-  { text: '2h00', value: 120 },
-  { text: '2h30', value: 160 },
-  { text: '3h00', value: 180 },
-  { text: '3h30', value: 210 },
-  { text: '4h00', value: 240 },
-  { text: '4h30', value: 270 },
-]
-
-const capitalizeFirstLetter = useCapitalizeFirstLetter
 
 function fetchNewPageData(url: string | null) {
   filters.get(`${url}`, { preserveState: true })
@@ -111,13 +98,13 @@ onMounted(() => {
   <AppHead :title="title" />
   <AppLayout>
     <div class="media-list-container">
-      <!-- search -->
       <div>
         <form
           method="GET"
           @submit.prevent="filters.get(`/media/${props.mediaCategory}`, { preserveState: true })"
         >
           <div>
+            <!-- search -->
             <LabelComp text="Recherche" textPosition="up">
               <InputComp
                 v-model="filters.search"
@@ -132,65 +119,18 @@ onMounted(() => {
           <div>
             <h3>Filtrer</h3>
             <button type="submit" @click="resetFormValues">Réinitialiser les filtres</button>
-            <div>
-              <span>Progression</span>
-              <div>
-                <ul>
-                  <li v-for="status in mediaStatusesList" :key="status.id">
-                    <LabelComp :text="capitalizeFirstLetter(status.name)" textPosition="down">
-                      <InputComp v-model="filters.status" type="checkbox" :value="status.id" />
-                    </LabelComp>
-                  </li>
-                </ul>
-              </div>
-            </div>
-
-            <div>
-              <span>Types</span>
-              <ul>
-                <li v-for="type in mediaTypesList" :key="type.id">
-                  <LabelComp :text="capitalizeFirstLetter(type.name)" textPosition="down">
-                    <InputComp
-                      v-model="filters.types"
-                      type="checkbox"
-                      :id="`type-${type.id}`"
-                      :value="type.id"
-                    />
-                  </LabelComp>
-                </li>
-              </ul>
-            </div>
-
-            <div>
-              <span>Genres</span>
-              <ul>
-                <li v-for="genre in mediaGenresList" :key="genre.id">
-                  <LabelComp :text="capitalizeFirstLetter(genre.name)" textPosition="down">
-                    <InputComp v-model="filters.genres" type="checkbox" :value="genre.id" />
-                  </LabelComp>
-                </li>
-              </ul>
-            </div>
-
-            <div v-if="props.mediaCategory === 'game'">
-              <span>Plateformes</span>
-              <ul>
-                <li v-for="plateforme in gamePlatformsList" :key="plateforme.id">
-                  <LabelComp :text="capitalizeFirstLetter(plateforme.name)" textPosition="down">
-                    <InputComp v-model="filters.platforms" type="checkbox" :value="plateforme.id" />
-                  </LabelComp>
-                </li>
-              </ul>
-            </div>
-
-            <div v-if="props.mediaCategory === 'movie'">
-              <span>Durée maximale</span>
-              <select v-model="filters.duration">
-                <option v-for="option in moviedurationOptions" :value="option.value">
-                  {{ option.text }}
-                </option>
-              </select>
-            </div>
+            <MediaFilters
+              v-model:status="filters.status"
+              v-model:types="filters.types"
+              v-model:genres="filters.genres"
+              v-model:platforms="filters.platforms"
+              v-model:duration="filters.duration"
+              :statuses-list="mediaStatusesList"
+              :types-list="mediaTypesList"
+              :genres-list="mediaGenresList"
+              :platforms-list="gamePlatformsList"
+              :media-category="mediaCategory"
+            />
 
             <button type="submit">Appliquer</button>
           </div>
