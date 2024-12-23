@@ -8,6 +8,7 @@ defineProps<{
   value?: string | number | object
 }>()
 </script>
+
 <template>
   <template v-if="type === 'checkbox'">
     <input v-model="model" type="checkbox" :id="id" :value="value || ''" />
