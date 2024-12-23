@@ -7,6 +7,7 @@ import { onMounted } from 'vue'
 import AppHead from '~/components/AppHead.vue'
 import MediaCard from '~/components/MediaCard.vue'
 import MediaFilters from '~/components/MediaFilters.vue'
+import Pagination from '~/components/Pagination.vue'
 import InputComp from '~/components/ui/InputComp.vue'
 import LabelComp from '~/components/ui/LabelComp.vue'
 import AppLayout from '~/layouts/AppLayout.vue'
@@ -43,34 +44,6 @@ const filters = useForm<IFilters>('filterResults', {
 
 function fetchNewPageData(url: string | null) {
   filters.get(`${url}`, { preserveState: true })
-}
-
-interface IHandlePaginationOptions {
-  toFirstPage?: boolean
-  toPreviousPage?: boolean
-  toNextPage?: boolean
-  toLastPage?: boolean
-}
-
-function handlePaginationClick(navigationOptions: IHandlePaginationOptions) {
-  const currentPageIsNotFirstPage =
-    props.mediaList.meta.currentPage > props.mediaList.meta.firstPage
-  const currentPageIsNotLastPage = props.mediaList.meta.currentPage < props.mediaList.meta.lastPage
-
-  if (currentPageIsNotFirstPage) {
-    if (navigationOptions.toFirstPage) {
-      return fetchNewPageData(props.mediaList.meta.firstPageUrl)
-    } else if (navigationOptions.toPreviousPage) {
-      return fetchNewPageData(props.mediaList.meta.previousPageUrl)
-    }
-  }
-  if (currentPageIsNotLastPage) {
-    if (navigationOptions.toLastPage) {
-      return fetchNewPageData(props.mediaList.meta.lastPageUrl)
-    } else if (navigationOptions.toNextPage) {
-      return fetchNewPageData(props.mediaList.meta.nextPageUrl)
-    }
-  }
 }
 
 function resetFormValues() {
@@ -153,33 +126,20 @@ onMounted(() => {
     </div>
     <!-- pagination -->
     <div>
-      <nav>
-        <button
-          :disabled="props.mediaList.meta.currentPage === props.mediaList.meta.firstPage"
-          @click="handlePaginationClick({ toFirstPage: true })"
-        >
-          <<
-        </button>
-        <button
-          :disabled="props.mediaList.meta.currentPage === props.mediaList.meta.firstPage"
-          @click="handlePaginationClick({ toPreviousPage: true })"
-        >
-          <
-        </button>
-        <span>{{ props.mediaList.meta.currentPage }} / {{ props.mediaList.meta.lastPage }}</span>
-        <button
-          :disabled="props.mediaList.meta.currentPage === props.mediaList.meta.lastPage"
-          @click="handlePaginationClick({ toNextPage: true })"
-        >
-          >
-        </button>
-        <button
-          :disabled="props.mediaList.meta.currentPage === props.mediaList.meta.lastPage"
-          @click="handlePaginationClick({ toLastPage: true })"
-        >
-          >>
-        </button>
-      </nav>
+      <Pagination
+        :page="{
+          currentPage: props.mediaList.meta.currentPage,
+          firstPage: props.mediaList.meta.firstPage,
+          lastPage: props.mediaList.meta.lastPage,
+        }"
+        :url="{
+          firstPageUrl: props.mediaList.meta.firstPageUrl,
+          lastPageUrl: props.mediaList.meta.lastPageUrl,
+          nextPageUrl: props.mediaList.meta.nextPageUrl,
+          previousPageUrl: props.mediaList.meta.previousPageUrl,
+        }"
+        @update:current-page="fetchNewPageData"
+      />
     </div>
   </AppLayout>
 </template>
