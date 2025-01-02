@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import ButtonComp from '~/components/ui/ButtonComp.vue'
+
 const emit = defineEmits(['update:currentPage'])
 
 const props = defineProps<{
@@ -45,34 +47,34 @@ function handlePaginationClick(paginationOptions: IHandlePaginationOptions) {
 
 <template>
   <nav>
-    <button
+    <ButtonComp
       :disabled="props.page.currentPage === props.page.firstPage"
       @click="handlePaginationClick({ toFirstPage: true })"
     >
       <span><<</span>
-    </button>
+    </ButtonComp>
 
-    <button
+    <ButtonComp
       :disabled="props.page.currentPage === props.page.firstPage"
       @click="handlePaginationClick({ toPreviousPage: true })"
     >
       <span><</span>
-    </button>
+    </ButtonComp>
 
     <span>{{ props.page.currentPage }} / {{ props.page.lastPage }}</span>
 
-    <button
+    <ButtonComp
       :disabled="props.page.currentPage === props.page.lastPage"
       @click="handlePaginationClick({ toNextPage: true })"
     >
       <span>></span>
-    </button>
+    </ButtonComp>
 
-    <button
+    <ButtonComp
       :disabled="props.page.currentPage === props.page.lastPage"
       @click="handlePaginationClick({ toLastPage: true })"
     >
       <span>>></span>
-    </button>
+    </ButtonComp>
   </nav>
 </template>
