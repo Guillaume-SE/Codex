@@ -8,6 +8,7 @@ import AppHead from '~/components/AppHead.vue'
 import MediaCard from '~/components/MediaCard.vue'
 import MediaFilters from '~/components/MediaFilters.vue'
 import Pagination from '~/components/Pagination.vue'
+import ButtonComp from '~/components/ui/ButtonComp.vue'
 import InputComp from '~/components/ui/InputComp.vue'
 import LabelComp from '~/components/ui/LabelComp.vue'
 import AppLayout from '~/layouts/AppLayout.vue'
@@ -85,13 +86,16 @@ onMounted(() => {
                 :placeholder="`Rechercher un${mediaCategoryFr === 'série' ? 'e' : ''} ${mediaCategoryFr}`"
               />
             </LabelComp>
-            <button type="submit">Rechercher</button>
+            <ButtonComp type="submit"> Rechercher </ButtonComp>
           </div>
 
-          <!-- filters -->
           <div>
             <h3>Filtrer</h3>
-            <button type="submit" @click="resetFormValues">Réinitialiser les filtres</button>
+            <!-- reset -->
+            <ButtonComp type="submit" @click="resetFormValues">
+              Réinitialiser les filtres
+            </ButtonComp>
+            <!-- filters -->
             <MediaFilters
               v-model:status="filters.status"
               v-model:types="filters.types"
@@ -105,7 +109,7 @@ onMounted(() => {
               :media-category="mediaCategory"
             />
 
-            <button type="submit">Appliquer</button>
+            <ButtonComp type="submit">Appliquer</ButtonComp>
           </div>
         </form>
       </div>
