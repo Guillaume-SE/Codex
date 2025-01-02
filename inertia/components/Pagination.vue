@@ -22,21 +22,21 @@ interface IHandlePaginationOptions {
   toLastPage?: boolean
 }
 
-function handlePaginationClick(navigationOptions: IHandlePaginationOptions) {
+function handlePaginationClick(paginationOptions: IHandlePaginationOptions) {
   const currentPageIsNotFirstPage = props.page.currentPage > props.page.firstPage
   const currentPageIsNotLastPage = props.page.currentPage < props.page.lastPage
 
   if (currentPageIsNotFirstPage) {
-    if (navigationOptions.toFirstPage) {
+    if (paginationOptions.toFirstPage) {
       return emit('update:currentPage', props.url.firstPageUrl)
-    } else if (navigationOptions.toPreviousPage) {
+    } else if (paginationOptions.toPreviousPage) {
       return emit('update:currentPage', props.url.previousPageUrl)
     }
   }
   if (currentPageIsNotLastPage) {
-    if (navigationOptions.toLastPage) {
+    if (paginationOptions.toLastPage) {
       return emit('update:currentPage', props.url.lastPageUrl)
-    } else if (navigationOptions.toNextPage) {
+    } else if (paginationOptions.toNextPage) {
       return emit('update:currentPage', props.url.nextPageUrl)
     }
   }
