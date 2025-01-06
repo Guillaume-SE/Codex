@@ -91,7 +91,8 @@ export default class MediaController {
       const category = filters.params.categoryName
 
       const config = categoryConfig[category]
-      const mediaList = await this.mediaService.getByCategory(category, filters, page)
+      const mediaList = await MediaService.getByCategoryFiltered(category, filters, page)
+      const mediaSortOptions = MediaService.sortOptions
       const mediaStatusesList = await MediaStatus.all()
       const mediaTypesList = await this.mediaCategoryService.getCategoryTypes(category)
       const mediaGenresList = await this.mediaCategoryService.getCategoryGenres(category)
@@ -106,12 +107,14 @@ export default class MediaController {
         title: config.title,
         mediaCategory: category,
         mediaCategoryFr: config.categoryFr,
+        mediaSortOptions,
         mediaStatusesList,
         mediaTypesList,
         mediaGenresList,
         gamePlatformsList,
       })
     } catch (error) {
+      console.log(error)
       return response.redirect('/')
     }
   }
