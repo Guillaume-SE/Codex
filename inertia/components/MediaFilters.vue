@@ -23,15 +23,15 @@ const durationModel = defineModel<string | undefined>('duration')
 const capitalizeFirstLetter = useCapitalizeFirstLetter
 
 const movieDurationOptions = [
-  { label: 'Toute durée', value: '' },
-  { label: '1h00', value: 60 },
-  { label: '1h30', value: 90 },
-  { label: '2h00', value: 120 },
-  { label: '2h30', value: 160 },
-  { label: '3h00', value: 180 },
-  { label: '3h30', value: 210 },
-  { label: '4h00', value: 240 },
-  { label: '4h30', value: 270 },
+  { text: 'Toute durée', value: '' },
+  { text: '1h00', value: 60 },
+  { text: '1h30', value: 90 },
+  { text: '2h00', value: 120 },
+  { text: '2h30', value: 160 },
+  { text: '3h00', value: 180 },
+  { text: '3h30', value: 210 },
+  { text: '4h00', value: 240 },
+  { text: '4h30', value: 270 },
 ]
 </script>
 
