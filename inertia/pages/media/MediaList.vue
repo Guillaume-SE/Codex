@@ -11,6 +11,7 @@ import Pagination from '~/components/Pagination.vue'
 import ButtonComp from '~/components/ui/ButtonComp.vue'
 import InputComp from '~/components/ui/InputComp.vue'
 import LabelComp from '~/components/ui/LabelComp.vue'
+import SelectComp from '~/components/ui/SelectComp.vue'
 import AppLayout from '~/layouts/AppLayout.vue'
 
 const props = defineProps<{
@@ -18,6 +19,7 @@ const props = defineProps<{
   mediaList: InferPageProps<MediaController, 'showByCategory'>['mediaList']
   mediaCategory: MediaCategories
   mediaCategoryFr: MediaCategoriesFr
+  mediaSortOptions: InferPageProps<MediaController, 'showByCategory'>['mediaSortOptions']
   mediaStatusesList: InferPageProps<MediaController, 'showByCategory'>['mediaStatusesList']
   mediaTypesList: InferPageProps<MediaController, 'showByCategory'>['mediaTypesList']
   mediaGenresList: InferPageProps<MediaController, 'showByCategory'>['mediaGenresList']
@@ -26,6 +28,7 @@ const props = defineProps<{
 
 interface IFilters {
   search: string
+  sortBy: string
   status: number[]
   types: number[]
   genres: number[]
@@ -36,6 +39,7 @@ interface IFilters {
 // argument passed to conserve values when navigate between pages
 const filters = useForm<IFilters>('filterResults', {
   search: '',
+  sortBy: props.mediaSortOptions[0].value,
   status: [],
   types: [],
   genres: [],
@@ -43,12 +47,14 @@ const filters = useForm<IFilters>('filterResults', {
   duration: '',
 })
 
+// paginate with filters included
 function fetchNewPageData(url: string | null) {
   filters.get(`${url}`, { preserveState: true })
 }
 
 function resetFormValues() {
   filters.defaults({
+    sortBy: props.mediaSortOptions[0].value,
     status: [],
     types: [],
     genres: [],
@@ -90,6 +96,8 @@ onMounted(() => {
           </div>
 
           <div>
+            <h3>Trier</h3>
+            <SelectComp v-model="filters.sortBy" :options="mediaSortOptions" />
             <h3>Filtrer</h3>
             <!-- reset -->
             <ButtonComp type="submit" @click="resetFormValues">
