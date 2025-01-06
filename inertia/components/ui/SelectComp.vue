@@ -3,7 +3,7 @@ const model = defineModel()
 
 defineProps<{
   options: {
-    label: string
+    text: string
     value: string | number
     description?: string
   }[]
@@ -13,7 +13,7 @@ defineProps<{
 <template>
   <select v-model="model">
     <option v-for="option in options" :key="option.value" :value="option.value">
-      {{ option.label }}
+      {{ option.text }}
       <span v-if="option.description">
         {{ option.description }}
       </span>
