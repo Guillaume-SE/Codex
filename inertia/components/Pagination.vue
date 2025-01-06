@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import ButtonComp from '~/components/ui/ButtonComp.vue'
+
 const emit = defineEmits(['update:currentPage'])
 
 const props = defineProps<{
@@ -22,21 +24,21 @@ interface IHandlePaginationOptions {
   toLastPage?: boolean
 }
 
-function handlePaginationClick(navigationOptions: IHandlePaginationOptions) {
+function handlePaginationClick(paginationOptions: IHandlePaginationOptions) {
   const currentPageIsNotFirstPage = props.page.currentPage > props.page.firstPage
   const currentPageIsNotLastPage = props.page.currentPage < props.page.lastPage
 
   if (currentPageIsNotFirstPage) {
-    if (navigationOptions.toFirstPage) {
+    if (paginationOptions.toFirstPage) {
       return emit('update:currentPage', props.url.firstPageUrl)
-    } else if (navigationOptions.toPreviousPage) {
+    } else if (paginationOptions.toPreviousPage) {
       return emit('update:currentPage', props.url.previousPageUrl)
     }
   }
   if (currentPageIsNotLastPage) {
-    if (navigationOptions.toLastPage) {
+    if (paginationOptions.toLastPage) {
       return emit('update:currentPage', props.url.lastPageUrl)
-    } else if (navigationOptions.toNextPage) {
+    } else if (paginationOptions.toNextPage) {
       return emit('update:currentPage', props.url.nextPageUrl)
     }
   }
@@ -45,34 +47,34 @@ function handlePaginationClick(navigationOptions: IHandlePaginationOptions) {
 
 <template>
   <nav>
-    <button
+    <ButtonComp
       :disabled="props.page.currentPage === props.page.firstPage"
       @click="handlePaginationClick({ toFirstPage: true })"
     >
       <span><<</span>
-    </button>
+    </ButtonComp>
 
-    <button
+    <ButtonComp
       :disabled="props.page.currentPage === props.page.firstPage"
       @click="handlePaginationClick({ toPreviousPage: true })"
     >
       <span><</span>
-    </button>
+    </ButtonComp>
 
     <span>{{ props.page.currentPage }} / {{ props.page.lastPage }}</span>
 
-    <button
+    <ButtonComp
       :disabled="props.page.currentPage === props.page.lastPage"
       @click="handlePaginationClick({ toNextPage: true })"
     >
       <span>></span>
-    </button>
+    </ButtonComp>
 
-    <button
+    <ButtonComp
       :disabled="props.page.currentPage === props.page.lastPage"
       @click="handlePaginationClick({ toLastPage: true })"
     >
       <span>>></span>
-    </button>
+    </ButtonComp>
   </nav>
 </template>
