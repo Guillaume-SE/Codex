@@ -1,3 +1,4 @@
+import MediaService from '#services/media_service'
 import vine from '@vinejs/vine'
 import { DateTime } from 'luxon'
 
@@ -114,6 +115,12 @@ export const showByCategoryMediaValidator = vine.compile(
     //   //     return !!statusExists
     //   //   })
     //   //   .optional(),
+    sortBy: vine
+      .string()
+      .exists(async (_db, value) => {
+        return MediaService.sortOptions.some((option) => option.value === value)
+      })
+      .optional(),
     status: vine
       .array(vine.number().isExists({ table: 'media_statuses', column: 'id' }))
       .optional(),
