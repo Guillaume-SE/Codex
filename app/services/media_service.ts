@@ -11,6 +11,13 @@ import { inject } from '@adonisjs/core'
 import db from '@adonisjs/lucid/services/db'
 import { Infer } from '@vinejs/vine/types'
 
+interface IMediaSortOption {
+  value: string
+  text: string
+  column: string
+  dir: 'asc' | 'desc' | undefined
+}
+
 @inject()
 export default class MediaService {
   constructor(protected coverService: CoverService) {}
@@ -165,11 +172,25 @@ export default class MediaService {
     }
   }
 
-  async getByCategory(
+  static sortOptions: IMediaSortOption[] = [
+    { value: 'created_desc', text: 'Ajout récent', column: 'id', dir: 'desc' },
+    { value: 'created_asc', text: 'Ajout ancien', column: 'id', dir: 'asc' },
+    { value: 'name_asc', text: 'Nom (A-Z)', column: 'name', dir: 'asc' },
+    { value: 'name_desc', text: 'Nom (Z-A)', column: 'name', dir: 'desc' },
+    // { value: 'released_asc', text: 'Date de sortie ancienne', column: 'released', dir: 'asc' },
+    // { value: 'released_desc', text: 'Date de sortie récente', column: 'released', dir: 'desc' },
+    { value: 'rating_asc', text: 'Note - / +', column: 'reviews.rating', dir: 'asc' },
+    { value: 'rating_desc', text: 'Note + / -', column: 'reviews.rating', dir: 'desc' },
+  ]
+
+  static async getByCategoryFiltered(
     category: MediaCategories,
     filters: Infer<typeof showByCategoryMediaValidator>,
     page: number = 1
   ) {
+    const sort =
+      this.sortOptions.find((option) => option.value === filters.sortBy) || this.sortOptions[0]
+
     const mediaQuery = await Media.query()
       .whereHas('category', (subQuery) => {
         subQuery.where('name', category)
@@ -182,7 +203,6 @@ export default class MediaService {
             .orWhere('alternative_name', 'like', `%${filters.search}%`)
         })
       })
-      // status
       .if(filters.status, (q) => {
         q.where((subQuery) => {
           subQuery.whereIn('status_id', filters.status!)
@@ -208,6 +228,9 @@ export default class MediaService {
           subQuery.where('duration', '<=', filters.duration!)
         })
       })
+      .if(['rating_asc', 'rating_desc'].includes(sort.value), (query) => {
+        query.join('reviews', 'reviews.id', 'media.id').select('media.*')
+      })
       .preload('status')
       .preload('category')
       .preload('type')
@@ -226,7 +249,7 @@ export default class MediaService {
       .preload('bookInfo')
       .preload('review')
       .preload('cover')
-      .orderBy('id')
+      .orderBy(sort.column, sort.dir)
       .paginate(page, 5)
 
     return mediaQuery
