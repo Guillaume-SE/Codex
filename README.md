@@ -86,7 +86,7 @@ node ace db:seed -i
 
 ## Status
 
-20/11/24: Factories completed, now plan to complete the filters options for users.
+7 jan. 2025 : filters finished and functional, next step will be to create a "hub" to redirect to each category.
 
 ## Other
 
