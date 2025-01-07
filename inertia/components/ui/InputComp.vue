@@ -18,6 +18,10 @@ defineProps<{
     <input v-model="model" type="search" :placeholder="placeholder || ''" />
   </template>
 
+  <template v-else-if="type === 'radio'">
+    <input v-model="model" type="radio" :value="value || ''" />
+  </template>
+
   <template v-else>
     <input v-model="model" type="text" :placeholder="placeholder || ''" />
   </template>

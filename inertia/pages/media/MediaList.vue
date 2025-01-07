@@ -11,6 +11,7 @@ import Pagination from '~/components/Pagination.vue'
 import ButtonComp from '~/components/ui/ButtonComp.vue'
 import InputComp from '~/components/ui/InputComp.vue'
 import LabelComp from '~/components/ui/LabelComp.vue'
+import SelectComp from '~/components/ui/SelectComp.vue'
 import AppLayout from '~/layouts/AppLayout.vue'
 
 const props = defineProps<{
@@ -18,6 +19,7 @@ const props = defineProps<{
   mediaList: InferPageProps<MediaController, 'showByCategory'>['mediaList']
   mediaCategory: MediaCategories
   mediaCategoryFr: MediaCategoriesFr
+  mediaSortOptions: InferPageProps<MediaController, 'showByCategory'>['mediaSortOptions']
   mediaStatusesList: InferPageProps<MediaController, 'showByCategory'>['mediaStatusesList']
   mediaTypesList: InferPageProps<MediaController, 'showByCategory'>['mediaTypesList']
   mediaGenresList: InferPageProps<MediaController, 'showByCategory'>['mediaGenresList']
@@ -26,34 +28,41 @@ const props = defineProps<{
 
 interface IFilters {
   search: string
+  sortBy: string
   status: number[]
   types: number[]
   genres: number[]
   platforms: number[]
   duration: string | undefined
+  favorite: boolean
 }
 
 // argument passed to conserve values when navigate between pages
 const filters = useForm<IFilters>('filterResults', {
   search: '',
+  sortBy: props.mediaSortOptions[0].value,
   status: [],
   types: [],
   genres: [],
   platforms: [],
   duration: '',
+  favorite: false,
 })
 
+// paginate with filters included
 function fetchNewPageData(url: string | null) {
   filters.get(`${url}`, { preserveState: true })
 }
 
 function resetFormValues() {
   filters.defaults({
+    sortBy: props.mediaSortOptions[0].value,
     status: [],
     types: [],
     genres: [],
     platforms: [],
     duration: '',
+    favorite: false,
   })
   if (props.mediaCategory !== 'movie') {
     filters.defaults('duration', undefined)
@@ -90,6 +99,8 @@ onMounted(() => {
           </div>
 
           <div>
+            <h3>Trier par</h3>
+            <SelectComp v-model="filters.sortBy" :options="mediaSortOptions" />
             <h3>Filtrer</h3>
             <!-- reset -->
             <ButtonComp type="submit" @click="resetFormValues">
@@ -102,6 +113,7 @@ onMounted(() => {
               v-model:genres="filters.genres"
               v-model:platforms="filters.platforms"
               v-model:duration="filters.duration"
+              v-model:favorite="filters.favorite"
               :statuses-list="mediaStatusesList"
               :types-list="mediaTypesList"
               :genres-list="mediaGenresList"
@@ -116,6 +128,7 @@ onMounted(() => {
 
       <!-- cards -->
       <div v-if="mediaList.data.length > 0" class="media-card-container">
+        <span>{{ mediaList.meta.total }} résultats</span>
         <MediaCard
           v-for="media in mediaList.data"
           :key="media.id"
