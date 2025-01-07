@@ -130,5 +130,6 @@ export const showByCategoryMediaValidator = vine.compile(
       .array(vine.number().isExists({ table: 'game_platforms', column: 'id' }))
       .optional(),
     duration: vine.number().nullable().optional(),
+    favorite: vine.boolean().optional(),
   })
 )
