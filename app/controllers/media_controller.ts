@@ -114,7 +114,6 @@ export default class MediaController {
         gamePlatformsList,
       })
     } catch (error) {
-      console.log(error)
       return response.redirect('/')
     }
   }
