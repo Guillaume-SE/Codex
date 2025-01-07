@@ -173,14 +173,12 @@ export default class MediaService {
   }
 
   static sortOptions: IMediaSortOption[] = [
-    { value: 'created_desc', text: 'Ajout récent', column: 'id', dir: 'desc' },
-    { value: 'created_asc', text: 'Ajout ancien', column: 'id', dir: 'asc' },
-    { value: 'name_asc', text: 'Nom (A-Z)', column: 'name', dir: 'asc' },
-    { value: 'name_desc', text: 'Nom (Z-A)', column: 'name', dir: 'desc' },
-    // { value: 'released_asc', text: 'Date de sortie ancienne', column: 'released', dir: 'asc' },
-    // { value: 'released_desc', text: 'Date de sortie récente', column: 'released', dir: 'desc' },
-    { value: 'rating_asc', text: 'Note - / +', column: 'reviews.rating', dir: 'asc' },
-    { value: 'rating_desc', text: 'Note + / -', column: 'reviews.rating', dir: 'desc' },
+    { value: 'created_desc', text: 'Ajouts récents', column: 'id', dir: 'desc' },
+    { value: 'created_asc', text: 'Ajouts plus anciens', column: 'id', dir: 'asc' },
+    { value: 'name_asc', text: 'Nom (de A à Z)', column: 'name', dir: 'asc' },
+    { value: 'name_desc', text: 'Nom (de Z à A)', column: 'name', dir: 'desc' },
+    { value: 'rating_desc', text: 'Meilleures notes', column: 'reviews.rating', dir: 'desc' },
+    { value: 'rating_asc', text: 'Moins bonnes notes', column: 'reviews.rating', dir: 'asc' },
   ]
 
   static async getByCategoryFiltered(
@@ -228,6 +226,11 @@ export default class MediaService {
           subQuery.where('duration', '<=', filters.duration!)
         })
       })
+      .if(filters.favorite, (q) => {
+        q.whereHas('review', (subQuery) => {
+          subQuery.where('is_favorite', '=', filters.favorite!)
+        })
+      })
       .if(['rating_asc', 'rating_desc'].includes(sort.value), (query) => {
         query.join('reviews', 'reviews.id', 'media.id').select('media.*')
       })
@@ -250,7 +253,7 @@ export default class MediaService {
       .preload('review')
       .preload('cover')
       .orderBy(sort.column, sort.dir)
-      .paginate(page, 5)
+      .paginate(page, 10)
 
     return mediaQuery
   }
