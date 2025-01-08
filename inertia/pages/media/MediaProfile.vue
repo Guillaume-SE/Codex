@@ -1,12 +1,13 @@
 <script setup lang="ts">
+import MediaController from '#controllers/media_controller'
 import type {
   IAnimeMediaPresented,
-  IBaseMediaPresented,
   IBookMediaPresented,
   IGameMediaPresented,
   IMovieMediaPresented,
   ISeriesMediaPresented,
 } from '#interfaces/media_presented_interface'
+import { InferPageProps } from '@adonisjs/inertia/types'
 import { computed } from 'vue'
 import AppHead from '~/components/AppHead.vue'
 import ImageNotAvailableIcon from '~/components/icons/ImageNotAvailableIcon.vue'
@@ -23,7 +24,7 @@ const props = defineProps<{
     | ISeriesMediaPresented
     | IAnimeMediaPresented
     | IBookMediaPresented
-  tagRelatedList: IBaseMediaPresented[]
+  tagRelatedList: InferPageProps<MediaController, 'showOne'>['tagRelatedList']
 }>()
 
 const isGameMedia = (media: Object): media is IGameMediaPresented => 'gameInfos' in media
@@ -78,33 +79,29 @@ const formattedDuration = computed(() =>
           <!-- alt name -->
           <p v-if="media.alternativeName">Nom alternatif: {{ media.alternativeName }}</p>
           <!-- released -->
-          <p>Date de sortie: {{ media.released ? media.released : 'N/A' }}</p>
+          <p>Date de sortie: {{ media.released || 'N/A' }}</p>
           <!-- contributors -->
           <p v-for="(values, key) in media.contributors" :key="key">
             {{ key }}: {{ values.join(', ') }}
           </p>
           <!-- games infos -->
-          <p v-if="isGameMedia(media)">
-            Joué sur: {{ media.gameInfos.platform ? media.gameInfos.platform : 'N/A' }}
-          </p>
+          <p v-if="isGameMedia(media)">Joué sur: {{ media.gameInfos.platform || 'N/A' }}</p>
           <!-- movies infos -->
-          <p v-if="isMovieMedia(media)">
-            Durée: {{ media.movieInfos.duration ? formattedDuration : 'N/A' }}
-          </p>
+          <p v-if="isMovieMedia(media)">Durée: {{ formattedDuration || 'N/A' }}</p>
           <!-- series infos -->
           <p v-if="isSeriesMedia(media)">
             Nombre d'épisodes:
-            {{ media.seriesInfos.seasonLength ? media.seriesInfos.seasonLength : 'N/A' }}
+            {{ media.seriesInfos.seasonLength || 'N/A' }}
           </p>
           <!-- anime infos -->
           <p v-if="isAnimeMedia(media)">
             Nombre d'épisodes:
-            {{ media.animeInfos.seasonLength ? media.animeInfos.seasonLength : 'N/A' }}
+            {{ media.animeInfos.seasonLength || 'N/A' }}
           </p>
           <!-- books infos -->
           <p v-if="isBookMedia(media)">
             Pages:
-            {{ media.bookInfos.pages ? media.bookInfos.pages : 'N/A' }}
+            {{ media.bookInfos.pages || 'N/A' }}
           </p>
         </div>
       </div>
