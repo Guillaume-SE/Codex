@@ -1,4 +1,3 @@
-import { MediaPresenterFactory } from '#classes/MediaPresenter'
 import type { IMediaPayload } from '#interfaces/media_interface'
 import Cover from '#models/cover'
 import Media from '#models/media'
@@ -283,9 +282,7 @@ export default class MediaService {
         .load('review')
     })
 
-    const formatedMedia = MediaPresenterFactory.presentMedia(media)
-
-    return formatedMedia
+    return media
   }
 
   async getTagRelated(category: string, mediaId: number, tag: string) {
@@ -311,8 +308,6 @@ export default class MediaService {
       .preload('review')
       .preload('cover')
 
-    const formattedMediaList = MediaPresenterFactory.presentMediaList(mediaList)
-
-    return formattedMediaList
+    return mediaList
   }
 }
