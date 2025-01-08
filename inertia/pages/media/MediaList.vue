@@ -84,7 +84,7 @@ onMounted(() => {
       <div>
         <form
           method="GET"
-          @submit.prevent="filters.get(`/media/${props.mediaCategory}`, { preserveState: true })"
+          @submit.prevent="filters.get(`/category/${props.mediaCategory}`, { preserveState: true })"
         >
           <div>
             <!-- search -->
@@ -99,7 +99,8 @@ onMounted(() => {
           </div>
 
           <div>
-            <h3>Trier par</h3>
+            <h3>Trier</h3>
+            <span>Trier les résultats par</span>
             <SelectComp v-model="filters.sortBy" :options="mediaSortOptions" />
             <h3>Filtrer</h3>
             <!-- reset -->

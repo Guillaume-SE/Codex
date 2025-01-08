@@ -23,9 +23,9 @@ router.get('/users/:id', [UsersController, 'show'])
 /**
  * medias
  */
-// router.get('/media', [MediaController, 'showLastAdded']).as('media.show')
-router.get('/media/:categoryName', [MediaController, 'showByCategory'])
-router.get('/media/:categoryName/:mediaId', [MediaController, 'showOne'])
+router.get('/categories', [MediaController, 'showCategories'])
+router.get('/category/:categoryName', [MediaController, 'showByCategory'])
+router.get('/category/:categoryName/:mediaId', [MediaController, 'showOne'])
 //ADMIN
 router.post('/media', [MediaController, 'addOne'])
 router.put('/media/:mediaId', [MediaController, 'updateOne'])

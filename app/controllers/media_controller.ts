@@ -64,13 +64,20 @@ export default class MediaController {
     try {
       await request.validateUsing(showOneMediaValidator)
       const media = await this.mediaService.getOne(mediaId)
+      const presentedMedia = MediaPresenterFactory.presentMedia(media)
+
       const tagRelatedList = await this.mediaService.getTagRelated(
-        media.category,
-        media.id,
-        media.tag
+        presentedMedia.category,
+        presentedMedia.id,
+        presentedMedia.tag
       )
 
-      return inertia.render('media/MediaProfile', { media, tagRelatedList })
+      const presentedTagRelatedList = MediaPresenterFactory.presentMediaList(tagRelatedList)
+
+      return inertia.render('media/MediaProfile', {
+        media: presentedMedia,
+        tagRelatedList: presentedTagRelatedList,
+      })
     } catch (error) {
       return response.status(404).json({ error, customError: error.message })
     }
@@ -98,7 +105,7 @@ export default class MediaController {
       const mediaGenresList = await this.mediaCategoryService.getCategoryGenres(category)
       const gamePlatformsList = await GamePlatform.all()
 
-      mediaList.baseUrl(`/media/${category}`)
+      mediaList.baseUrl(`/category/${category}`)
 
       const paginatedMediaList = MediaPresenterFactory.presentPaginatedMediaList(mediaList)
 
@@ -116,5 +123,9 @@ export default class MediaController {
     } catch (error) {
       return response.redirect('/')
     }
+  }
+
+  public async showCategories({ inertia }: HttpContext) {
+    return inertia.render('media/MediaCategories')
   }
 }
