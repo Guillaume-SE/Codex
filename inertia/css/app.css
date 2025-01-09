@@ -219,3 +219,7 @@ img-medium {
 .review-title {
   margin-left: 10px;
 }
+
+.recommandations-carousel {
+  display: flex;
+}
