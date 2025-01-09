@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import MediaController from '#controllers/media_controller'
+import type MediaController from '#controllers/media_controller'
 import type {
   IAnimeMediaPresented,
   IBookMediaPresented,
@@ -119,7 +119,7 @@ const formattedDuration = computed(() =>
     </div>
     <div>
       <h3>Similaire</h3>
-      <div v-if="tagRelatedList.length > 0">
+      <div v-if="tagRelatedList.length > 0" class="recommandations-carousel">
         <MediaCard
           v-for="media in tagRelatedList"
           :key="media.id"

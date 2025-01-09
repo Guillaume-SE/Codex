@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import MediaController from '#controllers/media_controller'
+import type MediaController from '#controllers/media_controller'
 import type { MediaCategories, MediaCategoriesFr } from '#types/MediaCategories'
 import { InferPageProps } from '@adonisjs/inertia/types'
 import { useForm } from '@inertiajs/vue3'
@@ -80,6 +80,7 @@ onMounted(() => {
 <template>
   <AppHead :title="title" />
   <AppLayout>
+    <h2>{{ mediaCategoryFr }}</h2>
     <div class="media-list-container">
       <div>
         <form

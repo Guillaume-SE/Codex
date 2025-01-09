@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import MediaController from '#controllers/media_controller'
+import type MediaController from '#controllers/media_controller'
 import { InferPageProps } from '@adonisjs/inertia/types'
 import InputComp from '~/components/ui/InputComp.vue'
 import LabelComp from '~/components/ui/LabelComp.vue'
