@@ -51,7 +51,7 @@ function handlePaginationClick(paginationOptions: IHandlePaginationOptions) {
       :disabled="props.page.currentPage === props.page.firstPage"
       @click="handlePaginationClick({ toFirstPage: true })"
     >
-      <span><<</span>
+      <span>|<</span>
     </ButtonComp>
 
     <ButtonComp
@@ -74,7 +74,7 @@ function handlePaginationClick(paginationOptions: IHandlePaginationOptions) {
       :disabled="props.page.currentPage === props.page.lastPage"
       @click="handlePaginationClick({ toLastPage: true })"
     >
-      <span>>></span>
+      <span>>|</span>
     </ButtonComp>
   </nav>
 </template>
