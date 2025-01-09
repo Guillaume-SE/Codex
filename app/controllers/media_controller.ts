@@ -58,7 +58,7 @@ export default class MediaController {
     }
   }
 
-  public async showOne({ inertia, request, params, response }: HttpContext) {
+  public async showOne({ inertia, request, params }: HttpContext) {
     const mediaId = params.mediaId
 
     try {
@@ -79,12 +79,16 @@ export default class MediaController {
         tagRelatedList: presentedTagRelatedList,
       })
     } catch (error) {
-      return response.status(404).json({ error, customError: error.message })
+      return inertia.render('errors/NotFound')
     }
   }
 
   public async showByCategory({ inertia, request, response }: HttpContext) {
-    const categoryConfig: Record<MediaCategories, { title: string; categoryFr: string }> = {
+    interface ICategoryConfig {
+      title: string
+      categoryFr: string
+    }
+    const categoryConfig: Record<MediaCategories, ICategoryConfig> = {
       game: { title: 'Liste des jeux', categoryFr: 'jeu' },
       movie: { title: 'Liste des films', categoryFr: 'film' },
       series: { title: 'Liste des séries', categoryFr: 'série' },
@@ -98,7 +102,7 @@ export default class MediaController {
       const category = filters.params.categoryName
 
       const config = categoryConfig[category]
-      const mediaList = await MediaService.getByCategoryFiltered(category, filters, page)
+      const mediaList = await MediaService.getFiltered(category, filters, page)
       const mediaSortOptions = MediaService.sortOptions
       const mediaStatusesList = await MediaStatus.all()
       const mediaTypesList = await this.mediaCategoryService.getCategoryTypes(category)
@@ -125,7 +129,38 @@ export default class MediaController {
     }
   }
 
-  public async showCategories({ inertia }: HttpContext) {
-    return inertia.render('media/MediaCategories')
+  public async showCategories({ inertia, response }: HttpContext) {
+    try {
+      const mediaCategories = ['game', 'movie', 'series', 'anime', 'book']
+      const mediaLists = await Promise.all(
+        mediaCategories.map((category) => this.mediaService.getLastAdded(category, 5))
+      )
+
+      const presentedMediaLists = mediaLists.map((mediaList) =>
+        MediaPresenterFactory.presentMediaList(mediaList)
+      )
+
+      const [
+        presentedGamesList,
+        presentedMoviesList,
+        presentedSeriesList,
+        presentedAnimeList,
+        presentedBooksList,
+      ] = presentedMediaLists
+
+      const categoriesOverview = [
+        { label: 'Jeux', category: 'game', lastAddedList: presentedGamesList },
+        { label: 'Films', category: 'movie', lastAddedList: presentedMoviesList },
+        { label: 'Séries', category: 'series', lastAddedList: presentedSeriesList },
+        { label: 'Anime', category: 'anime', lastAddedList: presentedAnimeList },
+        { label: 'Livres', category: 'book', lastAddedList: presentedBooksList },
+      ]
+
+      return inertia.render('media/MediaCategories', {
+        categoriesOverview,
+      })
+    } catch (error) {
+      return response.redirect('/')
+    }
   }
 }
