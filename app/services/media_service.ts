@@ -180,7 +180,7 @@ export default class MediaService {
     { value: 'rating_asc', text: 'Moins bonnes notes', column: 'reviews.rating', dir: 'asc' },
   ]
 
-  static async getByCategoryFiltered(
+  static async getFiltered(
     category: MediaCategories,
     filters: Infer<typeof showByCategoryMediaValidator>,
     page: number = 1
@@ -288,14 +288,36 @@ export default class MediaService {
   async getTagRelated(category: string, mediaId: number, tag: string) {
     const mediaList = await Media.query()
       .whereNot('id', mediaId)
-      .whereHas('category', (categoryQuery) => {
-        categoryQuery.where('name', category)
+      .whereHas('category', (query) => {
+        query.where('name', category)
       })
-      .andWhereHas('tag', (tagQuery) => {
-        tagQuery.where('name', tag)
+      .andWhereHas('tag', (query) => {
+        query.where('name', tag)
       })
       .orderByRaw('RAND()')
       .limit(10)
+      .preload('status')
+      .preload('category')
+      .preload('type')
+      .preload('tag')
+      .preload('genres')
+      .preload('contributors', (query) => {
+        query.preload('role')
+        query.preload('contributor')
+      })
+      .preload('review')
+      .preload('cover')
+
+    return mediaList
+  }
+
+  async getLastAdded(category: string, limit: number) {
+    const mediaList = await Media.query()
+      .whereHas('category', (query) => {
+        query.where('name', category)
+      })
+      .orderBy('id', 'desc')
+      .limit(limit)
       .preload('status')
       .preload('category')
       .preload('type')
