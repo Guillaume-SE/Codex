@@ -58,7 +58,7 @@ export default class MediaController {
     }
   }
 
-  public async showOne({ inertia, request, params }: HttpContext) {
+  public async showOne({ inertia, request, params, response }: HttpContext) {
     const mediaId = params.mediaId
 
     try {
@@ -79,7 +79,7 @@ export default class MediaController {
         tagRelatedList: presentedTagRelatedList,
       })
     } catch (error) {
-      return inertia.render('errors/NotFound')
+      return response.redirect('/')
     }
   }
 
