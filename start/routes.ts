@@ -16,13 +16,11 @@ const StorageController = () => import('#controllers/storage_controller')
 router.get('/', [HomeController, 'showHome']).as('home')
 
 router.get('/storage/*', [StorageController, 'show'])
-/**
- * users
- */
+
+//* users
 router.get('/users/:id', [UsersController, 'show'])
-/**
- * medias
- */
+
+//* medias
 router.get('/categories', [MediaController, 'showCategories'])
 router.get('/category/:categoryName', [MediaController, 'showByCategory'])
 router.get('/category/:categoryName/:mediaId', [MediaController, 'showOne'])
@@ -30,50 +28,42 @@ router.get('/category/:categoryName/:mediaId', [MediaController, 'showOne'])
 router.post('/media', [MediaController, 'addOne'])
 router.put('/media/:mediaId', [MediaController, 'updateOne'])
 router.delete('/media/:mediaId', [MediaController, 'deleteOne'])
-/**
- * reviews
- */
+
+//* reviews
 router.post('/media/:mediaId/review', [ReviewsController, 'manageReview'])
 router.put('/media/:mediaId/review', [ReviewsController, 'manageReview'])
-/**
- * covers
- */
+
+//* covers
 router.get('/media/covers', [CoversController, 'show'])
 router.post('/media/:mediaId/cover', [CoversController, 'manageOne'])
 router.put('/media/:mediaId/cover', [CoversController, 'manageOne'])
 router.delete('/media/:mediaId/cover', [CoversController, 'deleteOne'])
-/**
- * genres
- */
+
+//* genres
 router.post('/genre', [GenresController, 'addOne'])
 router.put('/genre/:genreId', [GenresController, 'updateOne'])
 router.delete('/genre/:genreId', [GenresController, 'deleteOne'])
-/**
- * types
- */
+
+//* types
 router.post('/type', [MediaTypesController, 'addOne'])
 router.put('/type/:typeId', [MediaTypesController, 'updateOne'])
-/**
- * tags
- */
+
+//* tags
 router.post('/tag', [TagsController, 'addOne'])
 router.put('/tag/:tagId', [TagsController, 'updateOne'])
 router.delete('/tag/:tagId', [TagsController, 'deleteOne'])
-/**
- * game platforms
- */
+
+//* game platforms
 router.post('/platform', [GamePlatformsController, 'addOne'])
 router.put('/platform/:platformId', [GamePlatformsController, 'updateOne'])
 router.delete('/platform/:platformId', [GamePlatformsController, 'deleteOne'])
-/**
- * contributors roles
- */
+
+//* contributors roles
 router.post('/contributor-role', [ContributorsRolesController, 'addOne'])
 router.put('/contributor-role/:roleId', [ContributorsRolesController, 'updateOne'])
 router.delete('/contributor-role/:roleId', [ContributorsRolesController, 'deleteOne'])
-/**
- * contributors
- */
+
+//* contributors
 router.post('/contributor', [ContributorsController, 'addOne'])
 router.put('/contributor/:contributorId', [ContributorsController, 'updateOne'])
 router.delete('/contributor/:contributorId', [ContributorsController, 'deleteOne'])
