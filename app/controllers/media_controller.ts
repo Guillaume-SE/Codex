@@ -23,6 +23,10 @@ export default class MediaController {
     protected contributorService: ContributorService
   ) {}
 
+  async showCreate({ inertia }: HttpContext) {
+    return inertia.render('admin/CreateMedia')
+  }
+
   async addOne({ request, response }: HttpContext) {
     try {
       const data = await request.validateUsing(createMediaValidator)
