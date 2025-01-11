@@ -8,6 +8,7 @@ import AppHead from '~/components/AppHead.vue'
 import MediaCard from '~/components/MediaCard.vue'
 import MediaFilters from '~/components/MediaFilters.vue'
 import Pagination from '~/components/Pagination.vue'
+import SearchBar from '~/components/SearchBar.vue'
 import ButtonComp from '~/components/ui/ButtonComp.vue'
 import InputComp from '~/components/ui/InputComp.vue'
 import LabelComp from '~/components/ui/LabelComp.vue'
@@ -89,14 +90,10 @@ onMounted(() => {
         >
           <div>
             <!-- search -->
-            <LabelComp text="Recherche" textPosition="up">
-              <InputComp
-                v-model="filters.search"
-                type="search"
-                :placeholder="`Rechercher un${mediaCategoryFr === 'série' ? 'e' : ''} ${mediaCategoryFr}`"
-              />
-            </LabelComp>
-            <ButtonComp type="submit"> Rechercher </ButtonComp>
+            <SearchBar
+              v-model="filters.search"
+              :placeholder="`Rechercher un${mediaCategoryFr === 'série' ? 'e' : ''} ${mediaCategoryFr}`"
+            />
           </div>
 
           <div>
