@@ -12,6 +12,7 @@ const ContributorsRolesController = () => import('#controllers/contributors_role
 const ContributorsController = () => import('#controllers/contributors_controller')
 const HomeController = () => import('#controllers/home_controller')
 const StorageController = () => import('#controllers/storage_controller')
+const DashboardController = () => import('#controllers/dashboard_controller')
 
 router.get('/', [HomeController, 'showHome']).as('home')
 
@@ -20,11 +21,12 @@ router.get('/storage/*', [StorageController, 'show'])
 //* users
 router.get('/users/:id', [UsersController, 'show'])
 
-//* medias
+//* media
 router.get('/categories', [MediaController, 'showCategories'])
 router.get('/category/:categoryName', [MediaController, 'showByCategory'])
 router.get('/category/:categoryName/:mediaId', [MediaController, 'showOne'])
 //ADMIN
+router.get('/media/create', [MediaController, 'showCreate'])
 router.post('/media', [MediaController, 'addOne'])
 router.put('/media/:mediaId', [MediaController, 'updateOne'])
 router.delete('/media/:mediaId', [MediaController, 'deleteOne'])
@@ -67,3 +69,6 @@ router.delete('/contributor-role/:roleId', [ContributorsRolesController, 'delete
 router.post('/contributor', [ContributorsController, 'addOne'])
 router.put('/contributor/:contributorId', [ContributorsController, 'updateOne'])
 router.delete('/contributor/:contributorId', [ContributorsController, 'deleteOne'])
+
+//* dashboard
+router.get('/dashboard', [DashboardController, 'showDashboard'])
