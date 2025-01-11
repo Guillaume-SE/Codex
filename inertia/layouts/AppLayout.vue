@@ -8,7 +8,7 @@ import { Link } from '@inertiajs/vue3'
       <nav class="navbar">
         <Link href="/">Accueil</Link>
         <Link href="/categories">Catégories</Link>
-        <div>Dashboard</div>
+        <Link href="/dashboard">Dashboard</Link>
       </nav>
     </header>
     <div>
