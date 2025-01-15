@@ -1,6 +1,8 @@
 import { MediaPresenterFactory } from '#classes/MediaPresenter'
 import GamePlatform from '#models/game_platform'
+import MediaCategory from '#models/media_category'
 import MediaStatus from '#models/media_status'
+import Tag from '#models/tag'
 import ContributorService from '#services/contributor_service'
 import MediaCategoryService from '#services/media_category_service'
 import MediaService from '#services/media_service'
@@ -14,6 +16,7 @@ import {
 } from '#validators/media_validator'
 import { inject } from '@adonisjs/core'
 import type { HttpContext } from '@adonisjs/core/http'
+import db from '@adonisjs/lucid/services/db'
 
 @inject()
 export default class MediaController {
@@ -24,7 +27,48 @@ export default class MediaController {
   ) {}
 
   async showCreate({ inertia }: HttpContext) {
-    return inertia.render('admin/CreateMedia')
+    type FormattedOptions = { text: string; value: string | number }
+    type CategoryRelatedTypes = Record<string, { text: string; value: string | number }[]>
+
+    // easier to manipulate lists in the SelectComp components
+    const formatOptions = <T extends Record<string, any>>(
+      items: T[],
+      textKey: keyof T,
+      valueKey: keyof T
+    ): FormattedOptions[] => items.map((item) => ({ text: item[textKey], value: item[valueKey] }))
+
+    const statuses = await MediaStatus.query().orderBy('name', 'desc')
+    const categories = await MediaCategory.query().orderBy('name')
+    const tags = await Tag.query().orderBy('name')
+
+    const categoryTypes = await db
+      .from('category_types')
+      .join('media_types', 'category_types.type_id', 'media_types .id')
+      .select('category_types.category_id', 'media_types.id', 'media_types.name')
+      .orderBy('name')
+
+    // needed to only show types for a chosen category in the form
+    const categoryRelatedTypes = categories.reduce((acc: CategoryRelatedTypes, category) => {
+      const types = categoryTypes
+        .filter((ct) => ct.category_id === category.id)
+        .map((ct) => ({
+          text: ct.name,
+          value: ct.id,
+        }))
+      acc[category.id] = types
+      return acc
+    }, {})
+
+    const formattedStatuses = formatOptions(statuses, 'name', 'id')
+    const formattedCategories = formatOptions(categories, 'name', 'id')
+    const formattedTags = formatOptions(tags, 'name', 'id')
+
+    return inertia.render('admin/CreateMedia', {
+      statusesList: formattedStatuses,
+      categoriesList: formattedCategories,
+      tagsList: formattedTags,
+      categoryRelatedTypes,
+    })
   }
 
   async addOne({ request, response }: HttpContext) {
