@@ -9,9 +9,6 @@ import MediaCard from '~/components/MediaCard.vue'
 import MediaFilters from '~/components/MediaFilters.vue'
 import Pagination from '~/components/Pagination.vue'
 import SearchBar from '~/components/SearchBar.vue'
-import ButtonComp from '~/components/ui/ButtonComp.vue'
-import InputComp from '~/components/ui/InputComp.vue'
-import LabelComp from '~/components/ui/LabelComp.vue'
 import SelectComp from '~/components/ui/SelectComp.vue'
 import AppLayout from '~/layouts/AppLayout.vue'
 
@@ -101,10 +98,6 @@ onMounted(() => {
             <span>Trier les résultats par</span>
             <SelectComp v-model="filters.sortBy" :options="mediaSortOptions" />
             <h3>Filtrer</h3>
-            <!-- reset -->
-            <ButtonComp type="submit" @click="resetFormValues">
-              Réinitialiser les filtres
-            </ButtonComp>
             <!-- filters -->
             <MediaFilters
               v-model:status="filters.status"
@@ -118,13 +111,11 @@ onMounted(() => {
               :genres-list="mediaGenresList"
               :platforms-list="gamePlatformsList"
               :media-category="mediaCategory"
+              @update:reset-form-values="resetFormValues"
             />
-
-            <ButtonComp type="submit">Appliquer</ButtonComp>
           </div>
         </form>
       </div>
-
       <!-- cards -->
       <div v-if="mediaList.data.length > 0" class="media-card-container">
         <span>{{ mediaList.meta.total }} résultats</span>
