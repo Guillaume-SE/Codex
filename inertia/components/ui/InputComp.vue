@@ -22,6 +22,10 @@ defineProps<{
     <input v-model="model" type="radio" :value="value || ''" />
   </template>
 
+  <template v-else-if="type === 'date'">
+    <input v-model="model" type="date" />
+  </template>
+
   <template v-else>
     <input v-model="model" type="text" :placeholder="placeholder || ''" />
   </template>
