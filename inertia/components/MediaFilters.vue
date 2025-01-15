@@ -5,6 +5,7 @@ import InputComp from '~/components/ui/InputComp.vue'
 import LabelComp from '~/components/ui/LabelComp.vue'
 import SelectComp from '~/components/ui/SelectComp.vue'
 import { useCapitalizeFirstLetter } from '~/composables/useCapitalizeFirstLetter'
+import ButtonComp from './ui/ButtonComp.vue'
 
 defineProps<{
   statusesList: InferPageProps<MediaController, 'showByCategory'>['mediaStatusesList']
@@ -20,6 +21,12 @@ const genresModel = defineModel<number[]>('genres')
 const platformsModel = defineModel<number[]>('platforms')
 const durationModel = defineModel<string | undefined>('duration')
 const favoriteModel = defineModel<boolean>('favorite')
+
+const emit = defineEmits(['update:resetFormValues'])
+
+function resetFormValues() {
+  return emit('update:resetFormValues')
+}
 
 const capitalizeFirstLetter = useCapitalizeFirstLetter
 
@@ -37,6 +44,7 @@ const movieDurationOptions = [
 </script>
 
 <template>
+  <ButtonComp type="submit" @click="resetFormValues"> Réinitialiser les filtres </ButtonComp>
   <!-- status -->
   <div>
     <span>Progression</span>
@@ -97,4 +105,5 @@ const movieDurationOptions = [
       <InputComp v-model="favoriteModel" type="radio" value="true" />
     </LabelComp>
   </div>
+  <ButtonComp type="submit">Appliquer</ButtonComp>
 </template>
