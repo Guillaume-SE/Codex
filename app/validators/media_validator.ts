@@ -33,10 +33,10 @@ export const createMediaValidator = vine.compile(
       .isExists({ table: 'game_platforms', column: 'id' })
       .nullable()
       .optional(),
-    pages: vine.number().positive().nullable().optional(),
     duration: vine.number().positive().nullable().optional(),
-    animeSeasonLength: vine.number().positive().nullable().optional(),
     seriesSeasonLength: vine.number().positive().nullable().optional(),
+    animeSeasonLength: vine.number().positive().nullable().optional(),
+    pages: vine.number().positive().nullable().optional(),
   })
 )
 
