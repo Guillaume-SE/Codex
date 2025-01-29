@@ -3,7 +3,7 @@ import type MediaController from '#controllers/media_controller'
 import type { MediaCategories, MediaCategoriesFr } from '#types/MediaCategories'
 import { InferPageProps } from '@adonisjs/inertia/types'
 import { useForm } from '@inertiajs/vue3'
-import { onMounted } from 'vue'
+import { computed, onMounted } from 'vue'
 import AppHead from '~/components/AppHead.vue'
 import MediaCard from '~/components/MediaCard.vue'
 import MediaFilters from '~/components/MediaFilters.vue'
@@ -73,6 +73,10 @@ onMounted(() => {
     filters.duration = undefined
   }
 })
+
+const mediaListIsNotEmpty = computed(() => {
+  return props.mediaList.data.length > 0 ? true : false
+})
 </script>
 
 <template>
@@ -117,8 +121,10 @@ onMounted(() => {
         </form>
       </div>
       <!-- cards -->
-      <div v-if="mediaList.data.length > 0" class="media-card-container">
+      <div v-if="mediaListIsNotEmpty">
         <span>{{ mediaList.meta.total }} résultats</span>
+      </div>
+      <div v-if="mediaListIsNotEmpty" class="media-card-container">
         <MediaCard
           v-for="media in mediaList.data"
           :key="media.id"
