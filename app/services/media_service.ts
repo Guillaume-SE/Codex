@@ -1,11 +1,14 @@
-import type { IMediaPayload } from '#interfaces/media_interface'
 import Cover from '#models/cover'
 import Media from '#models/media'
 import MediaCategory from '#models/media_category'
 import MediaContributor from '#models/media_contributor'
 import CoverService from '#services/cover_service'
 import type { MediaCategories } from '#types/MediaCategories'
-import { showByCategoryMediaValidator } from '#validators/media_validator'
+import {
+  createMediaValidator,
+  showByCategoryMediaValidator,
+  updateMediaValidator,
+} from '#validators/media_validator'
 import { inject } from '@adonisjs/core'
 import db from '@adonisjs/lucid/services/db'
 import { Infer } from '@vinejs/vine/types'
@@ -17,10 +20,12 @@ interface IMediaSortOption {
   dir: 'asc' | 'desc' | undefined
 }
 
+type updatedData = Omit<Infer<typeof updateMediaValidator>, 'params'>
+
 @inject()
 export default class MediaService {
   constructor(protected coverService: CoverService) {}
-  public async store(data: IMediaPayload) {
+  public async store(data: Infer<typeof createMediaValidator>) {
     const {
       statusId,
       categoryId,
@@ -70,21 +75,25 @@ export default class MediaService {
       }
 
       if (selectedCategoryName === 'game') {
-        await media.related('gameInfo').create(categoryRelatedMediaData)
-      } else if (selectedCategoryName === 'book') {
-        await media.related('bookInfo').create(categoryRelatedMediaData)
+        await media.related('gameInfo').create({ platformId: categoryRelatedMediaData.platformId })
       } else if (selectedCategoryName === 'movie') {
-        await media.related('movieInfo').create(categoryRelatedMediaData)
+        await media.related('movieInfo').create({ duration: categoryRelatedMediaData.duration })
       } else if (selectedCategoryName === 'series') {
-        await media.related('seriesInfo').create(categoryRelatedMediaData)
+        await media
+          .related('seriesInfo')
+          .create({ seriesSeasonLength: categoryRelatedMediaData.seriesSeasonLength })
       } else if (selectedCategoryName === 'anime') {
-        await media.related('animeInfo').create(categoryRelatedMediaData)
+        await media
+          .related('animeInfo')
+          .create({ animeSeasonLength: categoryRelatedMediaData.animeSeasonLength })
+      } else if (selectedCategoryName === 'book') {
+        await media.related('bookInfo').create({ pages: categoryRelatedMediaData.pages })
       }
     })
     return media
   }
 
-  public async update(data: IMediaPayload, mediaId: number) {
+  public async update(data: updatedData, mediaId: number) {
     const {
       statusId,
       categoryId,
@@ -142,12 +151,12 @@ export default class MediaService {
         await media.related('gameInfo').updateOrCreate(searchPayload, categoryRelatedMediaData)
       } else if (categoryName === 'movie') {
         await media.related('movieInfo').updateOrCreate(searchPayload, categoryRelatedMediaData)
-      } else if (categoryName === 'book') {
-        await media.related('bookInfo').updateOrCreate(searchPayload, categoryRelatedMediaData)
       } else if (categoryName === 'series') {
         await media.related('seriesInfo').updateOrCreate(searchPayload, categoryRelatedMediaData)
       } else if (categoryName === 'anime') {
         await media.related('animeInfo').updateOrCreate(searchPayload, categoryRelatedMediaData)
+      } else if (categoryName === 'book') {
+        await media.related('bookInfo').updateOrCreate(searchPayload, categoryRelatedMediaData)
       }
     })
 
