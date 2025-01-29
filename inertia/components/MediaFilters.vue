@@ -97,13 +97,16 @@ const movieDurationOptions = [
   <!-- data display -->
   <div>
     <span>Affichage</span>
-    <LabelComp text="Tous les résultats" textPosition="down">
-      <InputComp v-model="favoriteModel" type="radio" value="false" />
-    </LabelComp>
-
-    <LabelComp text="Favoris uniquement" textPosition="down">
-      <InputComp v-model="favoriteModel" type="radio" value="true" />
-    </LabelComp>
+    <div>
+      <LabelComp text="Tous les résultats" textPosition="down">
+        <InputComp v-model="favoriteModel" type="radio" value="false" />
+      </LabelComp>
+    </div>
+    <div>
+      <LabelComp text="Favoris uniquement" textPosition="down">
+        <InputComp v-model="favoriteModel" type="radio" value="true" />
+      </LabelComp>
+    </div>
   </div>
   <ButtonComp type="submit">Appliquer</ButtonComp>
 </template>
