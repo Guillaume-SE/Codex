@@ -2,7 +2,7 @@
 import type MediaController from '#controllers/media_controller'
 import { InferPageProps } from '@adonisjs/inertia/types'
 import { useForm } from '@inertiajs/vue3'
-import { ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 import AppHead from '~/components/AppHead.vue'
 import ButtonComp from '~/components/ui/ButtonComp.vue'
 import InputComp from '~/components/ui/InputComp.vue'
@@ -11,19 +11,38 @@ import SelectComp from '~/components/ui/SelectComp.vue'
 import AppLayout from '~/layouts/AppLayout.vue'
 
 const props = defineProps<{
-  statusesList: InferPageProps<MediaController, 'showCreate'>['statusesList']
-  categoriesList: InferPageProps<MediaController, 'showCreate'>['categoriesList']
+  statuses: InferPageProps<MediaController, 'showCreate'>['statuses']
+  categories: InferPageProps<MediaController, 'showCreate'>['categories']
   categoryRelatedTypes: InferPageProps<MediaController, 'showCreate'>['categoryRelatedTypes']
-  tagsList: InferPageProps<MediaController, 'showCreate'>['tagsList']
+  categoryRelatedGenres: InferPageProps<MediaController, 'showCreate'>['categoryRelatedGenres']
+  tags: InferPageProps<MediaController, 'showCreate'>['tags']
+  gamePlatforms: InferPageProps<MediaController, 'showCreate'>['gamePlatforms']
 }>()
 
-const newForm = useForm({
+interface IForm {
+  statusId: string
+  categoryId: string
+  typeId: string
+  name: string
+  alternativeName: string | null
+  released: string | null
+  synopsis: string | null
+  tagId: string
+  genreId: string[]
+  platformId: string | null
+  duration: string | null
+  seriesSeasonLength: string | null
+  animeSeasonLength: string | null
+  pages: string | null
+}
+
+const newForm = useForm<IForm>({
   statusId: '',
-  categoryId: props.categoriesList[0].value,
+  categoryId: '',
   typeId: '',
   name: '',
-  alternativeName: '',
-  released: '',
+  alternativeName: null,
+  released: null,
   synopsis: '',
   tagId: '1',
   genreId: [],
@@ -35,14 +54,35 @@ const newForm = useForm({
 })
 
 const filteredTypesList = ref(props.categoryRelatedTypes[newForm.categoryId])
+const filteredGenresList = ref(props.categoryRelatedGenres[newForm.categoryId])
 
 watch(
   () => newForm.categoryId,
   (newCategoryId) => {
     filteredTypesList.value = props.categoryRelatedTypes[newCategoryId] || []
-    newForm.typeId = ''
+    filteredGenresList.value = props.categoryRelatedGenres[newCategoryId] || []
+    resetFormValues()
+    console.log(currentCategory.value?.name)
   }
 )
+
+const resetFormValues = () => {
+  newForm.typeId = ''
+  newForm.genreId = []
+  newForm.platformId = ''
+  newForm.duration = ''
+  newForm.seriesSeasonLength = ''
+  newForm.animeSeasonLength = ''
+  newForm.pages = ''
+}
+
+const currentCategory = computed(() => {
+  const category = props.categories.find((category) => category.id === newForm.categoryId)
+  return category
+})
+const isNoCategorySelected = computed(() => {
+  return newForm.categoryId === '' ? true : false
+})
 </script>
 
 <template>
@@ -50,33 +90,39 @@ watch(
   <AppLayout>
     <div>
       <form method="POST" @submit.prevent="newForm.post('/media')">
+        <!-- status -->
         <div>
-          <LabelComp text="Statut (requis)" text-position="up">
-            <SelectComp
-              v-model="newForm.statusId"
-              :options="statusesList"
-              :disabled-value="true"
-              disabled-text="Choisir un statut"
-            ></SelectComp>
-          </LabelComp>
+          <span>Progression (requis):</span>
+          <div v-for="status in statuses">
+            <LabelComp :text="status.name" textPosition="down">
+              <InputComp v-model="newForm.statusId" type="radio" :value="status.id" />
+            </LabelComp>
+          </div>
         </div>
+        <!-- category -->
         <div>
-          <LabelComp text="Catégorie (requis)" text-position="up">
-            <SelectComp v-model="newForm.categoryId" :options="categoriesList"></SelectComp>
-          </LabelComp>
+          <span>Catégorie (requis):</span>
+          <div v-for="category in categories">
+            <LabelComp :text="category.name" textPosition="down">
+              <InputComp v-model="newForm.categoryId" type="radio" :value="category.id" />
+            </LabelComp>
+          </div>
         </div>
+        <!-- type -->
         <div>
-          <LabelComp text="Type (requis)" text-position="up">
-            <SelectComp
-              v-model="newForm.typeId"
-              :options="filteredTypesList"
-              :disabled-value="true"
-              disabled-text="Choisir un type"
-            ></SelectComp>
-          </LabelComp>
+          <span>Type (requis):</span>
+          <div v-if="isNoCategorySelected">
+            <span>En attente d'un choix de catégorie</span>
+          </div>
+          <div v-for="type in filteredTypesList">
+            <LabelComp :text="type.text" textPosition="down">
+              <InputComp v-model="newForm.typeId" type="radio" :value="type.value" />
+            </LabelComp>
+          </div>
         </div>
+        <!-- name -->
         <div>
-          <LabelComp text="Nom du media (requis)" text-position="up">
+          <LabelComp text="Nom du media (requis):" text-position="up">
             <InputComp
               v-model="newForm.name"
               type="text"
@@ -84,8 +130,9 @@ watch(
             />
           </LabelComp>
         </div>
+        <!-- alternative name -->
         <div>
-          <LabelComp text="Nom alternatif" text-position="up">
+          <LabelComp text="Nom alternatif:" text-position="up">
             <InputComp
               v-model="newForm.alternativeName"
               type="text"
@@ -93,13 +140,15 @@ watch(
             />
           </LabelComp>
         </div>
+        <!-- released date -->
         <div>
-          <LabelComp text="Date de sortie" text-position="up">
+          <LabelComp text="Date de sortie:" text-position="up">
             <InputComp v-model="newForm.released" type="date" />
           </LabelComp>
         </div>
+        <!-- synopsis -->
         <div>
-          <LabelComp text="Synopsis" text-position="up" for="synopsis">
+          <LabelComp text="Synopsis:" text-position="up" for="synopsis">
             <textarea
               v-model="newForm.synopsis"
               placeholder="Batman aborde une phase décisive de sa guerre contre le crime à Gotham City..."
@@ -107,10 +156,44 @@ watch(
             ></textarea>
           </LabelComp>
         </div>
+        <!-- recommandation tag -->
         <div>
-          <LabelComp text="Tag de recommandation (requis)" text-position="up">
-            <SelectComp v-model="newForm.tagId" :options="tagsList"></SelectComp>
-          </LabelComp>
+          <span>Tag de recommandation (requis):</span>
+          <div v-for="tag in tags">
+            <LabelComp :text="tag.name" textPosition="down">
+              <InputComp v-model="newForm.tagId" type="radio" :value="tag.id" />
+            </LabelComp>
+          </div>
+        </div>
+        <!-- genres -->
+        <div>
+          <span>Genres:</span>
+          <div v-if="isNoCategorySelected">
+            <span>En attente d'un choix de catégorie</span>
+          </div>
+          <div v-for="genre in filteredGenresList">
+            <LabelComp :text="genre.text" textPosition="down">
+              <InputComp v-model="newForm.genreId" type="checkbox" :value="genre.value" />
+            </LabelComp>
+          </div>
+        </div>
+        <div v-if="currentCategory">
+          <!-- game platform -->
+          <div v-if="currentCategory.name === 'game'">
+            <span>Joué sur:</span>
+            <div v-for="platform in gamePlatforms">
+              <LabelComp :text="platform.name" textPosition="down">
+                <InputComp v-model="newForm.platformId" type="radio" :value="platform.id" />
+              </LabelComp>
+            </div>
+          </div>
+          <!-- movie duration -->
+          <div v-if="currentCategory.name === 'movie'">
+            {{ newForm.duration }}
+            <LabelComp text="Durée du film en minutes" textPosition="up">
+              <InputComp v-model="newForm.duration" type="text" placeholder="60,90,120..." />
+            </LabelComp>
+          </div>
         </div>
         <ButtonComp type="submit"></ButtonComp>
       </form>
