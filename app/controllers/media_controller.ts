@@ -29,6 +29,7 @@ export default class MediaController {
   async showCreate({ inertia }: HttpContext) {
     type FormattedOptions = { text: string; value: string | number }
     type CategoryRelatedTypes = Record<string, { text: string; value: string | number }[]>
+    type CategoryRelatedGenres = Record<string, { text: string; value: string | number }[]>
 
     // easier to manipulate lists in the SelectComp components
     const formatOptions = <T extends Record<string, any>>(
@@ -40,11 +41,18 @@ export default class MediaController {
     const statuses = await MediaStatus.query().orderBy('name', 'desc')
     const categories = await MediaCategory.query().orderBy('name')
     const tags = await Tag.query().orderBy('name')
+    const gamePlatforms = await GamePlatform.query().orderBy('name')
 
     const categoryTypes = await db
       .from('category_types')
-      .join('media_types', 'category_types.type_id', 'media_types .id')
+      .join('media_types', 'category_types.type_id', 'media_types.id')
       .select('category_types.category_id', 'media_types.id', 'media_types.name')
+      .orderBy('name')
+
+    const categoryGenres = await db
+      .from('category_genres')
+      .join('genres', 'category_genres.genre_id', 'genres.id')
+      .select('category_genres.category_id', 'genres.id', 'genres.name')
       .orderBy('name')
 
     // needed to only show types for a chosen category in the form
@@ -59,15 +67,25 @@ export default class MediaController {
       return acc
     }, {})
 
-    const formattedStatuses = formatOptions(statuses, 'name', 'id')
-    const formattedCategories = formatOptions(categories, 'name', 'id')
-    const formattedTags = formatOptions(tags, 'name', 'id')
+    // needed to only show genres for a chosen category in the form
+    const categoryRelatedGenres = categories.reduce((acc: CategoryRelatedGenres, category) => {
+      const genres = categoryGenres
+        .filter((ct) => ct.category_id === category.id)
+        .map((ct) => ({
+          text: ct.name,
+          value: ct.id,
+        }))
+      acc[category.id] = genres
+      return acc
+    }, {})
 
     return inertia.render('admin/CreateMedia', {
-      statusesList: formattedStatuses,
-      categoriesList: formattedCategories,
-      tagsList: formattedTags,
+      statuses,
+      categories,
       categoryRelatedTypes,
+      categoryRelatedGenres,
+      tags,
+      gamePlatforms,
     })
   }
 
