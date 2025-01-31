@@ -62,7 +62,6 @@ watch(
     filteredTypesList.value = props.categoryRelatedTypes[newCategoryId] || []
     filteredGenresList.value = props.categoryRelatedGenres[newCategoryId] || []
     resetFormValues()
-    console.log(currentCategory.value?.name)
   }
 )
 
@@ -189,9 +188,26 @@ const isNoCategorySelected = computed(() => {
           </div>
           <!-- movie duration -->
           <div v-if="currentCategory.name === 'movie'">
-            {{ newForm.duration }}
             <LabelComp text="Durée du film en minutes" textPosition="up">
               <InputComp v-model="newForm.duration" type="text" placeholder="60,90,120..." />
+            </LabelComp>
+          </div>
+          <!-- series season length -->
+          <div v-if="currentCategory.name === 'series'">
+            <LabelComp text="Nombres d'épisodes" textPosition="up">
+              <InputComp v-model="newForm.seriesSeasonLength" type="number" min="1" />
+            </LabelComp>
+          </div>
+          <!-- anime season length -->
+          <div v-if="currentCategory.name === 'anime'">
+            <LabelComp text="Nombres d'épisodes" textPosition="up">
+              <InputComp v-model="newForm.animeSeasonLength" type="number" min="1" />
+            </LabelComp>
+          </div>
+          <!-- books pages -->
+          <div v-if="currentCategory.name === 'book'">
+            <LabelComp text="Nombres de pages" textPosition="up">
+              <InputComp v-model="newForm.pages" type="number" min="1" />
             </LabelComp>
           </div>
         </div>
