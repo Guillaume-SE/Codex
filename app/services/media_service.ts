@@ -36,7 +36,6 @@ export default class MediaService {
       synopsis,
       tagId,
       genreId,
-      contributors,
       ...categoryRelatedMediaData
     } = data
 
@@ -64,15 +63,6 @@ export default class MediaService {
         .save()
 
       await media.related('genres').sync(genreId)
-
-      for (const contributor of contributors) {
-        await media.related('contributors').createMany([
-          {
-            contributorId: contributor.contributorId,
-            roleId: contributor.roleId,
-          },
-        ])
-      }
 
       if (selectedCategoryName === 'game') {
         await media.related('gameInfo').create({ platformId: categoryRelatedMediaData.platformId })
