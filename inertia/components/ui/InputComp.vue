@@ -6,6 +6,8 @@ defineProps<{
   placeholder?: string
   id?: string
   value?: string | number | object
+  min?: string
+  max?: string
 }>()
 </script>
 
@@ -24,6 +26,10 @@ defineProps<{
 
   <template v-else-if="type === 'date'">
     <input v-model="model" type="date" />
+  </template>
+
+  <template v-else-if="type === 'number'">
+    <input v-model="model" type="number" :min="min || ''" :max="max || ''" />
   </template>
 
   <template v-else>
