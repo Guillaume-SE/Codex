@@ -27,16 +27,8 @@ export default class MediaController {
   ) {}
 
   async showCreate({ inertia }: HttpContext) {
-    type FormattedOptions = { text: string; value: string | number }
     type CategoryRelatedTypes = Record<string, { text: string; value: string | number }[]>
     type CategoryRelatedGenres = Record<string, { text: string; value: string | number }[]>
-
-    // easier to manipulate lists in the SelectComp components
-    const formatOptions = <T extends Record<string, any>>(
-      items: T[],
-      textKey: keyof T,
-      valueKey: keyof T
-    ): FormattedOptions[] => items.map((item) => ({ text: item[textKey], value: item[valueKey] }))
 
     const statuses = await MediaStatus.query().orderBy('name', 'desc')
     const categories = await MediaCategory.query().orderBy('name')
@@ -89,11 +81,11 @@ export default class MediaController {
     })
   }
 
-  async addOne({ request, response }: HttpContext) {
+  async addOne({ request, response, inertia }: HttpContext) {
     try {
       const data = await request.validateUsing(createMediaValidator)
-      const newMedia = await this.mediaService.store(data)
-      return response.status(201).json(newMedia)
+      await this.mediaService.store(data)
+      return inertia.render('admin/Dashboard')
     } catch (error) {
       return response.status(400).json({ error, customError: error.message })
     }
