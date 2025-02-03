@@ -80,10 +80,6 @@ const formattedDuration = computed(() =>
           <p v-if="media.alternativeName">Nom alternatif: {{ media.alternativeName }}</p>
           <!-- released -->
           <p>Date de sortie: {{ media.released || 'N/A' }}</p>
-          <!-- contributors -->
-          <p v-for="(values, key) in media.contributors" :key="key">
-            {{ key }}: {{ values.join(', ') }}
-          </p>
           <!-- games infos -->
           <p v-if="isGameMedia(media)">Joué sur: {{ media.gameInfos.platform || 'N/A' }}</p>
           <!-- movies infos -->
