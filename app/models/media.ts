@@ -4,15 +4,14 @@ import Cover from '#models/cover'
 import GameInfo from '#models/game_info'
 import Genre from '#models/genre'
 import MediaCategory from '#models/media_category'
-import MediaContributor from '#models/media_contributor'
 import MediaStatus from '#models/media_status'
 import MediaType from '#models/media_type'
 import MovieInfo from '#models/movie_info'
 import Review from '#models/review'
 import SeriesInfo from '#models/series_info'
 import Tag from '#models/tag'
-import { BaseModel, belongsTo, column, hasMany, hasOne, manyToMany } from '@adonisjs/lucid/orm'
-import type { BelongsTo, HasMany, HasOne, ManyToMany } from '@adonisjs/lucid/types/relations'
+import { BaseModel, belongsTo, column, hasOne, manyToMany } from '@adonisjs/lucid/orm'
+import type { BelongsTo, HasOne, ManyToMany } from '@adonisjs/lucid/types/relations'
 import { DateTime } from 'luxon'
 
 export default class Media extends BaseModel {
@@ -109,9 +108,4 @@ export default class Media extends BaseModel {
     pivotTimestamps: false,
   })
   declare genres: ManyToMany<typeof Genre>
-
-  @hasMany(() => MediaContributor, {
-    foreignKey: 'mediaId',
-  })
-  declare contributors: HasMany<typeof MediaContributor>
 }

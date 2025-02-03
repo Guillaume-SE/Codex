@@ -8,7 +8,6 @@ export interface IBaseMediaPresented {
   released: string | null
   synopsis: string | null
   genres: string[]
-  contributors: Record<string, string[]>
   review?: {
     rating: number | null
     opinion: string | null

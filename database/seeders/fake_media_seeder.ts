@@ -1,5 +1,4 @@
 import { MediaFactory } from '#database/factories/media_factory'
-import Contributor from '#models/contributor'
 import Media from '#models/media'
 import { BaseSeeder } from '@adonisjs/lucid/seeders'
 
@@ -81,9 +80,8 @@ export default class extends BaseSeeder {
       { genres: [2, 6, 7, 8], contributorRoles: [7, 8], media: booksReleasingSoon },
     ]
 
-    for (const { genres, contributorRoles, media } of mediaOptions) {
+    for (const { genres, media } of mediaOptions) {
       await this.#attachGenres(genres, media)
-      await this.#attachContributors(contributorRoles, media)
     }
   }
 
@@ -91,15 +89,6 @@ export default class extends BaseSeeder {
     for (const media of mediaList) {
       const randomGenreIds = this.#getRandomGenres(genreIds)
       await media.related('genres').sync(randomGenreIds)
-    }
-  }
-
-  async #attachContributors(contributorRoleIds: number[], mediaList: Media[]) {
-    const contributors = await Contributor.all()
-    const contributorIds = contributors.map((contributor) => contributor.id)
-    for (const media of mediaList) {
-      const randomContributors = this.#getRandomContributors(contributorIds, contributorRoleIds)
-      await media.related('contributors').createMany(randomContributors)
     }
   }
 
@@ -111,14 +100,5 @@ export default class extends BaseSeeder {
   #getRandomGenres(genreIds: number[]) {
     const numGenres = Math.floor(Math.random() * (genreIds.length + 1))
     return this.#getRandomElements(genreIds, numGenres)
-  }
-
-  #getRandomContributors(contributorIds: number[], roleIds: number[]) {
-    const numContributors = Math.floor(Math.random() * 4) + 1
-    const randomContributors = this.#getRandomElements(contributorIds, numContributors)
-    return randomContributors.map((contributorId) => {
-      const randomRole = roleIds[Math.floor(Math.random() * roleIds.length)]
-      return { contributorId, roleId: randomRole }
-    })
   }
 }

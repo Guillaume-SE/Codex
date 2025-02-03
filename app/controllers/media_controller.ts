@@ -3,7 +3,6 @@ import GamePlatform from '#models/game_platform'
 import MediaCategory from '#models/media_category'
 import MediaStatus from '#models/media_status'
 import Tag from '#models/tag'
-import ContributorService from '#services/contributor_service'
 import MediaCategoryService from '#services/media_category_service'
 import MediaService from '#services/media_service'
 import type { MediaCategories } from '#types/MediaCategories'
@@ -22,8 +21,7 @@ import db from '@adonisjs/lucid/services/db'
 export default class MediaController {
   constructor(
     protected mediaService: MediaService,
-    protected mediaCategoryService: MediaCategoryService,
-    protected contributorService: ContributorService
+    protected mediaCategoryService: MediaCategoryService
   ) {}
 
   async showCreate({ inertia }: HttpContext) {

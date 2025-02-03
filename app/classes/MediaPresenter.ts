@@ -1,5 +1,4 @@
 import { IGenre } from '#interfaces/genre_interface'
-import { IMediaContributors } from '#interfaces/media_contributor_interface'
 import { IPaginated } from '#interfaces/paginated_interface'
 import Media from '#models/media'
 import { ModelPaginatorContract } from '@adonisjs/lucid/types/model'
@@ -16,7 +15,6 @@ export abstract class BaseMediaPresenter {
   synopsis: string | null
   tag: string
   genres: string[]
-  contributors: Record<string, string[]>
   review?: {
     rating: number | null
     opinion: string | null
@@ -41,7 +39,6 @@ export abstract class BaseMediaPresenter {
     this.synopsis = media.synopsis
     this.tag = media.tag.name
     this.genres = media.genres.map((genre: IGenre) => genre.name)
-    this.contributors = BaseMediaPresenter.formatContributors(media.contributors)
 
     if (media.review) {
       this.review = {
@@ -60,27 +57,6 @@ export abstract class BaseMediaPresenter {
         largeUrl: media.cover.largeCoverUrl,
       }
     }
-  }
-
-  public static formatContributors(
-    mediaContributors: IMediaContributors[]
-  ): Record<string, string[]> {
-    return mediaContributors.reduce(
-      (acc: Record<string, string[]>, mediaContributor: IMediaContributors) => {
-        const roleName = mediaContributor.role?.name
-        if (roleName) {
-          if (!acc[roleName]) {
-            acc[roleName] = []
-          }
-          const contributorName = mediaContributor.contributor?.name
-          if (contributorName) {
-            acc[roleName].push(contributorName)
-          }
-        }
-        return acc
-      },
-      {}
-    )
   }
 }
 

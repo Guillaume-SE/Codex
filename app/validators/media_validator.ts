@@ -58,12 +58,6 @@ export const updateMediaValidator = vine.compile(
     synopsis: vine.string().trim().nullable(),
     tagId: vine.number().isExists({ table: 'tags', column: 'id' }),
     genreId: vine.array(vine.number().isExists({ table: 'genres', column: 'id' })).distinct(),
-    contributors: vine.array(
-      vine.object({
-        contributorId: vine.number().isExists({ table: 'contributors', column: 'id' }),
-        roleId: vine.number().isExists({ table: 'contributor_roles', column: 'id' }),
-      })
-    ),
     // specific infos
     platformId: vine
       .number()

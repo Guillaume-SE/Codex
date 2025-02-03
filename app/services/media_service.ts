@@ -1,7 +1,6 @@
 import Cover from '#models/cover'
 import Media from '#models/media'
 import MediaCategory from '#models/media_category'
-import MediaContributor from '#models/media_contributor'
 import CoverService from '#services/cover_service'
 import type { MediaCategories } from '#types/MediaCategories'
 import {
@@ -94,7 +93,6 @@ export default class MediaService {
       synopsis,
       tagId,
       genreId,
-      contributors,
       ...categoryRelatedMediaData
     } = data
 
@@ -110,7 +108,6 @@ export default class MediaService {
     }
 
     const media = await Media.findOrFail(mediaId)
-    // const mediaContributors = await MediaContributor.findManyBy('media_id', mediaId)
     const category = await MediaCategory.findOrFail(categoryId)
     const categoryName = category.name
     const searchPayload = { mediaId: mediaId }
@@ -124,18 +121,6 @@ export default class MediaService {
         .save()
 
       await media.related('genres').sync(genreId)
-
-      // simpler to delete all actual contributors
-      await MediaContributor.query({ client: trx }).where('media_id', mediaId).delete()
-      // and add fresh one
-      for (const contributor of contributors) {
-        await media.related('contributors').createMany([
-          {
-            contributorId: contributor.contributorId,
-            roleId: contributor.roleId,
-          },
-        ])
-      }
 
       if (categoryName === 'game') {
         await media.related('gameInfo').updateOrCreate(searchPayload, categoryRelatedMediaData)
@@ -237,10 +222,6 @@ export default class MediaService {
       .preload('type')
       .preload('tag')
       .preload('genres')
-      .preload('contributors', (contributorsQuery) => {
-        contributorsQuery.preload('role')
-        contributorsQuery.preload('contributor')
-      })
       .preload('gameInfo', (gamesQuery) => {
         gamesQuery.preload('gamePlatform')
       })
@@ -266,10 +247,6 @@ export default class MediaService {
         .load('type')
         .load('tag')
         .load('genres')
-        .load('contributors', (contributorsQuery) => {
-          contributorsQuery.preload('role')
-          contributorsQuery.preload('contributor')
-        })
         .load('gameInfo', (gamesQuery) => {
           gamesQuery.preload('gamePlatform')
         })
@@ -300,10 +277,6 @@ export default class MediaService {
       .preload('type')
       .preload('tag')
       .preload('genres')
-      .preload('contributors', (query) => {
-        query.preload('role')
-        query.preload('contributor')
-      })
       .preload('review')
       .preload('cover')
 
@@ -322,10 +295,6 @@ export default class MediaService {
       .preload('type')
       .preload('tag')
       .preload('genres')
-      .preload('contributors', (contributorsQuery) => {
-        contributorsQuery.preload('role')
-        contributorsQuery.preload('contributor')
-      })
       .preload('review')
       .preload('cover')
 
