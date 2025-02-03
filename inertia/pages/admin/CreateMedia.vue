@@ -7,7 +7,6 @@ import AppHead from '~/components/AppHead.vue'
 import ButtonComp from '~/components/ui/ButtonComp.vue'
 import InputComp from '~/components/ui/InputComp.vue'
 import LabelComp from '~/components/ui/LabelComp.vue'
-import SelectComp from '~/components/ui/SelectComp.vue'
 import AppLayout from '~/layouts/AppLayout.vue'
 
 const props = defineProps<{
