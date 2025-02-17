@@ -15,7 +15,6 @@ import {
 } from '#validators/media_validator'
 import { inject } from '@adonisjs/core'
 import type { HttpContext } from '@adonisjs/core/http'
-import db from '@adonisjs/lucid/services/db'
 
 @inject()
 export default class MediaController {
@@ -25,49 +24,39 @@ export default class MediaController {
   ) {}
 
   async showCreate({ inertia }: HttpContext) {
-    type CategoryRelatedTypes = Record<string, { text: string; value: string | number }[]>
-    type CategoryRelatedGenres = Record<string, { text: string; value: string | number }[]>
+    type Item = { text: string; value: string }
+    type CategoryItem = {
+      category_id: string
+      name: string
+      id: string
+    }
 
     const statuses = await MediaStatus.query().orderBy('name', 'desc')
     const categories = await MediaCategory.query().orderBy('name')
     const tags = await Tag.query().orderBy('name')
     const gamePlatforms = await GamePlatform.query().orderBy('name')
+    const categoriesTypes = await this.mediaCategoryService.getCategoriesTypes()
+    const categoriesGenres = await this.mediaCategoryService.getCategoriesGenres()
 
-    const categoryTypes = await db
-      .from('category_types')
-      .join('media_types', 'category_types.type_id', 'media_types.id')
-      .select('category_types.category_id', 'media_types.id', 'media_types.name')
-      .orderBy('name')
+    // needed to only show related items to each categories in the form
+    const getCategoryRelatedItems = (
+      categories: MediaCategory[],
+      categoriesItems: CategoryItem[]
+    ): Record<string, Item[]> => {
+      return categories.reduce((acc: Record<string, Item[]>, category) => {
+        const items = categoriesItems
+          .filter((item) => item.category_id.toString() === category.id.toString())
+          .map((item) => ({
+            text: item.name,
+            value: item.id,
+          }))
+        acc[category.id.toString()] = items
+        return acc
+      }, {})
+    }
 
-    const categoryGenres = await db
-      .from('category_genres')
-      .join('genres', 'category_genres.genre_id', 'genres.id')
-      .select('category_genres.category_id', 'genres.id', 'genres.name')
-      .orderBy('name')
-
-    // needed to only show types for a chosen category in the form
-    const categoryRelatedTypes = categories.reduce((acc: CategoryRelatedTypes, category) => {
-      const types = categoryTypes
-        .filter((ct) => ct.category_id === category.id)
-        .map((ct) => ({
-          text: ct.name,
-          value: ct.id,
-        }))
-      acc[category.id] = types
-      return acc
-    }, {})
-
-    // needed to only show genres for a chosen category in the form
-    const categoryRelatedGenres = categories.reduce((acc: CategoryRelatedGenres, category) => {
-      const genres = categoryGenres
-        .filter((ct) => ct.category_id === category.id)
-        .map((ct) => ({
-          text: ct.name,
-          value: ct.id,
-        }))
-      acc[category.id] = genres
-      return acc
-    }, {})
+    const categoryRelatedTypes = getCategoryRelatedItems(categories, categoriesTypes)
+    const categoryRelatedGenres = getCategoryRelatedItems(categories, categoriesGenres)
 
     return inertia.render('admin/CreateMedia', {
       statuses,
