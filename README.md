@@ -23,7 +23,8 @@ It also allows me to keep up to date with the ones I've planned to see, the ones
 
 ## Database diagram and relationship explanations
 
-![diagram](https://github.com/user-attachments/assets/fef2a5f2-a2c3-48db-bbad-e6b3017a8dac)
+![db-diagram-dark](https://github.com/user-attachments/assets/625d4471-6598-4995-a752-4619396f0ee9)
+
 
 - `users`: as the project aims to contain only my media entries, I chose not to link the "users" table to "reviews". It will only be used for authentication.
 
@@ -44,8 +45,6 @@ It also allows me to keep up to date with the ones I've planned to see, the ones
 - `books_infos`: contains all book related media information.
 
 - `tags`: allow to give to each media a tag who can be used to show related result.
-
-- `media_contributors`: allows to know who worked on the related media and what their role was.
 
 - `category_types`: allows to assign one media types to multiple categories and avoid types names duplication.
 
@@ -86,7 +85,7 @@ node ace db:seed -i
 
 ## Status
 
-7 jan. 2025 : filters finished and functional, next step will be to create a "hub" to redirect to each category.
+3 feb. 2025 : set up the admin interface for handling media on the site
 
 ## Other
 
