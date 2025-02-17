@@ -8,8 +8,6 @@ const GenresController = () => import('#controllers/genres_controller')
 const MediaTypesController = () => import('#controllers/media_types_controller')
 const TagsController = () => import('#controllers/tags_controller')
 const GamePlatformsController = () => import('#controllers/game_platforms_controller')
-const ContributorsRolesController = () => import('#controllers/contributors_roles_controller')
-const ContributorsController = () => import('#controllers/contributors_controller')
 const HomeController = () => import('#controllers/home_controller')
 const StorageController = () => import('#controllers/storage_controller')
 const DashboardController = () => import('#controllers/dashboard_controller')
@@ -59,16 +57,6 @@ router.delete('/tag/:tagId', [TagsController, 'deleteOne'])
 router.post('/platform', [GamePlatformsController, 'addOne'])
 router.put('/platform/:platformId', [GamePlatformsController, 'updateOne'])
 router.delete('/platform/:platformId', [GamePlatformsController, 'deleteOne'])
-
-//* contributors roles
-router.post('/contributor-role', [ContributorsRolesController, 'addOne'])
-router.put('/contributor-role/:roleId', [ContributorsRolesController, 'updateOne'])
-router.delete('/contributor-role/:roleId', [ContributorsRolesController, 'deleteOne'])
-
-//* contributors
-router.post('/contributor', [ContributorsController, 'addOne'])
-router.put('/contributor/:contributorId', [ContributorsController, 'updateOne'])
-router.delete('/contributor/:contributorId', [ContributorsController, 'deleteOne'])
 
 //* dashboard
 router.get('/dashboard', [DashboardController, 'showDashboard'])
