@@ -300,4 +300,26 @@ export default class MediaService {
 
     return mediaList
   }
+
+  static async getAllPaginated(page: number = 1) {
+    const mediaQuery = await Media.query()
+      .preload('status')
+      .preload('category')
+      .preload('type')
+      .preload('tag')
+      .preload('genres')
+      .preload('gameInfo', (gamesQuery) => {
+        gamesQuery.preload('gamePlatform')
+      })
+      .preload('movieInfo')
+      .preload('seriesInfo')
+      .preload('animeInfo')
+      .preload('bookInfo')
+      .preload('review')
+      .preload('cover')
+      .orderBy('id', 'desc')
+    // .paginate(page, 20)
+
+    return mediaQuery
+  }
 }
