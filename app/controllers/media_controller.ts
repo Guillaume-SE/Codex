@@ -154,6 +154,7 @@ export default class MediaController {
       const mediaGenresList = await this.mediaCategoryService.getCategoryGenres(category)
       const gamePlatformsList = await GamePlatform.all()
 
+      // needed for pagination
       mediaList.baseUrl(`/category/${category}`)
 
       const paginatedMediaList = MediaPresenterFactory.presentPaginatedMediaList(mediaList)

@@ -74,6 +74,10 @@ const resetFormValues = () => {
   newForm.pages = ''
 }
 
+function submit() {
+  newForm.post('/media')
+}
+
 const currentCategory = computed(() => {
   const category = props.categories.find((category) => category.id === newForm.categoryId)
   return category
@@ -87,7 +91,7 @@ const isNoCategorySelected = computed(() => {
   <AppHead title="Ajouter un media" />
   <AppLayout>
     <div>
-      <form method="POST" @submit.prevent="newForm.post('/media')">
+      <form @submit.prevent="submit">
         <!-- status -->
         <div>
           <span>Progression (requis):</span>
@@ -210,7 +214,7 @@ const isNoCategorySelected = computed(() => {
             </LabelComp>
           </div>
         </div>
-        <ButtonComp type="submit"></ButtonComp>
+        <ButtonComp type="submit" :disabled="newForm.processing"></ButtonComp>
       </form>
     </div>
   </AppLayout>

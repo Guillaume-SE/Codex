@@ -1,4 +1,3 @@
-import type { ICoverFilenames } from '#interfaces/cover_interface'
 import env from '#start/env'
 import { cuid } from '@adonisjs/core/helpers'
 import { PathLike } from 'fs'
@@ -8,6 +7,13 @@ interface IProcessImageOptions {
   width?: number
   height?: number
   format: keyof sharp.FormatEnum
+}
+
+interface ICoverFilenames {
+  original: string
+  small: string
+  medium: string
+  large: string
 }
 
 export class CoverUtils {
