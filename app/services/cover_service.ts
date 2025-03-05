@@ -1,10 +1,16 @@
 import { CoverUtils } from '#classes/CoverUtils'
-import type { ICoverFilenames } from '#interfaces/cover_interface'
 import Cover from '#models/cover'
 import Media from '#models/media'
 import { inject } from '@adonisjs/core'
 import { MultipartFile } from '@adonisjs/core/bodyparser'
 import drive from '@adonisjs/drive/services/main'
+
+interface ICoverFilenames {
+  original: string
+  small: string
+  medium: string
+  large: string
+}
 
 @inject()
 export default class CoverService {
