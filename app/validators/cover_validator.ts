@@ -20,7 +20,7 @@ export const deleteCoverValidator = vine.compile(
   })
 )
 
-export const getCoverValidator = vine.compile(
+export const mediaCoverValidator = vine.compile(
   vine.object({
     params: vine.object({
       mediaId: vine.number().isExists({ table: 'media', column: 'id' }),
