@@ -36,7 +36,7 @@ function submitDeleteCover() {
       <h3>Gestion de cover</h3>
       <div v-if="media.cover">
         <div>
-          <p>Cover actuelle pour {{ media.name }}</p>
+          <p>Modifier la cover pour {{ media.name }}</p>
         </div>
         <div>
           <img
