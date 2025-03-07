@@ -91,6 +91,7 @@ const isNoCategorySelected = computed(() => {
   <AppHead title="Ajouter un media" />
   <AppLayout>
     <div>
+      <h3>Ajouter un nouveau media</h3>
       <form @submit.prevent="submit">
         <!-- status -->
         <div>
