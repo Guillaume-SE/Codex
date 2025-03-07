@@ -4,7 +4,7 @@ import RatingBox from '~/components/RatingBox.vue'
 import { useRatingLabel } from '~/composables/useRatingLabel'
 
 const props = defineProps<{
-  rating: number | null | undefined
+  rating: number | null
 }>()
 
 const ratingLabel = computed(() => useRatingLabel(props.rating))

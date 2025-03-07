@@ -1,7 +1,7 @@
 <script setup lang="ts">
 defineProps<{
   textPosition: 'up' | 'down'
-  text: string
+  text?: string
 }>()
 </script>
 

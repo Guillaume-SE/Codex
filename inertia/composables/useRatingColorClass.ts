@@ -1,5 +1,5 @@
-export function useRatingColorClass(rating: number | null | undefined): string {
-  if (rating === null || rating === undefined) {
+export function useRatingColorClass(rating: number | null): string {
+  if (rating === null || rating === undefined || isNaN(rating)) {
     return 'rating-default'
   }
 

@@ -5,7 +5,7 @@ defineProps<{
   type: string
   placeholder?: string
   id?: string
-  value?: string | number | object
+  value?: string | number | object | null
   min?: string
   max?: string
 }>()

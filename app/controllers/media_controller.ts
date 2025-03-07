@@ -8,9 +8,8 @@ import MediaService from '#services/media_service'
 import type { MediaCategories } from '#types/MediaCategories'
 import {
   createMediaValidator,
-  deleteMediaValidator,
   showByCategoryMediaValidator,
-  showOneMediaValidator,
+  singleMediaValidator,
   updateMediaValidator,
 } from '#validators/media_validator'
 import { inject } from '@adonisjs/core'
@@ -68,22 +67,20 @@ export default class MediaController {
     })
   }
 
-  async addOne({ request, response, inertia }: HttpContext) {
-    try {
-      const data = await request.validateUsing(createMediaValidator)
-      await this.mediaService.store(data)
-      return inertia.render('admin/Dashboard')
-    } catch (error) {
-      return response.status(400).json({ error, customError: error.message })
-    }
+  async addOne({ request, response }: HttpContext) {
+    const data = await request.validateUsing(createMediaValidator)
+    await this.mediaService.store(data)
+
+    return response.redirect().toRoute('dashboard.home')
   }
 
   async updateOne({ params, response, request }: HttpContext) {
     const mediaId = params.mediaId
     try {
       const { params, ...data } = await request.validateUsing(updateMediaValidator)
-      const media = await this.mediaService.update(data, mediaId)
-      return response.status(201).json(media)
+      await this.mediaService.update(data, mediaId)
+
+      return response.redirect().toRoute('dashboard.home')
     } catch (error) {
       return response.status(400).json({ error, customError: error.message })
     }
@@ -93,7 +90,7 @@ export default class MediaController {
     const mediaId = params.mediaId
 
     try {
-      await request.validateUsing(deleteMediaValidator)
+      await request.validateUsing(singleMediaValidator)
 
       await this.mediaService.delete(mediaId)
 
@@ -107,7 +104,7 @@ export default class MediaController {
     const mediaId = params.mediaId
 
     try {
-      await request.validateUsing(showOneMediaValidator)
+      await request.validateUsing(singleMediaValidator)
       const media = await this.mediaService.getOne(mediaId)
       const presentedMedia = MediaPresenterFactory.presentMedia(media)
 
