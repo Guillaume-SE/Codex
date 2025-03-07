@@ -30,6 +30,7 @@ router.put('/media/:mediaId', [MediaController, 'updateOne'])
 router.delete('/media/:mediaId', [MediaController, 'deleteOne'])
 
 //* reviews
+router.get('/media/:mediaId/review', [ReviewsController, 'showManage'])
 router.post('/media/:mediaId/review', [ReviewsController, 'manageReview'])
 router.put('/media/:mediaId/review', [ReviewsController, 'manageReview'])
 
