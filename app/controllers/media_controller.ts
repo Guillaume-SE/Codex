@@ -8,9 +8,8 @@ import MediaService from '#services/media_service'
 import type { MediaCategories } from '#types/MediaCategories'
 import {
   createMediaValidator,
-  deleteMediaValidator,
   showByCategoryMediaValidator,
-  showOneMediaValidator,
+  singleMediaValidator,
   updateMediaValidator,
 } from '#validators/media_validator'
 import { inject } from '@adonisjs/core'
@@ -91,7 +90,7 @@ export default class MediaController {
     const mediaId = params.mediaId
 
     try {
-      await request.validateUsing(deleteMediaValidator)
+      await request.validateUsing(singleMediaValidator)
 
       await this.mediaService.delete(mediaId)
 
@@ -105,7 +104,7 @@ export default class MediaController {
     const mediaId = params.mediaId
 
     try {
-      await request.validateUsing(showOneMediaValidator)
+      await request.validateUsing(singleMediaValidator)
       const media = await this.mediaService.getOne(mediaId)
       const presentedMedia = MediaPresenterFactory.presentMedia(media)
 
