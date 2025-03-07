@@ -46,7 +46,9 @@ defineProps<{
           <p>{{ media.name }}</p>
         </div>
         <div>
-          <RatingBox :rating="media.review?.rating ? media.review.rating : null" />
+          <Link :href="`/media/${media.id}/review`">
+            <RatingBox :rating="media.review?.rating ? media.review.rating : null" />
+          </Link>
         </div>
         <div>
           <StatusProgressBadge
