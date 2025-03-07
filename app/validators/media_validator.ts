@@ -71,22 +71,6 @@ export const updateMediaValidator = vine.compile(
   })
 )
 
-export const deleteMediaValidator = vine.compile(
-  vine.object({
-    params: vine.object({
-      mediaId: vine.number().isExists({ table: 'media', column: 'id' }),
-    }),
-  })
-)
-
-export const showOneMediaValidator = vine.compile(
-  vine.object({
-    params: vine.object({
-      mediaId: vine.number().isExists({ table: 'media', column: 'id' }),
-    }),
-  })
-)
-
 export const showByCategoryMediaValidator = vine.compile(
   vine.object({
     params: vine.object({
@@ -121,3 +105,27 @@ export const showByCategoryMediaValidator = vine.compile(
     favorite: vine.boolean().optional(),
   })
 )
+
+export const singleMediaValidator = vine.compile(
+  vine.object({
+    params: vine.object({
+      mediaId: vine.number().isExists({ table: 'media', column: 'id' }),
+    }),
+  })
+)
+
+// export const deleteMediaValidator = vine.compile(
+//   vine.object({
+//     params: vine.object({
+//       mediaId: vine.number().isExists({ table: 'media', column: 'id' }),
+//     }),
+//   })
+// )
+
+// export const showOneMediaValidator = vine.compile(
+//   vine.object({
+//     params: vine.object({
+//       mediaId: vine.number().isExists({ table: 'media', column: 'id' }),
+//     }),
+//   })
+// )
