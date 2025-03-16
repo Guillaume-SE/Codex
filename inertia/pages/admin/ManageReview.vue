@@ -2,7 +2,7 @@
 import type ReviewController from '#controllers/reviews_controller'
 import { InferPageProps } from '@adonisjs/inertia/types'
 import { useForm } from '@inertiajs/vue3'
-import { computed, onMounted, ref, watch } from 'vue'
+import { onMounted } from 'vue'
 import AppHead from '~/components/AppHead.vue'
 import RatingBox from '~/components/RatingBox.vue'
 import ButtonComp from '~/components/ui/ButtonComp.vue'
@@ -38,22 +38,20 @@ onMounted(() => {
   }
 })
 
-const ratingValues = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10']
+const ratingValues = [null, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 </script>
 
 <template>
   <AppHead title="Gestion de review" />
   <AppLayout>
     <div>
+      <h3>Gestion de la review de {{ props.media.name }}</h3>
+    </div>
+    <div>
       <form @submit.prevent="submit">
         <!-- rating -->
         <div>
           <span>Note:</span>
-          <div>
-            <LabelComp text="Aucune note" textPosition="down">
-              <InputComp v-model="newForm.rating" type="radio" />
-            </LabelComp>
-          </div>
           <div v-for="rating in ratingValues">
             <LabelComp textPosition="down">
               <InputComp v-model="newForm.rating" type="radio" :value="rating" />
