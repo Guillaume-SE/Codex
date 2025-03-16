@@ -11,11 +11,3 @@ export const manageReviewValidator = vine.compile(
     isFavorite: vine.boolean(),
   })
 )
-
-export const mediaReviewValidator = vine.compile(
-  vine.object({
-    params: vine.object({
-      mediaId: vine.number().isExists({ table: 'media', column: 'id' }),
-    }),
-  })
-)
