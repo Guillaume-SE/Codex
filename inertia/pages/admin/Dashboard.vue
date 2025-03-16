@@ -43,7 +43,9 @@ defineProps<{
         </div>
 
         <div>
-          <p>{{ media.name }}</p>
+          <Link :href="`/media/create`">
+            <p>{{ media.name }}</p>
+          </Link>
         </div>
         <div>
           <Link :href="`/media/${media.id}/review`">
