@@ -18,7 +18,7 @@ defineProps<{
   <AppLayout>
     <div>
       <h3>Media</h3>
-      <Link href="/media/create">Ajouter un media</Link>
+      <Link href="/media/manage">Ajouter un media</Link>
     </div>
 
     <div class="dashboard-list">
@@ -43,7 +43,7 @@ defineProps<{
         </div>
 
         <div>
-          <Link :href="`/media/create`">
+          <Link :href="`/media/manage/${media.id}`">
             <p>{{ media.name }}</p>
           </Link>
         </div>
