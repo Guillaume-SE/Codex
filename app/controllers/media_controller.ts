@@ -22,12 +22,18 @@ export default class MediaController {
     protected mediaCategoryService: MediaCategoryService
   ) {}
 
-  async showCreate({ inertia }: HttpContext) {
+  async showManage({ request, inertia }: HttpContext) {
     type Item = { text: string; value: string }
     type CategoryItem = {
       category_id: string
       name: string
       id: string
+    }
+
+    let media
+    if (request.params().mediaId) {
+      const { params } = await request.validateUsing(singleMediaValidator)
+      media = await this.mediaService.getOne(params.mediaId)
     }
 
     const statuses = await MediaStatus.query().orderBy('name', 'desc')
@@ -57,33 +63,29 @@ export default class MediaController {
     const categoryRelatedTypes = getCategoryRelatedItems(categories, categoriesTypes)
     const categoryRelatedGenres = getCategoryRelatedItems(categories, categoriesGenres)
 
-    return inertia.render('admin/CreateMedia', {
+    return inertia.render('admin/ManageMedia', {
       statuses,
       categories,
       categoryRelatedTypes,
       categoryRelatedGenres,
       tags,
       gamePlatforms,
+      media,
     })
   }
 
-  async addOne({ request, response }: HttpContext) {
+  async manageOne({ response, request }: HttpContext) {
+    // for update
+    if (request.params().mediaId) {
+      const { params, ...data } = await request.validateUsing(updateMediaValidator)
+      await this.mediaService.manageMedia(data, params.mediaId)
+      return response.redirect().toRoute('dashboard.home')
+    }
+    // for create
     const data = await request.validateUsing(createMediaValidator)
-    await this.mediaService.store(data)
+    await this.mediaService.manageMedia(data)
 
     return response.redirect().toRoute('dashboard.home')
-  }
-
-  async updateOne({ params, response, request }: HttpContext) {
-    const mediaId = params.mediaId
-    try {
-      const { params, ...data } = await request.validateUsing(updateMediaValidator)
-      await this.mediaService.update(data, mediaId)
-
-      return response.redirect().toRoute('dashboard.home')
-    } catch (error) {
-      return response.status(400).json({ error, customError: error.message })
-    }
   }
 
   async deleteOne({ request, params, response }: HttpContext) {
