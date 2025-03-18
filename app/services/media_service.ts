@@ -24,7 +24,8 @@ type updatedData = Omit<Infer<typeof updateMediaValidator>, 'params'>
 @inject()
 export default class MediaService {
   constructor(protected coverService: CoverService) {}
-  public async store(data: Infer<typeof createMediaValidator>) {
+
+  public async manageMedia(data: updatedData, mediaId?: number) {
     const {
       statusId,
       categoryId,
@@ -51,8 +52,13 @@ export default class MediaService {
 
     const selectedCategory = await MediaCategory.findOrFail(categoryId)
     const selectedCategoryName = selectedCategory.name
+    let media = new Media()
+    let searchPayload: number | undefined
+    if (mediaId) {
+      media = await Media.findOrFail(mediaId)
+      searchPayload = media.id
+    }
 
-    const media = new Media()
     await db.transaction(async (trx) => {
       media.useTransaction(trx)
       await media
@@ -64,77 +70,39 @@ export default class MediaService {
       await media.related('genres').sync(genreId)
 
       if (selectedCategoryName === 'game') {
-        await media.related('gameInfo').create({ platformId: categoryRelatedMediaData.platformId })
+        await media
+          .related('gameInfo')
+          .updateOrCreate(
+            { mediaId: searchPayload },
+            { platformId: categoryRelatedMediaData.platformId }
+          )
       } else if (selectedCategoryName === 'movie') {
-        await media.related('movieInfo').create({ duration: categoryRelatedMediaData.duration })
+        await media
+          .related('movieInfo')
+          .updateOrCreate(
+            { mediaId: searchPayload },
+            { duration: categoryRelatedMediaData.duration }
+          )
       } else if (selectedCategoryName === 'series') {
         await media
           .related('seriesInfo')
-          .create({ seriesSeasonLength: categoryRelatedMediaData.seriesSeasonLength })
+          .updateOrCreate(
+            { mediaId: searchPayload },
+            { seriesSeasonLength: categoryRelatedMediaData.seriesSeasonLength }
+          )
       } else if (selectedCategoryName === 'anime') {
         await media
           .related('animeInfo')
-          .create({ animeSeasonLength: categoryRelatedMediaData.animeSeasonLength })
+          .updateOrCreate(
+            { mediaId: searchPayload },
+            { animeSeasonLength: categoryRelatedMediaData.animeSeasonLength }
+          )
       } else if (selectedCategoryName === 'book') {
-        await media.related('bookInfo').create({ pages: categoryRelatedMediaData.pages })
+        await media
+          .related('bookInfo')
+          .updateOrCreate({ mediaId: searchPayload }, { pages: categoryRelatedMediaData.pages })
       }
     })
-    return media
-  }
-
-  public async update(data: updatedData, mediaId: number) {
-    const {
-      statusId,
-      categoryId,
-      typeId,
-      name,
-      alternativeName,
-      released,
-      synopsis,
-      tagId,
-      genreId,
-      ...categoryRelatedMediaData
-    } = data
-
-    const generalMediaData = {
-      statusId,
-      categoryId,
-      typeId,
-      name,
-      alternativeName,
-      released,
-      synopsis,
-      tagId,
-    }
-
-    const media = await Media.findOrFail(mediaId)
-    const category = await MediaCategory.findOrFail(categoryId)
-    const categoryName = category.name
-    const searchPayload = { mediaId: mediaId }
-
-    await db.transaction(async (trx) => {
-      media.useTransaction(trx)
-      await media
-        .merge({
-          ...generalMediaData,
-        })
-        .save()
-
-      await media.related('genres').sync(genreId)
-
-      if (categoryName === 'game') {
-        await media.related('gameInfo').updateOrCreate(searchPayload, categoryRelatedMediaData)
-      } else if (categoryName === 'movie') {
-        await media.related('movieInfo').updateOrCreate(searchPayload, categoryRelatedMediaData)
-      } else if (categoryName === 'series') {
-        await media.related('seriesInfo').updateOrCreate(searchPayload, categoryRelatedMediaData)
-      } else if (categoryName === 'anime') {
-        await media.related('animeInfo').updateOrCreate(searchPayload, categoryRelatedMediaData)
-      } else if (categoryName === 'book') {
-        await media.related('bookInfo').updateOrCreate(searchPayload, categoryRelatedMediaData)
-      }
-    })
-
     return media
   }
 
