@@ -24,9 +24,9 @@ router.get('/categories', [MediaController, 'showCategories'])
 router.get('/category/:categoryName', [MediaController, 'showByCategory'])
 router.get('/category/:categoryName/:mediaId', [MediaController, 'showOne'])
 //ADMIN
-router.get('/media/create', [MediaController, 'showCreate'])
-router.post('/media', [MediaController, 'addOne'])
-router.put('/media/:mediaId', [MediaController, 'updateOne'])
+router.get('/media/manage/:mediaId?', [MediaController, 'showManage'])
+router.post('/media', [MediaController, 'manageOne'])
+router.put('/media/:mediaId', [MediaController, 'manageOne'])
 router.delete('/media/:mediaId', [MediaController, 'deleteOne'])
 
 //* reviews

@@ -31,7 +31,7 @@ function submit() {
 }
 
 onMounted(() => {
-  if (props.media.review) {
+  if (props.media?.review) {
     newForm.rating = props.media.review.rating
     newForm.opinion = props.media.review.opinion
     newForm.isFavorite = props.media.review.isFavorite
