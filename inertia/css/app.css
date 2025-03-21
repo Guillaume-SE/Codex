@@ -67,7 +67,7 @@ h6 {
   border-radius: 3px;
 }
 
-img-medium {
+.img-medium {
   width: 150px;
   aspect-ratio: 2/3 auto;
   border-radius: 3px;
@@ -121,29 +121,28 @@ img-medium {
 .status-progress-container {
   display: flex;
   align-items: center;
-  width: 120px;
-  border-radius: 10px;
-  background-color: #0f172a;
-}
-.status-progress-container-small {
-  display: flex;
-  align-items: center;
+  /* padding: 0 5px;
   width: 100px;
   height: 30px;
   border-radius: 10px;
-  background-color: #0f172a;
+  background-color: #0f172a; */
 }
 
 .status-progress-text {
-  color: #fafafa;
+  /* color: #fafafa; */
+  color: #0f172a;
   font-weight: 700;
-}
-.status-progress-text-small {
   font-size: 0.8rem;
 }
 
 .status-progress-icon {
-  margin-bottom: -0.1em;
+  /* width: 20px;
+  height: 20px; */
+  /* margin-bottom: -0.1em; */
+  width: 12px;
+  height: 12px;
+  margin-right: 5px;
+  border-radius: 50%;
 }
 
 .rating-container {
@@ -199,22 +198,22 @@ img-medium {
   outline-offset: -6px;
 }
 .in-progress {
-  color: #0ea5e9;
+  background-color: #0ea5e9;
 }
 .completed {
-  color: #13d75b;
+  background-color: #13d75b;
 }
 .paused {
-  color: #f6bb09;
+  background-color: #f6bb09;
 }
 .dropped {
-  color: #f87171;
+  background-color: #f87171;
 }
 .planned {
-  color: #cbd5e1;
+  background-color: #cbd5e1;
 }
 .anticipated {
-  color: #d946ef;
+  background-color: #d946ef;
 }
 
 .review-container {
@@ -244,14 +243,21 @@ img-medium {
 }
 
 .dashboard-list-item {
-  display: flex;
+  display: grid;
+  grid-template-columns: 50px 100px 2fr 1fr 1fr 1fr;
   align-items: center;
-  justify-content: space-between;
-  width: 100%;
-  height: 40px;
-  margin-bottom: 10px;
+  gap: 10px;
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
 }
 .dashboard-list_img {
   width: 30px;
-  height: 100%;
+  height: auto;
+  object-fit: cover;
+}
+
+.manage-review-rating-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
 }
