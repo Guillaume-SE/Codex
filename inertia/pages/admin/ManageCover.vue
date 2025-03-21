@@ -11,7 +11,7 @@ const props = defineProps<{
   media: InferPageProps<CoverController, 'showManage'>['media']
 }>()
 
-const showDeleteCover = ref(false)
+const showDeleteCover = ref<boolean>(false)
 const uploadInput = ref<HTMLInputElement>()
 const form = useForm({
   cover: null as File | null,
