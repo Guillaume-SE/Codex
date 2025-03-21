@@ -52,11 +52,13 @@ const ratingValues = [null, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
         <!-- rating -->
         <div>
           <span>Note:</span>
-          <div v-for="rating in ratingValues">
-            <LabelComp textPosition="down">
-              <InputComp v-model="newForm.rating" type="radio" :value="rating" />
-              <RatingBox :rating="rating" />
-            </LabelComp>
+          <div class="manage-review-rating-container">
+            <div v-for="rating in ratingValues">
+              <LabelComp textPosition="down">
+                <InputComp v-model="newForm.rating" type="radio" :value="rating" />
+                <RatingBox :rating="rating" />
+              </LabelComp>
+            </div>
           </div>
         </div>
         <!-- opinion -->

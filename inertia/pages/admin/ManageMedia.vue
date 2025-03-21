@@ -38,7 +38,7 @@ interface IForm {
   pages: string | null
 }
 
-const newForm = useForm<IForm>({
+const form = useForm<IForm>({
   statusId: '',
   categoryId: '',
   typeId: '',
@@ -55,75 +55,74 @@ const newForm = useForm<IForm>({
   pages: null,
 })
 
-const isForUpdate = ref(false)
-const filteredTypesList = ref(props.categoryRelatedTypes[newForm.categoryId])
-const filteredGenresList = ref(props.categoryRelatedGenres[newForm.categoryId])
+const isForUpdate = ref<boolean>(false)
+const filteredTypesList = ref(props.categoryRelatedTypes[form.categoryId])
+const filteredGenresList = ref(props.categoryRelatedGenres[form.categoryId])
 
 onMounted(() => {
   if (props.media) {
     isForUpdate.value = true
-    newForm.statusId = props.media.statusId
-    newForm.categoryId = props.media.categoryId
-    newForm.name = props.media.name
-    newForm.alternativeName = props.media.alternativeName
-    newForm.released = props.media.released ? formatDate(props.media.released) : null
-    newForm.synopsis = props.media.synopsis
-    newForm.tagId = props.media.tagId
+    form.statusId = props.media.statusId
+    form.categoryId = props.media.categoryId
+    form.name = props.media.name
+    form.alternativeName = props.media.alternativeName
+    form.released = props.media.released ? formatDate(props.media.released) : null
+    form.synopsis = props.media.synopsis
+    form.tagId = props.media.tagId
   }
 })
 
 watch(
-  () => newForm.categoryId,
+  () => form.categoryId,
   (newCategoryId) => {
     filteredTypesList.value = props.categoryRelatedTypes[newCategoryId] || []
     filteredGenresList.value = props.categoryRelatedGenres[newCategoryId] || []
     resetFormValues()
 
     if (props.media) {
-      newForm.typeId = props.media.typeId
-      newForm.genreId = props.media.genres.map((genre: { id: number; name: string }) => {
+      form.typeId = props.media.typeId
+      form.genreId = props.media.genres.map((genre: { id: number; name: string }) => {
         return genre.id
       })
-      newForm.platformId = props.media.gameInfo?.platformId
-      newForm.duration = props.media.movieInfo?.duration
-      newForm.seriesSeasonLength = props.media.seriesInfo?.seriesSeasonLength
-      newForm.animeSeasonLength = props.media.animeInfo?.animeSeasonLength
-      newForm.pages = props.media.bookInfo?.pages
+      form.platformId = props.media.gameInfo?.platformId
+      form.duration = props.media.movieInfo?.duration
+      form.seriesSeasonLength = props.media.seriesInfo?.seriesSeasonLength
+      form.animeSeasonLength = props.media.animeInfo?.animeSeasonLength
+      form.pages = props.media.bookInfo?.pages
     }
   }
 )
 
 const resetFormValues = () => {
-  newForm.typeId = ''
-  newForm.genreId = []
-  newForm.platformId = ''
-  newForm.duration = ''
-  newForm.seriesSeasonLength = ''
-  newForm.animeSeasonLength = ''
-  newForm.pages = ''
+  form.typeId = ''
+  form.genreId = []
+  form.platformId = ''
+  form.duration = ''
+  form.seriesSeasonLength = ''
+  form.animeSeasonLength = ''
+  form.pages = ''
 }
 
 function submit() {
   if (isForUpdate.value === true) {
-    return newForm.put(`/media/${props.media!.id}`)
+    return form.put(`/media/${props.media!.id}`)
   }
-  return newForm.post('/media')
+  return form.post('/media')
 }
 
 const formatDate = useFormattedDate
 const currentCategory = computed(() => {
-  const category = props.categories.find((category) => category.id === newForm.categoryId)
+  const category = props.categories.find((category) => category.id === form.categoryId)
   return category
 })
 const isNoCategorySelected = computed(() => {
-  return newForm.categoryId === '' ? true : false
+  return form.categoryId === '' ? true : false
 })
 </script>
 
 <template>
   <AppHead title="Gestion de media" />
   <AppLayout>
-    {{ props.media }}
     <div>
       <h3 v-if="props.media">Mise à jour de {{ props.media.name }}</h3>
       <h3 v-else>Ajout d'un nouveau media</h3>
@@ -134,7 +133,7 @@ const isNoCategorySelected = computed(() => {
           <span>Progression (requis):</span>
           <div v-for="status in statuses">
             <LabelComp :text="status.name" textPosition="down">
-              <InputComp v-model="newForm.statusId" type="radio" :value="status.id" />
+              <InputComp v-model="form.statusId" type="radio" :value="status.id" />
             </LabelComp>
           </div>
         </div>
@@ -143,11 +142,7 @@ const isNoCategorySelected = computed(() => {
           <span>Catégorie:</span>
           <div>
             <LabelComp :text="props.media.category.name" textPosition="down">
-              <InputComp
-                v-model="newForm.categoryId"
-                type="radio"
-                :value="props.media.category.id"
-              />
+              <InputComp v-model="form.categoryId" type="radio" :value="props.media.category.id" />
             </LabelComp>
           </div>
         </div>
@@ -155,7 +150,7 @@ const isNoCategorySelected = computed(() => {
           <span>Catégorie (requis):</span>
           <div v-for="category in categories">
             <LabelComp :text="category.name" textPosition="down">
-              <InputComp v-model="newForm.categoryId" type="radio" :value="category.id" />
+              <InputComp v-model="form.categoryId" type="radio" :value="category.id" />
             </LabelComp>
           </div>
         </div>
@@ -167,7 +162,7 @@ const isNoCategorySelected = computed(() => {
           </div>
           <div v-for="type in filteredTypesList">
             <LabelComp :text="type.text" textPosition="down">
-              <InputComp v-model="newForm.typeId" type="radio" :value="type.value" />
+              <InputComp v-model="form.typeId" type="radio" :value="type.value" />
             </LabelComp>
           </div>
         </div>
@@ -175,7 +170,7 @@ const isNoCategorySelected = computed(() => {
         <div>
           <LabelComp text="Nom de l'œuvre (requis):" text-position="up">
             <InputComp
-              v-model="newForm.name"
+              v-model="form.name"
               type="text"
               placeholder="The Dark Knight: le Chevalier noir"
             />
@@ -184,24 +179,20 @@ const isNoCategorySelected = computed(() => {
         <!-- alternative name -->
         <div>
           <LabelComp text="Nom alternatif:" text-position="up">
-            <InputComp
-              v-model="newForm.alternativeName"
-              type="text"
-              placeholder="The Dark Knight"
-            />
+            <InputComp v-model="form.alternativeName" type="text" placeholder="The Dark Knight" />
           </LabelComp>
         </div>
         <!-- released date -->
         <div>
           <LabelComp text="Date de sortie:" text-position="up">
-            <InputComp v-model="newForm.released" type="date" />
+            <InputComp v-model="form.released" type="date" />
           </LabelComp>
         </div>
         <!-- synopsis -->
         <div>
           <LabelComp text="Synopsis:" text-position="up" for="synopsis">
             <textarea
-              v-model="newForm.synopsis"
+              v-model="form.synopsis"
               placeholder="Batman aborde une phase décisive de sa guerre contre le crime à Gotham City..."
               id="synopsis"
             ></textarea>
@@ -212,7 +203,7 @@ const isNoCategorySelected = computed(() => {
           <span>Tag de recommandation (requis):</span>
           <div v-for="tag in tags">
             <LabelComp :text="tag.name" textPosition="down">
-              <InputComp v-model="newForm.tagId" type="radio" :value="tag.id" />
+              <InputComp v-model="form.tagId" type="radio" :value="tag.id" />
             </LabelComp>
           </div>
         </div>
@@ -224,7 +215,7 @@ const isNoCategorySelected = computed(() => {
           </div>
           <div v-for="genre in filteredGenresList">
             <LabelComp :text="genre.text" textPosition="down">
-              <InputComp v-model="newForm.genreId" type="checkbox" :value="genre.value" />
+              <InputComp v-model="form.genreId" type="checkbox" :value="genre.value" />
             </LabelComp>
           </div>
         </div>
@@ -234,7 +225,7 @@ const isNoCategorySelected = computed(() => {
             <span>Joué sur:</span>
             <div v-for="platform in gamePlatforms">
               <LabelComp :text="platform.name" textPosition="down">
-                <InputComp v-model="newForm.platformId" type="radio" :value="platform.id" />
+                <InputComp v-model="form.platformId" type="radio" :value="platform.id" />
               </LabelComp>
             </div>
           </div>
@@ -242,7 +233,7 @@ const isNoCategorySelected = computed(() => {
           <div v-if="currentCategory.name === 'movie'">
             <LabelComp text="Durée du film en minutes(ex: 60, 90...):" textPosition="up">
               <div>
-                <InputComp v-model="newForm.duration" type="number" min="1" />
+                <InputComp v-model="form.duration" type="number" min="1" />
               </div>
             </LabelComp>
           </div>
@@ -250,7 +241,7 @@ const isNoCategorySelected = computed(() => {
           <div v-if="currentCategory.name === 'series'">
             <LabelComp text="Nombres d'épisodes" textPosition="up">
               <div>
-                <InputComp v-model="newForm.seriesSeasonLength" type="number" min="1" />
+                <InputComp v-model="form.seriesSeasonLength" type="number" min="1" />
               </div>
             </LabelComp>
           </div>
@@ -258,7 +249,7 @@ const isNoCategorySelected = computed(() => {
           <div v-if="currentCategory.name === 'anime'">
             <LabelComp text="Nombres d'épisodes" textPosition="up">
               <div>
-                <InputComp v-model="newForm.animeSeasonLength" type="number" min="1" />
+                <InputComp v-model="form.animeSeasonLength" type="number" min="1" />
               </div>
             </LabelComp>
           </div>
@@ -266,14 +257,14 @@ const isNoCategorySelected = computed(() => {
           <div v-if="currentCategory.name === 'book'">
             <LabelComp text="Nombres de pages" textPosition="up">
               <div>
-                <InputComp v-model="newForm.pages" type="number" min="1" />
+                <InputComp v-model="form.pages" type="number" min="1" />
               </div>
             </LabelComp>
           </div>
         </div>
-        <!-- <div v-if="newForm.errors">{{ newForm.errors }}</div> -->
+        <!-- <div v-if="form.errors">{{ form.errors }}</div> -->
         <div>
-          <ButtonComp type="submit" :disabled="newForm.processing"></ButtonComp>
+          <ButtonComp type="submit" :disabled="form.processing"></ButtonComp>
         </div>
       </form>
     </div>
