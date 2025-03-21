@@ -68,6 +68,7 @@
     "@inertiajs/vue3": "^1.2.0",
     "@vinejs/vine": "^2.1.0",
     "@vue/server-renderer": "^3.5.12",
+    "@vueuse/core": "^13.0.0",
     "edge.js": "^6.2.0",
     "luxon": "^3.5.0",
     "mysql2": "^3.11.3",
