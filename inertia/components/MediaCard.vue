@@ -45,10 +45,7 @@ defineProps<{
       </p>
     </Link>
     <div class="media-card-info-container">
-      <StatusProgressBadge
-        :status="media.status"
-        :class="'status-progress-text-small status-progress-container-small'"
-      />
+      <StatusProgressBadge :status="media.status" />
       <RatingBox :rating="media.review?.rating ? media.review.rating : null" />
     </div>
     <div>
