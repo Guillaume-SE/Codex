@@ -88,18 +88,11 @@ export default class MediaController {
     return response.redirect().toRoute('dashboard.home')
   }
 
-  async deleteOne({ request, params, response }: HttpContext) {
-    const mediaId = params.mediaId
+  async deleteOne({ request, response }: HttpContext) {
+    const { params } = await request.validateUsing(singleMediaValidator)
+    await this.mediaService.delete(params.mediaId)
 
-    try {
-      await request.validateUsing(singleMediaValidator)
-
-      await this.mediaService.delete(mediaId)
-
-      return response.status(200)
-    } catch (error) {
-      return response.status(404).json({ error, customError: error.message })
-    }
+    return response.redirect().toRoute('dashboard.home')
   }
 
   public async showOne({ inertia, request, params, response }: HttpContext) {
