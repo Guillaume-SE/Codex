@@ -3,11 +3,7 @@ import Media from '#models/media'
 import MediaCategory from '#models/media_category'
 import CoverService from '#services/cover_service'
 import type { MediaCategories } from '#types/MediaCategories'
-import {
-  createMediaValidator,
-  showByCategoryMediaValidator,
-  updateMediaValidator,
-} from '#validators/media_validator'
+import { showByCategoryMediaValidator, updateMediaValidator } from '#validators/media_validator'
 import { inject } from '@adonisjs/core'
 import db from '@adonisjs/lucid/services/db'
 import { Infer } from '@vinejs/vine/types'
