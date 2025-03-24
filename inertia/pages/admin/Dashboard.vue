@@ -2,7 +2,7 @@
 import type DashboardController from '#controllers/dashboard_controller'
 import { InferPageProps } from '@adonisjs/inertia/types'
 import { Link, useForm } from '@inertiajs/vue3'
-import { ref } from 'vue'
+import { ref, useTemplateRef } from 'vue'
 import AppHead from '~/components/AppHead.vue'
 import ImageNotAvailableIcon from '~/components/icons/ImageNotAvailableIcon.vue'
 import RatingBox from '~/components/RatingBox.vue'
@@ -23,8 +23,9 @@ const form = useForm<IForm>({
   mediaId: null,
 })
 
-const showModal = ref<boolean>(false)
+// const showModal = ref<boolean>(false)
 const mediaTitle = ref<string>('')
+const modalRef = useTemplateRef<HTMLDialogElement>('modalRef')
 
 function submitDeleteMedia() {
   const mediaId = form.mediaId
@@ -39,11 +40,11 @@ function submitDeleteMedia() {
 const openModal = (id: number, title: string) => {
   form.mediaId = id
   mediaTitle.value = title
-  showModal.value = true
+  modalRef.value?.showModal()
 }
 const closeModal = () => {
-  showModal.value = false
   form.mediaId = null
+  modalRef.value?.close()
 }
 </script>
 
@@ -58,7 +59,7 @@ const closeModal = () => {
     <div class="dashboard-list">
       <div v-for="media in mediaList" class="dashboard-list-item">
         <div>
-          <input v-model="form.mediaId" type="checkbox" :value="media.id" />
+          <input type="checkbox" :value="media.id" />
         </div>
         <div v-if="media.cover" class="dashboard-list_img">
           <Link :href="`/media/${media.id}/cover`">
@@ -101,7 +102,7 @@ const closeModal = () => {
           </div>
         </div>
       </div>
-      <ModalComp :show="showModal" @close-modal="closeModal">
+      <ModalComp ref="modalRef" @close-modal="closeModal">
         <template #header>
           <div>
             <span> Confirmation </span>
