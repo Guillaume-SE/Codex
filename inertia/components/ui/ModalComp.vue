@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { onClickOutside } from '@vueuse/core'
-import { defineEmits, defineProps, ref } from 'vue'
+import { useTemplateRef } from 'vue'
 import ButtonComp from '~/components/ui/ButtonComp.vue'
 
 defineProps({
@@ -8,49 +8,59 @@ defineProps({
 })
 
 const emit = defineEmits(['close-modal'])
+const modalRef = useTemplateRef<HTMLDialogElement>('modalRef')
+const target = useTemplateRef<HTMLDialogElement>('target')
 
-const target = ref(null)
+// Expose the modalRef (the native <dialog> element) to the parent
+defineExpose({
+  showModal: () => modalRef.value?.showModal(),
+  close: () => modalRef.value?.close(),
+})
+
+// useClickOutsideDialog(modalRef, () => {
+//   emit('close-modal')
+// })
+
 onClickOutside(target, () => emit('close-modal'))
 </script>
 
 <template>
-  <div class="modal-overlay" v-if="show">
-    <div class="modal" ref="target">
+  <dialog ref="modalRef" class="modal">
+    <div ref="target">
       <ButtonComp @click.stop="emit('close-modal')" class="close-button">&times;</ButtonComp>
       <slot name="header"></slot>
       <slot name="content"></slot>
       <slot name="action"></slot>
     </div>
-  </div>
+  </dialog>
 </template>
 
 <style scoped>
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.4);
-  z-index: 1;
-}
 .modal {
   position: fixed;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  z-index: 2;
+  width: 80%;
+  max-width: 500px;
   background: white;
-  padding: 20px;
   border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
 }
 .close-button {
   position: absolute;
-  top: 10px;
+  top: 0px;
   right: 10px;
   background: transparent;
   border: none;
-  font-size: 20px;
+  font-size: 30px;
   cursor: pointer;
+}
+.close-button:hover {
+  color: red;
+}
+dialog::backdrop {
+  background-color: hsl(250, 100%, 50%, 0.25);
 }
 </style>

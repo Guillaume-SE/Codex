@@ -252,7 +252,7 @@ h6 {
 }
 .dashboard-list_img {
   width: 30px;
-  height: auto;
+  height: 45px;
   object-fit: cover;
 }
 

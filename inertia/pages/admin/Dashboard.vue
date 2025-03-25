@@ -2,29 +2,37 @@
 import type DashboardController from '#controllers/dashboard_controller'
 import { InferPageProps } from '@adonisjs/inertia/types'
 import { Link, useForm } from '@inertiajs/vue3'
-import { ref } from 'vue'
+import { ref, useTemplateRef } from 'vue'
 import AppHead from '~/components/AppHead.vue'
 import ImageNotAvailableIcon from '~/components/icons/ImageNotAvailableIcon.vue'
+import Pagination from '~/components/Pagination.vue'
 import RatingBox from '~/components/RatingBox.vue'
+import SearchBar from '~/components/SearchBar.vue'
 import StatusProgressBadge from '~/components/StatusProgressBadge.vue'
 import ButtonComp from '~/components/ui/ButtonComp.vue'
 import ModalComp from '~/components/ui/ModalComp.vue'
 import AppLayout from '~/layouts/AppLayout.vue'
 
-defineProps<{
+const props = defineProps<{
   mediaList: InferPageProps<DashboardController, 'showDashboard'>['mediaList']
 }>()
 
 interface IForm {
   mediaId: number | null
 }
+interface IFilters {
+  search: string
+}
 
 const form = useForm<IForm>({
   mediaId: null,
 })
+const filters = useForm<IFilters>('filterResults', {
+  search: '',
+})
 
-const showModal = ref<boolean>(false)
 const mediaTitle = ref<string>('')
+const modalRef = useTemplateRef<HTMLDialogElement>('modalRef')
 
 function submitDeleteMedia() {
   const mediaId = form.mediaId
@@ -35,15 +43,23 @@ function submitDeleteMedia() {
   })
   closeModal()
 }
+function submitFilters() {
+  filters.get('/dashboard', { preserveState: true })
+}
 
 const openModal = (id: number, title: string) => {
   form.mediaId = id
   mediaTitle.value = title
-  showModal.value = true
+  modalRef.value?.showModal()
 }
 const closeModal = () => {
-  showModal.value = false
   form.mediaId = null
+  modalRef.value?.close()
+}
+
+// paginate with filters included
+function fetchNewPageData(url: string | null) {
+  filters.get(`${url}`, { preserveState: true })
 }
 </script>
 
@@ -51,15 +67,21 @@ const closeModal = () => {
   <AppHead title="Dashboard" />
   <AppLayout>
     <div>
-      <h3>Media</h3>
       <Link href="/media/manage">Ajouter un media</Link>
     </div>
 
     <div class="dashboard-list">
-      <div v-for="media in mediaList" class="dashboard-list-item">
+      <form action="GET" @submit.prevent="submitFilters">
         <div>
-          <input v-model="form.mediaId" type="checkbox" :value="media.id" />
+          <!-- search -->
+          <SearchBar v-model="filters.search" />
         </div>
+      </form>
+      <div v-for="media in mediaList.data" class="dashboard-list-item">
+        <div>
+          <input type="checkbox" :value="media.id" />
+        </div>
+        <!-- cover -->
         <div v-if="media.cover" class="dashboard-list_img">
           <Link :href="`/media/${media.id}/cover`">
             <img
@@ -78,17 +100,19 @@ const closeModal = () => {
             </div>
           </Link>
         </div>
-
+        <!-- name -->
         <div>
           <Link :href="`/media/manage/${media.id}`">
             <p>{{ media.name }}</p>
           </Link>
         </div>
+        <!-- review rating -->
         <div>
           <Link :href="`/media/${media.id}/review`">
             <RatingBox :rating="media.review?.rating ? media.review.rating : null" />
           </Link>
         </div>
+        <!-- status progress -->
         <div>
           <StatusProgressBadge
             :status="media.status"
@@ -101,7 +125,27 @@ const closeModal = () => {
           </div>
         </div>
       </div>
-      <ModalComp :show="showModal" @close-modal="closeModal">
+
+      <!-- pagination -->
+      <div>
+        <Pagination
+          :page="{
+            currentPage: props.mediaList.meta.currentPage,
+            firstPage: props.mediaList.meta.firstPage,
+            lastPage: props.mediaList.meta.lastPage,
+          }"
+          :url="{
+            firstPageUrl: props.mediaList.meta.firstPageUrl,
+            lastPageUrl: props.mediaList.meta.lastPageUrl,
+            nextPageUrl: props.mediaList.meta.nextPageUrl,
+            previousPageUrl: props.mediaList.meta.previousPageUrl,
+          }"
+          @update:current-page="fetchNewPageData"
+        />
+      </div>
+
+      <!-- delete modal -->
+      <ModalComp ref="modalRef" @close-modal="closeModal">
         <template #header>
           <div>
             <span> Confirmation </span>

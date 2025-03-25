@@ -3,6 +3,7 @@ import Media from '#models/media'
 import MediaCategory from '#models/media_category'
 import CoverService from '#services/cover_service'
 import type { MediaCategories } from '#types/MediaCategories'
+import { searchValidator } from '#validators/dashboard_validator'
 import { showByCategoryMediaValidator, updateMediaValidator } from '#validators/media_validator'
 import { inject } from '@adonisjs/core'
 import db from '@adonisjs/lucid/services/db'
@@ -17,11 +18,23 @@ interface IMediaSortOption {
 
 type updatedData = Omit<Infer<typeof updateMediaValidator>, 'params'>
 
+interface IFilters {
+  params?: { categoryName: string }
+  search?: string
+  sortBy?: string
+  status?: number[]
+  types?: number[]
+  genres?: number[]
+  platforms?: number[]
+  duration?: number | null
+  favorite?: boolean
+}
+
 @inject()
 export default class MediaService {
   constructor(protected coverService: CoverService) {}
 
-  public async manageMedia(data: updatedData, mediaId?: number) {
+  public async manageOne(data: updatedData, mediaId?: number) {
     const {
       statusId,
       categoryId,
@@ -109,7 +122,7 @@ export default class MediaService {
     await media.delete()
 
     if (cover) {
-      await this.coverService.deleteCoverFile({
+      await this.coverService.deleteFile({
         original: cover.originalCoverFilename,
         small: cover.smallCoverFilename,
         medium: cover.mediumCoverFilename,
@@ -128,17 +141,15 @@ export default class MediaService {
     { value: 'rating_asc', text: 'Moins bonnes notes', column: 'reviews.rating', dir: 'asc' },
   ]
 
-  static async getFiltered(
-    category: MediaCategories,
-    filters: Infer<typeof showByCategoryMediaValidator>,
-    page: number = 1
-  ) {
+  static async getFiltered(filters: IFilters, page: number = 1, category?: MediaCategories) {
     const sort =
       this.sortOptions.find((option) => option.value === filters.sortBy) || this.sortOptions[0]
 
     const mediaQuery = await Media.query()
-      .whereHas('category', (subQuery) => {
-        subQuery.where('name', category)
+      .if(category, (q) => {
+        q.whereHas('category', (subQuery) => {
+          subQuery.where('name', category!)
+        })
       })
       // searchbar term
       .if(filters.search, (q) => {
@@ -263,27 +274,5 @@ export default class MediaService {
       .preload('cover')
 
     return mediaList
-  }
-
-  static async getAllPaginated(page: number = 1) {
-    const mediaQuery = await Media.query()
-      .preload('status')
-      .preload('category')
-      .preload('type')
-      .preload('tag')
-      .preload('genres')
-      .preload('gameInfo', (gamesQuery) => {
-        gamesQuery.preload('gamePlatform')
-      })
-      .preload('movieInfo')
-      .preload('seriesInfo')
-      .preload('animeInfo')
-      .preload('bookInfo')
-      .preload('review')
-      .preload('cover')
-      .orderBy('id', 'desc')
-    // .paginate(page, 20)
-
-    return mediaQuery
   }
 }

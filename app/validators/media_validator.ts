@@ -76,7 +76,7 @@ export const showByCategoryMediaValidator = vine.compile(
     params: vine.object({
       categoryName: vine.string().isExists({ table: 'media_categories', column: 'name' }),
     }),
-    search: vine.string().optional(),
+    search: vine.string().trim().escape().optional(),
     //   // status: vine
     //   //   .number()
     //   //   .exists(async (db, value) => {

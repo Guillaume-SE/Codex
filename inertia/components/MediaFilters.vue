@@ -99,12 +99,12 @@ const movieDurationOptions = [
     <span>Affichage</span>
     <div>
       <LabelComp text="Tous les résultats" textPosition="down">
-        <InputComp v-model="favoriteModel" type="radio" value="false" />
+        <InputComp v-model="favoriteModel" type="radio" :value="false" />
       </LabelComp>
     </div>
     <div>
       <LabelComp text="Favoris uniquement" textPosition="down">
-        <InputComp v-model="favoriteModel" type="radio" value="true" />
+        <InputComp v-model="favoriteModel" type="radio" :value="true" />
       </LabelComp>
     </div>
   </div>
