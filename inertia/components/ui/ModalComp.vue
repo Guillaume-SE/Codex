@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { onClickOutside } from '@vueuse/core'
-import { defineExpose, defineProps, useTemplateRef } from 'vue'
+import { useTemplateRef } from 'vue'
 import ButtonComp from '~/components/ui/ButtonComp.vue'
 
 defineProps({
