@@ -78,12 +78,12 @@ export default class MediaController {
     // for update
     if (request.params().mediaId) {
       const { params, ...data } = await request.validateUsing(updateMediaValidator)
-      await this.mediaService.manageMedia(data, params.mediaId)
+      await this.mediaService.manageOne(data, params.mediaId)
       return response.redirect().toRoute('dashboard.home')
     }
     // for create
     const data = await request.validateUsing(createMediaValidator)
-    await this.mediaService.manageMedia(data)
+    await this.mediaService.manageOne(data)
 
     return response.redirect().toRoute('dashboard.home')
   }
@@ -135,11 +135,11 @@ export default class MediaController {
 
     try {
       const page = request.input('page')
-      const filters = await request.validateUsing(showByCategoryMediaValidator)
-      const category = filters.params.categoryName
+      const { params, ...filters } = await request.validateUsing(showByCategoryMediaValidator)
+      const category = params.categoryName
 
       const config = categoryConfig[category]
-      const mediaList = await MediaService.getFiltered(category, filters, page)
+      const mediaList = await MediaService.getFiltered(filters, page, category)
       const mediaSortOptions = MediaService.sortOptions
       const mediaStatusesList = await MediaStatus.all()
       const mediaTypesList = await this.mediaCategoryService.getCategoryTypes(category)
