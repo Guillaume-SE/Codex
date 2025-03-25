@@ -31,7 +31,7 @@ export default class CoversController {
     const mediaId = params.mediaId
 
     const { cover } = await request.validateUsing(manageCoverValidator)
-    const uploadedCover = await this.coverService.storeCover(cover)
+    const uploadedCover = await this.coverService.store(cover)
     await this.coverService.saveStoredCoverFilenames(uploadedCover, mediaId)
 
     return response.redirect().toRoute('dashboard.home')
@@ -43,7 +43,7 @@ export default class CoversController {
     await request.validateUsing(deleteCoverValidator)
     const cover = await Cover.findByOrFail('media_id', mediaId)
 
-    await this.coverService.deleteCoverFile({
+    await this.coverService.deleteFile({
       original: cover.originalCoverFilename,
       small: cover.smallCoverFilename,
       medium: cover.mediumCoverFilename,
