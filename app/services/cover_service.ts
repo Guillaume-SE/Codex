@@ -14,7 +14,7 @@ interface ICoverFilenames {
 
 @inject()
 export default class CoverService {
-  async storeCover(file: MultipartFile) {
+  async store(file: MultipartFile) {
     if (file.tmpPath === undefined) {
       throw new Error("Aucun chemin disponible pour l'image")
     }
@@ -94,7 +94,7 @@ export default class CoverService {
     await media.related('cover').updateOrCreate(searchPayload, coverFilenames)
 
     if (existingCover) {
-      await this.deleteCoverFile({
+      await this.deleteFile({
         original: existingCover.originalCoverFilename,
         small: existingCover.smallCoverFilename,
         medium: existingCover.mediumCoverFilename,
@@ -103,7 +103,7 @@ export default class CoverService {
     }
   }
 
-  async deleteCoverFile(filenames: ICoverFilenames) {
+  async deleteFile(filenames: ICoverFilenames) {
     const coverUtils = new CoverUtils()
     const coverFullPaths = coverUtils.getFullPaths({
       original: filenames.original,
