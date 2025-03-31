@@ -38,6 +38,7 @@ export default class extends BaseSchema {
         .inTable('tags')
         .onUpdate('CASCADE')
         .notNullable()
+      table.timestamp('created_at')
     })
   }
 
