@@ -10,7 +10,7 @@ import MovieInfo from '#models/movie_info'
 import Review from '#models/review'
 import SeriesInfo from '#models/series_info'
 import Tag from '#models/tag'
-import { BaseModel, belongsTo, column, hasOne, manyToMany } from '@adonisjs/lucid/orm'
+import { BaseModel, beforeCreate, belongsTo, column, hasOne, manyToMany } from '@adonisjs/lucid/orm'
 import type { BelongsTo, HasOne, ManyToMany } from '@adonisjs/lucid/types/relations'
 import { DateTime } from 'luxon'
 
@@ -43,6 +43,9 @@ export default class Media extends BaseModel {
 
   @column({ columnName: 'tag_id', serializeAs: 'tagId' })
   declare tagId: number
+
+  @column.dateTime({ columnName: 'created_at', serializeAs: 'createdAt' })
+  declare createdAt: DateTime
 
   //relations
 
@@ -108,4 +111,10 @@ export default class Media extends BaseModel {
     pivotTimestamps: false,
   })
   declare genres: ManyToMany<typeof Genre>
+
+  // hooks
+  @beforeCreate()
+  static async setTimeOnCreate(media: Media) {
+    media.createdAt = DateTime.now()
+  }
 }

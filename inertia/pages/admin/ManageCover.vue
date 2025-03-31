@@ -50,7 +50,6 @@ function onUpload() {
       // Update the picture source of the `img` prop
       croppedImage.value = String(reader.result)
       // Show the modal
-      // uploadDialog.value = true
       openModal()
       // Clear selected files of input element
       if (uploadInput.value) {
@@ -75,10 +74,10 @@ function resetCrop() {
   cropper.reset()
 }
 // Clear the entire crop box
-function clear() {
-  if (!cropper) return
-  cropper.clear()
-}
+// function clear() {
+//   if (!cropper) return
+//   cropper.clear()
+// }
 </script>
 
 <template>
@@ -131,9 +130,6 @@ function clear() {
           <progress v-if="form.progress" :value="form.progress.percentage" max="100">
             {{ form.progress.percentage }}%
           </progress>
-          <!-- <div>
-            <ButtonComp type="submit" :disabled="form.processing"></ButtonComp>
-          </div> -->
 
           <div>
             <ModalComp ref="modalRef" @close-modal="closeModal">

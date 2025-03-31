@@ -14,12 +14,13 @@ export abstract class BaseMediaPresenter {
   released: DateTime | null
   synopsis: string | null
   tag: string
+  addedOn: string
   genres: string[]
   review?: {
     rating: number | null
     opinion: string | null
     isFavorite: boolean
-    lastUpdate: number
+    lastUpdate: string
   }
   cover?: {
     originalUrl: string
@@ -38,6 +39,7 @@ export abstract class BaseMediaPresenter {
     this.released = media.released
     this.synopsis = media.synopsis
     this.tag = media.tag.name
+    this.addedOn = media.created_at
     this.genres = media.genres.map((genre: IGenre) => genre.name)
 
     if (media.review) {
@@ -82,17 +84,6 @@ class MovieMediaPresenter extends BaseMediaPresenter {
   }
 }
 
-class BookMediaPresenter extends BaseMediaPresenter {
-  bookInfos: { pages: number | null }
-
-  constructor(media: any) {
-    super(media)
-    this.bookInfos = {
-      pages: media.bookInfo?.pages ?? null,
-    }
-  }
-}
-
 class AnimeMediaPresenter extends BaseMediaPresenter {
   animeInfos: { seasonLength: number | null }
 
@@ -111,6 +102,17 @@ class SeriesMediaPresenter extends BaseMediaPresenter {
     super(media)
     this.seriesInfos = {
       seasonLength: media.seriesInfo?.seriesSeasonLength ?? null,
+    }
+  }
+}
+
+class BookMediaPresenter extends BaseMediaPresenter {
+  bookInfos: { pages: number | null }
+
+  constructor(media: any) {
+    super(media)
+    this.bookInfos = {
+      pages: media.bookInfo?.pages ?? null,
     }
   }
 }

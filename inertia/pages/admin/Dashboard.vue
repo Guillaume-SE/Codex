@@ -125,7 +125,6 @@ function fetchNewPageData(url: string | null) {
           </div>
         </div>
       </div>
-
       <!-- pagination -->
       <div>
         <Pagination
@@ -164,25 +163,3 @@ function fetchNewPageData(url: string | null) {
     </div>
   </AppLayout>
 </template>
-
-<style scoped>
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.4);
-  z-index: 1;
-}
-.modal {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 2;
-  background: white;
-  padding: 20px;
-  border-radius: 8px;
-}
-</style>
