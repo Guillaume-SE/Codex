@@ -7,12 +7,13 @@ export interface IBaseMediaPresented {
   alternativeName: string | null
   released: string | null
   synopsis: string | null
+  addedOn: string
   genres: string[]
   review?: {
     rating: number | null
     opinion: string | null
     isFavorite: boolean
-    lastUpdate: number
+    lastUpdate: string
   }
   cover?: {
     originalUrl: string
@@ -34,12 +35,6 @@ export interface IMovieMediaPresented extends IBaseMediaPresented {
   }
 }
 
-export interface IBookMediaPresented extends IBaseMediaPresented {
-  bookInfos: {
-    pages: number | null
-  }
-}
-
 export interface ISeriesMediaPresented extends IBaseMediaPresented {
   seriesInfos: {
     seasonLength: number | null
@@ -49,5 +44,11 @@ export interface ISeriesMediaPresented extends IBaseMediaPresented {
 export interface IAnimeMediaPresented extends IBaseMediaPresented {
   animeInfos: {
     seasonLength: number | null
+  }
+}
+
+export interface IBookMediaPresented extends IBaseMediaPresented {
+  bookInfos: {
+    pages: number | null
   }
 }
