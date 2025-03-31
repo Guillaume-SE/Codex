@@ -1,6 +1,7 @@
 import Media from '#models/media'
 import { BaseModel, beforeCreate, beforeUpdate, belongsTo, column } from '@adonisjs/lucid/orm'
 import type { BelongsTo } from '@adonisjs/lucid/types/relations'
+import { DateTime } from 'luxon'
 
 export default class Review extends BaseModel {
   public static table = 'reviews'
@@ -20,8 +21,8 @@ export default class Review extends BaseModel {
   @column({ columnName: 'is_favorite', serializeAs: 'isFavorite' })
   declare isFavorite: boolean
 
-  @column({ columnName: 'updated_at', serializeAs: 'updatedAt' })
-  declare updatedAt: number
+  @column.dateTime({ columnName: 'updated_at', serializeAs: 'updatedAt' })
+  declare updatedAt: DateTime
 
   //relations
   @belongsTo(() => Media, {
@@ -31,11 +32,11 @@ export default class Review extends BaseModel {
 
   // hooks
   @beforeCreate()
-  static async defaultTimeStampValueOnCreate(review: Review) {
-    review.updatedAt = Date.now()
+  static async setTimeOnCreate(review: Review) {
+    review.updatedAt = DateTime.now()
   }
   @beforeUpdate()
-  static async defaultTimeStampValueOnUpdate(review: Review) {
-    review.updatedAt = Date.now()
+  static async setTimeOnUpdate(review: Review) {
+    review.updatedAt = DateTime.now()
   }
 }
