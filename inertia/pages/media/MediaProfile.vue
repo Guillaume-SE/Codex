@@ -2,6 +2,7 @@
 import type MediaController from '#controllers/media_controller'
 import type {
   IAnimeMediaPresented,
+  IBaseMediaPresented,
   IBookMediaPresented,
   IGameMediaPresented,
   IMovieMediaPresented,
@@ -14,11 +15,13 @@ import ImageNotAvailableIcon from '~/components/icons/ImageNotAvailableIcon.vue'
 import MediaCard from '~/components/MediaCard.vue'
 import RatingBadge from '~/components/RatingBadge.vue'
 import StatusProgressBadge from '~/components/StatusProgressBadge.vue'
+import { useFormattedDateToLocale } from '~/composables/useFormattedDate'
 import { useFormattedDuration } from '~/composables/useFormattedDuration'
 import AppLayout from '~/layouts/AppLayout.vue'
 
 const props = defineProps<{
   media:
+    | IBaseMediaPresented
     | IGameMediaPresented
     | IMovieMediaPresented
     | ISeriesMediaPresented
@@ -33,9 +36,14 @@ const isSeriesMedia = (media: Object): media is ISeriesMediaPresented => 'series
 const isAnimeMedia = (media: Object): media is IAnimeMediaPresented => 'animeInfos' in media
 const isBookMedia = (media: Object): media is IBookMediaPresented => 'bookInfos' in media
 
+const tagListIsNotEmpty = computed(() => {
+  return props.tagRelatedList.length > 0 ? true : false
+})
+
 const formattedDuration = computed(() =>
   isMovieMedia(props.media) ? useFormattedDuration(props.media.movieInfos.duration) : null
 )
+const formattedDate = useFormattedDateToLocale
 </script>
 
 <template>
@@ -79,7 +87,7 @@ const formattedDuration = computed(() =>
           <!-- alt name -->
           <p v-if="media.alternativeName">Nom alternatif: {{ media.alternativeName }}</p>
           <!-- released -->
-          <p>Date de sortie: {{ media.released || 'N/A' }}</p>
+          <p>Date de sortie: {{ formattedDate(media.released) || 'N/A' }}</p>
           <!-- games infos -->
           <p v-if="isGameMedia(media)">Joué sur: {{ media.gameInfos.platform || 'N/A' }}</p>
           <!-- movies infos -->
@@ -106,16 +114,17 @@ const formattedDuration = computed(() =>
           <h3 class="review-title">Avis</h3>
           <RatingBadge :rating="media.review?.rating ? media.review.rating : null" />
         </div>
-        <div v-if="media.review && media.review.opinion">
-          <p>
+        <div v-if="media.review">
+          <p v-if="media.review.opinion">
             {{ media.review.opinion }}
           </p>
+          <div>Mis à jour le {{ formattedDate(media.review!.lastUpdate, true) }}</div>
         </div>
       </div>
     </div>
     <div>
       <h3>Similaire</h3>
-      <div v-if="tagRelatedList.length > 0" class="recommandations-carousel">
+      <div v-if="tagListIsNotEmpty" class="recommandations-carousel">
         <MediaCard
           v-for="media in tagRelatedList"
           :key="media.id"
