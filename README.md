@@ -25,7 +25,6 @@ It also allows me to keep up to date with the ones I've planned to see, the ones
 
 ![db-diagram-dark](https://github.com/user-attachments/assets/625d4471-6598-4995-a752-4619396f0ee9)
 
-
 - `users`: as the project aims to contain only my media entries, I chose not to link the "users" table to "reviews". It will only be used for authentication.
 
 - `media`: contains every type of data the media I add may have. But also information specific to them, enabling them to be categorized within my application.
@@ -85,7 +84,7 @@ node ace db:seed -i
 
 ## Status
 
-3 feb. 2025 : set up the admin interface for handling media on the site
+4 apr. 2025 : dashboard finished soon and db adjustments to do mainly for a small review's table refactoring.
 
 ## Other
 
