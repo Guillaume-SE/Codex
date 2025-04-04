@@ -17,7 +17,7 @@ export default class extends BaseSchema {
       table.integer('rating').unsigned().nullable()
       table.text('opinion').nullable()
       table.boolean('is_favorite').defaultTo(false).notNullable()
-      table.timestamp('updated_at')
+      table.timestamp('updated_at').notNullable()
     })
   }
 
