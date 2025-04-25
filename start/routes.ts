@@ -31,7 +31,7 @@ router.delete('/media/:mediaId', [MediaController, 'deleteOne'])
 
 //* reviews
 router.get('/media/:mediaId/review', [ReviewsController, 'showManage'])
-router.post('/media/:mediaId/review', [ReviewsController, 'manageReview'])
+router.post('/media/:mediaId/review', [ReviewsController, 'manageOne'])
 
 //* covers
 router.get('/media/:mediaId/cover', [CoversController, 'showManage'])
@@ -53,8 +53,9 @@ router.put('/tag/:tagId', [TagsController, 'updateOne'])
 router.delete('/tag/:tagId', [TagsController, 'deleteOne'])
 
 //* game platforms
-router.post('/platform', [GamePlatformsController, 'addOne'])
-router.put('/platform/:platformId', [GamePlatformsController, 'updateOne'])
+router.get('/platform/manage', [GamePlatformsController, 'showManage']).as('platform.manage')
+router.post('/platform', [GamePlatformsController, 'storeOrUpdate'])
+router.put('/platform/:platformId', [GamePlatformsController, 'storeOrUpdate'])
 router.delete('/platform/:platformId', [GamePlatformsController, 'deleteOne'])
 
 //* dashboard
