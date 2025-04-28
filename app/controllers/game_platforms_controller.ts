@@ -1,7 +1,8 @@
+import GamePlatform from '#models/game_platform'
 import GamePlatformService from '#services/game_platform_service'
 import {
   createGamePlatformValidator,
-  deleteGamePlatformValidator,
+  platformValidator,
   updateGamePlatformValidator,
 } from '#validators/game_platform_validator'
 import { inject } from '@adonisjs/core'
@@ -11,39 +12,32 @@ import type { HttpContext } from '@adonisjs/core/http'
 export default class GamePlatformsController {
   constructor(private gamePlatformService: GamePlatformService) {}
 
-  public async addOne({ request, response }: HttpContext) {
-    try {
-      const data = await request.validateUsing(createGamePlatformValidator)
-      const platform = await this.gamePlatformService.store(data)
-      return response.status(201).json(platform)
-    } catch (error) {
-      return response.status(400).json({ error, customError: error.message })
-    }
+  async showManage({ inertia }: HttpContext) {
+    const platformList: GamePlatform[] = await GamePlatform.all()
+
+    return inertia.render('admin/ManageGamePlatform', {
+      platformList,
+    })
   }
 
-  public async updateOne({ params, request, response }: HttpContext) {
-    const platformId = params.platformId
-
-    try {
+  public async storeOrUpdate({ request, response }: HttpContext) {
+    // for update
+    if (request.params().platformId) {
       const { params, ...data } = await request.validateUsing(updateGamePlatformValidator)
-      const platform = await this.gamePlatformService.update(data, platformId)
-
-      return response.status(201).json(platform)
-    } catch (error) {
-      return response.status(400).json({ error, customError: error.message })
+      await this.gamePlatformService.storeOrUpdate(data, params.platformId)
+      return response.redirect().toRoute('platform.manage')
     }
+    // for create
+    const data = await request.validateUsing(createGamePlatformValidator)
+    await this.gamePlatformService.storeOrUpdate(data)
+
+    return response.redirect().toRoute('platform.manage')
   }
 
-  public async deleteOne({ request, params, response }: HttpContext) {
-    const platformId = params.platformId
+  public async deleteOne({ request, response }: HttpContext) {
+    const { params } = await request.validateUsing(platformValidator)
+    await this.gamePlatformService.delete(params.platformId)
 
-    try {
-      await request.validateUsing(deleteGamePlatformValidator)
-      await this.gamePlatformService.delete(platformId)
-
-      return response.status(202)
-    } catch (error) {
-      return response.status(400).json({ error, customError: error.message })
-    }
+    return response.redirect().toRoute('platform.manage')
   }
 }
