@@ -95,12 +95,10 @@ export default class MediaController {
     return response.redirect().toRoute('dashboard.home')
   }
 
-  public async showOne({ inertia, request, params, response }: HttpContext) {
-    const mediaId = params.mediaId
-
+  public async showOne({ inertia, request, response }: HttpContext) {
     try {
-      await request.validateUsing(singleMediaValidator)
-      const media = await this.mediaService.getOne(mediaId)
+      const { params } = await request.validateUsing(singleMediaValidator)
+      const media = await this.mediaService.getOne(params.mediaId)
       const presentedMedia = MediaPresenterFactory.presentMedia(media)
 
       const tagRelatedList = await this.mediaService.getTagRelated(
