@@ -9,7 +9,7 @@ export default class DashboardController {
   async showDashboard({ inertia, request }: HttpContext) {
     const page = request.input('page')
     const filters = await request.validateUsing(searchValidator)
-    const mediaList = await MediaService.getFiltered(filters, page)
+    const mediaList = await MediaService.getFiltered(filters, page, 20)
 
     mediaList.baseUrl('/dashboard')
 
