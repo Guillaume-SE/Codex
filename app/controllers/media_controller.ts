@@ -137,7 +137,7 @@ export default class MediaController {
       const category = params.categoryName
 
       const config = categoryConfig[category]
-      const mediaList = await MediaService.getFiltered(filters, page, category)
+      const mediaList = await MediaService.getFiltered(filters, page, 15, category)
       const mediaSortOptions = MediaService.sortOptions
       const mediaStatusesList = await MediaStatus.all()
       const mediaTypesList = await this.mediaCategoryService.getCategoryTypes(category)
