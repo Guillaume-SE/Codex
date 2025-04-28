@@ -29,7 +29,7 @@ export const updateGamePlatformValidator = vine.compile(
   })
 )
 
-export const deleteGamePlatformValidator = vine.compile(
+export const platformValidator = vine.compile(
   vine.object({
     params: vine.object({
       platformId: vine.number().isExists({ table: 'game_platforms', column: 'id' }),

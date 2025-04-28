@@ -13,16 +13,16 @@ import ButtonComp from '~/components/ui/ButtonComp.vue'
 import ModalComp from '~/components/ui/ModalComp.vue'
 import AppLayout from '~/layouts/AppLayout.vue'
 
-const props = defineProps<{
-  mediaList: InferPageProps<DashboardController, 'showDashboard'>['mediaList']
-}>()
-
 interface IForm {
   mediaId: number | null
 }
 interface IFilters {
   search: string
 }
+
+const props = defineProps<{
+  mediaList: InferPageProps<DashboardController, 'showDashboard'>['mediaList']
+}>()
 
 const form = useForm<IForm>({
   mediaId: null,
@@ -68,6 +68,9 @@ function fetchNewPageData(url: string | null) {
   <AppLayout>
     <div>
       <Link href="/media/manage">Ajouter un media</Link>
+    </div>
+    <div>
+      <Link href="/platform/manage">Gérer les plateformes</Link>
     </div>
 
     <div class="dashboard-list">
