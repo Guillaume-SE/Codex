@@ -23,7 +23,7 @@ export default class ReviewsController {
     })
   }
 
-  public async manageReview({ request, response }: HttpContext) {
+  public async manageOne({ request, response }: HttpContext) {
     const { params, ...data } = await request.validateUsing(manageReviewValidator)
     await this.reviewService.storeOrUpdate(data, params.mediaId)
 
