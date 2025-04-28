@@ -140,7 +140,12 @@ export default class MediaService {
     { value: 'rating_asc', text: 'Moins bonnes notes', column: 'reviews.rating', dir: 'asc' },
   ]
 
-  static async getFiltered(filters: IFilters, page: number = 1, category?: MediaCategories) {
+  static async getFiltered(
+    filters: IFilters,
+    page: number = 1,
+    results: number = 10,
+    category?: MediaCategories
+  ) {
     const sort =
       this.sortOptions.find((option) => option.value === filters.sortBy) || this.sortOptions[0]
 
@@ -206,7 +211,7 @@ export default class MediaService {
       .preload('review')
       .preload('cover')
       .orderBy(sort.column, sort.dir)
-      .paginate(page, 10)
+      .paginate(page, results)
 
     return mediaQuery
   }
