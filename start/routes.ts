@@ -39,17 +39,20 @@ router.post('/media/:mediaId/cover', [CoversController, 'manageOne'])
 router.delete('/media/:mediaId/cover', [CoversController, 'deleteOne'])
 
 //* genres
-router.post('/genre', [GenresController, 'addOne'])
-router.put('/genre/:genreId', [GenresController, 'updateOne'])
+router.get('/genre/manage', [GenresController, 'showManage']).as('genre.manage')
+router.post('/genre', [GenresController, 'storeOrUpdate'])
+router.put('/genre/:genreId', [GenresController, 'storeOrUpdate'])
 router.delete('/genre/:genreId', [GenresController, 'deleteOne'])
 
 //* types
-router.post('/type', [MediaTypesController, 'addOne'])
-router.put('/type/:typeId', [MediaTypesController, 'updateOne'])
+router.get('/type/manage', [MediaTypesController, 'showManage']).as('type.manage')
+router.post('/type', [MediaTypesController, 'storeOrUpdate'])
+router.put('/type/:typeId', [MediaTypesController, 'storeOrUpdate'])
 
 //* tags
-router.post('/tag', [TagsController, 'addOne'])
-router.put('/tag/:tagId', [TagsController, 'updateOne'])
+router.get('/tag/manage', [TagsController, 'showManage']).as('tag.manage')
+router.post('/tag', [TagsController, 'storeOrUpdate'])
+router.put('/tag/:tagId', [TagsController, 'storeOrUpdate'])
 router.delete('/tag/:tagId', [TagsController, 'deleteOne'])
 
 //* game platforms
