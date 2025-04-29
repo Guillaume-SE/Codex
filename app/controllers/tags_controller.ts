@@ -1,50 +1,39 @@
+import Tag from '#models/tag'
 import TagService from '#services/tag_service'
-import {
-  createTagValidator,
-  deleteTagValidator,
-  updateTagValidator,
-} from '#validators/tag_validator'
+import { createTagValidator, tagValidator, updateTagValidator } from '#validators/tag_validator'
 import { inject } from '@adonisjs/core'
-import type { HttpContext } from '@adonisjs/core/http'
+import { HttpContext } from '@adonisjs/core/http'
 
 @inject()
 export default class TagsController {
   constructor(readonly tagService: TagService) {}
 
-  public async addOne({ request, response }: HttpContext) {
-    try {
-      const data = await request.validateUsing(createTagValidator)
-      const tag = await this.tagService.store(data)
+  async showManage({ inertia }: HttpContext) {
+    const tagList: Tag[] = await Tag.query().orderBy('name', 'asc')
 
-      return response.status(201).json(tag)
-    } catch (error) {
-      return response.status(400).json({ error, customError: error.message })
-    }
+    return inertia.render('admin/ManageTag', {
+      tagList,
+    })
   }
 
-  public async updateOne({ params, request, response }: HttpContext) {
-    const tagId = params.tagId
-    try {
+  public async storeOrUpdate({ request, response }: HttpContext) {
+    // for update
+    if (request.params().tagId) {
       const { params, ...data } = await request.validateUsing(updateTagValidator)
-      const tag = await this.tagService.update(data, tagId)
-
-      return response.status(201).json(tag)
-    } catch (error) {
-      return response.status(400).json({ error, customError: error.message })
+      await this.tagService.storeOrUpdate(data, params.tagId)
+      return response.redirect().toRoute('tag.manage')
     }
+    // for create
+    const data = await request.validateUsing(createTagValidator)
+    await this.tagService.storeOrUpdate(data)
+
+    return response.redirect().toRoute('tag.manage')
   }
 
-  public async deleteOne({ request, params, response }: HttpContext) {
-    const tagId = params.tagId
+  public async deleteOne({ request, response }: HttpContext) {
+    const { params } = await request.validateUsing(tagValidator)
+    await this.tagService.delete(params.tagId)
 
-    try {
-      await request.validateUsing(deleteTagValidator)
-
-      await this.tagService.delete(tagId)
-
-      return response.status(202)
-    } catch (error) {
-      return response.status(400).json({ error, customError: error.message })
-    }
+    return response.redirect().toRoute('tag.manage')
   }
 }

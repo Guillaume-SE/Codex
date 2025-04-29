@@ -13,7 +13,7 @@ export default class GamePlatformsController {
   constructor(private gamePlatformService: GamePlatformService) {}
 
   async showManage({ inertia }: HttpContext) {
-    const platformList: GamePlatform[] = await GamePlatform.all()
+    const platformList: GamePlatform[] = await GamePlatform.query().orderBy('name', 'asc')
 
     return inertia.render('admin/ManageGamePlatform', {
       platformList,

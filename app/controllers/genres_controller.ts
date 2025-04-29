@@ -1,7 +1,8 @@
+import Genre from '#models/genre'
 import GenreService from '#services/genre_service'
 import {
   createGenreValidator,
-  deleteGenreValidator,
+  genreValidator,
   updateGenreValidator,
 } from '#validators/genre_validator'
 import { inject } from '@adonisjs/core'
@@ -11,41 +12,32 @@ import type { HttpContext } from '@adonisjs/core/http'
 export default class GenresController {
   constructor(readonly genreService: GenreService) {}
 
-  public async addOne({ request, response }: HttpContext) {
-    try {
-      const data = await request.validateUsing(createGenreValidator)
-      const genre = await this.genreService.store(data)
+  async showManage({ inertia }: HttpContext) {
+    const genreList: Genre[] = await Genre.query().orderBy('name', 'asc')
 
-      return response.status(201).json(genre)
-    } catch (error) {
-      return response.status(400).json({ error, customError: error.message })
-    }
+    return inertia.render('admin/ManageGenre', {
+      genreList,
+    })
   }
 
-  public async updateOne({ params, request, response }: HttpContext) {
-    const genreId = params.genreId
-
-    try {
+  public async storeOrUpdate({ request, response }: HttpContext) {
+    // for update
+    if (request.params().genreId) {
       const { params, ...data } = await request.validateUsing(updateGenreValidator)
-      const genre = await this.genreService.update(data, genreId)
-
-      return response.status(201).json(genre)
-    } catch (error) {
-      return response.status(400).json({ error, customError: error.message })
+      await this.genreService.storeOrUpdate(data, params.genreId)
+      return response.redirect().toRoute('genre.manage')
     }
+    // for create
+    const data = await request.validateUsing(createGenreValidator)
+    await this.genreService.storeOrUpdate(data)
+
+    return response.redirect().toRoute('genre.manage')
   }
 
-  public async deleteOne({ request, params, response }: HttpContext) {
-    const genreId = params.genreId
+  public async deleteOne({ request, response }: HttpContext) {
+    const { params } = await request.validateUsing(genreValidator)
+    await this.genreService.delete(params.genreId)
 
-    try {
-      await request.validateUsing(deleteGenreValidator)
-
-      await this.genreService.delete(genreId)
-
-      return response.status(202)
-    } catch (error) {
-      return response.status(400).json({ error, customError: error.message })
-    }
+    return response.redirect().toRoute('genre.manage')
   }
 }
