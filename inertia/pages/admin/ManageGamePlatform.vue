@@ -157,7 +157,7 @@ const platformListIsNotEmpty = computed(() => {
             <span>Cette suppression pourrait impacter les jeux déjà enregistrés.</span>
           </div>
           <div>
-            <span>Confirmer la suppression de {{ platformName }} ? </span>
+            <span>Confirmer la suppression de: {{ platformName }} ? </span>
           </div>
         </template>
         <template #action>
