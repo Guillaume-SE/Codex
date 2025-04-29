@@ -1,20 +1,18 @@
-import type { ITag } from '#interfaces/tag_interface'
 import Tag from '#models/tag'
+import { updateTagValidator } from '#validators/tag_validator'
 import { inject } from '@adonisjs/core'
+import { Infer } from '@vinejs/vine/types'
+
+type updatedData = Omit<Infer<typeof updateTagValidator>, 'params'>
 
 @inject()
 export default class TagService {
-  public async store(tag: ITag) {
-    const newTag = await Tag.create(tag)
-    return newTag
-  }
-
-  public async update(updatedTag: ITag, tagId: number) {
-    const tag = await Tag.findOrFail(tagId)
-
-    await tag.merge(updatedTag).save()
-
-    return tag
+  public async storeOrUpdate(data: updatedData, tagId?: number | undefined) {
+    let tag = new Tag()
+    if (tagId) {
+      tag = await Tag.findOrFail(tagId)
+    }
+    await tag.merge(data).save()
   }
 
   public async delete(tagId: number): Promise<void> {
