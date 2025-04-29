@@ -5,6 +5,7 @@ export const createGamePlatformValidator = vine.compile(
     name: vine
       .string()
       .trim()
+      .toLowerCase()
       .unique(async (db, value) => {
         const platformIsUnique = await db.from('game_platforms').where('name', value).first()
         return !platformIsUnique
@@ -22,6 +23,7 @@ export const updateGamePlatformValidator = vine.compile(
     name: vine
       .string()
       .trim()
+      .toLowerCase()
       .unique(async (db, value) => {
         const gamePlatformIsUnique = await db.from('game_platforms').where('name', value).first()
         return !gamePlatformIsUnique
