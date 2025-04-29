@@ -5,6 +5,7 @@ export const createMediaTypeValidator = vine.compile(
     name: vine
       .string()
       .trim()
+      .toLowerCase()
       .unique(async (db, value) => {
         const typeIsUnique = await db.from('media_types').where('name', value).first()
         return !typeIsUnique
@@ -22,6 +23,7 @@ export const updateMediaTypeValidator = vine.compile(
     name: vine
       .string()
       .trim()
+      .toLowerCase()
       .unique(async (db, value) => {
         const typeIsUnique = await db.from('media_types').where('name', value).first()
         return !typeIsUnique
