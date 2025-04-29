@@ -1,3 +1,4 @@
+import MediaType from '#models/media_type'
 import MediaTypeService from '#services/media_type_service'
 import {
   createMediaTypeValidator,
@@ -10,26 +11,25 @@ import type { HttpContext } from '@adonisjs/core/http'
 export default class MediaTypesController {
   constructor(protected mediaTypeService: MediaTypeService) {}
 
-  public async addOne({ request, response }: HttpContext) {
-    try {
-      const data = await request.validateUsing(createMediaTypeValidator)
-      const type = await this.mediaTypeService.store(data)
+  async showManage({ inertia }: HttpContext) {
+    const typeList: MediaType[] = await MediaType.query().orderBy('name', 'asc')
 
-      return response.status(201).json(type)
-    } catch (error) {
-      return response.status(400).json({ error, customError: error.message })
-    }
+    return inertia.render('admin/ManageType', {
+      typeList,
+    })
   }
 
-  public async updateOne({ params, request, response }: HttpContext) {
-    const typeId = params.typeId
-    try {
+  public async storeOrUpdate({ request, response }: HttpContext) {
+    // for update
+    if (request.params().typeId) {
       const { params, ...data } = await request.validateUsing(updateMediaTypeValidator)
-      const type = await this.mediaTypeService.update(data, typeId)
-
-      return response.status(201).json(type)
-    } catch (error) {
-      return response.status(400).json({ error, customError: error.message })
+      await this.mediaTypeService.storeOrUpdate(data, params.typeId)
+      return response.redirect().toRoute('type.manage')
     }
+    // for create
+    const data = await request.validateUsing(createMediaTypeValidator)
+    await this.mediaTypeService.storeOrUpdate(data)
+
+    return response.redirect().toRoute('type.manage')
   }
 }

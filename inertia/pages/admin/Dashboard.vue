@@ -72,6 +72,15 @@ function fetchNewPageData(url: string | null) {
     <div>
       <Link href="/platform/manage">Gérer les plateformes</Link>
     </div>
+    <div>
+      <Link href="/tag/manage">Gérer les tags</Link>
+    </div>
+    <div>
+      <Link href="/genre/manage">Gérer les genres</Link>
+    </div>
+    <div>
+      <Link href="/type/manage">Gérer les types</Link>
+    </div>
 
     <div class="dashboard-list">
       <form action="GET" @submit.prevent="submitFilters">

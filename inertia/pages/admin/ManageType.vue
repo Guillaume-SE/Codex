@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type GamePlatformsController from '#controllers/game_platforms_controller'
+import type MediaTypesController from '#controllers/media_types_controller'
 import { InferPageProps } from '@adonisjs/inertia/types'
 import { useForm } from '@inertiajs/vue3'
 import { computed, ref, useTemplateRef } from 'vue'
@@ -11,44 +11,44 @@ import ModalComp from '~/components/ui/ModalComp.vue'
 import AppLayout from '~/layouts/AppLayout.vue'
 
 interface IForm {
-  platformId: number | null
+  typeId: number | null
   name: string | null
 }
 
 type SubmitTask = 'create' | 'edit' | 'delete'
 
 const props = defineProps<{
-  platformList: InferPageProps<GamePlatformsController, 'showManage'>['platformList']
+  typeList: InferPageProps<MediaTypesController, 'showManage'>['typeList']
 }>()
 
 const form = useForm<IForm>({
-  platformId: null,
+  typeId: null,
   name: null,
 })
 
-const platformName = ref<string | null>('')
+const typeName = ref<string | null>('')
 const createModalRef = useTemplateRef<HTMLDialogElement>('createModalRef')
 const updateModalRef = useTemplateRef<HTMLDialogElement>('updateModalRef')
 const deleteModalRef = useTemplateRef<HTMLDialogElement>('deleteModalRef')
 
-function submitManagePlatform(task: SubmitTask) {
-  const platformId = form.platformId
+function submitManageType(task: SubmitTask) {
+  const typeId = form.typeId
   if (task === 'create') {
-    form.post(`/platform`)
+    form.post(`/type`)
   }
   if (task === 'edit') {
-    form.put(`/platform/${platformId}`)
+    form.put(`/type/${typeId}`)
   }
   if (task === 'delete') {
-    form.delete(`/platform/${platformId}`)
+    form.delete(`/type/${typeId}`)
   }
   form.reset()
   closeModal()
 }
 
 const openModal = (id: number | null, name: string | null, task: SubmitTask) => {
-  form.platformId = id
-  platformName.value = name
+  form.typeId = id
+  typeName.value = name
   if (task === 'edit') {
     form.name = name
     updateModalRef.value?.showModal()
@@ -61,45 +61,43 @@ const openModal = (id: number | null, name: string | null, task: SubmitTask) => 
   createModalRef.value?.showModal()
 }
 const closeModal = () => {
-  form.platformId = null
+  form.typeId = null
   form.name = null
   createModalRef.value?.close()
   updateModalRef.value?.close()
   deleteModalRef.value?.close()
 }
 
-const platformListIsNotEmpty = computed(() => {
-  return props.platformList.length > 0 ? true : false
+const typeListIsNotEmpty = computed(() => {
+  return props.typeList.length > 0 ? true : false
 })
 </script>
 
 <template>
-  <AppHead title="Gestion des plateformes" />
+  <AppHead title="Gestion des types" />
   <AppLayout>
     <div>
-      <h3>Gestion des plateformes</h3>
+      <h3>Gestion des types</h3>
     </div>
     <div>
       <ButtonComp @click="openModal(null, null, 'create')">Ajouter</ButtonComp>
     </div>
     <div class="dashboard-list">
-      <span>Plateformes déjà ajoutées</span>
-      <div v-if="platformListIsNotEmpty">
-        <div v-for="platform in platformList" class="platform-list-item">
+      <span>Types déjà ajoutés</span>
+      <div v-if="typeListIsNotEmpty">
+        <div v-for="type in typeList" class="type-list-item">
           <div>
-            <span>{{ platform.name }}</span>
+            <span>{{ type.name }}</span>
           </div>
           <div>
-            <ButtonComp @click="openModal(platform.id, platform.name, 'edit')">Modifier</ButtonComp>
+            <ButtonComp @click="openModal(type.id, type.name, 'edit')">Modifier</ButtonComp>
           </div>
           <div>
-            <ButtonComp @click="openModal(platform.id, platform.name, 'delete')"
-              >Supprimer</ButtonComp
-            >
+            <ButtonComp @click="openModal(type.id, type.name, 'delete')">Supprimer</ButtonComp>
           </div>
         </div>
       </div>
-      <div v-else>Aucune plateforme ajoutée</div>
+      <div v-else>Aucun type ajouté</div>
 
       <!-- create modal -->
       <ModalComp ref="createModalRef" @close-modal="closeModal">
@@ -110,7 +108,7 @@ const platformListIsNotEmpty = computed(() => {
         </template>
         <template #content>
           <div>
-            <span>Ajouter une nouvelle plateforme</span>
+            <span>Ajouter un nouveau type</span>
           </div>
           <div>
             <LabelComp text="Nom:" textPosition="up">
@@ -120,7 +118,7 @@ const platformListIsNotEmpty = computed(() => {
         </template>
         <template #action>
           <ButtonComp @click="closeModal">Retour</ButtonComp>
-          <ButtonComp @click="submitManagePlatform('create')">Confirmer</ButtonComp>
+          <ButtonComp @click="submitManageType('create')">Confirmer</ButtonComp>
         </template>
       </ModalComp>
       <!-- update modal -->
@@ -132,37 +130,34 @@ const platformListIsNotEmpty = computed(() => {
         </template>
         <template #content>
           <div>
-            <span>Modifier le nom de la plateforme</span>
+            <span>Modifier le nom du type</span>
           </div>
           <div>
             <LabelComp text="Nom actuel:" textPosition="up">
-              <InputComp v-model="form.name" type="text" :value="platformName" />
+              <InputComp v-model="form.name" type="text" :value="typeName" />
             </LabelComp>
           </div>
         </template>
         <template #action>
           <ButtonComp @click="closeModal">Retour</ButtonComp>
-          <ButtonComp @click="submitManagePlatform('edit')">Confirmer</ButtonComp>
+          <ButtonComp @click="submitManageType('edit')">Confirmer</ButtonComp>
         </template>
       </ModalComp>
       <!-- delete modal -->
       <ModalComp ref="deleteModalRef" @close-modal="closeModal">
         <template #header>
           <div>
-            <span>Supprimer une plateforme</span>
+            <span>Supprimer un type</span>
           </div>
         </template>
         <template #content>
           <div>
-            <span>Cette suppression pourrait impacter les jeux déjà enregistrés.</span>
-          </div>
-          <div>
-            <span>Confirmer la suppression de: {{ platformName }} ? </span>
+            <span>Confirmer la suppression de: {{ typeName }} ? </span>
           </div>
         </template>
         <template #action>
           <ButtonComp @click="closeModal">Retour</ButtonComp>
-          <ButtonComp @click="submitManagePlatform('delete')">Confirmer</ButtonComp>
+          <ButtonComp @click="submitManageType('delete')">Confirmer</ButtonComp>
         </template>
       </ModalComp>
     </div>
@@ -170,7 +165,7 @@ const platformListIsNotEmpty = computed(() => {
 </template>
 
 <style scoped>
-.platform-list-item {
+.type-list-item {
   display: grid;
   grid-template-columns: 2fr 1fr 1fr;
   align-items: center;

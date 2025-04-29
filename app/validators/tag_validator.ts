@@ -5,6 +5,7 @@ export const createTagValidator = vine.compile(
     name: vine
       .string()
       .trim()
+      .toLowerCase()
       .unique(async (db, value) => {
         const tagIsUnique = await db.from('tags').where('name', value).first()
         return !tagIsUnique
@@ -14,14 +15,13 @@ export const createTagValidator = vine.compile(
 
 export const updateTagValidator = vine.compile(
   vine.object({
-    // params
     params: vine.object({
       tagId: vine.number().isExists({ table: 'tags', column: 'id' }),
     }),
-    // body
     name: vine
       .string()
       .trim()
+      .toLowerCase()
       .unique(async (db, value) => {
         const tagIsUnique = await db.from('tags').where('name', value).first()
         return !tagIsUnique
@@ -29,7 +29,7 @@ export const updateTagValidator = vine.compile(
   })
 )
 
-export const deleteTagValidator = vine.compile(
+export const tagValidator = vine.compile(
   vine.object({
     params: vine.object({
       tagId: vine.number().isExists({ table: 'tags', column: 'id' }),

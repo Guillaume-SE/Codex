@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type GamePlatformsController from '#controllers/game_platforms_controller'
+import type GenresController from '#controllers/genres_controller'
 import { InferPageProps } from '@adonisjs/inertia/types'
 import { useForm } from '@inertiajs/vue3'
 import { computed, ref, useTemplateRef } from 'vue'
@@ -11,44 +11,44 @@ import ModalComp from '~/components/ui/ModalComp.vue'
 import AppLayout from '~/layouts/AppLayout.vue'
 
 interface IForm {
-  platformId: number | null
+  genreId: number | null
   name: string | null
 }
 
 type SubmitTask = 'create' | 'edit' | 'delete'
 
 const props = defineProps<{
-  platformList: InferPageProps<GamePlatformsController, 'showManage'>['platformList']
+  genreList: InferPageProps<GenresController, 'showManage'>['genreList']
 }>()
 
 const form = useForm<IForm>({
-  platformId: null,
+  genreId: null,
   name: null,
 })
 
-const platformName = ref<string | null>('')
+const genreName = ref<string | null>('')
 const createModalRef = useTemplateRef<HTMLDialogElement>('createModalRef')
 const updateModalRef = useTemplateRef<HTMLDialogElement>('updateModalRef')
 const deleteModalRef = useTemplateRef<HTMLDialogElement>('deleteModalRef')
 
-function submitManagePlatform(task: SubmitTask) {
-  const platformId = form.platformId
+function submitManageGenre(task: SubmitTask) {
+  const genreId = form.genreId
   if (task === 'create') {
-    form.post(`/platform`)
+    form.post(`/genre`)
   }
   if (task === 'edit') {
-    form.put(`/platform/${platformId}`)
+    form.put(`/genre/${genreId}`)
   }
   if (task === 'delete') {
-    form.delete(`/platform/${platformId}`)
+    form.delete(`/genre/${genreId}`)
   }
   form.reset()
   closeModal()
 }
 
 const openModal = (id: number | null, name: string | null, task: SubmitTask) => {
-  form.platformId = id
-  platformName.value = name
+  form.genreId = id
+  genreName.value = name
   if (task === 'edit') {
     form.name = name
     updateModalRef.value?.showModal()
@@ -61,45 +61,43 @@ const openModal = (id: number | null, name: string | null, task: SubmitTask) => 
   createModalRef.value?.showModal()
 }
 const closeModal = () => {
-  form.platformId = null
+  form.genreId = null
   form.name = null
   createModalRef.value?.close()
   updateModalRef.value?.close()
   deleteModalRef.value?.close()
 }
 
-const platformListIsNotEmpty = computed(() => {
-  return props.platformList.length > 0 ? true : false
+const genreListIsNotEmpty = computed(() => {
+  return props.genreList.length > 0 ? true : false
 })
 </script>
 
 <template>
-  <AppHead title="Gestion des plateformes" />
+  <AppHead title="Gestion des genres" />
   <AppLayout>
     <div>
-      <h3>Gestion des plateformes</h3>
+      <h3>Gestion des genres</h3>
     </div>
     <div>
       <ButtonComp @click="openModal(null, null, 'create')">Ajouter</ButtonComp>
     </div>
     <div class="dashboard-list">
-      <span>Plateformes déjà ajoutées</span>
-      <div v-if="platformListIsNotEmpty">
-        <div v-for="platform in platformList" class="platform-list-item">
+      <span>Genres déjà ajoutés</span>
+      <div v-if="genreListIsNotEmpty">
+        <div v-for="genre in genreList" class="genre-list-item">
           <div>
-            <span>{{ platform.name }}</span>
+            <span>{{ genre.name }}</span>
           </div>
           <div>
-            <ButtonComp @click="openModal(platform.id, platform.name, 'edit')">Modifier</ButtonComp>
+            <ButtonComp @click="openModal(genre.id, genre.name, 'edit')">Modifier</ButtonComp>
           </div>
           <div>
-            <ButtonComp @click="openModal(platform.id, platform.name, 'delete')"
-              >Supprimer</ButtonComp
-            >
+            <ButtonComp @click="openModal(genre.id, genre.name, 'delete')">Supprimer</ButtonComp>
           </div>
         </div>
       </div>
-      <div v-else>Aucune plateforme ajoutée</div>
+      <div v-else>Aucun genre ajoutée</div>
 
       <!-- create modal -->
       <ModalComp ref="createModalRef" @close-modal="closeModal">
@@ -110,7 +108,7 @@ const platformListIsNotEmpty = computed(() => {
         </template>
         <template #content>
           <div>
-            <span>Ajouter une nouvelle plateforme</span>
+            <span>Ajouter un nouveau genre</span>
           </div>
           <div>
             <LabelComp text="Nom:" textPosition="up">
@@ -120,7 +118,7 @@ const platformListIsNotEmpty = computed(() => {
         </template>
         <template #action>
           <ButtonComp @click="closeModal">Retour</ButtonComp>
-          <ButtonComp @click="submitManagePlatform('create')">Confirmer</ButtonComp>
+          <ButtonComp @click="submitManageGenre('create')">Confirmer</ButtonComp>
         </template>
       </ModalComp>
       <!-- update modal -->
@@ -132,37 +130,39 @@ const platformListIsNotEmpty = computed(() => {
         </template>
         <template #content>
           <div>
-            <span>Modifier le nom de la plateforme</span>
+            <span>Modifier le nom du genre</span>
           </div>
           <div>
             <LabelComp text="Nom actuel:" textPosition="up">
-              <InputComp v-model="form.name" type="text" :value="platformName" />
+              <InputComp v-model="form.name" type="text" :value="genreName" />
             </LabelComp>
           </div>
         </template>
         <template #action>
           <ButtonComp @click="closeModal">Retour</ButtonComp>
-          <ButtonComp @click="submitManagePlatform('edit')">Confirmer</ButtonComp>
+          <ButtonComp @click="submitManageGenre('edit')">Confirmer</ButtonComp>
         </template>
       </ModalComp>
       <!-- delete modal -->
       <ModalComp ref="deleteModalRef" @close-modal="closeModal">
         <template #header>
           <div>
-            <span>Supprimer une plateforme</span>
+            <span>Supprimer un genre</span>
           </div>
         </template>
         <template #content>
           <div>
-            <span>Cette suppression pourrait impacter les jeux déjà enregistrés.</span>
+            <span
+              >En cas d'erreur, il sera nécessaire de réattribuer le genre un par un à chaque média.
+            </span>
           </div>
           <div>
-            <span>Confirmer la suppression de: {{ platformName }} ? </span>
+            <span>Confirmer la suppression de: {{ genreName }} ? </span>
           </div>
         </template>
         <template #action>
           <ButtonComp @click="closeModal">Retour</ButtonComp>
-          <ButtonComp @click="submitManagePlatform('delete')">Confirmer</ButtonComp>
+          <ButtonComp @click="submitManageGenre('delete')">Confirmer</ButtonComp>
         </template>
       </ModalComp>
     </div>
@@ -170,7 +170,7 @@ const platformListIsNotEmpty = computed(() => {
 </template>
 
 <style scoped>
-.platform-list-item {
+.genre-list-item {
   display: grid;
   grid-template-columns: 2fr 1fr 1fr;
   align-items: center;
