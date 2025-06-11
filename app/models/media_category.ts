@@ -16,7 +16,7 @@ export default class MediaCategory extends BaseModel {
 
   //RELATIONS
   @hasMany(() => Media, {
-    foreignKey: 'mediaId',
+    foreignKey: 'categoryId',
   })
   declare media: HasMany<typeof Media>
 

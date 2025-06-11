@@ -14,7 +14,7 @@ export default class MediaType extends BaseModel {
 
   // RELATIONS
   @hasMany(() => Media, {
-    foreignKey: 'mediaId',
+    foreignKey: 'typeId',
   })
   declare media: HasMany<typeof Media>
 
