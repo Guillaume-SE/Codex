@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { onClickOutside } from '@vueuse/core'
 import { useTemplateRef } from 'vue'
 import ButtonComp from '~/components/ui/ButtonComp.vue'
 import { useClickOutsideDialog } from '~/composables/useClickOutsideDialog'
@@ -21,8 +20,6 @@ defineExpose({
 useClickOutsideDialog(modalRef, () => {
   emit('close-modal')
 })
-
-// onClickOutside(target, () => emit('close-modal'))
 </script>
 
 <template>

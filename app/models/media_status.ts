@@ -13,7 +13,7 @@ export default class MediaStatus extends BaseModel {
 
   //relations
   @hasMany(() => Media, {
-    foreignKey: 'mediaId',
+    foreignKey: 'statusId',
   })
   declare media: HasMany<typeof Media>
 }

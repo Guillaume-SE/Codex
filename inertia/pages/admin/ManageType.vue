@@ -10,47 +10,58 @@ import LabelComp from '~/components/ui/LabelComp.vue'
 import ModalComp from '~/components/ui/ModalComp.vue'
 import AppLayout from '~/layouts/AppLayout.vue'
 
-interface IForm {
-  typeId: number | null
-  name: string | null
-}
-
-type SubmitTask = 'create' | 'edit' | 'delete'
-
 const props = defineProps<{
   typeList: InferPageProps<MediaTypesController, 'showManage'>['typeList']
 }>()
 
+interface IForm {
+  newTypeId: string | number
+  name: string | null
+}
+
+interface ITypeList {
+  id: number | null
+  name: string | null
+  count: number | null
+}
+
+type SubmitTask = 'create' | 'edit' | 'replace' | 'delete'
+
 const form = useForm<IForm>({
-  typeId: null,
+  newTypeId: '',
   name: null,
 })
 
+const typeId = ref<number | null>()
 const typeName = ref<string | null>('')
+const filteredTypeList = ref(props.typeList)
 const createModalRef = useTemplateRef<HTMLDialogElement>('createModalRef')
 const updateModalRef = useTemplateRef<HTMLDialogElement>('updateModalRef')
 const deleteModalRef = useTemplateRef<HTMLDialogElement>('deleteModalRef')
+const replaceModalRef = useTemplateRef<HTMLDialogElement>('replaceModalRef')
 
 function submitManageType(task: SubmitTask) {
-  const typeId = form.typeId
   if (task === 'create') {
     form.post(`/type`)
   }
   if (task === 'edit') {
-    form.put(`/type/${typeId}`)
+    form.put(`/type/${typeId.value}`)
+  }
+  if (task === 'replace') {
+    form.put(`/type/replace/${typeId.value}`)
   }
   if (task === 'delete') {
-    form.delete(`/type/${typeId}`)
+    form.delete(`/type/${typeId.value}`)
   }
   form.reset()
   closeModal()
 }
 
-const openModal = (id: number | null, name: string | null, task: SubmitTask) => {
-  form.typeId = id
-  typeName.value = name
+const openModal = (options: ITypeList, task: SubmitTask) => {
+  typeId.value = options.id
+  typeName.value = options.name
+  form.name = options.name
   if (task === 'edit') {
-    form.name = name
     updateModalRef.value?.showModal()
     return
   }
@@ -58,14 +69,21 @@ const openModal = (id: number | null, name: string | null, task: SubmitTask) => 
     deleteModalRef.value?.showModal()
     return
   }
+  if (task === 'replace') {
+    form.newTypeId = ''
+    filteredTypeList.value = props.typeList.filter((type) => type.id !== options.id)
+    replaceModalRef.value?.showModal()
+    return
+  }
   createModalRef.value?.showModal()
 }
 const closeModal = () => {
-  form.typeId = null
+  typeId.value = null
   form.name = null
   createModalRef.value?.close()
   updateModalRef.value?.close()
   deleteModalRef.value?.close()
+  replaceModalRef.value?.close()
 }
 
 const typeListIsNotEmpty = computed(() => {
@@ -80,26 +98,44 @@ const typeListIsNotEmpty = computed(() => {
       <h3>Gestion des types</h3>
     </div>
     <div>
-      <ButtonComp @click="openModal(null, null, 'create')">Ajouter</ButtonComp>
+      <ButtonComp @click="openModal({ id: null, name: null, count: null }, 'create')"
+        >Ajouter</ButtonComp
+      >
     </div>
     <div class="dashboard-list">
-      <span>Types déjà ajoutés</span>
       <div v-if="typeListIsNotEmpty">
         <div v-for="type in typeList" class="type-list-item">
           <div>
             <span>{{ type.name }}</span>
           </div>
           <div>
-            <ButtonComp @click="openModal(type.id, type.name, 'edit')">Modifier</ButtonComp>
+            <span>{{ type.count }}</span>
           </div>
           <div>
-            <ButtonComp @click="openModal(type.id, type.name, 'delete')">Supprimer</ButtonComp>
+            <ButtonComp
+              @click="openModal({ id: type.id, name: type.name, count: type.count }, 'edit')"
+              >Modifier</ButtonComp
+            >
+          </div>
+          <div v-if="type.count > 0">
+            <ButtonComp
+              @click="openModal({ id: type.id, name: type.name, count: type.count }, 'replace')"
+              >Supprimer</ButtonComp
+            >
+          </div>
+          <div v-else>
+            <ButtonComp
+              @click="openModal({ id: type.id, name: type.name, count: type.count }, 'delete')"
+              >Supprimer</ButtonComp
+            >
           </div>
         </div>
       </div>
       <div v-else>Aucun type ajouté</div>
 
-      <!-- create modal -->
+      <!--
+      create modal
+      -->
       <ModalComp ref="createModalRef" @close-modal="closeModal">
         <template #header>
           <div>
@@ -118,10 +154,12 @@ const typeListIsNotEmpty = computed(() => {
         </template>
         <template #action>
           <ButtonComp @click="closeModal">Retour</ButtonComp>
-          <ButtonComp @click="submitManageType('create')">Confirmer</ButtonComp>
+          <ButtonComp @click="submitManageType('create')">Valider</ButtonComp>
         </template>
       </ModalComp>
-      <!-- update modal -->
+      <!--
+      update modal
+      -->
       <ModalComp ref="updateModalRef" @close-modal="closeModal">
         <template #header>
           <div>
@@ -140,24 +178,53 @@ const typeListIsNotEmpty = computed(() => {
         </template>
         <template #action>
           <ButtonComp @click="closeModal">Retour</ButtonComp>
-          <ButtonComp @click="submitManageType('edit')">Confirmer</ButtonComp>
+          <ButtonComp @click="submitManageType('edit')">Valider</ButtonComp>
         </template>
       </ModalComp>
-      <!-- delete modal -->
+      <!--
+      delete modal
+      -->
       <ModalComp ref="deleteModalRef" @close-modal="closeModal">
         <template #header>
           <div>
-            <span>Supprimer un type</span>
+            <span>Suppression</span>
           </div>
         </template>
         <template #content>
           <div>
-            <span>Confirmer la suppression de: {{ typeName }} ? </span>
+            <span>Supprimer le type:</span>
+            <span>{{ typeName }}</span>
           </div>
         </template>
         <template #action>
           <ButtonComp @click="closeModal">Retour</ButtonComp>
-          <ButtonComp @click="submitManageType('delete')">Confirmer</ButtonComp>
+          <ButtonComp @click="submitManageType('delete')">Valider</ButtonComp>
+        </template>
+      </ModalComp>
+      <!--
+      replace modal
+       -->
+      <ModalComp ref="replaceModalRef" @close-modal="closeModal">
+        <template #header>
+          <div>Remplacement</div>
+        </template>
+        <template #content>
+          <div>
+            <span>Au moins un media utilise le type {{ typeName }}</span>
+            <span>Remplacer ce type par</span>
+            <div>
+              <select v-model="form.newTypeId">
+                <option disabled value="">Choisir un type</option>
+                <option v-for="type in filteredTypeList" :value="type.id">
+                  {{ type.name }}
+                </option>
+              </select>
+            </div>
+          </div>
+        </template>
+        <template #action>
+          <ButtonComp @click="closeModal">Retour</ButtonComp>
+          <ButtonComp @click="submitManageType('replace')">Valider</ButtonComp>
         </template>
       </ModalComp>
     </div>
@@ -167,7 +234,7 @@ const typeListIsNotEmpty = computed(() => {
 <style scoped>
 .type-list-item {
   display: grid;
-  grid-template-columns: 2fr 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
   align-items: center;
   gap: 10px;
   padding: 10px;

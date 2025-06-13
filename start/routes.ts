@@ -48,6 +48,8 @@ router.delete('/genre/:genreId', [GenresController, 'deleteOne'])
 router.get('/type/manage', [MediaTypesController, 'showManage']).as('type.manage')
 router.post('/type', [MediaTypesController, 'storeOrUpdate'])
 router.put('/type/:typeId', [MediaTypesController, 'storeOrUpdate'])
+router.put('/type/replace/:typeId', [MediaTypesController, 'replaceOne'])
+router.delete('/type/:typeId', [MediaTypesController, 'deleteOne'])
 
 //* tags
 router.get('/tag/manage', [TagsController, 'showManage']).as('tag.manage')
