@@ -168,12 +168,13 @@ const typeListIsNotEmpty = computed(() => {
         </template>
         <template #content>
           <div>
-            <span>Modifier le nom du type</span>
+            <span>Nom actuel du type:</span>
+            <span>{{ typeName }}</span>
           </div>
           <div>
-            <LabelComp text="Nom actuel:" textPosition="up">
-              <InputComp v-model="form.name" type="text" :value="typeName" />
-            </LabelComp>
+            <!-- <LabelComp text="Nom:" textPosition="up"> -->
+            <InputComp v-model="form.name" type="text" :value="typeName" />
+            <!-- </LabelComp> -->
           </div>
         </template>
         <template #action>
@@ -210,8 +211,12 @@ const typeListIsNotEmpty = computed(() => {
         </template>
         <template #content>
           <div>
-            <span>Au moins un media utilise le type {{ typeName }}</span>
-            <span>Remplacer ce type par</span>
+            <div>
+              <span>Au moins un media utilise le type {{ typeName }}</span>
+            </div>
+            <div>
+              <span>Remplacer ce type par</span>
+            </div>
             <div>
               <select v-model="form.newTypeId">
                 <option disabled value="">Choisir un type</option>
