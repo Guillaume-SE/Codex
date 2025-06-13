@@ -1,33 +1,25 @@
 import { onMounted, onUnmounted, Ref } from 'vue'
 
 export function useClickOutsideDialog(
-  dialogRef: Ref<HTMLDialogElement | null>,
+  dialogRef: Ref<HTMLElement | null>,
+  targetRef: Ref<HTMLElement | null>,
   onClose: () => void
 ) {
   const handleClickOutside = (e: MouseEvent) => {
-    if (!dialogRef.value) return
+    const modal = dialogRef.value
+    const target = targetRef.value
 
-    const dialogDimensions = dialogRef.value.getBoundingClientRect()
-    // Check if the click was inside the modal
-    if (dialogRef.value.contains(e.target as Node)) {
-      return
-    }
+    if (!modal || !target) return
 
-    if (
-      e.clientX < dialogDimensions.left ||
-      e.clientX > dialogDimensions.right ||
-      e.clientY < dialogDimensions.top ||
-      e.clientY > dialogDimensions.bottom
-    ) {
+    if (modal.contains(e.target as Node) && !target.contains(e.target as Node)) {
+      // Optional: Guard for open selects
+      const activeElement = document.activeElement
+      if (activeElement && activeElement.tagName === 'SELECT') return
+
       onClose()
     }
   }
 
-  onMounted(() => {
-    dialogRef.value?.addEventListener('click', handleClickOutside)
-  })
-
-  onUnmounted(() => {
-    dialogRef.value?.removeEventListener('click', handleClickOutside)
-  })
+  onMounted(() => document.addEventListener('click', handleClickOutside))
+  onUnmounted(() => document.removeEventListener('click', handleClickOutside))
 }
