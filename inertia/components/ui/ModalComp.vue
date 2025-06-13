@@ -9,7 +9,7 @@ defineProps({
 
 const emit = defineEmits(['close-modal'])
 const modalRef = useTemplateRef<HTMLDialogElement>('modalRef')
-const target = useTemplateRef<HTMLDialogElement>('target')
+const modalContentRef = useTemplateRef<HTMLDialogElement>('modalContentRef')
 
 // Expose the modalRef (the native <dialog> element) to the parent
 defineExpose({
@@ -17,14 +17,14 @@ defineExpose({
   close: () => modalRef.value?.close(),
 })
 
-useClickOutsideDialog(modalRef, () => {
+useClickOutsideDialog(modalRef, modalContentRef, () => {
   emit('close-modal')
 })
 </script>
 
 <template>
   <dialog ref="modalRef" class="modal">
-    <div ref="target">
+    <div ref="modalContentRef" class="modal-content">
       <ButtonComp @click.stop="emit('close-modal')" class="close-button">&times;</ButtonComp>
       <slot name="header"></slot>
       <slot name="content"></slot>
@@ -43,8 +43,11 @@ useClickOutsideDialog(modalRef, () => {
   max-width: 500px;
   background: white;
   border-radius: 8px;
-  padding: 20px;
+  padding: 0px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+.modal-content {
+  padding: 20px;
 }
 .close-button {
   position: absolute;
