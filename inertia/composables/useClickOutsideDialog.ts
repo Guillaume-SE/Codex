@@ -1,6 +1,5 @@
 import { onMounted, onUnmounted, Ref } from 'vue'
 
-// not used but keeped as reference
 export function useClickOutsideDialog(
   dialogRef: Ref<HTMLDialogElement | null>,
   onClose: () => void
