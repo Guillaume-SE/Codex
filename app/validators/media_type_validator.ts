@@ -30,3 +30,20 @@ export const updateMediaTypeValidator = vine.compile(
       }),
   })
 )
+
+export const replaceMediaTypeValidator = vine.compile(
+  vine.object({
+    params: vine.object({
+      typeId: vine.number().isExists({ table: 'media_types', column: 'id' }),
+    }),
+    newTypeId: vine.number().isExists({ table: 'media_types', column: 'id' }),
+  })
+)
+
+export const singleMediaTypeValidator = vine.compile(
+  vine.object({
+    params: vine.object({
+      typeId: vine.number().isExists({ table: 'media_types', column: 'id' }),
+    }),
+  })
+)
