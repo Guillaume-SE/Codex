@@ -15,7 +15,6 @@ const props = defineProps<{
   categories: InferPageProps<MediaController, 'showManage'>['categories']
   categoryRelatedTypes: InferPageProps<MediaController, 'showManage'>['categoryRelatedTypes']
   categoryRelatedGenres: InferPageProps<MediaController, 'showManage'>['categoryRelatedGenres']
-  tags: InferPageProps<MediaController, 'showManage'>['tags']
   gamePlatforms: InferPageProps<MediaController, 'showManage'>['gamePlatforms']
   media: InferPageProps<MediaController, 'showManage'>['media']
   // errors: Object
@@ -29,7 +28,6 @@ interface IForm {
   alternativeName: string | null
   released: string | null
   synopsis: string | null
-  tagId: string
   genreId: number[]
   platformId: string | null
   duration: string | null
@@ -46,7 +44,6 @@ const form = useForm<IForm>({
   alternativeName: null,
   released: null,
   synopsis: '',
-  tagId: '1',
   genreId: [],
   platformId: null,
   duration: null,
@@ -68,7 +65,6 @@ onMounted(() => {
     form.alternativeName = props.media.alternativeName
     form.released = props.media.released ? formatDate(props.media.released) : null
     form.synopsis = props.media.synopsis
-    form.tagId = props.media.tagId
   }
 })
 
@@ -197,15 +193,6 @@ const isNoCategorySelected = computed(() => {
               id="synopsis"
             ></textarea>
           </LabelComp>
-        </div>
-        <!-- recommandation tag -->
-        <div>
-          <span>Tag de recommandation (requis):</span>
-          <div v-for="tag in tags">
-            <LabelComp :text="tag.name" textPosition="down">
-              <InputComp v-model="form.tagId" type="radio" :value="tag.id" />
-            </LabelComp>
-          </div>
         </div>
         <!-- genres -->
         <div>

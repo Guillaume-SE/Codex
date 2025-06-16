@@ -8,15 +8,11 @@ import { SeriesInfoFactory } from '#database/factories/series_info_factory'
 import MediaCategoriesEnum from '#enums/media_categories'
 import MediaStatusesEnum from '#enums/media_statuses'
 import Media from '#models/media'
-import Tag from '#models/tag'
 import factory from '@adonisjs/lucid/factories'
 import { DateTime } from 'luxon'
 
 export const MediaFactory = factory
   .define(Media, async ({ faker }) => {
-    const tags = await Tag.all()
-    const randomTag = faker.helpers.arrayElement(tags)
-
     return {
       name: faker.music.songName(),
       alternativeName:
@@ -27,7 +23,6 @@ export const MediaFactory = factory
         faker.helpers.maybe(() => faker.lorem.paragraph(), {
           probability: 0.8,
         }) ?? null,
-      tagId: randomTag.id,
     }
   })
   .state('isGame', (row, { faker }) => {

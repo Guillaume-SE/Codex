@@ -43,8 +43,6 @@ It also allows me to keep up to date with the ones I've planned to see, the ones
 
 - `books_infos`: contains all book related media information.
 
-- `tags`: allow to give to each media a tag who can be used to show related result.
-
 - `media_contributors`: allows to know who worked on the related media and what their role was.
 
 - `category_types`: allows to assign one media types to multiple categories and avoid types names duplication.

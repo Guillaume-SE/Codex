@@ -42,7 +42,6 @@ export default class MediaService {
       alternativeName,
       released,
       synopsis,
-      tagId,
       genreId,
       ...categoryRelatedMediaData
     } = data
@@ -55,7 +54,6 @@ export default class MediaService {
       alternativeName,
       released,
       synopsis,
-      tagId,
     }
 
     const selectedCategory = await MediaCategory.findOrFail(categoryId)
@@ -199,7 +197,6 @@ export default class MediaService {
       .preload('status')
       .preload('category')
       .preload('type')
-      .preload('tag')
       .preload('genres')
       .preload('gameInfo', (gamesQuery) => {
         gamesQuery.preload('gamePlatform')
@@ -224,7 +221,6 @@ export default class MediaService {
         .load('status')
         .load('category')
         .load('type')
-        .load('tag')
         .load('genres')
         .load('gameInfo', (gamesQuery) => {
           gamesQuery.preload('gamePlatform')
@@ -240,28 +236,6 @@ export default class MediaService {
     return media
   }
 
-  async getTagRelated(category: string, mediaId: number, tag: string) {
-    const mediaList = await Media.query()
-      .whereNot('id', mediaId)
-      .whereHas('category', (query) => {
-        query.where('name', category)
-      })
-      .andWhereHas('tag', (query) => {
-        query.where('name', tag)
-      })
-      .orderByRaw('RAND()')
-      .limit(10)
-      .preload('status')
-      .preload('category')
-      .preload('type')
-      .preload('tag')
-      .preload('genres')
-      .preload('review')
-      .preload('cover')
-
-    return mediaList
-  }
-
   async getLastAdded(category: string, limit: number) {
     const mediaList = await Media.query()
       .whereHas('category', (query) => {
@@ -272,7 +246,6 @@ export default class MediaService {
       .preload('status')
       .preload('category')
       .preload('type')
-      .preload('tag')
       .preload('genres')
       .preload('review')
       .preload('cover')

@@ -6,7 +6,6 @@ const CoversController = () => import('#controllers/covers_controller')
 const ReviewsController = () => import('#controllers/reviews_controller')
 const GenresController = () => import('#controllers/genres_controller')
 const MediaTypesController = () => import('#controllers/media_types_controller')
-const TagsController = () => import('#controllers/tags_controller')
 const GamePlatformsController = () => import('#controllers/game_platforms_controller')
 const HomeController = () => import('#controllers/home_controller')
 const StorageController = () => import('#controllers/storage_controller')
@@ -50,12 +49,6 @@ router.post('/type', [MediaTypesController, 'storeOrUpdate'])
 router.put('/type/:typeId', [MediaTypesController, 'storeOrUpdate'])
 router.put('/type/replace/:typeId', [MediaTypesController, 'replaceOne'])
 router.delete('/type/:typeId', [MediaTypesController, 'deleteOne'])
-
-//* tags
-router.get('/tag/manage', [TagsController, 'showManage']).as('tag.manage')
-router.post('/tag', [TagsController, 'storeOrUpdate'])
-router.put('/tag/:tagId', [TagsController, 'storeOrUpdate'])
-router.delete('/tag/:tagId', [TagsController, 'deleteOne'])
 
 //* game platforms
 router.get('/platform/manage', [GamePlatformsController, 'showManage']).as('platform.manage')

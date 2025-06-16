@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import type MediaController from '#controllers/media_controller'
 import type {
   IAnimeMediaPresented,
   IBaseMediaPresented,
@@ -8,11 +7,9 @@ import type {
   IMovieMediaPresented,
   ISeriesMediaPresented,
 } from '#interfaces/media_presented_interface'
-import { InferPageProps } from '@adonisjs/inertia/types'
 import { computed } from 'vue'
 import AppHead from '~/components/AppHead.vue'
 import ImageNotAvailableIcon from '~/components/icons/ImageNotAvailableIcon.vue'
-import MediaCard from '~/components/MediaCard.vue'
 import RatingBadge from '~/components/RatingBadge.vue'
 import StatusProgressBadge from '~/components/StatusProgressBadge.vue'
 import { useFormattedDateToLocale } from '~/composables/useFormattedDate'
@@ -27,7 +24,6 @@ const props = defineProps<{
     | ISeriesMediaPresented
     | IAnimeMediaPresented
     | IBookMediaPresented
-  tagRelatedList: InferPageProps<MediaController, 'showOne'>['tagRelatedList']
 }>()
 
 const isGameMedia = (media: Object): media is IGameMediaPresented => 'gameInfos' in media
@@ -35,10 +31,6 @@ const isMovieMedia = (media: Object): media is IMovieMediaPresented => 'movieInf
 const isSeriesMedia = (media: Object): media is ISeriesMediaPresented => 'seriesInfos' in media
 const isAnimeMedia = (media: Object): media is IAnimeMediaPresented => 'animeInfos' in media
 const isBookMedia = (media: Object): media is IBookMediaPresented => 'bookInfos' in media
-
-const tagListIsNotEmpty = computed(() => {
-  return props.tagRelatedList.length > 0 ? true : false
-})
 
 const formattedDuration = computed(() =>
   isMovieMedia(props.media) ? useFormattedDuration(props.media.movieInfos.duration) : null
@@ -121,19 +113,6 @@ const formattedDate = useFormattedDateToLocale
           <div>Mis à jour le {{ formattedDate(media.review!.lastUpdate, true) }}</div>
         </div>
       </div>
-    </div>
-    <div>
-      <h3>Similaire</h3>
-      <div v-if="tagListIsNotEmpty" class="recommandations-carousel">
-        <MediaCard
-          v-for="media in tagRelatedList"
-          :key="media.id"
-          :media="media"
-          :mediaType="media.type"
-          :mediaCategory="media.category"
-        />
-      </div>
-      <div v-else>Aucun élément similaire pour le moment</div>
     </div>
   </AppLayout>
 </template>

@@ -2,7 +2,6 @@ import { MediaPresenterFactory } from '#classes/MediaPresenter'
 import GamePlatform from '#models/game_platform'
 import MediaCategory from '#models/media_category'
 import MediaStatus from '#models/media_status'
-import Tag from '#models/tag'
 import MediaCategoryService from '#services/media_category_service'
 import MediaService from '#services/media_service'
 import type { MediaCategories } from '#types/MediaCategories'
@@ -38,7 +37,6 @@ export default class MediaController {
 
     const statuses = await MediaStatus.query().orderBy('name', 'desc')
     const categories = await MediaCategory.query().orderBy('name')
-    const tags = await Tag.query().orderBy('name')
     const gamePlatforms = await GamePlatform.query().orderBy('name')
     const categoriesTypes = await this.mediaCategoryService.getCategoriesTypes()
     const categoriesGenres = await this.mediaCategoryService.getCategoriesGenres()
@@ -68,7 +66,6 @@ export default class MediaController {
       categories,
       categoryRelatedTypes,
       categoryRelatedGenres,
-      tags,
       gamePlatforms,
       media,
     })
@@ -101,17 +98,8 @@ export default class MediaController {
       const media = await this.mediaService.getOne(params.mediaId)
       const presentedMedia = MediaPresenterFactory.presentMedia(media)
 
-      const tagRelatedList = await this.mediaService.getTagRelated(
-        presentedMedia.category,
-        presentedMedia.id,
-        presentedMedia.tag
-      )
-
-      const presentedTagRelatedList = MediaPresenterFactory.presentMediaList(tagRelatedList)
-
       return inertia.render('media/MediaProfile', {
         media: presentedMedia,
-        tagRelatedList: presentedTagRelatedList,
       })
     } catch (error) {
       return response.redirect('/')
