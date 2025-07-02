@@ -27,7 +27,7 @@ defineProps<{
 
 <template>
   <div class="media-card">
-    <Link :href="`/category/${mediaCategory}/${media.id}`">
+    <Link :href="`/categories/${mediaCategory}/${media.id}`">
       <div v-if="media.cover">
         <img
           class="img-medium"
