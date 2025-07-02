@@ -7,14 +7,14 @@ import AppHead from '~/components/AppHead.vue'
 import ButtonComp from '~/components/ui/ButtonComp.vue'
 import InputComp from '~/components/ui/InputComp.vue'
 import LabelComp from '~/components/ui/LabelComp.vue'
+import { useFormatCategoryNameInFr } from '~/composables/useFormatCategoryNameInFr'
 import { useFormattedDate } from '~/composables/useFormattedDate'
 import AppLayout from '~/layouts/AppLayout.vue'
 
 const props = defineProps<{
   statuses: InferPageProps<MediaController, 'showManage'>['statuses']
   categories: InferPageProps<MediaController, 'showManage'>['categories']
-  categoryRelatedTypes: InferPageProps<MediaController, 'showManage'>['categoryRelatedTypes']
-  categoryRelatedGenres: InferPageProps<MediaController, 'showManage'>['categoryRelatedGenres']
+  categoryAssociations: InferPageProps<MediaController, 'showManage'>['categoryAssociations']
   gamePlatforms: InferPageProps<MediaController, 'showManage'>['gamePlatforms']
   media: InferPageProps<MediaController, 'showManage'>['media']
   // errors: Object
@@ -53,8 +53,8 @@ const form = useForm<IForm>({
 })
 
 const isForUpdate = ref<boolean>(false)
-const filteredTypesList = ref(props.categoryRelatedTypes[form.categoryId])
-const filteredGenresList = ref(props.categoryRelatedGenres[form.categoryId])
+const filteredTypesList = ref(props.categoryAssociations[form.categoryId]?.types || [])
+const filteredGenresList = ref(props.categoryAssociations[form.categoryId]?.genres || [])
 
 onMounted(() => {
   if (props.media) {
@@ -71,8 +71,12 @@ onMounted(() => {
 watch(
   () => form.categoryId,
   (newCategoryId) => {
-    filteredTypesList.value = props.categoryRelatedTypes[newCategoryId] || []
-    filteredGenresList.value = props.categoryRelatedGenres[newCategoryId] || []
+    const selectedCategoryData = props.categoryAssociations[newCategoryId] || {
+      types: [],
+      genres: [],
+    }
+    filteredTypesList.value = selectedCategoryData.types
+    filteredGenresList.value = selectedCategoryData.genres
     resetFormValues()
 
     if (props.media) {
@@ -114,6 +118,8 @@ const currentCategory = computed(() => {
 const isNoCategorySelected = computed(() => {
   return form.categoryId === '' ? true : false
 })
+
+const formatCategoryName = useFormatCategoryNameInFr
 </script>
 
 <template>
@@ -124,20 +130,11 @@ const isNoCategorySelected = computed(() => {
       <h3 v-else>Ajout d'un nouveau media</h3>
 
       <form @submit.prevent="submit">
-        <!-- status -->
-        <div>
-          <span>Progression (requis):</span>
-          <div v-for="status in statuses">
-            <LabelComp :text="status.name" textPosition="down">
-              <InputComp v-model="form.statusId" type="radio" :value="status.id" />
-            </LabelComp>
-          </div>
-        </div>
         <!-- category -->
         <div v-if="props.media">
           <span>Catégorie:</span>
           <div>
-            <LabelComp :text="props.media.category.name" textPosition="down">
+            <LabelComp :text="formatCategoryName(props.media.category.name)" textPosition="down">
               <InputComp v-model="form.categoryId" type="radio" :value="props.media.category.id" />
             </LabelComp>
           </div>
@@ -145,7 +142,7 @@ const isNoCategorySelected = computed(() => {
         <div v-else>
           <span>Catégorie (requis):</span>
           <div v-for="category in categories">
-            <LabelComp :text="category.name" textPosition="down">
+            <LabelComp :text="formatCategoryName(category.name)" textPosition="down">
               <InputComp v-model="form.categoryId" type="radio" :value="category.id" />
             </LabelComp>
           </div>
@@ -246,6 +243,15 @@ const isNoCategorySelected = computed(() => {
               <div>
                 <InputComp v-model="form.pages" type="number" min="1" />
               </div>
+            </LabelComp>
+          </div>
+        </div>
+        <!-- status -->
+        <div>
+          <span>Progression (requis):</span>
+          <div v-for="status in statuses">
+            <LabelComp :text="status.name" textPosition="down">
+              <InputComp v-model="form.statusId" type="radio" :value="status.id" />
             </LabelComp>
           </div>
         </div>
