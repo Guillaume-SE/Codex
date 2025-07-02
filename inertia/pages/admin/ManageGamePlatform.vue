@@ -9,10 +9,17 @@ import InputComp from '~/components/ui/InputComp.vue'
 import LabelComp from '~/components/ui/LabelComp.vue'
 import ModalComp from '~/components/ui/ModalComp.vue'
 import AppLayout from '~/layouts/AppLayout.vue'
+import DashboardLayout from '~/layouts/DashboardLayout.vue'
 
 interface IForm {
   platformId: number | null
   name: string | null
+}
+
+interface IPlatformList {
+  id: number | null
+  name: string | null
+  count?: number | null
 }
 
 type SubmitTask = 'create' | 'edit' | 'delete'
@@ -46,11 +53,11 @@ function submitManagePlatform(task: SubmitTask) {
   closeModal()
 }
 
-const openModal = (id: number | null, name: string | null, task: SubmitTask) => {
-  form.platformId = id
-  platformName.value = name
+const openModal = (options: IPlatformList, task: SubmitTask) => {
+  form.platformId = options.id
+  platformName.value = options.name
   if (task === 'edit') {
-    form.name = name
+    form.name = options.name
     updateModalRef.value?.showModal()
     return
   }
@@ -76,103 +83,109 @@ const platformListIsNotEmpty = computed(() => {
 <template>
   <AppHead title="Gestion des plateformes" />
   <AppLayout>
-    <div>
-      <h3>Gestion des plateformes</h3>
-    </div>
-    <div>
-      <ButtonComp @click="openModal(null, null, 'create')">Ajouter</ButtonComp>
-    </div>
-    <div class="dashboard-list">
-      <span>Plateformes déjà ajoutées</span>
-      <div v-if="platformListIsNotEmpty">
-        <div v-for="platform in platformList" class="platform-list-item">
-          <div>
-            <span>{{ platform.name }}</span>
-          </div>
-          <div>
-            <ButtonComp @click="openModal(platform.id, platform.name, 'edit')">Modifier</ButtonComp>
-          </div>
-          <div>
-            <ButtonComp @click="openModal(platform.id, platform.name, 'delete')"
-              >Supprimer</ButtonComp
-            >
+    <DashboardLayout>
+      <div>
+        <h3>Gestion des plateformes</h3>
+      </div>
+      <div>
+        <ButtonComp @click="openModal({ id: null, name: null }, 'create')">Ajouter</ButtonComp>
+      </div>
+      <div class="dashboard-list">
+        <div v-if="platformListIsNotEmpty">
+          <div v-for="platform in platformList" class="platform-list-item">
+            <div>
+              <span>{{ platform.name }}</span>
+            </div>
+            <div>
+              <span>{{ platform.count }}</span>
+            </div>
+            <div>
+              <ButtonComp @click="openModal({ id: platform.id, name: platform.name }, 'edit')"
+                >Modifier</ButtonComp
+              >
+            </div>
+            <div>
+              <ButtonComp @click="openModal({ id: platform.id, name: platform.name }, 'delete')"
+                >Supprimer</ButtonComp
+              >
+            </div>
           </div>
         </div>
-      </div>
-      <div v-else>Aucune plateforme ajoutée</div>
+        <div v-else>Aucune plateforme ajoutée</div>
 
-      <!-- create modal -->
-      <ModalComp ref="createModalRef" @close-modal="closeModal">
-        <template #header>
-          <div>
-            <span>Nouvel ajout</span>
-          </div>
-        </template>
-        <template #content>
-          <div>
-            <span>Ajouter une nouvelle plateforme</span>
-          </div>
-          <div>
-            <LabelComp text="Nom:" textPosition="up">
-              <InputComp v-model="form.name" type="text" />
-            </LabelComp>
-          </div>
-        </template>
-        <template #action>
-          <ButtonComp @click="closeModal">Retour</ButtonComp>
-          <ButtonComp @click="submitManagePlatform('create')">Confirmer</ButtonComp>
-        </template>
-      </ModalComp>
-      <!-- update modal -->
-      <ModalComp ref="updateModalRef" @close-modal="closeModal">
-        <template #header>
-          <div>
-            <span>Modification</span>
-          </div>
-        </template>
-        <template #content>
-          <div>
-            <span>Modifier le nom de la plateforme</span>
-          </div>
-          <div>
-            <LabelComp text="Nom actuel:" textPosition="up">
-              <InputComp v-model="form.name" type="text" :value="platformName" />
-            </LabelComp>
-          </div>
-        </template>
-        <template #action>
-          <ButtonComp @click="closeModal">Retour</ButtonComp>
-          <ButtonComp @click="submitManagePlatform('edit')">Confirmer</ButtonComp>
-        </template>
-      </ModalComp>
-      <!-- delete modal -->
-      <ModalComp ref="deleteModalRef" @close-modal="closeModal">
-        <template #header>
-          <div>
-            <span>Supprimer une plateforme</span>
-          </div>
-        </template>
-        <template #content>
-          <div>
-            <span>Cette suppression pourrait impacter les jeux déjà enregistrés.</span>
-          </div>
-          <div>
-            <span>Confirmer la suppression de: {{ platformName }} ? </span>
-          </div>
-        </template>
-        <template #action>
-          <ButtonComp @click="closeModal">Retour</ButtonComp>
-          <ButtonComp @click="submitManagePlatform('delete')">Confirmer</ButtonComp>
-        </template>
-      </ModalComp>
-    </div>
+        <!-- create modal -->
+        <ModalComp ref="createModalRef" @close-modal="closeModal">
+          <template #header>
+            <div>
+              <span>Nouvel ajout</span>
+            </div>
+          </template>
+          <template #content>
+            <div>
+              <span>Ajouter une nouvelle plateforme</span>
+            </div>
+            <div>
+              <LabelComp text="Nom:" textPosition="up">
+                <InputComp v-model="form.name" type="text" />
+              </LabelComp>
+            </div>
+          </template>
+          <template #action>
+            <ButtonComp @click="closeModal">Retour</ButtonComp>
+            <ButtonComp @click="submitManagePlatform('create')">Confirmer</ButtonComp>
+          </template>
+        </ModalComp>
+        <!-- update modal -->
+        <ModalComp ref="updateModalRef" @close-modal="closeModal">
+          <template #header>
+            <div>
+              <span>Modification</span>
+            </div>
+          </template>
+          <template #content>
+            <div>
+              <span>Modifier le nom de la plateforme</span>
+            </div>
+            <div>
+              <LabelComp text="Nom actuel:" textPosition="up">
+                <InputComp v-model="form.name" type="text" :value="platformName" />
+              </LabelComp>
+            </div>
+          </template>
+          <template #action>
+            <ButtonComp @click="closeModal">Retour</ButtonComp>
+            <ButtonComp @click="submitManagePlatform('edit')">Confirmer</ButtonComp>
+          </template>
+        </ModalComp>
+        <!-- delete modal -->
+        <ModalComp ref="deleteModalRef" @close-modal="closeModal">
+          <template #header>
+            <div>
+              <span>Supprimer une plateforme</span>
+            </div>
+          </template>
+          <template #content>
+            <div>
+              <span>Cette suppression pourrait impacter les jeux déjà enregistrés.</span>
+            </div>
+            <div>
+              <span>Confirmer la suppression de: {{ platformName }} ? </span>
+            </div>
+          </template>
+          <template #action>
+            <ButtonComp @click="closeModal">Retour</ButtonComp>
+            <ButtonComp @click="submitManagePlatform('delete')">Confirmer</ButtonComp>
+          </template>
+        </ModalComp>
+      </div>
+    </DashboardLayout>
   </AppLayout>
 </template>
 
 <style scoped>
 .platform-list-item {
   display: grid;
-  grid-template-columns: 2fr 1fr 1fr;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
   align-items: center;
   gap: 10px;
   padding: 10px;
