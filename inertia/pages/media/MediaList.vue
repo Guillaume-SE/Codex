@@ -87,7 +87,9 @@ const mediaListIsNotEmpty = computed(() => {
       <div>
         <form
           method="GET"
-          @submit.prevent="filters.get(`/category/${props.mediaCategory}`, { preserveState: true })"
+          @submit.prevent="
+            filters.get(`/categories/${props.mediaCategory}`, { preserveState: true })
+          "
         >
           <div>
             <!-- search -->

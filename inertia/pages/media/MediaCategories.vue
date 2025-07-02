@@ -16,11 +16,10 @@ defineProps<{
   <AppLayout>
     <div>
       <h3>Catégories</h3>
-      <p>L'ensemble des catégories disponible sur le site.</p>
       <div v-for="category in categoriesOverview">
         <div>
           <h3>{{ category.label }}</h3>
-          <Link :href="`/category/${category.category}`"> Voir tout </Link>
+          <Link :href="`/categories/${category.category}`"> Voir tout </Link>
         </div>
         <div class="recommandations-carousel">
           <MediaCard
