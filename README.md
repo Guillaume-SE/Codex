@@ -43,8 +43,6 @@ It also allows me to keep up to date with the ones I've planned to see, the ones
 
 - `books_infos`: contains all book related media information.
 
-- `tags`: allow to give to each media a tag who can be used to show related result.
-
 - `category_types`: allows to assign one media types to multiple categories and avoid types names duplication.
 
 - `category_genres`: allows to assign one media genres to multiple categories and avoid genres names duplication.
@@ -84,7 +82,7 @@ node ace db:seed -i
 
 ## Status
 
-4 apr. 2025 : dashboard finished soon and db adjustments to do mainly for a small review's table refactoring.
+5 august 2025 : Working on errors handling globaly in the project.
 
 ## Other
 
