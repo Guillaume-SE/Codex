@@ -39,7 +39,8 @@ router.post('/media/:mediaId/cover', [CoversController, 'manageOne'])
 router.delete('/media/:mediaId/cover', [CoversController, 'deleteOne'])
 
 //* categories
-router.get('/category/manage', [MediaCategoriesController, 'showManage'])
+router.get('/category/manage', [MediaCategoriesController, 'showManage']).as('category.manage')
+router.post('/category/:categoryId/associate', [MediaCategoriesController, 'manageAssociation'])
 
 //* genres
 router.get('/genre/manage', [GenresController, 'showManage']).as('genre.manage')
