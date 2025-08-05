@@ -43,7 +43,6 @@ useClickOutsideDialog(modalRef, target, () => {
   max-width: 500px;
   background: white;
   border-radius: 8px;
-  padding: 0px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
 }
 .modal-content {

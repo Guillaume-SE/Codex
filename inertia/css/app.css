@@ -25,6 +25,10 @@ h6 {
   text-wrap: balance;
 }
 
+.form-text-error {
+  color: #fa2d36;
+}
+
 .navbar {
   display: flex;
   justify-content: space-around;

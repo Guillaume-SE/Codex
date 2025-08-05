@@ -1,8 +1,12 @@
-import { IGenre } from '#interfaces/genre_interface'
 import { IPaginated } from '#interfaces/paginated_interface'
 import Media from '#models/media'
 import { ModelPaginatorContract } from '@adonisjs/lucid/types/model'
 import { DateTime } from 'luxon'
+
+interface IGenre {
+  id: number
+  name: string
+}
 
 export abstract class BaseMediaPresenter {
   id: number
@@ -13,7 +17,6 @@ export abstract class BaseMediaPresenter {
   alternativeName: string | null
   released: DateTime | null
   synopsis: string | null
-  tag: string
   addedOn: string
   genres: string[]
   review?: {
@@ -38,7 +41,6 @@ export abstract class BaseMediaPresenter {
     this.alternativeName = media.alternativeName
     this.released = media.released
     this.synopsis = media.synopsis
-    this.tag = media.tag.name
     this.addedOn = media.created_at
     this.genres = media.genres.map((genre: IGenre) => genre.name)
 

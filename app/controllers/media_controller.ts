@@ -2,7 +2,6 @@ import { MediaPresenterFactory } from '#classes/MediaPresenter'
 import GamePlatform from '#models/game_platform'
 import MediaCategory from '#models/media_category'
 import MediaStatus from '#models/media_status'
-import Tag from '#models/tag'
 import MediaCategoryService from '#services/media_category_service'
 import MediaService from '#services/media_service'
 import type { MediaCategories } from '#types/MediaCategories'
@@ -15,6 +14,25 @@ import {
 import { inject } from '@adonisjs/core'
 import type { HttpContext } from '@adonisjs/core/http'
 
+interface ICategoriesType {
+  category_id: number
+  type_id: number
+  name: string
+}
+interface ICategoriesGenre {
+  category_id: number
+  genre_id: number
+  name: string
+}
+type Item = { text: string; value: number }
+type CategoryAssociations = Record<
+  string,
+  {
+    types: Item[]
+    genres: Item[]
+  }
+>
+
 @inject()
 export default class MediaController {
   constructor(
@@ -23,13 +41,6 @@ export default class MediaController {
   ) {}
 
   async showManage({ request, inertia }: HttpContext) {
-    type Item = { text: string; value: string }
-    type CategoryItem = {
-      category_id: string
-      name: string
-      id: string
-    }
-
     let media
     if (request.params().mediaId) {
       const { params } = await request.validateUsing(singleMediaValidator)
@@ -38,37 +49,40 @@ export default class MediaController {
 
     const statuses = await MediaStatus.query().orderBy('name', 'desc')
     const categories = await MediaCategory.query().orderBy('name')
-    const tags = await Tag.query().orderBy('name')
     const gamePlatforms = await GamePlatform.query().orderBy('name')
     const categoriesTypes = await this.mediaCategoryService.getCategoriesTypes()
     const categoriesGenres = await this.mediaCategoryService.getCategoriesGenres()
 
     // needed to only show related items to each categories in the form
-    const getCategoryRelatedItems = (
-      categories: MediaCategory[],
-      categoriesItems: CategoryItem[]
-    ): Record<string, Item[]> => {
-      return categories.reduce((acc: Record<string, Item[]>, category) => {
-        const items = categoriesItems
-          .filter((item) => item.category_id.toString() === category.id.toString())
-          .map((item) => ({
-            text: item.name,
-            value: item.id,
-          }))
-        acc[category.id.toString()] = items
-        return acc
-      }, {})
+    const buildCategoryAssociations = (
+      categoriesTypes: ICategoriesType[],
+      categoriesGenres: ICategoriesGenre[]
+    ): CategoryAssociations => {
+      const result: CategoryAssociations = {}
+
+      const ensure = (id: string | number) => {
+        const key = String(id)
+        if (!result[key]) result[key] = { types: [], genres: [] }
+        return result[key]
+      }
+
+      for (const { category_id, type_id, name } of categoriesTypes) {
+        ensure(category_id).types.push({ value: type_id, text: name })
+      }
+
+      for (const { category_id, genre_id, name } of categoriesGenres) {
+        ensure(category_id).genres.push({ value: genre_id, text: name })
+      }
+
+      return result
     }
 
-    const categoryRelatedTypes = getCategoryRelatedItems(categories, categoriesTypes)
-    const categoryRelatedGenres = getCategoryRelatedItems(categories, categoriesGenres)
+    const categoryAssociations = buildCategoryAssociations(categoriesTypes, categoriesGenres)
 
     return inertia.render('admin/ManageMedia', {
       statuses,
       categories,
-      categoryRelatedTypes,
-      categoryRelatedGenres,
-      tags,
+      categoryAssociations,
       gamePlatforms,
       media,
     })
@@ -101,17 +115,8 @@ export default class MediaController {
       const media = await this.mediaService.getOne(params.mediaId)
       const presentedMedia = MediaPresenterFactory.presentMedia(media)
 
-      const tagRelatedList = await this.mediaService.getTagRelated(
-        presentedMedia.category,
-        presentedMedia.id,
-        presentedMedia.tag
-      )
-
-      const presentedTagRelatedList = MediaPresenterFactory.presentMediaList(tagRelatedList)
-
       return inertia.render('media/MediaProfile', {
         media: presentedMedia,
-        tagRelatedList: presentedTagRelatedList,
       })
     } catch (error) {
       return response.redirect('/')

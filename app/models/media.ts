@@ -9,7 +9,6 @@ import MediaType from '#models/media_type'
 import MovieInfo from '#models/movie_info'
 import Review from '#models/review'
 import SeriesInfo from '#models/series_info'
-import Tag from '#models/tag'
 import { BaseModel, beforeCreate, belongsTo, column, hasOne, manyToMany } from '@adonisjs/lucid/orm'
 import type { BelongsTo, HasOne, ManyToMany } from '@adonisjs/lucid/types/relations'
 import { DateTime } from 'luxon'
@@ -41,9 +40,6 @@ export default class Media extends BaseModel {
   @column()
   declare synopsis: string | null
 
-  @column({ columnName: 'tag_id', serializeAs: 'tagId' })
-  declare tagId: number
-
   @column.dateTime({ columnName: 'created_at', serializeAs: 'createdAt' })
   declare createdAt: DateTime
 
@@ -63,11 +59,6 @@ export default class Media extends BaseModel {
     foreignKey: 'typeId',
   })
   declare type: BelongsTo<typeof MediaType>
-
-  @belongsTo(() => Tag, {
-    foreignKey: 'tagId',
-  })
-  declare tag: BelongsTo<typeof Tag>
 
   @hasOne(() => Review, {
     foreignKey: 'mediaId',

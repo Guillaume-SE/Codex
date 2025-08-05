@@ -8,7 +8,7 @@ export const createMediaValidator = vine.compile(
     statusId: vine.number().isExists({ table: 'media_statuses', column: 'id' }),
     typeId: vine.number().isExists({ table: 'media_types', column: 'id' }),
     name: vine.string().trim(),
-    alternativeName: vine.string().trim().nullable(),
+    alternativeName: vine.string().trim().notSameAs('name').nullable(),
     released: vine
       .date()
       .transform((value) => {
@@ -19,7 +19,6 @@ export const createMediaValidator = vine.compile(
       })
       .nullable(),
     synopsis: vine.string().trim().nullable(),
-    tagId: vine.number().isExists({ table: 'tags', column: 'id' }),
     genreId: vine.array(vine.number().isExists({ table: 'genres', column: 'id' })).distinct(),
     // specific infos
     platformId: vine
@@ -45,7 +44,7 @@ export const updateMediaValidator = vine.compile(
     statusId: vine.number().isExists({ table: 'media_statuses', column: 'id' }),
     typeId: vine.number().isExists({ table: 'media_types', column: 'id' }),
     name: vine.string().trim(),
-    alternativeName: vine.string().trim().nullable(),
+    alternativeName: vine.string().trim().notSameAs('name').nullable(),
     released: vine
       .date()
       .transform((value) => {
@@ -56,7 +55,6 @@ export const updateMediaValidator = vine.compile(
       })
       .nullable(),
     synopsis: vine.string().trim().nullable(),
-    tagId: vine.number().isExists({ table: 'tags', column: 'id' }),
     genreId: vine.array(vine.number().isExists({ table: 'genres', column: 'id' })).distinct(),
     // specific infos
     platformId: vine
@@ -77,6 +75,7 @@ export const showByCategoryMediaValidator = vine.compile(
       categoryName: vine.string().isExists({ table: 'media_categories', column: 'name' }),
     }),
     search: vine.string().trim().escape().optional(),
+    // for select input purpose
     //   // status: vine
     //   //   .number()
     //   //   .exists(async (db, value) => {

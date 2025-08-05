@@ -7,18 +7,17 @@ import AppHead from '~/components/AppHead.vue'
 import ButtonComp from '~/components/ui/ButtonComp.vue'
 import InputComp from '~/components/ui/InputComp.vue'
 import LabelComp from '~/components/ui/LabelComp.vue'
+import { useFormatCategoryNameInFr } from '~/composables/useFormatCategoryNameInFr'
 import { useFormattedDate } from '~/composables/useFormattedDate'
 import AppLayout from '~/layouts/AppLayout.vue'
 
 const props = defineProps<{
   statuses: InferPageProps<MediaController, 'showManage'>['statuses']
   categories: InferPageProps<MediaController, 'showManage'>['categories']
-  categoryRelatedTypes: InferPageProps<MediaController, 'showManage'>['categoryRelatedTypes']
-  categoryRelatedGenres: InferPageProps<MediaController, 'showManage'>['categoryRelatedGenres']
-  tags: InferPageProps<MediaController, 'showManage'>['tags']
+  categoryAssociations: InferPageProps<MediaController, 'showManage'>['categoryAssociations']
   gamePlatforms: InferPageProps<MediaController, 'showManage'>['gamePlatforms']
-  media: InferPageProps<MediaController, 'showManage'>['media']
-  // errors: Object
+  media?: InferPageProps<MediaController, 'showManage'>['media']
+  errors: Record<string, string[]>
 }>()
 
 interface IForm {
@@ -29,7 +28,6 @@ interface IForm {
   alternativeName: string | null
   released: string | null
   synopsis: string | null
-  tagId: string
   genreId: number[]
   platformId: string | null
   duration: string | null
@@ -46,7 +44,6 @@ const form = useForm<IForm>({
   alternativeName: null,
   released: null,
   synopsis: '',
-  tagId: '1',
   genreId: [],
   platformId: null,
   duration: null,
@@ -56,8 +53,8 @@ const form = useForm<IForm>({
 })
 
 const isForUpdate = ref<boolean>(false)
-const filteredTypesList = ref(props.categoryRelatedTypes[form.categoryId])
-const filteredGenresList = ref(props.categoryRelatedGenres[form.categoryId])
+const filteredTypesList = ref(props.categoryAssociations[form.categoryId]?.types || [])
+const filteredGenresList = ref(props.categoryAssociations[form.categoryId]?.genres || [])
 
 onMounted(() => {
   if (props.media) {
@@ -68,15 +65,18 @@ onMounted(() => {
     form.alternativeName = props.media.alternativeName
     form.released = props.media.released ? formatDate(props.media.released) : null
     form.synopsis = props.media.synopsis
-    form.tagId = props.media.tagId
   }
 })
 
 watch(
   () => form.categoryId,
   (newCategoryId) => {
-    filteredTypesList.value = props.categoryRelatedTypes[newCategoryId] || []
-    filteredGenresList.value = props.categoryRelatedGenres[newCategoryId] || []
+    const selectedCategoryData = props.categoryAssociations[newCategoryId] || {
+      types: [],
+      genres: [],
+    }
+    filteredTypesList.value = selectedCategoryData.types
+    filteredGenresList.value = selectedCategoryData.genres
     resetFormValues()
 
     if (props.media) {
@@ -118,6 +118,8 @@ const currentCategory = computed(() => {
 const isNoCategorySelected = computed(() => {
   return form.categoryId === '' ? true : false
 })
+
+const formatCategoryName = useFormatCategoryNameInFr
 </script>
 
 <template>
@@ -128,20 +130,11 @@ const isNoCategorySelected = computed(() => {
       <h3 v-else>Ajout d'un nouveau media</h3>
 
       <form @submit.prevent="submit">
-        <!-- status -->
-        <div>
-          <span>Progression (requis):</span>
-          <div v-for="status in statuses">
-            <LabelComp :text="status.name" textPosition="down">
-              <InputComp v-model="form.statusId" type="radio" :value="status.id" />
-            </LabelComp>
-          </div>
-        </div>
         <!-- category -->
         <div v-if="props.media">
           <span>Catégorie:</span>
           <div>
-            <LabelComp :text="props.media.category.name" textPosition="down">
+            <LabelComp :text="formatCategoryName(props.media.category.name)" textPosition="down">
               <InputComp v-model="form.categoryId" type="radio" :value="props.media.category.id" />
             </LabelComp>
           </div>
@@ -149,9 +142,12 @@ const isNoCategorySelected = computed(() => {
         <div v-else>
           <span>Catégorie (requis):</span>
           <div v-for="category in categories">
-            <LabelComp :text="category.name" textPosition="down">
+            <LabelComp :text="formatCategoryName(category.name)" textPosition="down">
               <InputComp v-model="form.categoryId" type="radio" :value="category.id" />
             </LabelComp>
+          </div>
+          <div v-if="errors.categoryId">
+            <span class="form-text-error">{{ errors.categoryId.join(', ') }}</span>
           </div>
         </div>
         <!-- type -->
@@ -165,6 +161,9 @@ const isNoCategorySelected = computed(() => {
               <InputComp v-model="form.typeId" type="radio" :value="type.value" />
             </LabelComp>
           </div>
+          <div v-if="errors.typeId">
+            <span class="form-text-error">{{ errors.typeId.join(', ') }}</span>
+          </div>
         </div>
         <!-- name -->
         <div>
@@ -175,18 +174,27 @@ const isNoCategorySelected = computed(() => {
               placeholder="The Dark Knight: le Chevalier noir"
             />
           </LabelComp>
+          <div v-if="errors.name">
+            <span class="form-text-error">{{ errors.name.join(', ') }}</span>
+          </div>
         </div>
         <!-- alternative name -->
         <div>
           <LabelComp text="Nom alternatif:" text-position="up">
             <InputComp v-model="form.alternativeName" type="text" placeholder="The Dark Knight" />
           </LabelComp>
+          <div v-if="errors.alternativeName">
+            <span class="form-text-error">{{ errors.alternativeName.join(', ') }}</span>
+          </div>
         </div>
         <!-- released date -->
         <div>
           <LabelComp text="Date de sortie:" text-position="up">
             <InputComp v-model="form.released" type="date" />
           </LabelComp>
+          <div v-if="errors.released">
+            <span class="form-text-error">{{ errors.released.join(', ') }}</span>
+          </div>
         </div>
         <!-- synopsis -->
         <div>
@@ -197,14 +205,8 @@ const isNoCategorySelected = computed(() => {
               id="synopsis"
             ></textarea>
           </LabelComp>
-        </div>
-        <!-- recommandation tag -->
-        <div>
-          <span>Tag de recommandation (requis):</span>
-          <div v-for="tag in tags">
-            <LabelComp :text="tag.name" textPosition="down">
-              <InputComp v-model="form.tagId" type="radio" :value="tag.id" />
-            </LabelComp>
+          <div v-if="errors.synopsis">
+            <span class="form-text-error">{{ errors.synopsis.join(', ') }}</span>
           </div>
         </div>
         <!-- genres -->
@@ -218,6 +220,9 @@ const isNoCategorySelected = computed(() => {
               <InputComp v-model="form.genreId" type="checkbox" :value="genre.value" />
             </LabelComp>
           </div>
+          <div v-if="errors.genreId">
+            <span class="form-text-error">{{ errors.genreId.join(', ') }}</span>
+          </div>
         </div>
         <div v-if="currentCategory">
           <!-- game platform -->
@@ -228,14 +233,20 @@ const isNoCategorySelected = computed(() => {
                 <InputComp v-model="form.platformId" type="radio" :value="platform.id" />
               </LabelComp>
             </div>
+            <div v-if="errors.platformId">
+              <span class="form-text-error">{{ errors.platformId.join(', ') }}</span>
+            </div>
           </div>
           <!-- movie duration -->
           <div v-if="currentCategory.name === 'movie'">
-            <LabelComp text="Durée du film en minutes(ex: 60, 90...):" textPosition="up">
+            <LabelComp text="Durée du film (en minutes):" textPosition="up">
               <div>
                 <InputComp v-model="form.duration" type="number" min="1" />
               </div>
             </LabelComp>
+            <div v-if="errors.duration">
+              <span class="form-text-error">{{ errors.duration.join(', ') }}</span>
+            </div>
           </div>
           <!-- series season length -->
           <div v-if="currentCategory.name === 'series'">
@@ -244,6 +255,9 @@ const isNoCategorySelected = computed(() => {
                 <InputComp v-model="form.seriesSeasonLength" type="number" min="1" />
               </div>
             </LabelComp>
+            <div v-if="errors.seriesSeasonLength">
+              <span class="form-text-error">{{ errors.seriesSeasonLength.join(', ') }}</span>
+            </div>
           </div>
           <!-- anime season length -->
           <div v-if="currentCategory.name === 'anime'">
@@ -252,6 +266,9 @@ const isNoCategorySelected = computed(() => {
                 <InputComp v-model="form.animeSeasonLength" type="number" min="1" />
               </div>
             </LabelComp>
+            <div v-if="errors.animeSeasonLength">
+              <span class="form-text-error">{{ errors.animeSeasonLength.join(', ') }}</span>
+            </div>
           </div>
           <!-- books pages -->
           <div v-if="currentCategory.name === 'book'">
@@ -260,9 +277,23 @@ const isNoCategorySelected = computed(() => {
                 <InputComp v-model="form.pages" type="number" min="1" />
               </div>
             </LabelComp>
+            <div v-if="errors.pages">
+              <span class="form-text-error">{{ errors.pages.join(', ') }}</span>
+            </div>
           </div>
         </div>
-        <!-- <div v-if="form.errors">{{ form.errors }}</div> -->
+        <!-- status -->
+        <div>
+          <span>Progression (requis):</span>
+          <div v-for="status in statuses">
+            <LabelComp :text="status.name" textPosition="down">
+              <InputComp v-model="form.statusId" type="radio" :value="status.id" />
+            </LabelComp>
+          </div>
+          <div v-if="errors.statusId">
+            <span class="form-text-error">{{ errors.statusId.join(', ') }}</span>
+          </div>
+        </div>
         <div>
           <ButtonComp type="submit" :disabled="form.processing"></ButtonComp>
         </div>

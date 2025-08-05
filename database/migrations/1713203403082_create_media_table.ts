@@ -31,13 +31,6 @@ export default class extends BaseSchema {
       table.string('alternative_name').nullable()
       table.timestamp('released').nullable()
       table.text('synopsis').nullable()
-      table
-        .integer('tag_id')
-        .unsigned()
-        .references('id')
-        .inTable('tags')
-        .onUpdate('CASCADE')
-        .notNullable()
       table.timestamp('created_at').notNullable()
     })
   }

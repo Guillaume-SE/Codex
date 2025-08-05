@@ -8,15 +8,31 @@ import {
 import { inject } from '@adonisjs/core'
 import type { HttpContext } from '@adonisjs/core/http'
 
+interface IPlatformListFormatted {
+  id: number
+  name: string
+  count: number
+}
+
 @inject()
 export default class GamePlatformsController {
   constructor(private gamePlatformService: GamePlatformService) {}
 
   async showManage({ inertia }: HttpContext) {
-    const platformList: GamePlatform[] = await GamePlatform.query().orderBy('name', 'asc')
+    const platformList: GamePlatform[] = await GamePlatform.query()
+      .withCount('gameInfo')
+      .orderBy('name', 'asc')
+
+    const platformListFormatted: IPlatformListFormatted[] = platformList.map((platform) => {
+      return {
+        id: platform.id,
+        name: platform.name,
+        count: platform.$extras.gameInfo_count,
+      }
+    })
 
     return inertia.render('admin/ManageGamePlatform', {
-      platformList,
+      platformList: platformListFormatted,
     })
   }
 

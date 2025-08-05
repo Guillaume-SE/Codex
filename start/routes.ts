@@ -6,7 +6,7 @@ const CoversController = () => import('#controllers/covers_controller')
 const ReviewsController = () => import('#controllers/reviews_controller')
 const GenresController = () => import('#controllers/genres_controller')
 const MediaTypesController = () => import('#controllers/media_types_controller')
-const TagsController = () => import('#controllers/tags_controller')
+const MediaCategoriesController = () => import('#controllers/media_categories_controller')
 const GamePlatformsController = () => import('#controllers/game_platforms_controller')
 const HomeController = () => import('#controllers/home_controller')
 const StorageController = () => import('#controllers/storage_controller')
@@ -21,8 +21,8 @@ router.get('/users/:id', [UsersController, 'show'])
 
 //* media
 router.get('/categories', [MediaController, 'showCategories'])
-router.get('/category/:categoryName', [MediaController, 'showByCategory'])
-router.get('/category/:categoryName/:mediaId', [MediaController, 'showOne'])
+router.get('/categories/:categoryName', [MediaController, 'showByCategory'])
+router.get('/categories/:categoryName/:mediaId', [MediaController, 'showOne'])
 //ADMIN
 router.get('/media/manage/:mediaId?', [MediaController, 'showManage'])
 router.post('/media', [MediaController, 'manageOne'])
@@ -38,6 +38,10 @@ router.get('/media/:mediaId/cover', [CoversController, 'showManage'])
 router.post('/media/:mediaId/cover', [CoversController, 'manageOne'])
 router.delete('/media/:mediaId/cover', [CoversController, 'deleteOne'])
 
+//* categories
+router.get('/category/manage', [MediaCategoriesController, 'showManage']).as('category.manage')
+router.post('/category/:categoryId/associate', [MediaCategoriesController, 'manageAssociation'])
+
 //* genres
 router.get('/genre/manage', [GenresController, 'showManage']).as('genre.manage')
 router.post('/genre', [GenresController, 'storeOrUpdate'])
@@ -50,12 +54,6 @@ router.post('/type', [MediaTypesController, 'storeOrUpdate'])
 router.put('/type/:typeId', [MediaTypesController, 'storeOrUpdate'])
 router.put('/type/replace/:typeId', [MediaTypesController, 'replaceOne'])
 router.delete('/type/:typeId', [MediaTypesController, 'deleteOne'])
-
-//* tags
-router.get('/tag/manage', [TagsController, 'showManage']).as('tag.manage')
-router.post('/tag', [TagsController, 'storeOrUpdate'])
-router.put('/tag/:tagId', [TagsController, 'storeOrUpdate'])
-router.delete('/tag/:tagId', [TagsController, 'deleteOne'])
 
 //* game platforms
 router.get('/platform/manage', [GamePlatformsController, 'showManage']).as('platform.manage')

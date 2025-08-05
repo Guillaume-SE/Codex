@@ -7,12 +7,12 @@ type updatedData = Omit<Infer<typeof updateGenreValidator>, 'params'>
 
 @inject()
 export default class GenreService {
-  public async storeOrUpdate(data: updatedData, tagId?: number | undefined) {
-    let tag = new Genre()
-    if (tagId) {
-      tag = await Genre.findOrFail(tagId)
+  public async storeOrUpdate(data: updatedData, genreId?: number | undefined) {
+    let genre = new Genre()
+    if (genreId) {
+      genre = await Genre.findOrFail(genreId)
     }
-    await tag.merge(data).save()
+    await genre.merge(data).save()
   }
 
   public async delete(genreId: number): Promise<void> {
