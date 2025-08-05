@@ -16,8 +16,8 @@ const props = defineProps<{
   categories: InferPageProps<MediaController, 'showManage'>['categories']
   categoryAssociations: InferPageProps<MediaController, 'showManage'>['categoryAssociations']
   gamePlatforms: InferPageProps<MediaController, 'showManage'>['gamePlatforms']
-  media: InferPageProps<MediaController, 'showManage'>['media']
-  // errors: Object
+  media?: InferPageProps<MediaController, 'showManage'>['media']
+  errors: Record<string, string[]>
 }>()
 
 interface IForm {
@@ -146,6 +146,9 @@ const formatCategoryName = useFormatCategoryNameInFr
               <InputComp v-model="form.categoryId" type="radio" :value="category.id" />
             </LabelComp>
           </div>
+          <div v-if="errors.categoryId">
+            <span class="form-text-error">{{ errors.categoryId.join(', ') }}</span>
+          </div>
         </div>
         <!-- type -->
         <div>
@@ -158,6 +161,9 @@ const formatCategoryName = useFormatCategoryNameInFr
               <InputComp v-model="form.typeId" type="radio" :value="type.value" />
             </LabelComp>
           </div>
+          <div v-if="errors.typeId">
+            <span class="form-text-error">{{ errors.typeId.join(', ') }}</span>
+          </div>
         </div>
         <!-- name -->
         <div>
@@ -168,18 +174,27 @@ const formatCategoryName = useFormatCategoryNameInFr
               placeholder="The Dark Knight: le Chevalier noir"
             />
           </LabelComp>
+          <div v-if="errors.name">
+            <span class="form-text-error">{{ errors.name.join(', ') }}</span>
+          </div>
         </div>
         <!-- alternative name -->
         <div>
           <LabelComp text="Nom alternatif:" text-position="up">
             <InputComp v-model="form.alternativeName" type="text" placeholder="The Dark Knight" />
           </LabelComp>
+          <div v-if="errors.alternativeName">
+            <span class="form-text-error">{{ errors.alternativeName.join(', ') }}</span>
+          </div>
         </div>
         <!-- released date -->
         <div>
           <LabelComp text="Date de sortie:" text-position="up">
             <InputComp v-model="form.released" type="date" />
           </LabelComp>
+          <div v-if="errors.released">
+            <span class="form-text-error">{{ errors.released.join(', ') }}</span>
+          </div>
         </div>
         <!-- synopsis -->
         <div>
@@ -190,6 +205,9 @@ const formatCategoryName = useFormatCategoryNameInFr
               id="synopsis"
             ></textarea>
           </LabelComp>
+          <div v-if="errors.synopsis">
+            <span class="form-text-error">{{ errors.synopsis.join(', ') }}</span>
+          </div>
         </div>
         <!-- genres -->
         <div>
@@ -202,6 +220,9 @@ const formatCategoryName = useFormatCategoryNameInFr
               <InputComp v-model="form.genreId" type="checkbox" :value="genre.value" />
             </LabelComp>
           </div>
+          <div v-if="errors.genreId">
+            <span class="form-text-error">{{ errors.genreId.join(', ') }}</span>
+          </div>
         </div>
         <div v-if="currentCategory">
           <!-- game platform -->
@@ -212,14 +233,20 @@ const formatCategoryName = useFormatCategoryNameInFr
                 <InputComp v-model="form.platformId" type="radio" :value="platform.id" />
               </LabelComp>
             </div>
+            <div v-if="errors.platformId">
+              <span class="form-text-error">{{ errors.platformId.join(', ') }}</span>
+            </div>
           </div>
           <!-- movie duration -->
           <div v-if="currentCategory.name === 'movie'">
-            <LabelComp text="Durée du film en minutes(ex: 60, 90...):" textPosition="up">
+            <LabelComp text="Durée du film (en minutes):" textPosition="up">
               <div>
                 <InputComp v-model="form.duration" type="number" min="1" />
               </div>
             </LabelComp>
+            <div v-if="errors.duration">
+              <span class="form-text-error">{{ errors.duration.join(', ') }}</span>
+            </div>
           </div>
           <!-- series season length -->
           <div v-if="currentCategory.name === 'series'">
@@ -228,6 +255,9 @@ const formatCategoryName = useFormatCategoryNameInFr
                 <InputComp v-model="form.seriesSeasonLength" type="number" min="1" />
               </div>
             </LabelComp>
+            <div v-if="errors.seriesSeasonLength">
+              <span class="form-text-error">{{ errors.seriesSeasonLength.join(', ') }}</span>
+            </div>
           </div>
           <!-- anime season length -->
           <div v-if="currentCategory.name === 'anime'">
@@ -236,6 +266,9 @@ const formatCategoryName = useFormatCategoryNameInFr
                 <InputComp v-model="form.animeSeasonLength" type="number" min="1" />
               </div>
             </LabelComp>
+            <div v-if="errors.animeSeasonLength">
+              <span class="form-text-error">{{ errors.animeSeasonLength.join(', ') }}</span>
+            </div>
           </div>
           <!-- books pages -->
           <div v-if="currentCategory.name === 'book'">
@@ -244,6 +277,9 @@ const formatCategoryName = useFormatCategoryNameInFr
                 <InputComp v-model="form.pages" type="number" min="1" />
               </div>
             </LabelComp>
+            <div v-if="errors.pages">
+              <span class="form-text-error">{{ errors.pages.join(', ') }}</span>
+            </div>
           </div>
         </div>
         <!-- status -->
@@ -254,8 +290,10 @@ const formatCategoryName = useFormatCategoryNameInFr
               <InputComp v-model="form.statusId" type="radio" :value="status.id" />
             </LabelComp>
           </div>
+          <div v-if="errors.statusId">
+            <span class="form-text-error">{{ errors.statusId.join(', ') }}</span>
+          </div>
         </div>
-        <!-- <div v-if="form.errors">{{ form.errors }}</div> -->
         <div>
           <ButtonComp type="submit" :disabled="form.processing"></ButtonComp>
         </div>
