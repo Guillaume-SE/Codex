@@ -2,6 +2,7 @@ import Genre from '#models/genre'
 import MediaCategory from '#models/media_category'
 import MediaType from '#models/media_type'
 import MediaCategoryService from '#services/media_category_service'
+import { typesAndGenresAssociationValidator } from '#validators/media_category_validator'
 import { inject } from '@adonisjs/core'
 import { HttpContext } from '@adonisjs/core/http'
 
@@ -60,5 +61,12 @@ export default class MediaCategoriesController {
       genresList,
       categoriesTypesGenresPaired,
     })
+  }
+
+  public async manageAssociation({ response, request }: HttpContext) {
+    const { params, ...data } = await request.validateUsing(typesAndGenresAssociationValidator)
+    await this.mediaCategoryService.associateTypesAndGenres(data, params.categoryId)
+
+    return response.redirect().toRoute('category.manage')
   }
 }
