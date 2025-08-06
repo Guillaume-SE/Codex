@@ -12,6 +12,12 @@ const HomeController = () => import('#controllers/home_controller')
 const StorageController = () => import('#controllers/storage_controller')
 const DashboardController = () => import('#controllers/dashboard_controller')
 
+router.where('mediaId', router.matchers.number())
+router.where('platformId', router.matchers.number())
+router.where('categoryId', router.matchers.number())
+router.where('typeId', router.matchers.number())
+router.where('genreId', router.matchers.number())
+
 router.get('/', [HomeController, 'showHome']).as('home')
 
 router.get('/storage/*', [StorageController, 'show'])
