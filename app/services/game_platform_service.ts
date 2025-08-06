@@ -15,9 +15,11 @@ export default class GamePlatformService {
     await platform.merge(data).save()
   }
 
-  public async delete(platformId: number): Promise<void> {
+  public async delete(platformId: number): Promise<string> {
     const platform = await GamePlatform.findOrFail(platformId)
 
     await platform.delete()
+
+    return platform.name
   }
 }
