@@ -12,6 +12,7 @@ import AppLayout from '~/layouts/AppLayout.vue'
 
 const props = defineProps<{
   media: InferPageProps<ReviewController, 'showManage'>['media']
+  errors: Record<string, string[]>
 }>()
 
 interface IForm {
@@ -59,6 +60,9 @@ const ratingValues = [null, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
                 <RatingBox :rating="rating" />
               </LabelComp>
             </div>
+            <div v-if="errors.rating">
+              <span class="form-text-error">{{ errors.rating.join(', ') }}</span>
+            </div>
           </div>
         </div>
         <!-- opinion -->
@@ -84,6 +88,9 @@ const ratingValues = [null, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
                 :false-value="0"
               />
             </LabelComp>
+          </div>
+          <div v-if="errors.isFavorite">
+            <span class="form-text-error">{{ errors.isFavorite.join(', ') }}</span>
           </div>
         </div>
         <ButtonComp type="submit" :disabled="newForm.processing"></ButtonComp>
