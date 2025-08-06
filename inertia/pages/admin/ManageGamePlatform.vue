@@ -26,6 +26,8 @@ type SubmitTask = 'create' | 'edit' | 'delete'
 
 const props = defineProps<{
   platformList: InferPageProps<GamePlatformsController, 'showManage'>['platformList']
+  errors: Record<string, string[]>
+  success: Record<string, string[]>
 }>()
 
 const form = useForm<IForm>({
@@ -45,12 +47,15 @@ function submitManagePlatform(task: SubmitTask) {
   }
   if (task === 'edit') {
     form.put(`/platform/${platformId}`)
+    closeModal()
   }
   if (task === 'delete') {
     form.delete(`/platform/${platformId}`)
+    closeModal()
   }
+  console.log(props.errors?.name)
+
   form.reset()
-  closeModal()
 }
 
 const openModal = (options: IPlatformList, task: SubmitTask) => {
@@ -86,6 +91,10 @@ const platformListIsNotEmpty = computed(() => {
     <DashboardLayout>
       <div>
         <h3>Gestion des plateformes</h3>
+        <div class="form-text-success">
+          {{ success }}
+          <!-- <span class="form-text-error">{{ errors.name.join(', ') }}</span> -->
+        </div>
       </div>
       <div>
         <ButtonComp @click="openModal({ id: null, name: null }, 'create')">Ajouter</ButtonComp>
@@ -114,7 +123,7 @@ const platformListIsNotEmpty = computed(() => {
         <div v-else>Aucune plateforme ajoutée</div>
 
         <!-- create modal -->
-        <ModalComp ref="createModalRef" @close-modal="closeModal">
+        <!-- <ModalComp ref="createModalRef" @close-modal="closeModal">
           <template #header>
             <div>
               <span>Nouvel ajout</span>
@@ -129,12 +138,32 @@ const platformListIsNotEmpty = computed(() => {
                 <InputComp v-model="form.name" type="text" />
               </LabelComp>
             </div>
+            <div v-if="errors.name">
+              <span class="form-text-error">{{ errors.name.join(', ') }}</span>
+            </div>
           </template>
           <template #action>
             <ButtonComp @click="closeModal">Retour</ButtonComp>
             <ButtonComp @click="submitManagePlatform('create')">Confirmer</ButtonComp>
           </template>
+        </ModalComp> -->
+        <ModalComp ref="createModalRef" @close-modal="closeModal">
+          <template #content>
+            <form @submit.prevent="submitManagePlatform('create')">
+              <div>
+                <LabelComp text="Nom:" textPosition="up">
+                  <InputComp v-model="form.name" type="text" />
+                </LabelComp>
+              </div>
+              <div v-if="errors.name">
+                <span class="form-text-error">{{ errors.name.join(', ') }}</span>
+              </div>
+              <ButtonComp @click="closeModal">Retour</ButtonComp>
+              <ButtonComp type="submit">Confirmer</ButtonComp>
+            </form>
+          </template>
         </ModalComp>
+
         <!-- update modal -->
         <ModalComp ref="updateModalRef" @close-modal="closeModal">
           <template #header>

@@ -2,7 +2,6 @@ import GamePlatform from '#models/game_platform'
 import GamePlatformService from '#services/game_platform_service'
 import {
   createGamePlatformValidator,
-  platformValidator,
   updateGamePlatformValidator,
 } from '#validators/game_platform_validator'
 import { inject } from '@adonisjs/core'
@@ -36,23 +35,29 @@ export default class GamePlatformsController {
     })
   }
 
-  public async storeOrUpdate({ request, response }: HttpContext) {
+  public async storeOrUpdate({ params, request, session, response }: HttpContext) {
     // for update
-    if (request.params().platformId) {
-      const { params, ...data } = await request.validateUsing(updateGamePlatformValidator)
+    if (params.platformId) {
+      const data = await request.validateUsing(updateGamePlatformValidator)
       await this.gamePlatformService.storeOrUpdate(data, params.platformId)
+
+      session.flash('success', `${data.name} modifié avec succès`)
+
       return response.redirect().toRoute('platform.manage')
     }
     // for create
     const data = await request.validateUsing(createGamePlatformValidator)
     await this.gamePlatformService.storeOrUpdate(data)
 
+    session.flash('success', `${data.name} ajouté avec succès`)
+
     return response.redirect().toRoute('platform.manage')
   }
 
-  public async deleteOne({ request, response }: HttpContext) {
-    const { params } = await request.validateUsing(platformValidator)
-    await this.gamePlatformService.delete(params.platformId)
+  public async deleteOne({ params, session, response }: HttpContext) {
+    const platformDeleted = await this.gamePlatformService.delete(params.platformId)
+
+    session.flash('success', `${platformDeleted} supprimée avec succès`)
 
     return response.redirect().toRoute('platform.manage')
   }
