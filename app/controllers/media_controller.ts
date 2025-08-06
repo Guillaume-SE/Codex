@@ -7,8 +7,7 @@ import MediaService from '#services/media_service'
 import type { MediaCategories } from '#types/MediaCategories'
 import {
   createMediaValidator,
-  showByCategoryMediaValidator,
-  singleMediaValidator,
+  mediaFiltersValidator,
   updateMediaValidator,
 } from '#validators/media_validator'
 import { inject } from '@adonisjs/core'
@@ -40,10 +39,9 @@ export default class MediaController {
     protected mediaCategoryService: MediaCategoryService
   ) {}
 
-  async showManage({ request, inertia }: HttpContext) {
+  async showManage({ params, inertia }: HttpContext) {
     let media
-    if (request.params().mediaId) {
-      const { params } = await request.validateUsing(singleMediaValidator)
+    if (params.mediaId) {
       media = await this.mediaService.getOne(params.mediaId)
     }
 
@@ -88,11 +86,12 @@ export default class MediaController {
     })
   }
 
-  async manageOne({ response, request }: HttpContext) {
+  async manageOne({ params, response, request }: HttpContext) {
     // for update
-    if (request.params().mediaId) {
-      const { params, ...data } = await request.validateUsing(updateMediaValidator)
+    if (params.mediaId) {
+      const data = await request.validateUsing(updateMediaValidator)
       await this.mediaService.manageOne(data, params.mediaId)
+
       return response.redirect().toRoute('dashboard.home')
     }
     // for create
@@ -102,28 +101,22 @@ export default class MediaController {
     return response.redirect().toRoute('dashboard.home')
   }
 
-  async deleteOne({ request, response }: HttpContext) {
-    const { params } = await request.validateUsing(singleMediaValidator)
+  async deleteOne({ params, response }: HttpContext) {
     await this.mediaService.delete(params.mediaId)
 
     return response.redirect().toRoute('dashboard.home')
   }
 
-  public async showOne({ inertia, request, response }: HttpContext) {
-    try {
-      const { params } = await request.validateUsing(singleMediaValidator)
-      const media = await this.mediaService.getOne(params.mediaId)
-      const presentedMedia = MediaPresenterFactory.presentMedia(media)
+  public async showOne({ params, inertia }: HttpContext) {
+    const media = await this.mediaService.getOne(params.mediaId)
+    const presentedMedia = MediaPresenterFactory.presentMedia(media)
 
-      return inertia.render('media/MediaProfile', {
-        media: presentedMedia,
-      })
-    } catch (error) {
-      return response.redirect('/')
-    }
+    return inertia.render('media/MediaProfile', {
+      media: presentedMedia,
+    })
   }
 
-  public async showByCategory({ inertia, request, response }: HttpContext) {
+  public async showByCategory({ params, request, inertia }: HttpContext) {
     interface ICategoryConfig {
       title: string
       categoryFr: string
@@ -136,72 +129,65 @@ export default class MediaController {
       anime: { title: 'Liste des anime', categoryFr: 'anime' },
     }
 
-    try {
-      const page = request.input('page')
-      const { params, ...filters } = await request.validateUsing(showByCategoryMediaValidator)
-      const category = params.categoryName
+    const page = request.input('page')
+    const filters = await request.validateUsing(mediaFiltersValidator)
+    // to proc a 404 if the category doesn't exist
+    const category = await MediaCategory.findByOrFail('name', params.categoryName)
 
-      const config = categoryConfig[category]
-      const mediaList = await MediaService.getFiltered(filters, page, 15, category)
-      const mediaSortOptions = MediaService.sortOptions
-      const mediaStatusesList = await MediaStatus.all()
-      const mediaTypesList = await this.mediaCategoryService.getCategoryTypes(category)
-      const mediaGenresList = await this.mediaCategoryService.getCategoryGenres(category)
-      const gamePlatformsList = await GamePlatform.all()
+    const config = categoryConfig[category.name]
+    const mediaList = await MediaService.getFiltered(filters, page, 15, category.name)
+    const mediaSortOptions = MediaService.sortOptions
+    const mediaStatusesList = await MediaStatus.all()
+    const mediaTypesList = await this.mediaCategoryService.getCategoryTypes(category.name)
+    const mediaGenresList = await this.mediaCategoryService.getCategoryGenres(category.name)
+    const gamePlatformsList = await GamePlatform.all()
 
-      // needed for pagination
-      mediaList.baseUrl(`/category/${category}`)
+    // needed for pagination
+    mediaList.baseUrl(`/category/${category}`)
 
-      const paginatedMediaList = MediaPresenterFactory.presentPaginatedMediaList(mediaList)
+    const paginatedMediaList = MediaPresenterFactory.presentPaginatedMediaList(mediaList)
 
-      return inertia.render('media/MediaList', {
-        mediaList: paginatedMediaList,
-        title: config.title,
-        mediaCategory: category,
-        mediaCategoryFr: config.categoryFr,
-        mediaSortOptions,
-        mediaStatusesList,
-        mediaTypesList,
-        mediaGenresList,
-        gamePlatformsList,
-      })
-    } catch (error) {
-      return response.redirect('/')
-    }
+    return inertia.render('media/MediaList', {
+      mediaList: paginatedMediaList,
+      title: config.title,
+      mediaCategory: category.name,
+      mediaCategoryFr: config.categoryFr,
+      mediaSortOptions,
+      mediaStatusesList,
+      mediaTypesList,
+      mediaGenresList,
+      gamePlatformsList,
+    })
   }
 
-  public async showCategories({ inertia, response }: HttpContext) {
-    try {
-      const mediaCategories = ['game', 'movie', 'series', 'anime', 'book']
-      const mediaLists = await Promise.all(
-        mediaCategories.map((category) => this.mediaService.getLastAdded(category, 5))
-      )
+  public async showCategories({ inertia }: HttpContext) {
+    const mediaCategories = ['game', 'movie', 'series', 'anime', 'book']
+    const mediaLists = await Promise.all(
+      mediaCategories.map((category) => this.mediaService.getLastAdded(category, 5))
+    )
 
-      const presentedMediaLists = mediaLists.map((mediaList) =>
-        MediaPresenterFactory.presentMediaList(mediaList)
-      )
+    const presentedMediaLists = mediaLists.map((mediaList) =>
+      MediaPresenterFactory.presentMediaList(mediaList)
+    )
 
-      const [
-        presentedGamesList,
-        presentedMoviesList,
-        presentedSeriesList,
-        presentedAnimeList,
-        presentedBooksList,
-      ] = presentedMediaLists
+    const [
+      presentedGamesList,
+      presentedMoviesList,
+      presentedSeriesList,
+      presentedAnimeList,
+      presentedBooksList,
+    ] = presentedMediaLists
 
-      const categoriesOverview = [
-        { label: 'Jeux', category: 'game', lastAddedList: presentedGamesList },
-        { label: 'Films', category: 'movie', lastAddedList: presentedMoviesList },
-        { label: 'Séries', category: 'series', lastAddedList: presentedSeriesList },
-        { label: 'Anime', category: 'anime', lastAddedList: presentedAnimeList },
-        { label: 'Livres', category: 'book', lastAddedList: presentedBooksList },
-      ]
+    const categoriesOverview = [
+      { label: 'Jeux', nameEng: 'game', lastAddedList: presentedGamesList },
+      { label: 'Films', nameEng: 'movie', lastAddedList: presentedMoviesList },
+      { label: 'Séries', nameEng: 'series', lastAddedList: presentedSeriesList },
+      { label: 'Anime', nameEng: 'anime', lastAddedList: presentedAnimeList },
+      { label: 'Livres', nameEng: 'book', lastAddedList: presentedBooksList },
+    ]
 
-      return inertia.render('media/MediaCategories', {
-        categoriesOverview,
-      })
-    } catch (error) {
-      return response.redirect('/')
-    }
+    return inertia.render('media/MediaCategories', {
+      categoriesOverview,
+    })
   }
 }

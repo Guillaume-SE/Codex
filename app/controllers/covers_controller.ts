@@ -3,7 +3,6 @@ import Cover from '#models/cover'
 import CoverService from '#services/cover_service'
 import MediaService from '#services/media_service'
 import { manageCoverValidator } from '#validators/cover_validator'
-import { singleMediaValidator } from '#validators/media_validator'
 import { inject } from '@adonisjs/core'
 import type { HttpContext } from '@adonisjs/core/http'
 
@@ -14,8 +13,7 @@ export default class CoversController {
     readonly mediaService: MediaService
   ) {}
 
-  async showManage({ request, inertia }: HttpContext) {
-    const { params } = await request.validateUsing(singleMediaValidator)
+  async showManage({ params, inertia }: HttpContext) {
     const media = await this.mediaService.getOne(params.mediaId)
     const presentedMedia = MediaPresenterFactory.presentMedia(media)
 
@@ -34,10 +32,9 @@ export default class CoversController {
     return response.redirect().toRoute('dashboard.home')
   }
 
-  public async deleteOne({ request, params, response }: HttpContext) {
+  public async deleteOne({ params, response }: HttpContext) {
     const mediaId = params.mediaId
 
-    await request.validateUsing(singleMediaValidator)
     const cover = await Cover.findByOrFail('media_id', mediaId)
 
     await this.coverService.deleteFile({
