@@ -19,9 +19,9 @@ defineProps<{
       <div v-for="category in categoriesOverview">
         <div>
           <h3>{{ category.label }}</h3>
-          <Link :href="`/categories/${category.category}`"> Voir tout </Link>
+          <Link :href="`/categories/${category.nameEng}`"> Voir tout </Link>
         </div>
-        <div class="recommandations-carousel">
+        <div class="preview-carousel">
           <MediaCard
             v-for="media in category.lastAddedList"
             :key="media.id"
@@ -33,3 +33,9 @@ defineProps<{
     </div>
   </AppLayout>
 </template>
+
+<style scoped>
+.preview-carousel {
+  display: flex;
+}
+</style>

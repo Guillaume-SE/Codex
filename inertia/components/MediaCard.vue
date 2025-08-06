@@ -59,3 +59,24 @@ defineProps<{
     </div>
   </div>
 </template>
+
+<style scoped>
+.media-card {
+  width: 150px;
+  min-height: 290px;
+  margin: 10px;
+  position: relative;
+}
+
+.media-card-title {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.media-card-info-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+</style>

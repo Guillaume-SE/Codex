@@ -10,7 +10,7 @@ import type {
 import { computed } from 'vue'
 import AppHead from '~/components/AppHead.vue'
 import ImageNotAvailableIcon from '~/components/icons/ImageNotAvailableIcon.vue'
-import RatingBadge from '~/components/RatingBadge.vue'
+import RatingBox from '~/components/RatingBox.vue'
 import StatusProgressBadge from '~/components/StatusProgressBadge.vue'
 import { useFormattedDateToLocale } from '~/composables/useFormattedDate'
 import { useFormattedDuration } from '~/composables/useFormattedDuration'
@@ -34,6 +34,9 @@ const isBookMedia = (media: Object): media is IBookMediaPresented => 'bookInfos'
 
 const formattedDuration = computed(() =>
   isMovieMedia(props.media) ? useFormattedDuration(props.media.movieInfos.duration) : null
+)
+const hasReviewRating = computed(() =>
+  props.media.review?.rating ? props.media.review.rating : null
 )
 const formattedDate = useFormattedDateToLocale
 </script>
@@ -101,15 +104,10 @@ const formattedDate = useFormattedDateToLocale
           </p>
         </div>
       </div>
-      <div class="review-container">
-        <div class="review-heading">
-          <h3 class="review-title">Avis</h3>
-          <RatingBadge :rating="media.review?.rating ? media.review.rating : null" />
-        </div>
+      <div>
+        <h3>Avis</h3>
+        <RatingBox :rating="hasReviewRating" />
         <div v-if="media.review">
-          <p v-if="media.review.opinion">
-            {{ media.review.opinion }}
-          </p>
           <div>Mis à jour le {{ formattedDate(media.review!.lastUpdate, true) }}</div>
         </div>
       </div>

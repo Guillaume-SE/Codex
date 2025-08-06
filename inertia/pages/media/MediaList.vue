@@ -126,7 +126,7 @@ const mediaListIsNotEmpty = computed(() => {
       <div v-if="mediaListIsNotEmpty">
         <span>{{ mediaList.meta.total }} résultats</span>
       </div>
-      <div v-if="mediaListIsNotEmpty" class="media-card-container">
+      <div v-if="mediaListIsNotEmpty" class="media-list-cards-container">
         <MediaCard
           v-for="media in mediaList.data"
           :key="media.id"
@@ -158,3 +158,14 @@ const mediaListIsNotEmpty = computed(() => {
     </div>
   </AppLayout>
 </template>
+
+<style scoped>
+.media-list-container {
+  display: flex;
+}
+.media-list-cards-container {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 5px;
+}
+</style>
