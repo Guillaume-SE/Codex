@@ -27,8 +27,13 @@ router.get('/users/:id', [UsersController, 'show'])
 
 //* media
 router.get('/categories', [MediaController, 'showCategories'])
-router.get('/categories/:categoryName', [MediaController, 'showByCategory'])
-router.get('/categories/:categoryName/:mediaId', [MediaController, 'showOne'])
+router
+  .get('/categories/:categoryName', [MediaController, 'showByCategory'])
+  .where('categoryName', { match: /^(game|book|anime|series|movie)$/ })
+router
+  .get('/categories/:categoryName/:mediaId', [MediaController, 'showOne'])
+  .where('categoryName', { match: /^(game|book|anime|series|movie)$/ })
+
 //ADMIN
 router.get('/media/manage/:mediaId?', [MediaController, 'showManage'])
 router.post('/media', [MediaController, 'manageOne'])
