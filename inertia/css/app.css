@@ -25,15 +25,6 @@ h6 {
   text-wrap: balance;
 }
 
-.form-text-error {
-  color: #fa2d36;
-  font-weight: bold;
-}
-.form-text-success {
-  color: #00c950;
-  font-weight: bold;
-}
-
 .navbar {
   display: flex;
   justify-content: space-around;
@@ -104,50 +95,6 @@ h6 {
   margin-right: 10px;
 }
 
-.status-progress-container {
-  display: flex;
-  align-items: center;
-  /* padding: 0 5px;
-  width: 100px;
-  height: 30px;
-  border-radius: 10px;
-  background-color: #0f172a; */
-}
-
-.status-progress-text {
-  /* color: #fafafa; */
-  color: #0f172a;
-  font-weight: 700;
-  font-size: 0.8rem;
-}
-
-.status-progress-icon {
-  /* width: 20px;
-  height: 20px; */
-  /* margin-bottom: -0.1em; */
-  width: 12px;
-  height: 12px;
-  margin-right: 5px;
-  border-radius: 50%;
-}
-
-.rating-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  min-width: 100px;
-  min-height: 80px;
-  padding-top: 5px;
-  padding-bottom: 5px;
-  border-radius: 5px;
-  /* background-color: #e2e8f0; */
-}
-
-.rating-title {
-  align-items: center;
-  margin-bottom: 5px;
-}
-
 .rating-number-container {
   display: flex;
   justify-content: center;
@@ -162,10 +109,6 @@ h6 {
   font-weight: 500;
   font-size: 1.2rem;
   color: #fafafa;
-}
-
-.rating-label {
-  margin-top: 5px;
 }
 .rating-default {
   outline: 3px solid rgba(203, 213, 225, 1);
@@ -182,24 +125,6 @@ h6 {
 .rating-bad {
   outline: 3px solid rgba(248, 113, 113, 1);
   outline-offset: -6px;
-}
-.in-progress {
-  background-color: #0ea5e9;
-}
-.completed {
-  background-color: #13d75b;
-}
-.paused {
-  background-color: #f6bb09;
-}
-.dropped {
-  background-color: #f87171;
-}
-.planned {
-  background-color: #cbd5e1;
-}
-.anticipated {
-  background-color: #d946ef;
 }
 
 .review-container {
