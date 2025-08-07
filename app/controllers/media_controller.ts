@@ -131,26 +131,25 @@ export default class MediaController {
 
     const page = request.input('page')
     const filters = await request.validateUsing(mediaFiltersValidator)
-    // to proc a 404 if the category doesn't exist
-    const category = await MediaCategory.findByOrFail('name', params.categoryName)
+    const categoryName = params.categoryName
 
-    const config = categoryConfig[category.name]
-    const mediaList = await MediaService.getFiltered(filters, page, 15, category.name)
+    const config = categoryConfig[categoryName]
+    const mediaList = await MediaService.getFiltered(filters, page, 15, categoryName)
     const mediaSortOptions = MediaService.sortOptions
     const mediaStatusesList = await MediaStatus.all()
-    const mediaTypesList = await this.mediaCategoryService.getCategoryTypes(category.name)
-    const mediaGenresList = await this.mediaCategoryService.getCategoryGenres(category.name)
+    const mediaTypesList = await this.mediaCategoryService.getCategoryTypes(categoryName)
+    const mediaGenresList = await this.mediaCategoryService.getCategoryGenres(categoryName)
     const gamePlatformsList = await GamePlatform.all()
 
     // needed for pagination
-    mediaList.baseUrl(`/category/${category}`)
+    mediaList.baseUrl(`/categories/${categoryName}`)
 
     const paginatedMediaList = MediaPresenterFactory.presentPaginatedMediaList(mediaList)
 
     return inertia.render('media/MediaList', {
       mediaList: paginatedMediaList,
       title: config.title,
-      mediaCategory: category.name,
+      mediaCategory: categoryName,
       mediaCategoryFr: config.categoryFr,
       mediaSortOptions,
       mediaStatusesList,
