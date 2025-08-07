@@ -8,7 +8,6 @@ import RatingBox from '~/components/RatingBox.vue'
 import ButtonComp from '~/components/ui/ButtonComp.vue'
 import InputComp from '~/components/ui/InputComp.vue'
 import LabelComp from '~/components/ui/LabelComp.vue'
-import AppLayout from '~/layouts/AppLayout.vue'
 
 const props = defineProps<{
   media: InferPageProps<ReviewController, 'showManage'>['media']
@@ -44,57 +43,55 @@ const ratingValues = [null, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 
 <template>
   <AppHead title="Gestion de review" />
-  <AppLayout>
-    <div>
-      <h3>Gestion de la review de {{ props.media.name }}</h3>
-    </div>
-    <div>
-      <form @submit.prevent="submit">
-        <!-- rating -->
-        <div>
-          <span>Note:</span>
-          <div class="manage-review-rating-container">
-            <div v-for="rating in ratingValues">
-              <LabelComp textPosition="down">
-                <InputComp v-model="newForm.rating" type="radio" :value="rating" />
-                <RatingBox :rating="rating" />
-              </LabelComp>
-            </div>
-            <div v-if="errors.rating">
-              <span class="form-text-error">{{ errors.rating.join(', ') }}</span>
-            </div>
-          </div>
-        </div>
-        <!-- opinion -->
-        <div>
-          <div>
-            <LabelComp text="Avis:" text-position="up" for="opinion">
-              <textarea
-                v-model="newForm.opinion"
-                placeholder="Très bon film, bande son incroyable..."
-                id="opinion"
-              ></textarea>
+  <div>
+    <h3>Gestion de la review de {{ props.media.name }}</h3>
+  </div>
+  <div>
+    <form @submit.prevent="submit">
+      <!-- rating -->
+      <div>
+        <span>Note:</span>
+        <div class="manage-review-rating-container">
+          <div v-for="rating in ratingValues">
+            <LabelComp textPosition="down">
+              <InputComp v-model="newForm.rating" type="radio" :value="rating" />
+              <RatingBox :rating="rating" />
             </LabelComp>
           </div>
+          <div v-if="errors.rating">
+            <span class="form-text-error">{{ errors.rating.join(', ') }}</span>
+          </div>
         </div>
-        <!-- favoris -->
+      </div>
+      <!-- opinion -->
+      <div>
         <div>
-          <div>
-            <LabelComp text="Mettre en coup de coeur" textPosition="down">
-              <InputComp
-                v-model="newForm.isFavorite"
-                type="checkbox"
-                :true-value="1"
-                :false-value="0"
-              />
-            </LabelComp>
-          </div>
-          <div v-if="errors.isFavorite">
-            <span class="form-text-error">{{ errors.isFavorite.join(', ') }}</span>
-          </div>
+          <LabelComp text="Avis:" text-position="up" for="opinion">
+            <textarea
+              v-model="newForm.opinion"
+              placeholder="Très bon film, bande son incroyable..."
+              id="opinion"
+            ></textarea>
+          </LabelComp>
         </div>
-        <ButtonComp type="submit" :disabled="newForm.processing"></ButtonComp>
-      </form>
-    </div>
-  </AppLayout>
+      </div>
+      <!-- favoris -->
+      <div>
+        <div>
+          <LabelComp text="Mettre en coup de coeur" textPosition="down">
+            <InputComp
+              v-model="newForm.isFavorite"
+              type="checkbox"
+              :true-value="1"
+              :false-value="0"
+            />
+          </LabelComp>
+        </div>
+        <div v-if="errors.isFavorite">
+          <span class="form-text-error">{{ errors.isFavorite.join(', ') }}</span>
+        </div>
+      </div>
+      <ButtonComp type="submit" :disabled="newForm.processing"></ButtonComp>
+    </form>
+  </div>
 </template>

@@ -4,7 +4,6 @@ import { InferPageProps } from '@adonisjs/inertia/types'
 import { Link } from '@inertiajs/vue3'
 import AppHead from '~/components/AppHead.vue'
 import MediaCard from '~/components/MediaCard.vue'
-import AppLayout from '~/layouts/AppLayout.vue'
 
 defineProps<{
   categoriesOverview: InferPageProps<MediaController, 'showCategories'>['categoriesOverview']
@@ -13,25 +12,23 @@ defineProps<{
 
 <template>
   <AppHead title="Toutes les catégories" />
-  <AppLayout>
-    <div>
-      <h3>Catégories</h3>
-      <div v-for="category in categoriesOverview">
-        <div>
-          <h3>{{ category.label }}</h3>
-          <Link :href="`/categories/${category.nameEng}`"> Voir tout </Link>
-        </div>
-        <div class="preview-carousel">
-          <MediaCard
-            v-for="media in category.lastAddedList"
-            :key="media.id"
-            :media="media"
-            :mediaCategory="media.category"
-          />
-        </div>
+  <div>
+    <h3>Catégories</h3>
+    <div v-for="category in categoriesOverview">
+      <div>
+        <h3>{{ category.label }}</h3>
+        <Link :href="`/categories/${category.nameEng}`"> Voir tout </Link>
+      </div>
+      <div class="preview-carousel">
+        <MediaCard
+          v-for="media in category.lastAddedList"
+          :key="media.id"
+          :media="media"
+          :mediaCategory="media.category"
+        />
       </div>
     </div>
-  </AppLayout>
+  </div>
 </template>
 
 <style scoped>

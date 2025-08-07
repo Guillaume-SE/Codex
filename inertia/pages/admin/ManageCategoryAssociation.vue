@@ -9,7 +9,6 @@ import InputComp from '~/components/ui/InputComp.vue'
 import LabelComp from '~/components/ui/LabelComp.vue'
 import { useCapitalizeFirstLetter } from '~/composables/useCapitalizeFirstLetter'
 import { useFormatCategoryNameInFr } from '~/composables/useFormatCategoryNameInFr'
-import AppLayout from '~/layouts/AppLayout.vue'
 import DashboardLayout from '~/layouts/DashboardLayout.vue'
 
 const props = defineProps<{
@@ -53,37 +52,35 @@ const formatCategoryName = useFormatCategoryNameInFr
 
 <template>
   <AppHead title="Gestion des catégories" />
-  <AppLayout>
-    <DashboardLayout>
-      <select v-model="selectedCategory">
-        <option v-for="category in categoriesList" :value="category.id">
-          {{ formatCategoryName(category.name) }}
-        </option>
-      </select>
+  <DashboardLayout>
+    <select v-model="selectedCategory">
+      <option v-for="category in categoriesList" :value="category.id">
+        {{ formatCategoryName(category.name) }}
+      </option>
+    </select>
 
+    <div>
+      <!-- type list -->
       <div>
-        <!-- type list -->
-        <div>
-          <span>Liste des types</span>
-        </div>
-        <div v-for="type in typesList">
-          <LabelComp :text="capitalizeFirstLetter(type.name)" textPosition="down">
-            <InputComp v-model="form.types" type="checkbox" :value="type.id" />
-          </LabelComp>
-        </div>
-        <!-- genres list -->
-        <div>
-          <span>Liste des genres</span>
-        </div>
-        <div v-for="genre in genresList">
-          <LabelComp :text="capitalizeFirstLetter(genre.name)" textPosition="down">
-            <InputComp v-model="form.genres" type="checkbox" :value="genre.id" />
-          </LabelComp>
-        </div>
+        <span>Liste des types</span>
       </div>
+      <div v-for="type in typesList">
+        <LabelComp :text="capitalizeFirstLetter(type.name)" textPosition="down">
+          <InputComp v-model="form.types" type="checkbox" :value="type.id" />
+        </LabelComp>
+      </div>
+      <!-- genres list -->
       <div>
-        <ButtonComp @click="submit">Valider</ButtonComp>
+        <span>Liste des genres</span>
       </div>
-    </DashboardLayout>
-  </AppLayout>
+      <div v-for="genre in genresList">
+        <LabelComp :text="capitalizeFirstLetter(genre.name)" textPosition="down">
+          <InputComp v-model="form.genres" type="checkbox" :value="genre.id" />
+        </LabelComp>
+      </div>
+    </div>
+    <div>
+      <ButtonComp @click="submit">Valider</ButtonComp>
+    </div>
+  </DashboardLayout>
 </template>

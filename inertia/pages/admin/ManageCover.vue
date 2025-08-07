@@ -7,7 +7,6 @@ import VuePictureCropper, { cropper } from 'vue-picture-cropper'
 import AppHead from '~/components/AppHead.vue'
 import ButtonComp from '~/components/ui/ButtonComp.vue'
 import ModalComp from '~/components/ui/ModalComp.vue'
-import AppLayout from '~/layouts/AppLayout.vue'
 
 const props = defineProps<{
   media: InferPageProps<CoverController, 'showManage'>['media']
@@ -82,85 +81,78 @@ function resetCrop() {
 
 <template>
   <AppHead title="Gestion de cover" />
-  <AppLayout>
-    <div>
-      <h3>Gestion de cover</h3>
-      <div v-if="media.cover">
-        <div>
-          <p>Modifier la cover pour {{ media.name }}</p>
-        </div>
-        <div>
-          <img
-            class="img-medium"
-            loading="lazy"
-            :src="`/storage/${media.cover.smallUrl}`"
-            :srcset="`/storage/${media.cover.smallUrl}, /storage/${media.cover.mediumUrl} 2x`"
-            :alt="`cover de ${media.name}`"
-          />
-        </div>
-        <!-- delete cover form -->
-        <form @submit.prevent="submitDeleteCover">
-          <div>
-            <div v-if="!showDeleteCover">
-              <ButtonComp @click="showDeleteCover = true">Supprimer</ButtonComp>
-            </div>
-            <div v-else>
-              <p>Supprimer cette cover ?</p>
-              <ButtonComp @click="showDeleteCover = false">Annuler</ButtonComp>
-              <ButtonComp type="submit">Confirmer</ButtonComp>
-            </div>
-          </div>
-        </form>
-      </div>
-      <div v-else>
-        <p>Ajouter une cover pour {{ media.name }}</p>
-      </div>
-
+  <div>
+    <h3>Gestion de cover</h3>
+    <div v-if="media.cover">
       <div>
-        <p>Dimensions minimales: 300x450</p>
-        <p>Poids max: 2mb</p>
-
-        <form @submit.prevent="submitPostCover">
-          <input
-            type="file"
-            accept=".png, .jpg, .jpeg, .webp"
-            ref="uploadInput"
-            @change="onUpload"
-          />
-          <progress v-if="form.progress" :value="form.progress.percentage" max="100">
-            {{ form.progress.percentage }}%
-          </progress>
-
-          <div>
-            <ModalComp ref="modalRef" @close-modal="closeModal">
-              <template #header>
-                <div>
-                  <span> Modal de crop </span>
-                </div>
-                <div>
-                  <ButtonComp @click="resetCrop">Reset</ButtonComp>
-                </div>
-              </template>
-              <template #content>
-                <VuePictureCropper
-                  :box-style="{ width: '100%', height: '100%' }"
-                  :img="croppedImage"
-                  :options="{
-                    aspectRatio: 2 / 3,
-                    dragMode: 'none',
-                    viewMode: 1,
-                    autoCropArea: 1,
-                  }"
-                />
-              </template>
-              <template #action>
-                <ButtonComp @click="closeModal">Retour</ButtonComp>
-                <ButtonComp :pending="form.processing" @click="submitPostCover">Upload</ButtonComp>
-              </template>
-            </ModalComp>
-          </div>
-        </form>
+        <p>Modifier la cover pour {{ media.name }}</p>
       </div>
+      <div>
+        <img
+          class="img-medium"
+          loading="lazy"
+          :src="`/storage/${media.cover.smallUrl}`"
+          :srcset="`/storage/${media.cover.smallUrl}, /storage/${media.cover.mediumUrl} 2x`"
+          :alt="`cover de ${media.name}`"
+        />
+      </div>
+      <!-- delete cover form -->
+      <form @submit.prevent="submitDeleteCover">
+        <div>
+          <div v-if="!showDeleteCover">
+            <ButtonComp @click="showDeleteCover = true">Supprimer</ButtonComp>
+          </div>
+          <div v-else>
+            <p>Supprimer cette cover ?</p>
+            <ButtonComp @click="showDeleteCover = false">Annuler</ButtonComp>
+            <ButtonComp type="submit">Confirmer</ButtonComp>
+          </div>
+        </div>
+      </form>
     </div>
-  </AppLayout>
+    <div v-else>
+      <p>Ajouter une cover pour {{ media.name }}</p>
+    </div>
+
+    <div>
+      <p>Dimensions minimales: 300x450</p>
+      <p>Poids max: 2mb</p>
+
+      <form @submit.prevent="submitPostCover">
+        <input type="file" accept=".png, .jpg, .jpeg, .webp" ref="uploadInput" @change="onUpload" />
+        <progress v-if="form.progress" :value="form.progress.percentage" max="100">
+          {{ form.progress.percentage }}%
+        </progress>
+
+        <div>
+          <ModalComp ref="modalRef" @close-modal="closeModal">
+            <template #header>
+              <div>
+                <span> Modal de crop </span>
+              </div>
+              <div>
+                <ButtonComp @click="resetCrop">Reset</ButtonComp>
+              </div>
+            </template>
+            <template #content>
+              <VuePictureCropper
+                :box-style="{ width: '100%', height: '100%' }"
+                :img="croppedImage"
+                :options="{
+                  aspectRatio: 2 / 3,
+                  dragMode: 'none',
+                  viewMode: 1,
+                  autoCropArea: 1,
+                }"
+              />
+            </template>
+            <template #action>
+              <ButtonComp @click="closeModal">Retour</ButtonComp>
+              <ButtonComp :pending="form.processing" @click="submitPostCover">Upload</ButtonComp>
+            </template>
+          </ModalComp>
+        </div>
+      </form>
+    </div>
+  </div>
 </template>
