@@ -7,7 +7,7 @@ const messages = {
   'string': 'Le champ "{{ field }}" doit être du texte',
   'positive': 'Le champ "{{ field }}" doit être un nombre positif',
   // specific
-  'alternativeName.notSameAs': 'Le "{{ field }}" doit être différent du nom principal',
+  'alternativeName.notSameAs': 'Le {{ field }} doit être différent du nom principal',
   'file.extname': 'Fichier invalide. Seuls les formats png, webp, jpg, jpeg sont autorisés',
   'file.size': 'Fichier trop lourd. Seuls les fichiers de 2mb maximum sont autorisés',
   'isExists': "Le {{ field }} choisi n'existe pas",
