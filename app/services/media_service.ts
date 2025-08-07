@@ -130,8 +130,8 @@ export default class MediaService {
   }
 
   static sortOptions: IMediaSortOption[] = [
-    { value: 'created_desc', text: 'Ajouts récents', column: 'id', dir: 'desc' },
-    { value: 'created_asc', text: 'Ajouts plus anciens', column: 'id', dir: 'asc' },
+    { value: 'created_desc', text: 'Ajouts récents', column: 'created_at', dir: 'desc' },
+    { value: 'created_asc', text: 'Ajouts plus anciens', column: 'created_at', dir: 'asc' },
     { value: 'name_asc', text: 'Nom (de A à Z)', column: 'name', dir: 'asc' },
     { value: 'name_desc', text: 'Nom (de Z à A)', column: 'name', dir: 'desc' },
     { value: 'rating_desc', text: 'Meilleures notes', column: 'reviews.rating', dir: 'desc' },
