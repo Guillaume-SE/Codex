@@ -2,9 +2,6 @@
 import { Link } from '@inertiajs/vue3'
 import ToastNotification from '~/components/ui/ToastNotification.vue'
 
-// const page = usePage()
-// const message = computed(() => page.props.success)
-
 defineProps<{
   success?: string
 }>()
