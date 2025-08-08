@@ -10,16 +10,18 @@ import LabelComp from '~/components/ui/LabelComp.vue'
 import ModalComp from '~/components/ui/ModalComp.vue'
 import DashboardLayout from '~/layouts/DashboardLayout.vue'
 
+const props = defineProps<{
+  genreList: InferPageProps<GenresController, 'showManage'>['genreList']
+}>()
+
+defineOptions({ layout: DashboardLayout })
+
 interface IForm {
   genreId: number | null
   name: string | null
 }
 
 type SubmitTask = 'create' | 'edit' | 'delete'
-
-const props = defineProps<{
-  genreList: InferPageProps<GenresController, 'showManage'>['genreList']
-}>()
 
 const form = useForm<IForm>({
   genreId: null,
@@ -75,97 +77,95 @@ const genreListIsNotEmpty = computed(() => {
 
 <template>
   <AppHead title="Gestion des genres" />
-  <DashboardLayout>
-    <div>
-      <h3>Gestion des genres</h3>
-    </div>
-    <div>
-      <ButtonComp @click="openModal(null, null, 'create')">Ajouter</ButtonComp>
-    </div>
-    <div class="dashboard-list">
-      <div v-if="genreListIsNotEmpty">
-        <div v-for="genre in genreList" class="genre-list-item">
-          <div>
-            <span>{{ genre.name }}</span>
-          </div>
-          <div>
-            <ButtonComp @click="openModal(genre.id, genre.name, 'edit')">Modifier</ButtonComp>
-          </div>
-          <div>
-            <ButtonComp @click="openModal(genre.id, genre.name, 'delete')">Supprimer</ButtonComp>
-          </div>
+  <div>
+    <h3>Gestion des genres</h3>
+  </div>
+  <div>
+    <ButtonComp @click="openModal(null, null, 'create')">Ajouter</ButtonComp>
+  </div>
+  <div class="dashboard-list">
+    <div v-if="genreListIsNotEmpty">
+      <div v-for="genre in genreList" class="genre-list-item">
+        <div>
+          <span>{{ genre.name }}</span>
+        </div>
+        <div>
+          <ButtonComp @click="openModal(genre.id, genre.name, 'edit')">Modifier</ButtonComp>
+        </div>
+        <div>
+          <ButtonComp @click="openModal(genre.id, genre.name, 'delete')">Supprimer</ButtonComp>
         </div>
       </div>
-      <div v-else>Aucun genre ajoutée</div>
-
-      <!-- create modal -->
-      <ModalComp ref="createModalRef" @close-modal="closeModal">
-        <template #header>
-          <div>
-            <span>Nouvel ajout</span>
-          </div>
-        </template>
-        <template #content>
-          <div>
-            <span>Ajouter un nouveau genre</span>
-          </div>
-          <div>
-            <LabelComp text="Nom:" textPosition="up">
-              <InputComp v-model="form.name" type="text" />
-            </LabelComp>
-          </div>
-        </template>
-        <template #action>
-          <ButtonComp @click="closeModal">Retour</ButtonComp>
-          <ButtonComp @click="submitManageGenre('create')">Confirmer</ButtonComp>
-        </template>
-      </ModalComp>
-      <!-- update modal -->
-      <ModalComp ref="updateModalRef" @close-modal="closeModal">
-        <template #header>
-          <div>
-            <span>Modification</span>
-          </div>
-        </template>
-        <template #content>
-          <div>
-            <span>Modifier le nom du genre</span>
-          </div>
-          <div>
-            <LabelComp text="Nom actuel:" textPosition="up">
-              <InputComp v-model="form.name" type="text" :value="genreName" />
-            </LabelComp>
-          </div>
-        </template>
-        <template #action>
-          <ButtonComp @click="closeModal">Retour</ButtonComp>
-          <ButtonComp @click="submitManageGenre('edit')">Confirmer</ButtonComp>
-        </template>
-      </ModalComp>
-      <!-- delete modal -->
-      <ModalComp ref="deleteModalRef" @close-modal="closeModal">
-        <template #header>
-          <div>
-            <span>Supprimer un genre</span>
-          </div>
-        </template>
-        <template #content>
-          <div>
-            <span
-              >En cas d'erreur, il sera nécessaire de réattribuer le genre un par un à chaque média.
-            </span>
-          </div>
-          <div>
-            <span>Confirmer la suppression de: {{ genreName }} ? </span>
-          </div>
-        </template>
-        <template #action>
-          <ButtonComp @click="closeModal">Retour</ButtonComp>
-          <ButtonComp @click="submitManageGenre('delete')">Confirmer</ButtonComp>
-        </template>
-      </ModalComp>
     </div>
-  </DashboardLayout>
+    <div v-else>Aucun genre ajoutée</div>
+
+    <!-- create modal -->
+    <ModalComp ref="createModalRef" @close-modal="closeModal">
+      <template #header>
+        <div>
+          <span>Nouvel ajout</span>
+        </div>
+      </template>
+      <template #content>
+        <div>
+          <span>Ajouter un nouveau genre</span>
+        </div>
+        <div>
+          <LabelComp text="Nom:" textPosition="up">
+            <InputComp v-model="form.name" type="text" />
+          </LabelComp>
+        </div>
+      </template>
+      <template #action>
+        <ButtonComp @click="closeModal">Retour</ButtonComp>
+        <ButtonComp @click="submitManageGenre('create')">Confirmer</ButtonComp>
+      </template>
+    </ModalComp>
+    <!-- update modal -->
+    <ModalComp ref="updateModalRef" @close-modal="closeModal">
+      <template #header>
+        <div>
+          <span>Modification</span>
+        </div>
+      </template>
+      <template #content>
+        <div>
+          <span>Modifier le nom du genre</span>
+        </div>
+        <div>
+          <LabelComp text="Nom actuel:" textPosition="up">
+            <InputComp v-model="form.name" type="text" :value="genreName" />
+          </LabelComp>
+        </div>
+      </template>
+      <template #action>
+        <ButtonComp @click="closeModal">Retour</ButtonComp>
+        <ButtonComp @click="submitManageGenre('edit')">Confirmer</ButtonComp>
+      </template>
+    </ModalComp>
+    <!-- delete modal -->
+    <ModalComp ref="deleteModalRef" @close-modal="closeModal">
+      <template #header>
+        <div>
+          <span>Supprimer un genre</span>
+        </div>
+      </template>
+      <template #content>
+        <div>
+          <span
+            >En cas d'erreur, il sera nécessaire de réattribuer le genre un par un à chaque média.
+          </span>
+        </div>
+        <div>
+          <span>Confirmer la suppression de: {{ genreName }} ? </span>
+        </div>
+      </template>
+      <template #action>
+        <ButtonComp @click="closeModal">Retour</ButtonComp>
+        <ButtonComp @click="submitManageGenre('delete')">Confirmer</ButtonComp>
+      </template>
+    </ModalComp>
+  </div>
 </template>
 
 <style scoped>

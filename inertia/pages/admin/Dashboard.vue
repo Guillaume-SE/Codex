@@ -4,10 +4,10 @@ import { InferPageProps } from '@adonisjs/inertia/types'
 import { Link, useForm } from '@inertiajs/vue3'
 import { ref, useTemplateRef } from 'vue'
 import AppHead from '~/components/AppHead.vue'
+import DashboardAction from '~/components/DashboardAction.vue'
 import ImageNotAvailableIcon from '~/components/icons/ImageNotAvailableIcon.vue'
 import Pagination from '~/components/Pagination.vue'
 import RatingBox from '~/components/RatingBox.vue'
-import SearchBar from '~/components/SearchBar.vue'
 import StatusProgressBadge from '~/components/StatusProgressBadge.vue'
 import ButtonComp from '~/components/ui/ButtonComp.vue'
 import ModalComp from '~/components/ui/ModalComp.vue'
@@ -23,6 +23,10 @@ interface IFilters {
 const props = defineProps<{
   mediaList: InferPageProps<DashboardController, 'showDashboard'>['mediaList']
 }>()
+
+defineOptions({
+  layout: DashboardLayout,
+})
 
 const form = useForm<IForm>({
   mediaId: null,
@@ -66,33 +70,25 @@ function fetchNewPageData(url: string | null) {
 <template>
   <AppHead title="Dashboard" />
   <div>
-    <Link href="/media/manage">Ajouter un media</Link>
-  </div>
-
-  <DashboardLayout>
-    <div class="dashboard-list">
-      <form action="GET" @submit.prevent="submitFilters">
+    <form action="GET" @submit.prevent="submitFilters">
+      <div class="dashboard-title-container">
         <div>
-          <!-- search -->
-          <SearchBar v-model="filters.search" />
+          <h3>Gestion des plateformes</h3>
         </div>
-      </form>
-      <!-- list title -->
-      <div class="dashboard-list-item">
-        <div>
-          <input type="checkbox" />
-        </div>
-        <span>Cover</span>
-        <span>Nom</span>
-        <span>Note</span>
-        <span>Statut</span>
+        <DashboardAction v-model:search="filters.search" :type="'search'">
+          <Link href="/media/manage">Ajouter un media</Link>
+        </DashboardAction>
       </div>
+    </form>
+    <div class="dashboard-list-item">
+      <span>Nom</span>
+      <span>Note</span>
+      <span>Statut</span>
+    </div>
 
-      <div v-for="media in mediaList.data" class="dashboard-list-item">
-        <div>
-          <input type="checkbox" :value="media.id" />
-        </div>
-        <!-- cover -->
+    <div v-for="media in mediaList.data" class="dashboard-list-item">
+      <!-- cover -->
+      <div class="dashboard-item-name-container">
         <div v-if="media.cover" class="dashboard-list_img">
           <Link :href="`/media/${media.id}/cover`">
             <img
@@ -112,59 +108,92 @@ function fetchNewPageData(url: string | null) {
           </Link>
         </div>
         <!-- name -->
-        <div>
-          <Link :href="`/media/manage/${media.id}`">
-            <p>{{ media.name }}</p>
-          </Link>
-        </div>
-        <!-- review rating -->
-        <div>
-          <Link :href="`/media/${media.id}/review`">
-            <RatingBox :rating="media.review?.rating ? media.review.rating : null" />
-          </Link>
-        </div>
-        <!-- status progress -->
-        <StatusProgressBadge :status="media.status" />
-
-        <div>
-          <ButtonComp @click="openModal(media.id, media.name)">Supprimer</ButtonComp>
-        </div>
+        <Link :href="`/media/manage/${media.id}`">
+          <p class="dashboard-item-name">{{ media.name }}</p>
+        </Link>
       </div>
-      <!-- pagination -->
+      <!-- review rating -->
       <div>
-        <Pagination
-          :page="{
-            currentPage: props.mediaList.meta.currentPage,
-            firstPage: props.mediaList.meta.firstPage,
-            lastPage: props.mediaList.meta.lastPage,
-          }"
-          :url="{
-            firstPageUrl: props.mediaList.meta.firstPageUrl,
-            lastPageUrl: props.mediaList.meta.lastPageUrl,
-            nextPageUrl: props.mediaList.meta.nextPageUrl,
-            previousPageUrl: props.mediaList.meta.previousPageUrl,
-          }"
-          @update:current-page="fetchNewPageData"
-        />
+        <Link :href="`/media/${media.id}/review`">
+          <RatingBox :rating="media.review?.rating ? media.review.rating : null" />
+        </Link>
       </div>
+      <!-- status progress -->
+      <StatusProgressBadge :status="media.status" />
 
-      <!-- delete modal -->
-      <ModalComp ref="modalRef" @close-modal="closeModal">
-        <template #header>
-          <div>
-            <span> Confirmation </span>
-          </div>
-        </template>
-        <template #content>
-          <div>
-            <span> Confirmer la suppression de {{ mediaTitle }} ? </span>
-          </div>
-        </template>
-        <template #action>
-          <ButtonComp @click="closeModal">Retour</ButtonComp>
-          <ButtonComp @click="submitDeleteMedia">Confirmer</ButtonComp>
-        </template>
-      </ModalComp>
+      <div>
+        <ButtonComp @click="openModal(media.id, media.name)">Supprimer</ButtonComp>
+      </div>
     </div>
-  </DashboardLayout>
+    <!-- pagination -->
+    <div>
+      <Pagination
+        :page="{
+          currentPage: props.mediaList.meta.currentPage,
+          firstPage: props.mediaList.meta.firstPage,
+          lastPage: props.mediaList.meta.lastPage,
+        }"
+        :url="{
+          firstPageUrl: props.mediaList.meta.firstPageUrl,
+          lastPageUrl: props.mediaList.meta.lastPageUrl,
+          nextPageUrl: props.mediaList.meta.nextPageUrl,
+          previousPageUrl: props.mediaList.meta.previousPageUrl,
+        }"
+        @update:current-page="fetchNewPageData"
+      />
+    </div>
+
+    <!-- delete modal -->
+    <ModalComp ref="modalRef" @close-modal="closeModal">
+      <template #header>
+        <div>
+          <span> Confirmation </span>
+        </div>
+      </template>
+      <template #content>
+        <div>
+          <span> Confirmer la suppression de {{ mediaTitle }} ? </span>
+        </div>
+      </template>
+      <template #action>
+        <ButtonComp @click="closeModal">Retour</ButtonComp>
+        <ButtonComp @click="submitDeleteMedia">Confirmer</ButtonComp>
+      </template>
+    </ModalComp>
+  </div>
 </template>
+
+<style scoped>
+.dashboard-title-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.dashboard-action {
+  display: flex;
+  justify-content: end;
+}
+.dashboard-list-item {
+  display: grid;
+  grid-template-columns: 3fr 1fr 1fr 1fr;
+  align-items: center;
+  gap: 15px;
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+}
+.dashboard-list_img {
+  width: 30px;
+  height: 45px;
+  object-fit: cover;
+}
+.dashboard-item-name-container {
+  display: flex;
+  align-items: center;
+}
+.dashboard-item-name {
+  margin-left: 5px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+</style>

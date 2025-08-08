@@ -21,6 +21,10 @@ const props = defineProps<{
   >['categoriesTypesGenresPaired']
 }>()
 
+defineOptions({
+  layout: DashboardLayout,
+})
+
 interface IForm {
   genres: number[]
   types: number[]
@@ -52,35 +56,33 @@ const formatCategoryName = useFormatCategoryNameInFr
 
 <template>
   <AppHead title="Gestion des catégories" />
-  <DashboardLayout>
-    <select v-model="selectedCategory">
-      <option v-for="category in categoriesList" :value="category.id">
-        {{ formatCategoryName(category.name) }}
-      </option>
-    </select>
+  <select v-model="selectedCategory">
+    <option v-for="category in categoriesList" :value="category.id">
+      {{ formatCategoryName(category.name) }}
+    </option>
+  </select>
 
+  <div>
+    <!-- type list -->
     <div>
-      <!-- type list -->
-      <div>
-        <span>Liste des types</span>
-      </div>
-      <div v-for="type in typesList">
-        <LabelComp :text="capitalizeFirstLetter(type.name)" textPosition="down">
-          <InputComp v-model="form.types" type="checkbox" :value="type.id" />
-        </LabelComp>
-      </div>
-      <!-- genres list -->
-      <div>
-        <span>Liste des genres</span>
-      </div>
-      <div v-for="genre in genresList">
-        <LabelComp :text="capitalizeFirstLetter(genre.name)" textPosition="down">
-          <InputComp v-model="form.genres" type="checkbox" :value="genre.id" />
-        </LabelComp>
-      </div>
+      <span>Liste des types</span>
     </div>
+    <div v-for="type in typesList">
+      <LabelComp :text="capitalizeFirstLetter(type.name)" textPosition="down">
+        <InputComp v-model="form.types" type="checkbox" :value="type.id" />
+      </LabelComp>
+    </div>
+    <!-- genres list -->
     <div>
-      <ButtonComp @click="submit">Valider</ButtonComp>
+      <span>Liste des genres</span>
     </div>
-  </DashboardLayout>
+    <div v-for="genre in genresList">
+      <LabelComp :text="capitalizeFirstLetter(genre.name)" textPosition="down">
+        <InputComp v-model="form.genres" type="checkbox" :value="genre.id" />
+      </LabelComp>
+    </div>
+  </div>
+  <div>
+    <ButtonComp @click="submit">Valider</ButtonComp>
+  </div>
 </template>

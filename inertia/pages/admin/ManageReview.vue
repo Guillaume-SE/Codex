@@ -8,17 +8,22 @@ import RatingBox from '~/components/RatingBox.vue'
 import ButtonComp from '~/components/ui/ButtonComp.vue'
 import InputComp from '~/components/ui/InputComp.vue'
 import LabelComp from '~/components/ui/LabelComp.vue'
-
-const props = defineProps<{
-  media: InferPageProps<ReviewController, 'showManage'>['media']
-  errors: Record<string, string[]>
-}>()
+import DashboardLayout from '~/layouts/DashboardLayout.vue'
 
 interface IForm {
   rating: string | number | null
   opinion: string | null
   isFavorite: boolean
 }
+
+const props = defineProps<{
+  media: InferPageProps<ReviewController, 'showManage'>['media']
+  errors: Record<string, string[]>
+}>()
+
+defineOptions({
+  layout: DashboardLayout,
+})
 
 const newForm = useForm<IForm>({
   rating: '',
