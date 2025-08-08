@@ -19,7 +19,7 @@ export default function render(page: any) {
       const pages = import.meta.glob<DefineComponent>('../pages/**/*.vue', { eager: true })
       const resolvedPage = pages[`../pages/${name}.vue`]
 
-      resolvedPage.default.layout = resolvedPage.default.layout || AppLayout
+      resolvedPage.default.layout = resolvedPage?.default.layout || AppLayout
       // page.default.layout = name.startsWith('dashboard/') ? DashboardLayout : AppLayout
 
       return resolvedPage

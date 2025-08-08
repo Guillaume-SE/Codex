@@ -28,7 +28,7 @@ createInertiaApp({
       import.meta.glob<DefineComponent>('../pages/**/*.vue')
     )
 
-    page.default.layout = page.default.layout || AppLayout
+    page.default.layout = page?.default.layout || AppLayout
     // page.default.layout = name.startsWith('dashboard/') ? DashboardLayout : AppLayout
 
     return page
