@@ -127,42 +127,6 @@ h6 {
   outline-offset: -6px;
 }
 
-.review-container {
-  width: 40%;
-  max-width: 400px;
-  min-height: 100px;
-  padding: 10px;
-  background-color: #f8fafc;
-}
-.review-heading {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 10px;
-}
-
-.review-title {
-  margin-left: 10px;
-}
-
-.dashboard-list {
-  width: 80%;
-  margin: auto;
-}
-
-.dashboard-list-item {
-  display: grid;
-  grid-template-columns: 50px 100px 2fr 1fr 1fr 1fr;
-  align-items: center;
-  gap: 10px;
-  padding: 10px;
-  border-bottom: 1px solid #ddd;
-}
-.dashboard-list_img {
-  width: 30px;
-  height: 45px;
-  object-fit: cover;
-}
-
 .manage-review-rating-container {
   display: flex;
   flex-direction: row;
