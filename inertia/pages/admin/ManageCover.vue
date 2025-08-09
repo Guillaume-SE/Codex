@@ -59,13 +59,13 @@ function onUpload() {
 }
 async function submitPostCover() {
   form.cover = await cropper?.getFile()
-  form.post(`/media/${props.media.id}/cover`),
+  ;(form.post(`/media/${props.media.id}/cover`),
     {
       onSuccess: () => {
         uploadDialog.value = false
         form.reset()
       },
-    }
+    })
 }
 // Reset the default cropping area
 function resetCrop() {
@@ -123,36 +123,33 @@ function resetCrop() {
         <progress v-if="form.progress" :value="form.progress.percentage" max="100">
           {{ form.progress.percentage }}%
         </progress>
-
-        <div>
-          <ModalComp ref="modalRef" @close-modal="closeModal">
-            <template #header>
-              <div>
-                <span> Modal de crop </span>
-              </div>
-              <div>
-                <ButtonComp @click="resetCrop">Reset</ButtonComp>
-              </div>
-            </template>
-            <template #content>
-              <VuePictureCropper
-                :box-style="{ width: '100%', height: '100%' }"
-                :img="croppedImage"
-                :options="{
-                  aspectRatio: 2 / 3,
-                  dragMode: 'none',
-                  viewMode: 1,
-                  autoCropArea: 1,
-                }"
-              />
-            </template>
-            <template #action>
-              <ButtonComp @click="closeModal">Retour</ButtonComp>
-              <ButtonComp :pending="form.processing" @click="submitPostCover">Upload</ButtonComp>
-            </template>
-          </ModalComp>
-        </div>
       </form>
+      <ModalComp ref="modalRef" @close-modal="closeModal">
+        <template #header>
+          <div>
+            <span> Modal de crop </span>
+          </div>
+          <div>
+            <ButtonComp @click="resetCrop">Reset</ButtonComp>
+          </div>
+        </template>
+        <template #content>
+          <VuePictureCropper
+            :box-style="{ width: '100%', height: '100%' }"
+            :img="croppedImage"
+            :options="{
+              aspectRatio: 2 / 3,
+              dragMode: 'none',
+              viewMode: 1,
+              autoCropArea: 1,
+            }"
+          />
+        </template>
+        <template #action>
+          <ButtonComp @click="closeModal">Retour</ButtonComp>
+          <ButtonComp :pending="form.processing" @click="submitPostCover">Upload</ButtonComp>
+        </template>
+      </ModalComp>
     </div>
   </div>
 </template>
