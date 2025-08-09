@@ -1,12 +1,12 @@
 <script setup lang="ts">
 defineProps<{
-  message: string[]
+  message: string
 }>()
 </script>
 
 <template>
-  <div v-for="error in message">
-    <span class="form-text-error">{{ error }}</span>
+  <div>
+    <span class="form-text-error">{{ message }}</span>
   </div>
 </template>
 
