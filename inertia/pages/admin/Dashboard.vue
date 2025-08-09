@@ -2,7 +2,8 @@
 import type DashboardController from '#controllers/dashboard_controller'
 import { InferPageProps } from '@adonisjs/inertia/types'
 import { Link, useForm } from '@inertiajs/vue3'
-import { ref, useTemplateRef } from 'vue'
+import { nextTick, ref, useTemplateRef } from 'vue'
+import ActionDialogComp from '~/components/ActionDialogComp.vue'
 import AppHead from '~/components/AppHead.vue'
 import DashboardAction from '~/components/DashboardAction.vue'
 import ImageNotAvailableIcon from '~/components/icons/ImageNotAvailableIcon.vue'
@@ -10,8 +11,18 @@ import Pagination from '~/components/Pagination.vue'
 import RatingBox from '~/components/RatingBox.vue'
 import StatusProgressBadge from '~/components/StatusProgressBadge.vue'
 import ButtonComp from '~/components/ui/ButtonComp.vue'
-import ModalComp from '~/components/ui/ModalComp.vue'
+import FormErrorComp from '~/components/ui/FormErrorComp.vue'
+import { useActionText, type IResourceNameConfig } from '~/composables/useActionText'
 import DashboardLayout from '~/layouts/DashboardLayout.vue'
+
+const props = defineProps<{
+  mediaList: InferPageProps<DashboardController, 'showDashboard'>['mediaList']
+  errors: Record<string, string[]>
+}>()
+
+defineOptions({
+  layout: DashboardLayout,
+})
 
 interface IForm {
   mediaId: number | null
@@ -20,13 +31,7 @@ interface IFilters {
   search: string
 }
 
-const props = defineProps<{
-  mediaList: InferPageProps<DashboardController, 'showDashboard'>['mediaList']
-}>()
-
-defineOptions({
-  layout: DashboardLayout,
-})
+type SubmitTask = 'create' | 'edit' | 'delete'
 
 const form = useForm<IForm>({
   mediaId: null,
@@ -35,10 +40,18 @@ const filters = useForm<IFilters>('filterResults', {
   search: '',
 })
 
-const mediaTitle = ref<string>('')
-const modalRef = useTemplateRef<HTMLDialogElement>('modalRef')
+const mediaName = ref<string>('')
+const actionDialogRef = useTemplateRef<InstanceType<typeof ActionDialogComp>>('actionDialogRef')
+const currentTask = ref<SubmitTask | null>(null)
 
-function submitDeleteMedia() {
+const mediaConfig: IResourceNameConfig = {
+  singular: 'media',
+  indefinite: 'un',
+  definite: 'le',
+}
+const { title: dialogTitle, actionText: dialogActionText } = useActionText(currentTask, mediaConfig)
+
+function submitForm() {
   const mediaId = form.mediaId
   form.delete(`media/${mediaId}`, {
     onSuccess: () => {
@@ -51,14 +64,17 @@ function submitFilters() {
   filters.get('/dashboard', { preserveState: true })
 }
 
-const openModal = (id: number, title: string) => {
+const openModal = (task: SubmitTask, id: number, name: string) => {
+  currentTask.value = task
   form.mediaId = id
-  mediaTitle.value = title
-  modalRef.value?.showModal()
+  mediaName.value = name
+  nextTick(() => {
+    actionDialogRef.value?.showModal()
+  })
 }
 const closeModal = () => {
   form.mediaId = null
-  modalRef.value?.close()
+  actionDialogRef.value?.close()
 }
 
 // paginate with filters included
@@ -69,16 +85,15 @@ function fetchNewPageData(url: string | null) {
 
 <template>
   <AppHead title="Dashboard" />
-  <div>
+  <div class="dashboard-content-container">
     <form action="GET" @submit.prevent="submitFilters">
-      <div class="dashboard-title-container">
-        <div>
-          <h3>Gestion des plateformes</h3>
-        </div>
-        <DashboardAction v-model:search="filters.search" :type="'search'">
-          <Link href="/media/manage">Ajouter un media</Link>
-        </DashboardAction>
-      </div>
+      <DashboardAction
+        v-model:search="filters.search"
+        :type="'search'"
+        :title="'Gestion des media'"
+      >
+        <Link href="/media/manage">Ajouter un media</Link>
+      </DashboardAction>
     </form>
     <div class="dashboard-list-item">
       <span>Nom</span>
@@ -120,9 +135,8 @@ function fetchNewPageData(url: string | null) {
       </div>
       <!-- status progress -->
       <StatusProgressBadge :status="media.status" />
-
       <div>
-        <ButtonComp @click="openModal(media.id, media.name)">Supprimer</ButtonComp>
+        <ButtonComp @click="openModal('delete', media.id, media.name)">Supprimer</ButtonComp>
       </div>
     </div>
     <!-- pagination -->
@@ -144,34 +158,38 @@ function fetchNewPageData(url: string | null) {
     </div>
 
     <!-- delete modal -->
-    <ModalComp ref="modalRef" @close-modal="closeModal">
-      <template #header>
-        <div>
-          <span> Confirmation </span>
+    <ActionDialogComp
+      v-if="currentTask"
+      ref="actionDialogRef"
+      :title="dialogTitle"
+      :form="form"
+      :action-text="dialogActionText"
+      @submit="submitForm"
+      @close="closeModal"
+    >
+      <template #form-content>
+        <div v-if="currentTask === 'create' || currentTask === 'edit'">
+          <div>
+            <!-- <LabelComp text="Nom" textPosition="up"> -->
+            <!-- <InputComp v-model="form.name" type="text" /> -->
+            <!-- </LabelComp> -->
+          </div>
+          <!-- <FormErrorComp v-if="form.errors.name" :message="form.errors.name" /> -->
+        </div>
+
+        <div v-if="currentTask === 'delete'">
+          <span>
+            Confirmer la suppression de <strong>{{ mediaName }}</strong> ?
+          </span>
         </div>
       </template>
-      <template #content>
-        <div>
-          <span> Confirmer la suppression de {{ mediaTitle }} ? </span>
-        </div>
-      </template>
-      <template #action>
-        <ButtonComp @click="closeModal">Retour</ButtonComp>
-        <ButtonComp @click="submitDeleteMedia">Confirmer</ButtonComp>
-      </template>
-    </ModalComp>
+    </ActionDialogComp>
   </div>
 </template>
 
 <style scoped>
-.dashboard-title-container {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-.dashboard-action {
-  display: flex;
-  justify-content: end;
+.dashboard-content-container {
+  min-width: 800px;
 }
 .dashboard-list-item {
   display: grid;
