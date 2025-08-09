@@ -41,7 +41,7 @@ export default class GamePlatformsController {
       const data = await request.validateUsing(updateGamePlatformValidator)
       await this.gamePlatformService.storeOrUpdate(data, params.platformId)
 
-      session.flash('success', `${data.name} modifié avec succès`)
+      session.flash('success', `${data.name} modifiée avec succès`)
 
       return response.redirect().toRoute('platform.manage')
     }
@@ -49,7 +49,7 @@ export default class GamePlatformsController {
     const data = await request.validateUsing(createGamePlatformValidator)
     await this.gamePlatformService.storeOrUpdate(data)
 
-    session.flash('success', `${data.name} ajouté avec succès`)
+    session.flash('success', `${data.name} ajoutée avec succès`)
 
     return response.redirect().toRoute('platform.manage')
   }
