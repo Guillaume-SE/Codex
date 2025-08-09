@@ -145,7 +145,7 @@ const formatCategoryName = useFormatCategoryNameInFr
             <InputComp v-model="form.categoryId" type="radio" :value="category.id" />
           </LabelComp>
         </div>
-        <FormErrorComp v-if="errors.categoryId" :message="errors.categoryId" />
+        <FormErrorComp v-if="form.errors.categoryId" :message="form.errors.categoryId" />
       </div>
       <!-- type -->
       <div>
@@ -158,7 +158,7 @@ const formatCategoryName = useFormatCategoryNameInFr
             <InputComp v-model="form.typeId" type="radio" :value="type.value" />
           </LabelComp>
         </div>
-        <FormErrorComp v-if="errors.typeId" :message="errors.typeId" />
+        <FormErrorComp v-if="form.errors.typeId" :message="form.errors.typeId" />
       </div>
       <!-- name -->
       <div>
@@ -169,21 +169,21 @@ const formatCategoryName = useFormatCategoryNameInFr
             placeholder="The Dark Knight: le Chevalier noir"
           />
         </LabelComp>
-        <FormErrorComp v-if="errors.name" :message="errors.name" />
+        <FormErrorComp v-if="form.errors.name" :message="form.errors.name" />
       </div>
       <!-- alternative name -->
       <div>
         <LabelComp text="Nom alternatif:" text-position="up">
           <InputComp v-model="form.alternativeName" type="text" placeholder="The Dark Knight" />
         </LabelComp>
-        <FormErrorComp v-if="errors.alternativeName" :message="errors.alternativeName" />
+        <FormErrorComp v-if="form.errors.alternativeName" :message="form.errors.alternativeName" />
       </div>
       <!-- released date -->
       <div>
         <LabelComp text="Date de sortie:" text-position="up">
           <InputComp v-model="form.released" type="date" />
         </LabelComp>
-        <FormErrorComp v-if="errors.released" :message="errors.released" />
+        <FormErrorComp v-if="form.errors.released" :message="form.errors.released" />
       </div>
       <!-- synopsis -->
       <div>
@@ -194,7 +194,7 @@ const formatCategoryName = useFormatCategoryNameInFr
             id="synopsis"
           ></textarea>
         </LabelComp>
-        <FormErrorComp v-if="errors.synopsis" :message="errors.synopsis" />
+        <FormErrorComp v-if="form.errors.synopsis" :message="form.errors.synopsis" />
       </div>
       <!-- genres -->
       <div>
@@ -207,7 +207,7 @@ const formatCategoryName = useFormatCategoryNameInFr
             <InputComp v-model="form.genreId" type="checkbox" :value="genre.value" />
           </LabelComp>
         </div>
-        <FormErrorComp v-if="errors.genreId" :message="errors.genreId" />
+        <FormErrorComp v-if="form.errors.genreId" :message="form.errors.genreId" />
       </div>
       <div v-if="currentCategory">
         <!-- game platform -->
@@ -218,7 +218,7 @@ const formatCategoryName = useFormatCategoryNameInFr
               <InputComp v-model="form.platformId" type="radio" :value="platform.id" />
             </LabelComp>
           </div>
-          <FormErrorComp v-if="errors.platformId" :message="errors.platformId" />
+          <FormErrorComp v-if="form.errors.platformId" :message="form.errors.platformId" />
         </div>
         <!-- movie duration -->
         <div v-if="currentCategory.name === 'movie'">
@@ -227,7 +227,7 @@ const formatCategoryName = useFormatCategoryNameInFr
               <InputComp v-model="form.duration" type="number" min="1" />
             </div>
           </LabelComp>
-          <FormErrorComp v-if="errors.duration" :message="errors.duration" />
+          <FormErrorComp v-if="form.errors.duration" :message="form.errors.duration" />
         </div>
         <!-- series season length -->
         <div v-if="currentCategory.name === 'series'">
@@ -236,7 +236,10 @@ const formatCategoryName = useFormatCategoryNameInFr
               <InputComp v-model="form.seriesSeasonLength" type="number" min="1" />
             </div>
           </LabelComp>
-          <FormErrorComp v-if="errors.seriesSeasonLength" :message="errors.seriesSeasonLength" />
+          <FormErrorComp
+            v-if="form.errors.seriesSeasonLength"
+            :message="form.errors.seriesSeasonLength"
+          />
         </div>
         <!-- anime season length -->
         <div v-if="currentCategory.name === 'anime'">
@@ -245,7 +248,10 @@ const formatCategoryName = useFormatCategoryNameInFr
               <InputComp v-model="form.animeSeasonLength" type="number" min="1" />
             </div>
           </LabelComp>
-          <FormErrorComp v-if="errors.animeSeasonLength" :message="errors.animeSeasonLength" />
+          <FormErrorComp
+            v-if="form.errors.animeSeasonLength"
+            :message="form.errors.animeSeasonLength"
+          />
         </div>
         <!-- books pages -->
         <div v-if="currentCategory.name === 'book'">
@@ -254,7 +260,7 @@ const formatCategoryName = useFormatCategoryNameInFr
               <InputComp v-model="form.pages" type="number" min="1" />
             </div>
           </LabelComp>
-          <FormErrorComp v-if="errors.pages" :message="errors.pages" />
+          <FormErrorComp v-if="form.errors.pages" :message="form.errors.pages" />
         </div>
       </div>
       <!-- status -->
@@ -265,7 +271,7 @@ const formatCategoryName = useFormatCategoryNameInFr
             <InputComp v-model="form.statusId" type="radio" :value="status.id" />
           </LabelComp>
         </div>
-        <FormErrorComp v-if="errors.statusId" :message="errors.statusId" />
+        <FormErrorComp v-if="form.errors.statusId" :message="form.errors.statusId" />
       </div>
       <div>
         <ButtonComp type="submit" :disabled="form.processing"></ButtonComp>
