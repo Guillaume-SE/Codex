@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { Link } from '@inertiajs/vue3'
 import SearchBar from '~/components/SearchBar.vue'
 
 const model = defineModel<string>('search')
@@ -11,17 +10,17 @@ defineProps<{
 </script>
 
 <template>
-  <template v-if="type === 'search'">
-    <div class="dashboard-title-container">
-      <div>
-        <h3>{{ title }}</h3>
-      </div>
-      <div class="dashboard-action">
-        <SearchBar v-model="model" placeholder="Rechercher" />
-        <slot />
-      </div>
+  <div class="dashboard-title-container">
+    <div>
+      <h3>{{ title }}</h3>
     </div>
-  </template>
+
+    <div class="dashboard-action">
+      <SearchBar v-if="type === 'search'" v-model="model" placeholder="Rechercher" />
+
+      <slot />
+    </div>
+  </div>
 </template>
 
 <style scoped>
