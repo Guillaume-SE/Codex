@@ -1,5 +1,6 @@
 import GamePlatform from '#models/game_platform'
 import GamePlatformService from '#services/game_platform_service'
+import { searchValidator } from '#validators/dashboard_validator'
 import {
   createGamePlatformValidator,
   updateGamePlatformValidator,
@@ -17,10 +18,12 @@ interface IPlatformListFormatted {
 export default class GamePlatformsController {
   constructor(private gamePlatformService: GamePlatformService) {}
 
-  async showManage({ inertia }: HttpContext) {
-    const platformList: GamePlatform[] = await GamePlatform.query()
-      .withCount('gameInfo')
-      .orderBy('name', 'asc')
+  async showManage({ inertia, request }: HttpContext) {
+    const page = request.input('page')
+    const filters = await request.validateUsing(searchValidator)
+    const platformList = await GamePlatformService.getFiltered(filters, page, 10)
+
+    platformList.baseUrl('/platform/manage')
 
     const platformListFormatted: IPlatformListFormatted[] = platformList.map((platform) => {
       return {

@@ -3,7 +3,6 @@ import MediaTypeService from '#services/media_type_service'
 import {
   createMediaTypeValidator,
   replaceMediaTypeValidator,
-  singleMediaTypeValidator,
   updateMediaTypeValidator,
 } from '#validators/media_type_validator'
 import { inject } from '@adonisjs/core'
@@ -35,30 +34,41 @@ export default class MediaTypesController {
     })
   }
 
-  public async storeOrUpdate({ request, response }: HttpContext) {
+  public async storeOrUpdate({ params, request, session, response }: HttpContext) {
     // for update
-    if (request.params().typeId) {
-      const { params, ...data } = await request.validateUsing(updateMediaTypeValidator)
+    if (params.typeId) {
+      const data = await request.validateUsing(updateMediaTypeValidator)
       await this.mediaTypeService.storeOrUpdate(data, params.typeId)
+
+      session.flash('success', `${data.name} ajouté avec succès`)
+
       return response.redirect().toRoute('type.manage')
     }
     // for create
     const data = await request.validateUsing(createMediaTypeValidator)
     await this.mediaTypeService.storeOrUpdate(data)
 
-    return response.redirect().toRoute('type.manage')
-  }
-
-  public async replaceOne({ request, response }: HttpContext) {
-    const { params, newTypeId } = await request.validateUsing(replaceMediaTypeValidator)
-    await this.mediaTypeService.replaceAndDelete(params.typeId, newTypeId)
+    session.flash('success', `${data.name} ajouté avec succès`)
 
     return response.redirect().toRoute('type.manage')
   }
 
-  public async deleteOne({ request, response }: HttpContext) {
-    const { params } = await request.validateUsing(singleMediaTypeValidator)
-    await this.mediaTypeService.delete(params.typeId)
+  public async replaceOne({ request, params, session, response }: HttpContext) {
+    const { replacementTypeId } = await request.validateUsing(replaceMediaTypeValidator)
+    const typeDeleted = await this.mediaTypeService.replaceAndDelete(
+      params.typeId,
+      replacementTypeId
+    )
+
+    session.flash('success', `Remplacement effectué. ${typeDeleted} supprimé avec succès`)
+
+    return response.redirect().toRoute('type.manage')
+  }
+
+  public async deleteOne({ params, session, response }: HttpContext) {
+    const typeDeleted = await this.mediaTypeService.delete(params.typeId)
+
+    session.flash('success', `${typeDeleted} supprimé avec succès`)
 
     return response.redirect().toRoute('type.manage')
   }
