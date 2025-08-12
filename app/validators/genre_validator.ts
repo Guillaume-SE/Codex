@@ -5,7 +5,6 @@ export const createGenreValidator = vine.compile(
     name: vine
       .string()
       .trim()
-      .toLowerCase()
       .unique(async (db, value) => {
         const genreIsUnique = await db.from('genres').where('name', value).first()
         return !genreIsUnique
@@ -15,24 +14,12 @@ export const createGenreValidator = vine.compile(
 
 export const updateGenreValidator = vine.compile(
   vine.object({
-    params: vine.object({
-      genreId: vine.number().isExists({ table: 'genres', column: 'id' }),
-    }),
     name: vine
       .string()
       .trim()
-      .toLowerCase()
       .unique(async (db, value) => {
         const genreIsUnique = await db.from('genres').where('name', value).first()
         return !genreIsUnique
       }),
-  })
-)
-
-export const genreValidator = vine.compile(
-  vine.object({
-    params: vine.object({
-      genreId: vine.number().isExists({ table: 'genres', column: 'id' }),
-    }),
   })
 )
