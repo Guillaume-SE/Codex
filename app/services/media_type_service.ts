@@ -4,7 +4,7 @@ import { updateMediaTypeValidator } from '#validators/media_type_validator'
 import { inject } from '@adonisjs/core'
 import { Infer } from '@vinejs/vine/types'
 
-type updatedData = Omit<Infer<typeof updateMediaTypeValidator>, 'params'>
+type updatedData = Infer<typeof updateMediaTypeValidator>
 
 @inject()
 export default class MediaTypeService {
@@ -16,22 +16,19 @@ export default class MediaTypeService {
     await type.merge(data).save()
   }
 
-  public async replaceAndDelete(oldTypeId: number, newTypeId: number) {
+  public async replaceAndDelete(oldTypeId: number, replacementTypeId: number): Promise<string> {
     const oldType = await MediaType.findOrFail(oldTypeId)
-    const newType = await MediaType.findOrFail(newTypeId)
+    const oldTypeName = oldType.name
 
-    const mediaUsingOldType = await Media.query().where('type_id', '=', oldType.id)
-
-    for (let media of mediaUsingOldType) {
-      media.typeId = newType.id
-      await media.save()
-    }
-
+    await Media.query().where('type_id', oldTypeId).update({ typeId: replacementTypeId })
     await oldType.delete()
+
+    return oldTypeName
   }
 
-  public async delete(typeId: number) {
+  public async delete(typeId: number): Promise<string> {
     const type = await MediaType.findOrFail(typeId)
+    const typeName = type.name
     const hasMediaUsingThisType = await Media.findBy('typeId', type.id)
 
     if (hasMediaUsingThisType) {
@@ -39,5 +36,7 @@ export default class MediaTypeService {
     }
 
     await type.delete()
+
+    return typeName
   }
 }
