@@ -32,7 +32,9 @@ defineProps<{
           <Link href="/type/manage">Types</Link>
           <Link href="/category/manage">Catégories</Link>
         </nav>
-        <slot />
+        <div class="dashboard-content-container">
+          <slot />
+        </div>
       </div>
     </div>
     <ToastNotification v-if="success" :message="success" />
@@ -46,6 +48,9 @@ defineProps<{
 }
 .dashboard-content {
   display: flex;
+}
+.dashboard-content-container {
+  min-width: 800px;
 }
 .dashboard-navbar {
   display: flex;
