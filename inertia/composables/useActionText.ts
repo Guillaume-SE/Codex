@@ -1,9 +1,9 @@
 import { computed, type Ref } from 'vue'
 
-type ActionType = 'create' | 'edit' | 'delete'
+export type ActionType = 'create' | 'edit' | 'delete' | 'replace'
 
 export interface IResourceNameConfig {
-  singular: string // "plateforme" or "jeu"
+  singular: string // "plateforme" or "jeu"...
   indefinite: string // "une" or "un"
   definite: string // "la" or "le"
 }
@@ -16,6 +16,7 @@ export function useActionText(task: Ref<ActionType | null>, config: IResourceNam
       case 'edit':
         return `Modifier ${config.definite} ${config.singular}`
       case 'delete':
+      case 'replace':
         return `Supprimer ${config.definite} ${config.singular}`
       default:
         return ''
@@ -29,6 +30,7 @@ export function useActionText(task: Ref<ActionType | null>, config: IResourceNam
       case 'edit':
         return 'Confirmer'
       case 'delete':
+      case 'replace':
         return 'Supprimer'
       default:
         return ''
