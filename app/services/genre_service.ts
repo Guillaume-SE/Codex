@@ -3,7 +3,7 @@ import { updateGenreValidator } from '#validators/genre_validator'
 import { inject } from '@adonisjs/core'
 import { Infer } from '@vinejs/vine/types'
 
-type updatedData = Omit<Infer<typeof updateGenreValidator>, 'params'>
+type updatedData = Infer<typeof updateGenreValidator>
 
 @inject()
 export default class GenreService {
@@ -15,9 +15,12 @@ export default class GenreService {
     await genre.merge(data).save()
   }
 
-  public async delete(genreId: number): Promise<void> {
+  public async delete(genreId: number): Promise<string> {
     const genre = await Genre.findOrFail(genreId)
+    const genreName = genre.name
 
     await genre.delete()
+
+    return genreName
   }
 }

@@ -15,7 +15,7 @@ interface IMediaSortOption {
   dir: 'asc' | 'desc' | undefined
 }
 
-type updatedData = Omit<Infer<typeof updateMediaValidator>, 'params'>
+type updatedData = Infer<typeof updateMediaValidator>
 
 interface IFilters {
   params?: { categoryName: string }
