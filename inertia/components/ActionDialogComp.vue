@@ -7,6 +7,7 @@ defineProps<{
   title: string
   form: object
   actionText: string
+  isActionDisabled?: boolean
 }>()
 
 const modalRef = useTemplateRef<InstanceType<typeof ModalComp>>('modalRef')
@@ -30,7 +31,7 @@ defineExpose({
 
         <div class="modal-actions">
           <ButtonComp type="button" @click="emit('close')">Retour</ButtonComp>
-          <ButtonComp type="submit">{{ actionText }}</ButtonComp>
+          <ButtonComp type="submit" :disabled="isActionDisabled">{{ actionText }}</ButtonComp>
         </div>
       </form>
     </template>
