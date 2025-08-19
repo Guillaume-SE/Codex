@@ -1,28 +1,13 @@
-import { MediaPresenterFactory } from '#classes/MediaPresenter'
+import { MediaPresenter } from '#classes/MediaPresenter'
 import GamePlatform from '#models/game_platform'
 import MediaCategory from '#models/media_category'
 import MediaStatus from '#models/media_status'
 import MediaCategoryService from '#services/media_category_service'
 import MediaService from '#services/media_service'
-import type { MediaCategories } from '#types/MediaCategories'
-import {
-  createMediaValidator,
-  mediaFiltersValidator,
-  updateMediaValidator,
-} from '#validators/media_validator'
+import { mediaFiltersValidator, mediaValidator } from '#validators/media_validator'
 import { inject } from '@adonisjs/core'
 import type { HttpContext } from '@adonisjs/core/http'
 
-interface ICategoriesType {
-  category_id: number
-  type_id: number
-  name: string
-}
-interface ICategoriesGenre {
-  category_id: number
-  genre_id: number
-  name: string
-}
 type Item = { text: string; value: number }
 type CategoryAssociations = Record<
   string,
@@ -46,40 +31,20 @@ export default class MediaController {
     }
 
     const statuses = await MediaStatus.query().orderBy('name', 'desc')
-    const categories = await MediaCategory.query().orderBy('name')
     const gamePlatforms = await GamePlatform.query().orderBy('name')
-    const categoriesTypes = await this.mediaCategoryService.getCategoriesTypes()
-    const categoriesGenres = await this.mediaCategoryService.getCategoriesGenres()
+    const categoriesWithRelations = await this.mediaCategoryService.getCategoriesWithRelations()
 
-    // needed to only show related items to each categories in the form
-    const buildCategoryAssociations = (
-      categoriesTypes: ICategoriesType[],
-      categoriesGenres: ICategoriesGenre[]
-    ): CategoryAssociations => {
-      const result: CategoryAssociations = {}
-
-      const ensure = (id: string | number) => {
-        const key = String(id)
-        if (!result[key]) result[key] = { types: [], genres: [] }
-        return result[key]
+    const categoryAssociations = categoriesWithRelations.reduce((acc, category) => {
+      acc[category.id] = {
+        types: category.types.map((t) => ({ value: t.id, text: t.name })),
+        genres: category.genres.map((g) => ({ value: g.id, text: g.name })),
       }
-
-      for (const { category_id, type_id, name } of categoriesTypes) {
-        ensure(category_id).types.push({ value: type_id, text: name })
-      }
-
-      for (const { category_id, genre_id, name } of categoriesGenres) {
-        ensure(category_id).genres.push({ value: genre_id, text: name })
-      }
-
-      return result
-    }
-
-    const categoryAssociations = buildCategoryAssociations(categoriesTypes, categoriesGenres)
+      return acc
+    }, {} as CategoryAssociations)
 
     return inertia.render('admin/ManageMedia', {
       statuses,
-      categories,
+      categories: categoriesWithRelations,
       categoryAssociations,
       gamePlatforms,
       media,
@@ -89,13 +54,13 @@ export default class MediaController {
   async manageOne({ params, response, request }: HttpContext) {
     // for update
     if (params.mediaId) {
-      const data = await request.validateUsing(updateMediaValidator)
+      const data = await request.validateUsing(mediaValidator)
       await this.mediaService.manageOne(data, params.mediaId)
 
       return response.redirect().toRoute('dashboard.home')
     }
     // for create
-    const data = await request.validateUsing(createMediaValidator)
+    const data = await request.validateUsing(mediaValidator)
     await this.mediaService.manageOne(data)
 
     return response.redirect().toRoute('dashboard.home')
@@ -109,7 +74,7 @@ export default class MediaController {
 
   public async showOne({ params, inertia }: HttpContext) {
     const media = await this.mediaService.getOne(params.mediaId)
-    const presentedMedia = MediaPresenterFactory.presentMedia(media)
+    const presentedMedia = MediaPresenter.present(media)
 
     return inertia.render('media/MediaProfile', {
       media: presentedMedia,
@@ -117,23 +82,10 @@ export default class MediaController {
   }
 
   public async showByCategory({ params, request, inertia }: HttpContext) {
-    interface ICategoryConfig {
-      title: string
-      categoryFr: string
-    }
-    const categoryConfig: Record<MediaCategories, ICategoryConfig> = {
-      game: { title: 'Liste des jeux', categoryFr: 'jeu' },
-      movie: { title: 'Liste des films', categoryFr: 'film' },
-      series: { title: 'Liste des séries', categoryFr: 'série' },
-      book: { title: 'Liste des livres', categoryFr: 'livre' },
-      anime: { title: 'Liste des anime', categoryFr: 'anime' },
-    }
-
     const page = request.input('page')
     const filters = await request.validateUsing(mediaFiltersValidator)
     const categoryName = params.categoryName
 
-    const config = categoryConfig[categoryName]
     const mediaList = await MediaService.getFiltered(filters, page, 15, categoryName)
     const mediaSortOptions = MediaService.sortOptions
     const mediaStatusesList = await MediaStatus.all()
@@ -144,13 +96,11 @@ export default class MediaController {
     // needed for pagination
     mediaList.baseUrl(`/categories/${categoryName}`)
 
-    const paginatedMediaList = MediaPresenterFactory.presentPaginatedMediaList(mediaList)
+    const paginatedMediaList = MediaPresenter.presentPaginated(mediaList)
 
     return inertia.render('media/MediaList', {
       mediaList: paginatedMediaList,
-      title: config.title,
       mediaCategory: categoryName,
-      mediaCategoryFr: config.categoryFr,
       mediaSortOptions,
       mediaStatusesList,
       mediaTypesList,
@@ -165,9 +115,7 @@ export default class MediaController {
       mediaCategories.map((category) => this.mediaService.getLastAdded(category, 5))
     )
 
-    const presentedMediaLists = mediaLists.map((mediaList) =>
-      MediaPresenterFactory.presentMediaList(mediaList)
-    )
+    const presentedMediaLists = mediaLists.map((mediaList) => MediaPresenter.presentMany(mediaList))
 
     const [
       presentedGamesList,
