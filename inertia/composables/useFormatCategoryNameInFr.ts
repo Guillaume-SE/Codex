@@ -1,4 +1,6 @@
-export function useFormatCategoryNameInFr(name: string): string {
+import type { MediaCategories } from '#types/MediaCategories'
+
+export function useFormatCategoryNameInFr(name: MediaCategories): string {
   switch (name) {
     case 'movie':
       return 'film'
