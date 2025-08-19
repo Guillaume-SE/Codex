@@ -36,19 +36,7 @@ export default class MediaCategoryService {
       .orderBy('name')
   }
 
-  public async getCategoriesTypes() {
-    return await db
-      .from('category_types')
-      .join('media_types', 'category_types.type_id', 'media_types.id')
-      .select('category_types.category_id', 'media_types.id as type_id', 'media_types.name')
-      .orderBy('name')
-  }
-
-  public async getCategoriesGenres() {
-    return await db
-      .from('category_genres')
-      .join('genres', 'category_genres.genre_id', 'genres.id')
-      .select('category_genres.category_id', 'genres.id as genre_id', 'genres.name')
-      .orderBy('name')
+  public async getCategoriesWithRelations() {
+    return await MediaCategory.query().preload('types').preload('genres')
   }
 }
