@@ -1,4 +1,4 @@
-export interface IBaseMediaPresented {
+export interface IMediaPresented {
   id: number
   status: string
   category: string
@@ -7,13 +7,13 @@ export interface IBaseMediaPresented {
   alternativeName: string | null
   released: string | null
   synopsis: string | null
-  addedOn: string
+  addedOn: string | null
   genres: string[]
   review?: {
     rating: number | null
     opinion: string | null
     isFavorite: boolean
-    lastUpdate: string
+    lastUpdate: string | null
   }
   cover?: {
     originalUrl: string
@@ -21,34 +21,9 @@ export interface IBaseMediaPresented {
     mediumUrl: string
     largeUrl: string
   }
-}
-
-export interface IGameMediaPresented extends IBaseMediaPresented {
-  gameInfos: {
-    platform: string | null
-  }
-}
-
-export interface IMovieMediaPresented extends IBaseMediaPresented {
-  movieInfos: {
-    duration: number | null
-  }
-}
-
-export interface ISeriesMediaPresented extends IBaseMediaPresented {
-  seriesInfos: {
-    seasonLength: number | null
-  }
-}
-
-export interface IAnimeMediaPresented extends IBaseMediaPresented {
-  animeInfos: {
-    seasonLength: number | null
-  }
-}
-
-export interface IBookMediaPresented extends IBaseMediaPresented {
-  bookInfos: {
-    pages: number | null
-  }
+  gameInfos?: { platform: string | null }
+  movieInfos?: { duration: number | null }
+  animeInfos?: { seasonLength: number | null }
+  seriesInfos?: { seasonLength: number | null }
+  bookInfos?: { pages: number | null }
 }
