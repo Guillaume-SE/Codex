@@ -2,7 +2,7 @@ import MediaService from '#services/media_service'
 import vine from '@vinejs/vine'
 import { DateTime } from 'luxon'
 
-export const createMediaValidator = vine.compile(
+export const mediaValidator = vine.compile(
   vine.object({
     categoryId: vine.number().isExists({ table: 'media_categories', column: 'id' }),
     statusId: vine.number().isExists({ table: 'media_statuses', column: 'id' }),
@@ -26,42 +26,15 @@ export const createMediaValidator = vine.compile(
       .isExists({ table: 'game_platforms', column: 'id' })
       .nullable()
       .optional(),
+    // .requiredWhen((field) => field.parent.categoryId === MediaCategoriesEnum.GAME)
     duration: vine.number().positive().nullable().optional(),
+    // .requiredWhen((field) => field.parent.categoryId === MediaCategoriesEnum.MOVIE)
     seriesSeasonLength: vine.number().positive().nullable().optional(),
+    // .requiredWhen((field) => field.parent.categoryId === MediaCategoriesEnum.SERIES)
     animeSeasonLength: vine.number().positive().nullable().optional(),
+    // .requiredWhen((field) => field.parent.categoryId === MediaCategoriesEnum.ANIME)
     pages: vine.number().positive().nullable().optional(),
-  })
-)
-
-export const updateMediaValidator = vine.compile(
-  vine.object({
-    //body
-    categoryId: vine.number().isExists({ table: 'media_categories', column: 'id' }),
-    statusId: vine.number().isExists({ table: 'media_statuses', column: 'id' }),
-    typeId: vine.number().isExists({ table: 'media_types', column: 'id' }),
-    name: vine.string().trim(),
-    alternativeName: vine.string().trim().notSameAs('name').nullable(),
-    released: vine
-      .date()
-      .transform((value) => {
-        if (value === undefined || !value) {
-          return null
-        }
-        return DateTime.fromJSDate(value)
-      })
-      .nullable(),
-    synopsis: vine.string().trim().nullable(),
-    genreId: vine.array(vine.number().isExists({ table: 'genres', column: 'id' })).distinct(),
-    // specific infos
-    platformId: vine
-      .number()
-      .isExists({ table: 'game_platforms', column: 'id' })
-      .nullable()
-      .optional(),
-    pages: vine.number().positive().nullable().optional(),
-    duration: vine.number().positive().nullable().optional(),
-    animeSeasonLength: vine.number().positive().nullable().optional(),
-    seriesSeasonLength: vine.number().positive().nullable().optional(),
+    // .requiredWhen((field) => field.parent.categoryId === MediaCategoriesEnum.BOOK),
   })
 )
 
