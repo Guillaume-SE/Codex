@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import type MediaTypesController from '#controllers/media_types_controller'
 import { InferPageProps } from '@adonisjs/inertia/types'
-import { useForm } from '@inertiajs/vue3'
-import { computed } from 'vue'
+import { router, useForm } from '@inertiajs/vue3'
+import { computed, watch } from 'vue'
 import ActionDialogComp from '~/components/ActionDialogComp.vue'
 import AppHead from '~/components/AppHead.vue'
 import DashboardAction from '~/components/DashboardAction.vue'
@@ -38,7 +38,7 @@ const form = useForm<IForm>({
   replacementTypeId: null,
 })
 
-function handleReplace() {
+function customHandleReplace() {
   const typeIdToDelete = selectedItem.value?.id
   if (!typeIdToDelete) {
     return
@@ -46,6 +46,24 @@ function handleReplace() {
 
   form.put(`/type/replace/${typeIdToDelete}`, {
     onSuccess: () => closeModal(),
+  })
+}
+
+function customHandleUpdate() {
+  const typeIdToUpdate = selectedItem.value?.id
+  if (!typeIdToUpdate) return
+
+  const payload = {
+    name: form.name,
+  }
+
+  // to avoid back end to receive typeId null (potential conflict with params)
+  router.put(`/type/${typeIdToUpdate}`, payload, {
+    onStart: () => (form.processing = true),
+    onFinish: () => (form.processing = false),
+    onSuccess: () => closeModal(),
+    preserveState: true,
+    preserveScroll: true,
   })
 }
 
@@ -57,7 +75,7 @@ const typeConfig: ActionDialogConfig<IForm, ITypeList> = {
     definite: 'le',
   },
   form: form,
-  customSubmitHandlers: { replace: handleReplace },
+  customSubmitHandlers: { replace: customHandleReplace, edit: customHandleUpdate },
 }
 
 const {
@@ -151,7 +169,7 @@ const isSubmitDisabled = computed(() => {
               <InputComp v-model="form.name" type="text" />
             </LabelComp>
           </div>
-          <FormErrorComp v-if="form.errors.name" :message="form.errors.name" />
+          <FormErrorComp v-if="errors.name" :message="errors.name" />
         </div>
 
         <div v-if="currentTask === 'delete' || currentTask === 'replace'">
