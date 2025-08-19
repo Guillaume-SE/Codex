@@ -38,6 +38,21 @@ const form = useForm<IForm>({
   replacementTypeId: null,
 })
 
+watch(
+  () => props.errors,
+  (newErrors) => {
+    form.clearErrors()
+
+    const formattedErrors = Object.fromEntries(
+      Object.entries(newErrors).map(([key, value]) => [key, value[0]])
+    )
+    form.setError(formattedErrors as any)
+  },
+  {
+    deep: true,
+  }
+)
+
 function customHandleReplace() {
   const typeIdToDelete = selectedItem.value?.id
   if (!typeIdToDelete) {
@@ -166,10 +181,10 @@ const isSubmitDisabled = computed(() => {
         <div v-if="currentTask === 'create' || currentTask === 'edit'">
           <div>
             <LabelComp text="Nom" textPosition="up">
-              <InputComp v-model="form.name" type="text" />
+              <InputComp v-model="form.name" type="text" @input="form.clearErrors('name')" />
             </LabelComp>
           </div>
-          <FormErrorComp v-if="errors.name" :message="errors.name" />
+          <FormErrorComp v-if="form.errors.name" :message="form.errors.name" />
         </div>
 
         <div v-if="currentTask === 'delete' || currentTask === 'replace'">
