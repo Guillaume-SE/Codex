@@ -4,7 +4,6 @@ import MediaType from '#models/media_type'
 import type { MediaCategories } from '#types/MediaCategories'
 import { typesAndGenresAssociationValidator } from '#validators/media_category_validator'
 import { inject } from '@adonisjs/core'
-import db from '@adonisjs/lucid/services/db'
 import { Infer } from '@vinejs/vine/types'
 
 type updatedData = Omit<Infer<typeof typesAndGenresAssociationValidator>, 'params'>

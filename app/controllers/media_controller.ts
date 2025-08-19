@@ -23,7 +23,7 @@ export default class MediaController {
     protected mediaCategoryService: MediaCategoryService
   ) {}
 
-  async showManage({ params, inertia }: HttpContext) {
+  public async showManage({ params, inertia }: HttpContext) {
     let media
     if (params.mediaId) {
       media = await this.mediaService.getOne(params.mediaId)
@@ -50,11 +50,13 @@ export default class MediaController {
     })
   }
 
-  async manageOne({ params, response, request }: HttpContext) {
+  async manageOne({ params, request, session, response }: HttpContext) {
     // for update
     if (params.mediaId) {
       const data = await request.validateUsing(mediaValidator)
       await this.mediaService.manageOne(data, params.mediaId)
+
+      session.flash('success', `${data.name} modifié avec succès`)
 
       return response.redirect().toRoute('dashboard.home')
     }
@@ -62,11 +64,15 @@ export default class MediaController {
     const data = await request.validateUsing(mediaValidator)
     await this.mediaService.manageOne(data)
 
+    session.flash('success', `${data.name} ajouté avec succès`)
+
     return response.redirect().toRoute('dashboard.home')
   }
 
-  async deleteOne({ params, response }: HttpContext) {
-    await this.mediaService.delete(params.mediaId)
+  async deleteOne({ params, session, response }: HttpContext) {
+    const mediaDeleted = await this.mediaService.delete(params.mediaId)
+
+    session.flash('success', `${mediaDeleted} supprimé avec succès`)
 
     return response.redirect().toRoute('dashboard.home')
   }

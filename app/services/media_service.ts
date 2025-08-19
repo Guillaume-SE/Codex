@@ -85,8 +85,9 @@ export default class MediaService {
     return media
   }
 
-  public async delete(mediaId: number) {
+  public async delete(mediaId: number): Promise<string> {
     const media = await Media.findOrFail(mediaId)
+    const mediaName = media.name
     const cover = await Cover.findBy('mediaId', mediaId)
 
     await media.delete()
@@ -100,6 +101,8 @@ export default class MediaService {
       })
       await cover.delete()
     }
+
+    return mediaName
   }
 
   static sortOptions: IMediaSortOption[] = [
