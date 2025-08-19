@@ -1,5 +1,5 @@
 import { IPaginated } from '#interfaces/paginated_interface'
-import Media from '#models/media'
+import type Media from '#models/media'
 import { ModelPaginatorContract } from '@adonisjs/lucid/types/model'
 import { DateTime } from 'luxon'
 
@@ -8,7 +8,7 @@ interface IGenre {
   name: string
 }
 
-export abstract class BaseMediaPresenter {
+export class MediaPresenter {
   id: number
   status: string
   category: string
@@ -17,13 +17,13 @@ export abstract class BaseMediaPresenter {
   alternativeName: string | null
   released: DateTime | null
   synopsis: string | null
-  addedOn: string
+  addedOn: DateTime
   genres: string[]
   review?: {
     rating: number | null
     opinion: string | null
     isFavorite: boolean
-    lastUpdate: string
+    lastUpdate: DateTime
   }
   cover?: {
     originalUrl: string
@@ -31,8 +31,13 @@ export abstract class BaseMediaPresenter {
     mediumUrl: string
     largeUrl: string
   }
+  gameInfos?: { platform: string | null }
+  movieInfos?: { duration: number | null }
+  animeInfos?: { seasonLength: number | null }
+  seriesInfos?: { seasonLength: number | null }
+  bookInfos?: { pages: number | null }
 
-  constructor(media: any) {
+  constructor(media: Media) {
     this.id = media.id
     this.status = media.status.name
     this.category = media.category.name
@@ -41,7 +46,7 @@ export abstract class BaseMediaPresenter {
     this.alternativeName = media.alternativeName
     this.released = media.released
     this.synopsis = media.synopsis
-    this.addedOn = media.created_at
+    this.addedOn = media.createdAt
     this.genres = media.genres.map((genre: IGenre) => genre.name)
 
     if (media.review) {
@@ -61,96 +66,39 @@ export abstract class BaseMediaPresenter {
         largeUrl: media.cover.largeCoverUrl,
       }
     }
-  }
-}
 
-class GameMediaPresenter extends BaseMediaPresenter {
-  gameInfos: { platform: string | null }
-
-  constructor(media: any) {
-    super(media)
-    this.gameInfos = {
-      platform: media.gameInfo?.gamePlatform?.name ?? null,
-    }
-  }
-}
-
-class MovieMediaPresenter extends BaseMediaPresenter {
-  movieInfos: { duration: number | null }
-
-  constructor(media: any) {
-    super(media)
-    this.movieInfos = {
-      duration: media.movieInfo?.duration ?? null,
-    }
-  }
-}
-
-class AnimeMediaPresenter extends BaseMediaPresenter {
-  animeInfos: { seasonLength: number | null }
-
-  constructor(media: any) {
-    super(media)
-    this.animeInfos = {
-      seasonLength: media.animeInfo?.animeSeasonLength ?? null,
-    }
-  }
-}
-
-class SeriesMediaPresenter extends BaseMediaPresenter {
-  seriesInfos: { seasonLength: number | null }
-
-  constructor(media: any) {
-    super(media)
-    this.seriesInfos = {
-      seasonLength: media.seriesInfo?.seriesSeasonLength ?? null,
-    }
-  }
-}
-
-class BookMediaPresenter extends BaseMediaPresenter {
-  bookInfos: { pages: number | null }
-
-  constructor(media: any) {
-    super(media)
-    this.bookInfos = {
-      pages: media.bookInfo?.pages ?? null,
-    }
-  }
-}
-
-export class MediaPresenterFactory {
-  static createPresenter(media: any): BaseMediaPresenter {
     switch (media.category.name) {
       case 'game':
-        return new GameMediaPresenter(media)
+        this.gameInfos = { platform: media.gameInfo?.gamePlatform?.name ?? null }
+        break
       case 'book':
-        return new BookMediaPresenter(media)
+        this.bookInfos = { pages: media.bookInfo?.pages ?? null }
+        break
       case 'movie':
-        return new MovieMediaPresenter(media)
+        this.movieInfos = { duration: media.movieInfo?.duration ?? null }
+        break
       case 'anime':
-        return new AnimeMediaPresenter(media)
+        this.animeInfos = { seasonLength: media.animeInfo?.animeSeasonLength ?? null }
+        break
       case 'series':
-        return new SeriesMediaPresenter(media)
-      default:
-        throw new Error('Catégorie du media inconnue')
+        this.seriesInfos = { seasonLength: media.seriesInfo?.seriesSeasonLength ?? null }
+        break
     }
   }
 
-  static presentPaginatedMediaList(
-    paginatorContract: ModelPaginatorContract<Media>
-  ): IPaginated<BaseMediaPresenter> {
+  static present(media: Media): MediaPresenter {
+    return new MediaPresenter(media)
+  }
+
+  static presentMany(mediaList: Media[]): MediaPresenter[] {
+    return mediaList.map((media) => new MediaPresenter(media))
+  }
+
+  static presentPaginated(paginator: ModelPaginatorContract<Media>): IPaginated<MediaPresenter> {
+    const presentedData = paginator.all().map((media) => new MediaPresenter(media))
     return {
-      meta: paginatorContract.getMeta(),
-      data: paginatorContract.all().map((data) => this.createPresenter(data)),
+      meta: paginator.getMeta(),
+      data: presentedData,
     }
-  }
-
-  static presentMediaList(mediaList: Media[]): BaseMediaPresenter[] {
-    return mediaList.map((data) => this.createPresenter(data))
-  }
-
-  static presentMedia(data: Media): BaseMediaPresenter {
-    return this.createPresenter(data)
   }
 }
