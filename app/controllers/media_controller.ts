@@ -1,6 +1,5 @@
 import { MediaPresenter } from '#classes/MediaPresenter'
 import GamePlatform from '#models/game_platform'
-import MediaCategory from '#models/media_category'
 import MediaStatus from '#models/media_status'
 import MediaCategoryService from '#services/media_category_service'
 import MediaService from '#services/media_service'
