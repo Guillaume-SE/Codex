@@ -1,21 +1,20 @@
 <script setup lang="ts">
 import type MediaController from '#controllers/media_controller'
-import type { MediaCategories, MediaCategoriesFr } from '#types/MediaCategories'
+import type { MediaCategories } from '#types/MediaCategories'
 import { InferPageProps } from '@adonisjs/inertia/types'
 import { useForm } from '@inertiajs/vue3'
-import { computed, onMounted } from 'vue'
+import { computed, onMounted, toRef } from 'vue'
 import AppHead from '~/components/AppHead.vue'
 import MediaCard from '~/components/MediaCard.vue'
 import MediaFilters from '~/components/MediaFilters.vue'
 import Pagination from '~/components/Pagination.vue'
 import SearchBar from '~/components/SearchBar.vue'
 import SelectComp from '~/components/ui/SelectComp.vue'
+import { useCategoryInfo } from '~/composables/useCategoryInfo'
 
 const props = defineProps<{
-  title: string
   mediaList: InferPageProps<MediaController, 'showByCategory'>['mediaList']
   mediaCategory: MediaCategories
-  mediaCategoryFr: MediaCategoriesFr
   mediaSortOptions: InferPageProps<MediaController, 'showByCategory'>['mediaSortOptions']
   mediaStatusesList: InferPageProps<MediaController, 'showByCategory'>['mediaStatusesList']
   mediaTypesList: InferPageProps<MediaController, 'showByCategory'>['mediaTypesList']
@@ -33,6 +32,9 @@ interface IFilters {
   duration: string | undefined
   favorite: boolean
 }
+
+const categoryRef = toRef(props, 'mediaCategory')
+const { title, categoryFr } = useCategoryInfo(categoryRef)
 
 // argument passed to conserve values when navigate between pages
 const filters = useForm<IFilters>('filterResults', {
@@ -80,7 +82,7 @@ const mediaListIsNotEmpty = computed(() => {
 
 <template>
   <AppHead :title="title" />
-  <h2>{{ mediaCategoryFr }}</h2>
+  <h2>{{ categoryFr }}</h2>
   <div class="media-list-container">
     <div>
       <form
@@ -88,11 +90,7 @@ const mediaListIsNotEmpty = computed(() => {
         @submit.prevent="filters.get(`/categories/${props.mediaCategory}`, { preserveState: true })"
       >
         <div>
-          <!-- search -->
-          <SearchBar
-            v-model="filters.search"
-            :placeholder="`Rechercher un${mediaCategoryFr === 'série' ? 'e' : ''} ${mediaCategoryFr}`"
-          />
+          <SearchBar v-model="filters.search" placeholder="Rechercher" />
         </div>
 
         <div>
@@ -128,7 +126,6 @@ const mediaListIsNotEmpty = computed(() => {
         :key="media.id"
         :media="media"
         :mediaCategory="mediaCategory"
-        :mediaCategoryFr="mediaCategoryFr"
       />
     </div>
     <div v-else>
