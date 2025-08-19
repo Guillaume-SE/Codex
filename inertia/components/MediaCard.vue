@@ -1,12 +1,5 @@
 <script setup lang="ts">
-import type {
-  IAnimeMediaPresented,
-  IBaseMediaPresented,
-  IBookMediaPresented,
-  IGameMediaPresented,
-  IMovieMediaPresented,
-  ISeriesMediaPresented,
-} from '#interfaces/media_presented_interface'
+import type { IMediaPresented } from '#interfaces/media_presented_interface'
 import type { MediaCategories } from '#types/MediaCategories'
 import { Link } from '@inertiajs/vue3'
 import RatingBox from '~/components/RatingBox.vue'
@@ -14,13 +7,7 @@ import StatusProgressBadge from '~/components/StatusProgressBadge.vue'
 import ImageNotAvailableIcon from '~/components/icons/ImageNotAvailableIcon.vue'
 
 defineProps<{
-  media:
-    | IBaseMediaPresented
-    | IGameMediaPresented
-    | IMovieMediaPresented
-    | ISeriesMediaPresented
-    | IAnimeMediaPresented
-    | IBookMediaPresented
+  media: IMediaPresented
   mediaCategory: MediaCategories
 }>()
 </script>
