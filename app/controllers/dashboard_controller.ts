@@ -1,4 +1,4 @@
-import { MediaPresenterFactory } from '#classes/MediaPresenter'
+import { MediaPresenter } from '#classes/MediaPresenter'
 import MediaService from '#services/media_service'
 import { searchValidator } from '#validators/dashboard_validator'
 import { inject } from '@adonisjs/core'
@@ -13,7 +13,7 @@ export default class DashboardController {
 
     mediaList.baseUrl('/dashboard')
 
-    const paginatedMediaList = MediaPresenterFactory.presentPaginatedMediaList(mediaList)
+    const paginatedMediaList = MediaPresenter.presentPaginated(mediaList)
 
     return inertia.render('admin/Dashboard', {
       mediaList: paginatedMediaList,
