@@ -37,7 +37,9 @@ export default class MediaTypesController {
   public async storeOrUpdate({ params, request, session, response }: HttpContext) {
     // for update
     if (params.typeId) {
-      const data = await request.validateUsing(updateMediaTypeValidator)
+      const data = await request.validateUsing(updateMediaTypeValidator, {
+        meta: { params: params },
+      })
       await this.mediaTypeService.storeOrUpdate(data, params.typeId)
 
       session.flash('success', `${data.name} ajouté avec succès`)
