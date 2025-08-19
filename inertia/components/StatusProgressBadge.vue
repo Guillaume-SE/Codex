@@ -1,19 +1,21 @@
 <script setup lang="ts">
-import { computed } from 'vue'
-import { useStatusBackgroundColor } from '~/composables/useStatusBackgroundColor'
-import { useStatusIconColor } from '~/composables/useStatusIconColor'
+import type { MediaStatuses } from '#types/MediaStatuses'
+import { type PropType, toRef } from 'vue'
+import { useStatusStyles } from '~/composables/useStatusStyle'
 
-const props = defineProps<{
-  status: string
-}>()
+const props = defineProps({
+  status: {
+    type: String as PropType<MediaStatuses>,
+    required: true,
+  },
+})
 
-const ratingColor = computed(() => useStatusIconColor(props.status))
-const ratingBackground = computed(() => useStatusBackgroundColor(props.status))
+const { backgroundColor, iconColor } = useStatusStyles(toRef(props, 'status'))
 </script>
 
 <template>
-  <div :class="[ratingBackground, 'status-progress-container']">
-    <div :class="[ratingColor, 'status-progress-icon']"></div>
+  <div :class="[backgroundColor, 'status-progress-container']">
+    <div :class="[iconColor, 'status-progress-icon']"></div>
     <span class="status-progress-text">
       {{ status }}
     </span>
