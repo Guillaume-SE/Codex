@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import StatusProgressIcon from '~/components/icons/StatusProgressIcon.vue'
 import { useStatusBackgroundColor } from '~/composables/useStatusBackgroundColor'
 import { useStatusIconColor } from '~/composables/useStatusIconColor'
 
@@ -14,7 +13,7 @@ const ratingBackground = computed(() => useStatusBackgroundColor(props.status))
 
 <template>
   <div :class="[ratingBackground, 'status-progress-container']">
-    <StatusProgressIcon :class="ratingColor" />
+    <div :class="[ratingColor, 'status-progress-icon']"></div>
     <span class="status-progress-text">
       {{ status }}
     </span>
