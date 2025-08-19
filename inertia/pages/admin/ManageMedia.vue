@@ -1,9 +1,15 @@
 <script setup lang="ts">
 import type MediaController from '#controllers/media_controller'
 import { InferPageProps } from '@adonisjs/inertia/types'
-import { useForm } from '@inertiajs/vue3'
+import { router, useForm } from '@inertiajs/vue3'
+import type { Component } from 'vue'
 import { computed, onMounted, ref, watch } from 'vue'
 import AppHead from '~/components/AppHead.vue'
+import AnimeFields from '~/components/media/AnimeFields.vue'
+import BookFields from '~/components/media/BookFields.vue'
+import GameFields from '~/components/media/GameFields.vue'
+import MovieFields from '~/components/media/MovieFields.vue'
+import SeriesFields from '~/components/media/SeriesFields.vue'
 import ButtonComp from '~/components/ui/ButtonComp.vue'
 import FormErrorComp from '~/components/ui/FormErrorComp.vue'
 import InputComp from '~/components/ui/InputComp.vue'
@@ -27,6 +33,8 @@ interface IForm {
   pages: string | null
 }
 
+type MediaProp = InferPageProps<MediaController, 'showManage'>['media']
+
 const props = defineProps<{
   statuses: InferPageProps<MediaController, 'showManage'>['statuses']
   categories: InferPageProps<MediaController, 'showManage'>['categories']
@@ -36,246 +44,354 @@ const props = defineProps<{
   errors: Record<string, string[]>
 }>()
 
-const form = useForm<IForm>({
-  statusId: '',
-  categoryId: '',
-  typeId: '',
-  name: '',
-  alternativeName: null,
-  released: null,
-  synopsis: '',
-  genreId: [],
-  platformId: null,
-  duration: null,
-  seriesSeasonLength: null,
-  animeSeasonLength: null,
-  pages: null,
-})
-
-const isForUpdate = ref<boolean>(false)
-const filteredTypesList = ref(props.categoryAssociations[form.categoryId]?.types || [])
-const filteredGenresList = ref(props.categoryAssociations[form.categoryId]?.genres || [])
-
-onMounted(() => {
-  if (props.media) {
-    isForUpdate.value = true
-    form.statusId = props.media.statusId
-    form.categoryId = props.media.categoryId
-    form.name = props.media.name
-    form.alternativeName = props.media.alternativeName
-    form.released = props.media.released ? formatDate(props.media.released) : null
-    form.synopsis = props.media.synopsis
-  }
-})
-
-watch(
-  () => form.categoryId,
-  (newCategoryId) => {
-    const selectedCategoryData = props.categoryAssociations[newCategoryId] || {
-      types: [],
-      genres: [],
-    }
-    filteredTypesList.value = selectedCategoryData.types
-    filteredGenresList.value = selectedCategoryData.genres
-    resetFormValues()
-
-    if (props.media) {
-      form.typeId = props.media.typeId
-      form.genreId = props.media.genres.map((genre: { id: number; name: string }) => {
-        return genre.id
-      })
-      form.platformId = props.media.gameInfo?.platformId
-      form.duration = props.media.movieInfo?.duration
-      form.seriesSeasonLength = props.media.seriesInfo?.seriesSeasonLength
-      form.animeSeasonLength = props.media.animeInfo?.animeSeasonLength
-      form.pages = props.media.bookInfo?.pages
-    }
-  }
-)
-
-const resetFormValues = () => {
-  form.typeId = ''
-  form.genreId = []
-  form.platformId = ''
-  form.duration = ''
-  form.seriesSeasonLength = ''
-  form.animeSeasonLength = ''
-  form.pages = ''
+const categoryFieldComponents: Record<string, Component> = {
+  game: GameFields,
+  movie: MovieFields,
+  series: SeriesFields,
+  anime: AnimeFields,
+  book: BookFields,
 }
 
-function submit() {
-  if (isForUpdate.value === true) {
-    return form.put(`/media/${props.media!.id}`)
-  }
-  return form.post('/media')
+const fieldSteps: Record<keyof IForm, number> = {
+  // Step 1
+  categoryId: 1,
+  typeId: 1,
+  // Step 2
+  name: 2,
+  alternativeName: 2,
+  released: 2,
+  synopsis: 2,
+  genreId: 2,
+  // Step 3
+  platformId: 3,
+  duration: 3,
+  seriesSeasonLength: 3,
+  animeSeasonLength: 3,
+  pages: 3,
+  statusId: 3,
 }
 
 const formatDate = useFormattedDate
-const currentCategory = computed(() => {
-  const category = props.categories.find((category) => category.id === form.categoryId)
-  return category
-})
-const isNoCategorySelected = computed(() => {
-  return form.categoryId === '' ? true : false
+const formatCategoryName = useFormatCategoryNameInFr
+
+onMounted(() => {
+  // to avoid disabled button issue with F5
+  isMounted.value = true
 })
 
-const formatCategoryName = useFormatCategoryNameInFr
+const isMounted = ref(false)
+const currentStep = ref(1)
+const isUpdateMode = computed(() => !!props.media)
+const currentCategory = computed(() => {
+  return props.categories.find((category) => category.id === form.categoryId)
+})
+const filteredTypesList = computed(() => {
+  if (!form.categoryId) return []
+  return props.categoryAssociations[form.categoryId]?.types || []
+})
+const filteredGenresList = computed(() => {
+  if (!form.categoryId) return []
+  return props.categoryAssociations[form.categoryId]?.genres || []
+})
+const isStep1Invalid = computed(() => {
+  return !form.categoryId || !form.typeId
+})
+
+function getInitialFormData(media?: MediaProp) {
+  if (!media) {
+    // Default values for CREATE mode
+    return {
+      statusId: '',
+      categoryId: '',
+      typeId: '',
+      name: '',
+      alternativeName: null,
+      released: null,
+      synopsis: '',
+      genreId: [],
+      platformId: null,
+      duration: null,
+      seriesSeasonLength: null,
+      animeSeasonLength: null,
+      pages: null,
+    }
+  }
+  return {
+    statusId: media.statusId,
+    categoryId: media.categoryId,
+    typeId: media.typeId,
+    name: media.name,
+    alternativeName: media.alternativeName,
+    released: media.released ? formatDate(media.released) : null,
+    synopsis: media.synopsis,
+    genreId: media.genres.map((g: { id: number }) => g.id),
+    platformId: media.gameInfo?.platformId,
+    duration: media.movieInfo?.duration,
+    seriesSeasonLength: media.seriesInfo?.seriesSeasonLength,
+    animeSeasonLength: media.animeInfo?.animeSeasonLength,
+    pages: media.bookInfo?.pages,
+  }
+}
+
+const form = useForm<IForm>(getInitialFormData(props.media))
+
+watch(
+  () => props.errors,
+  (newErrors) => {
+    form.clearErrors()
+    // transform and set the new errors
+    const formattedErrors = Object.fromEntries(
+      Object.entries(newErrors).map(([key, value]) => [key, value[0]])
+    )
+    form.setError(formattedErrors as any)
+  },
+  {
+    deep: true,
+  }
+)
+
+function nextStep() {
+  currentStep.value++
+}
+function prevStep() {
+  currentStep.value--
+}
+
+function handleFormError(errors: Record<string, string>) {
+  const firstErrorStep = Math.min(
+    ...Object.keys(errors).map((field) => fieldSteps[field as keyof IForm] || Infinity)
+  )
+  if (firstErrorStep !== Infinity) {
+    currentStep.value = firstErrorStep
+  }
+}
+
+function handleUpdate() {
+  if (!props.media?.id) return
+
+  const payload: Partial<IForm> = {
+    statusId: form.statusId,
+    categoryId: form.categoryId,
+    typeId: form.typeId,
+    name: form.name,
+    alternativeName: form.alternativeName,
+    released: form.released,
+    synopsis: form.synopsis,
+    genreId: form.genreId,
+  }
+
+  switch (currentCategory.value?.name) {
+    case 'game':
+      payload.platformId = form.platformId
+      break
+    case 'movie':
+      payload.duration = form.duration
+      break
+    case 'series':
+      payload.seriesSeasonLength = form.seriesSeasonLength
+      break
+    case 'anime':
+      payload.animeSeasonLength = form.animeSeasonLength
+      break
+    case 'book':
+      payload.pages = form.pages
+      break
+  }
+
+  router.put(`/media/${props.media.id}`, payload, {
+    onStart: () => (form.processing = true),
+    onFinish: () => (form.processing = false),
+    onError: handleFormError,
+  })
+}
+
+function handleCreate() {
+  form.post('/media', {
+    onError: handleFormError,
+  })
+}
+
+function submit() {
+  if (isUpdateMode.value) {
+    handleUpdate()
+  } else {
+    handleCreate()
+  }
+}
 </script>
 
 <template>
   <AppHead title="Gestion de media" />
   <div>
-    <h3 v-if="props.media">Mise à jour de {{ props.media.name }}</h3>
+    <h3 v-if="isUpdateMode">Mise à jour de {{ props.media?.name }}</h3>
     <h3 v-else>Ajout d'un nouveau media</h3>
 
+    <div class="step-indicator">
+      <ul class="step-container">
+        <li class="step" :class="{ active: currentStep >= 1 }">1. Catégorie</li>
+        <li class="step" :class="{ active: currentStep >= 2 }">2. Détails</li>
+        <li class="step" :class="{ active: currentStep >= 3 }">3. Spécificités</li>
+      </ul>
+    </div>
+
     <form @submit.prevent="submit">
-      <!-- category -->
-      <div v-if="props.media">
-        <span>Catégorie:</span>
-        <div>
-          <LabelComp :text="formatCategoryName(props.media.category.name)" textPosition="down">
-            <InputComp v-model="form.categoryId" type="radio" :value="props.media.category.id" />
-          </LabelComp>
-        </div>
-      </div>
-      <div v-else>
-        <span>Catégorie (requis):</span>
-        <div v-for="category in categories">
-          <LabelComp :text="formatCategoryName(category.name)" textPosition="down">
-            <InputComp v-model="form.categoryId" type="radio" :value="category.id" />
-          </LabelComp>
-        </div>
-        <FormErrorComp v-if="form.errors.categoryId" :message="form.errors.categoryId" />
-      </div>
-      <!-- type -->
-      <div>
-        <span>Type (requis):</span>
-        <div v-if="isNoCategorySelected">
-          <span>En attente d'un choix de catégorie</span>
-        </div>
-        <div v-for="type in filteredTypesList">
-          <LabelComp :text="type.text" textPosition="down">
-            <InputComp v-model="form.typeId" type="radio" :value="type.value" />
-          </LabelComp>
-        </div>
-        <FormErrorComp v-if="form.errors.typeId" :message="form.errors.typeId" />
-      </div>
-      <!-- name -->
-      <div>
-        <LabelComp text="Nom de l'œuvre (requis):" text-position="up">
-          <InputComp
-            v-model="form.name"
-            type="text"
-            placeholder="The Dark Knight: le Chevalier noir"
-          />
-        </LabelComp>
-        <FormErrorComp v-if="form.errors.name" :message="form.errors.name" />
-      </div>
-      <!-- alternative name -->
-      <div>
-        <LabelComp text="Nom alternatif:" text-position="up">
-          <InputComp v-model="form.alternativeName" type="text" placeholder="The Dark Knight" />
-        </LabelComp>
-        <FormErrorComp v-if="form.errors.alternativeName" :message="form.errors.alternativeName" />
-      </div>
-      <!-- released date -->
-      <div>
-        <LabelComp text="Date de sortie:" text-position="up">
-          <InputComp v-model="form.released" type="date" />
-        </LabelComp>
-        <FormErrorComp v-if="form.errors.released" :message="form.errors.released" />
-      </div>
-      <!-- synopsis -->
-      <div>
-        <LabelComp text="Synopsis:" text-position="up" for="synopsis">
-          <textarea
-            v-model="form.synopsis"
-            placeholder="Batman aborde une phase décisive de sa guerre contre le crime à Gotham City..."
-            id="synopsis"
-          ></textarea>
-        </LabelComp>
-        <FormErrorComp v-if="form.errors.synopsis" :message="form.errors.synopsis" />
-      </div>
-      <!-- genres -->
-      <div>
-        <span>Genres:</span>
-        <div v-if="isNoCategorySelected">
-          <span>En attente d'un choix de catégorie</span>
-        </div>
-        <div v-for="genre in filteredGenresList">
-          <LabelComp :text="genre.text" textPosition="down">
-            <InputComp v-model="form.genreId" type="checkbox" :value="genre.value" />
-          </LabelComp>
-        </div>
-        <FormErrorComp v-if="form.errors.genreId" :message="form.errors.genreId" />
-      </div>
-      <div v-if="currentCategory">
-        <!-- game platform -->
-        <div v-if="currentCategory.name === 'game'">
-          <span>Joué sur:</span>
-          <div v-for="platform in gamePlatforms">
-            <LabelComp :text="platform.name" textPosition="down">
-              <InputComp v-model="form.platformId" type="radio" :value="platform.id" />
-            </LabelComp>
+      <fieldset :disabled="!isMounted">
+        <!-- category -->
+        <div v-if="currentStep === 1">
+          <div v-if="isUpdateMode">
+            <span>Catégorie</span>
+            <div>
+              <span>{{ formatCategoryName(props.media?.category.name) }}</span>
+            </div>
           </div>
-          <FormErrorComp v-if="form.errors.platformId" :message="form.errors.platformId" />
-        </div>
-        <!-- movie duration -->
-        <div v-if="currentCategory.name === 'movie'">
-          <LabelComp text="Durée du film (en minutes):" textPosition="up">
-            <div>
-              <InputComp v-model="form.duration" type="number" min="1" />
+          <div v-else>
+            <span>Catégorie (requis)</span>
+            <div v-for="category in categories">
+              <LabelComp :text="formatCategoryName(category.name)" textPosition="down">
+                <InputComp
+                  v-model="form.categoryId"
+                  type="radio"
+                  :value="category.id"
+                  @input="form.clearErrors('categoryId')"
+                />
+              </LabelComp>
             </div>
-          </LabelComp>
-          <FormErrorComp v-if="form.errors.duration" :message="form.errors.duration" />
-        </div>
-        <!-- series season length -->
-        <div v-if="currentCategory.name === 'series'">
-          <LabelComp text="Nombres d'épisodes" textPosition="up">
-            <div>
-              <InputComp v-model="form.seriesSeasonLength" type="number" min="1" />
+            <FormErrorComp v-if="form.errors.categoryId" :message="form.errors.categoryId" />
+          </div>
+          <!-- type -->
+          <div>
+            <span>Type (requis)</span>
+            <div v-if="filteredTypesList.length === 0">
+              <span>En attente d'un choix de catégorie</span>
             </div>
-          </LabelComp>
-          <FormErrorComp
-            v-if="form.errors.seriesSeasonLength"
-            :message="form.errors.seriesSeasonLength"
-          />
-        </div>
-        <!-- anime season length -->
-        <div v-if="currentCategory.name === 'anime'">
-          <LabelComp text="Nombres d'épisodes" textPosition="up">
-            <div>
-              <InputComp v-model="form.animeSeasonLength" type="number" min="1" />
+            <div v-for="type in filteredTypesList">
+              <LabelComp :text="type.text" textPosition="down">
+                <InputComp
+                  v-model="form.typeId"
+                  type="radio"
+                  :value="type.value"
+                  @input="form.clearErrors('typeId')"
+                />
+              </LabelComp>
             </div>
-          </LabelComp>
-          <FormErrorComp
-            v-if="form.errors.animeSeasonLength"
-            :message="form.errors.animeSeasonLength"
-          />
+            <FormErrorComp v-if="form.errors.typeId" :message="form.errors.typeId" />
+          </div>
+
+          <div class="form-navigation">
+            <ButtonComp type="button" @click="nextStep" :disabled="isStep1Invalid">
+              Suivant
+            </ButtonComp>
+          </div>
         </div>
-        <!-- books pages -->
-        <div v-if="currentCategory.name === 'book'">
-          <LabelComp text="Nombres de pages" textPosition="up">
-            <div>
-              <InputComp v-model="form.pages" type="number" min="1" />
+
+        <div v-if="currentStep === 2">
+          <!-- name -->
+          <div>
+            <LabelComp text="Nom de l'œuvre (requis):" text-position="up">
+              <InputComp v-model="form.name" type="text" @input="form.clearErrors('name')" />
+            </LabelComp>
+            <FormErrorComp v-if="form.errors.name" :message="form.errors.name" />
+          </div>
+          <!-- alternative name -->
+          <div>
+            <LabelComp text="Nom alternatif:" text-position="up">
+              <InputComp
+                v-model="form.alternativeName"
+                type="text"
+                @input="form.clearErrors('alternativeName')"
+              />
+            </LabelComp>
+            <FormErrorComp
+              v-if="form.errors.alternativeName"
+              :message="form.errors.alternativeName"
+            />
+          </div>
+          <!-- released date -->
+          <div>
+            <LabelComp text="Date de sortie:" text-position="up">
+              <InputComp v-model="form.released" type="date" />
+            </LabelComp>
+            <FormErrorComp v-if="form.errors.released" :message="form.errors.released" />
+          </div>
+          <!-- synopsis -->
+          <div>
+            <LabelComp text="Synopsis:" text-position="up" for="synopsis">
+              <textarea v-model="form.synopsis" id="synopsis"></textarea>
+            </LabelComp>
+            <FormErrorComp v-if="form.errors.synopsis" :message="form.errors.synopsis" />
+          </div>
+          <!-- genres -->
+          <div>
+            <span>Genres</span>
+            <div v-if="filteredGenresList.length === 0">
+              <span>En attente d'un choix de catégorie</span>
             </div>
-          </LabelComp>
-          <FormErrorComp v-if="form.errors.pages" :message="form.errors.pages" />
+            <div v-for="genre in filteredGenresList">
+              <LabelComp :text="genre.text" textPosition="down">
+                <InputComp v-model="form.genreId" type="checkbox" :value="genre.value" />
+              </LabelComp>
+            </div>
+            <FormErrorComp v-if="form.errors.genreId" :message="form.errors.genreId" />
+          </div>
+
+          <div class="form-navigation">
+            <ButtonComp type="button" @click="prevStep">Précédent</ButtonComp>
+            <ButtonComp type="button" @click="nextStep">Suivant</ButtonComp>
+          </div>
         </div>
-      </div>
-      <!-- status -->
-      <div>
-        <span>Progression (requis):</span>
-        <div v-for="status in statuses">
-          <LabelComp :text="status.name" textPosition="down">
-            <InputComp v-model="form.statusId" type="radio" :value="status.id" />
-          </LabelComp>
+
+        <div v-if="currentStep === 3">
+          <div v-if="currentCategory">
+            <component
+              :is="categoryFieldComponents[currentCategory.name]"
+              :form="form"
+              :gamePlatforms="gamePlatforms"
+            />
+          </div>
+          <!-- status -->
+          <div>
+            <span>Progression (requis)</span>
+            <div v-for="status in statuses">
+              <LabelComp :text="status.name" textPosition="down">
+                <InputComp
+                  v-model="form.statusId"
+                  type="radio"
+                  :value="status.id"
+                  @input="form.clearErrors('statusId')"
+                />
+              </LabelComp>
+            </div>
+            <FormErrorComp v-if="form.errors.statusId" :message="form.errors.statusId" />
+          </div>
+
+          <div class="form-navigation">
+            <ButtonComp type="button" @click="prevStep">Précédent</ButtonComp>
+            <ButtonComp type="submit" :disabled="form.processing">Enregistrer</ButtonComp>
+          </div>
         </div>
-        <FormErrorComp v-if="form.errors.statusId" :message="form.errors.statusId" />
-      </div>
-      <div>
-        <ButtonComp type="submit" :disabled="form.processing"></ButtonComp>
-      </div>
+      </fieldset>
     </form>
   </div>
 </template>
+
+<style scoped>
+.step-container {
+  display: flex;
+  justify-content: space-between;
+  width: 80%;
+}
+.step-indicator {
+  margin-bottom: 1rem;
+  border-bottom: 1px solid #e2e8f0;
+  padding-bottom: 0.75rem;
+}
+.step {
+  color: grey;
+  font-weight: normal;
+  padding: 0 0.5rem;
+}
+.step.active {
+  color: #4f46e5;
+  font-weight: bold;
+}
+</style>
