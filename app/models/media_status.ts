@@ -1,4 +1,5 @@
 import Media from '#models/media'
+import type { MediaStatuses } from '#types/MediaStatuses'
 import { BaseModel, column, hasMany } from '@adonisjs/lucid/orm'
 import type { HasMany } from '@adonisjs/lucid/types/relations'
 
@@ -9,7 +10,7 @@ export default class MediaStatus extends BaseModel {
   declare id: number
 
   @column()
-  declare name: string
+  declare name: MediaStatuses
 
   //relations
   @hasMany(() => Media, {
