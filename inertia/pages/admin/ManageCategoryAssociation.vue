@@ -2,7 +2,7 @@
 import type MediaCategoriesController from '#controllers/media_categories_controller'
 import { InferPageProps } from '@adonisjs/inertia/types'
 import { useForm } from '@inertiajs/vue3'
-import { onMounted, ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 import AppHead from '~/components/AppHead.vue'
 import ButtonComp from '~/components/ui/ButtonComp.vue'
 import InputComp from '~/components/ui/InputComp.vue'
@@ -12,13 +12,9 @@ import { useFormatCategoryNameInFr } from '~/composables/useFormatCategoryNameIn
 import DashboardLayout from '~/layouts/DashboardLayout.vue'
 
 const props = defineProps<{
-  categoriesList: InferPageProps<MediaCategoriesController, 'showManage'>['categoriesList']
+  categories: InferPageProps<MediaCategoriesController, 'showManage'>['categories']
   typesList: InferPageProps<MediaCategoriesController, 'showManage'>['typesList']
   genresList: InferPageProps<MediaCategoriesController, 'showManage'>['genresList']
-  categoriesTypesGenresPaired: InferPageProps<
-    MediaCategoriesController,
-    'showManage'
-  >['categoriesTypesGenresPaired']
 }>()
 
 defineOptions({
@@ -30,24 +26,24 @@ interface IForm {
   types: number[]
 }
 
-const selectedCategory = ref<string>('')
-
-onMounted(() => {
-  selectedCategory.value = props.categoriesList[0].id
-})
-
-watch(selectedCategory, (newId) => {
-  form.genres = props.categoriesTypesGenresPaired[newId]?.genres || []
-  form.types = props.categoriesTypesGenresPaired[newId]?.types || []
+const selectedCategoryId = ref<string>(props.categories[0].id.toString())
+const selectedCategory = computed(() => {
+  return props.categories.find((c) => c.id === Number(selectedCategoryId.value))!
 })
 
 const form = useForm<IForm>({
-  genres: [],
-  types: [],
+  genres: selectedCategory.value.genreIds,
+  types: selectedCategory.value.typeIds,
+})
+
+watch(selectedCategoryId, (newId) => {
+  const newCategory = props.categories.find((c) => c.id === Number(newId))!
+  form.types = newCategory.typeIds
+  form.genres = newCategory.genreIds
 })
 
 function submit() {
-  return form.post(`/category/${selectedCategory.value}/associate`)
+  return form.post(`/admin/categories/${selectedCategoryId.value}/associate`)
 }
 
 const capitalizeFirstLetter = useCapitalizeFirstLetter
@@ -56,8 +52,8 @@ const formatCategoryName = useFormatCategoryNameInFr
 
 <template>
   <AppHead title="Gestion des catégories" />
-  <select v-model="selectedCategory">
-    <option v-for="category in categoriesList" :value="category.id">
+  <select v-model="selectedCategoryId">
+    <option v-for="category in categories" :value="category.id">
       {{ formatCategoryName(category.name) }}
     </option>
   </select>
