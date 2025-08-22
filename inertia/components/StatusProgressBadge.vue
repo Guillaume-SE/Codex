@@ -27,7 +27,7 @@ const { backgroundColor, iconColor } = useStatusStyles(toRef(props, 'status'))
   display: flex;
   align-items: center;
   padding: 5px 10px;
-  width: 75px;
+  width: 80px;
   border-radius: 10px;
 }
 
@@ -58,10 +58,10 @@ const { backgroundColor, iconColor } = useStatusStyles(toRef(props, 'status'))
   background-color: #ff1f56;
 }
 .icon-planned {
-  background-color: #79716b;
+  background-color: #ad47ff;
 }
 .icon-anticipated {
-  background-color: #ad47ff;
+  background-color: #79716b;
 }
 
 .background-in-progress {
@@ -77,9 +77,9 @@ const { backgroundColor, iconColor } = useStatusStyles(toRef(props, 'status'))
   background-color: #ffe2e1;
 }
 .background-planned {
-  background-color: #f5f5f4;
+  background-color: #f3e8ff;
 }
 .background-anticipated {
-  background-color: #f3e8ff;
+  background-color: #f5f5f4;
 }
 </style>
