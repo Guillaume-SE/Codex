@@ -50,30 +50,26 @@ export default class MediaController {
     })
   }
 
-  async manageOne({ params, request, session, response }: HttpContext) {
-    // for update
-    if (params.mediaId) {
-      const data = await request.validateUsing(mediaValidator)
-      await this.mediaService.manageOne(data, params.mediaId)
-
-      session.flash('success', `${data.name} modifié avec succès`)
-
-      return response.redirect().toRoute('dashboard.home')
-    }
-    // for create
+  async store({ request, session, response }: HttpContext) {
     const data = await request.validateUsing(mediaValidator)
     await this.mediaService.manageOne(data)
 
     session.flash('success', `${data.name} ajouté avec succès`)
-
     return response.redirect().toRoute('dashboard.home')
   }
 
-  async deleteOne({ params, session, response }: HttpContext) {
+  async update({ params, request, session, response }: HttpContext) {
+    const data = await request.validateUsing(mediaValidator)
+    await this.mediaService.manageOne(data, params.mediaId)
+
+    session.flash('success', `${data.name} modifié avec succès`)
+    return response.redirect().toRoute('dashboard.home')
+  }
+
+  async destroy({ params, session, response }: HttpContext) {
     const mediaDeleted = await this.mediaService.delete(params.mediaId)
 
     session.flash('success', `${mediaDeleted} supprimé avec succès`)
-
     return response.redirect().toRoute('dashboard.home')
   }
 
