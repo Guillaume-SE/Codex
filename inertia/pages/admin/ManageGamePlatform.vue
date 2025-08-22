@@ -12,6 +12,7 @@ import FormErrorComp from '~/components/ui/FormErrorComp.vue'
 import InputComp from '~/components/ui/InputComp.vue'
 import LabelComp from '~/components/ui/LabelComp.vue'
 import { useActionDialog, type ActionDialogConfig } from '~/composables/useActionDialog'
+import { usePaginatedFilters } from '~/composables/usePaginatedFilters'
 import DashboardLayout from '~/layouts/DashboardLayout.vue'
 
 interface IForm {
@@ -25,10 +26,6 @@ interface IPlatformList {
   count: number | null
 }
 
-interface IFilters {
-  search: string
-}
-
 const props = defineProps<{
   platformList: InferPageProps<GamePlatformsController, 'showManage'>['platformList']
   errors: Record<string, string[]>
@@ -40,12 +37,11 @@ const form = useForm<IForm>({
   platformId: null,
   name: null,
 })
-const filters = useForm<IFilters>('filterResults', {
-  search: '',
-})
+
+const { filters, submitFilters, fetchNewPageData } = usePaginatedFilters('/admin/platforms/manage')
 
 const platformConfig: ActionDialogConfig<IForm, IPlatformList> = {
-  resourceApiUrl: '/platform',
+  resourceApiUrl: '/admin/platforms',
   resourceNameConfig: {
     singular: 'plateforme',
     indefinite: 'une',
@@ -66,22 +62,17 @@ const {
   submitForm,
 } = useActionDialog<IForm, IPlatformList>(platformConfig)
 
-function submitFilters() {
-  filters.get('/platform/manage', { preserveState: true })
-}
-
-// paginate with filters included
-function fetchNewPageData(url: string | null) {
-  filters.get(`${url}`, { preserveState: true })
-}
-
-const platformListIsNotEmpty = computed(() => props.platformList.length > 0)
+const platformListIsNotEmpty = computed(() => (props.platformList.data.length > 0 ? true : false))
 </script>
 
 <template>
   <AppHead title="Gestion des plateformes" />
   <form action="GET" @submit.prevent="submitFilters">
-    <DashboardAction :type="'search'" :title="'Gestion des plateformes'">
+    <DashboardAction
+      v-model:search="filters.search"
+      :type="'search'"
+      :title="'Gestion des plateformes'"
+    >
       <ButtonComp @click="openModal('create')">Ajouter</ButtonComp>
     </DashboardAction>
   </form>
@@ -92,9 +83,8 @@ const platformListIsNotEmpty = computed(() => props.platformList.length > 0)
   </div>
 
   <div class="dashboard-list">
-    {{ platformList }}
     <div v-if="platformListIsNotEmpty">
-      <div v-for="platform in platformList" :key="platform.id" class="platform-list-item">
+      <div v-for="platform in platformList.data" :key="platform.id" class="platform-list-item">
         <div>
           <span>{{ platform.name }}</span>
         </div>
@@ -109,9 +99,9 @@ const platformListIsNotEmpty = computed(() => props.platformList.length > 0)
         </div>
       </div>
     </div>
-    <div v-else>Aucune plateforme ajoutée</div>
+    <div v-else>Aucune résultat</div>
 
-    <!-- <Pagination
+    <Pagination
       :page="{
         currentPage: props.platformList.meta.currentPage,
         firstPage: props.platformList.meta.firstPage,
@@ -124,7 +114,7 @@ const platformListIsNotEmpty = computed(() => props.platformList.length > 0)
         previousPageUrl: props.platformList.meta.previousPageUrl,
       }"
       @update:current-page="fetchNewPageData"
-    /> -->
+    />
 
     <ActionDialogComp
       v-if="currentTask"
@@ -139,7 +129,7 @@ const platformListIsNotEmpty = computed(() => props.platformList.length > 0)
         <div v-if="currentTask === 'create' || currentTask === 'edit'">
           <div>
             <LabelComp text="Nom" textPosition="up">
-              <InputComp v-model="form.name" type="text" />
+              <InputComp v-model="form.name" type="text" @input="form.clearErrors('name')" />
             </LabelComp>
           </div>
           <FormErrorComp v-if="form.errors.name" :message="form.errors.name" />

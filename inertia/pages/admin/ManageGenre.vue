@@ -6,11 +6,13 @@ import { computed } from 'vue'
 import ActionDialogComp from '~/components/ActionDialogComp.vue'
 import AppHead from '~/components/AppHead.vue'
 import DashboardAction from '~/components/DashboardAction.vue'
+import Pagination from '~/components/Pagination.vue'
 import ButtonComp from '~/components/ui/ButtonComp.vue'
 import FormErrorComp from '~/components/ui/FormErrorComp.vue'
 import InputComp from '~/components/ui/InputComp.vue'
 import LabelComp from '~/components/ui/LabelComp.vue'
 import { type ActionDialogConfig, useActionDialog } from '~/composables/useActionDialog'
+import { usePaginatedFilters } from '~/composables/usePaginatedFilters'
 import DashboardLayout from '~/layouts/DashboardLayout.vue'
 
 interface IForm {
@@ -36,8 +38,10 @@ const form = useForm<IForm>({
   name: null,
 })
 
+const { filters, submitFilters, fetchNewPageData } = usePaginatedFilters('/admin/genres/manage')
+
 const genreConfig: ActionDialogConfig<IForm, IGenreList> = {
-  resourceApiUrl: '/genre',
+  resourceApiUrl: '/admin/genres',
   resourceNameConfig: {
     singular: 'genre',
     indefinite: 'un',
@@ -58,13 +62,13 @@ const {
   submitForm,
 } = useActionDialog<IForm, IGenreList>(genreConfig)
 
-const genreListIsNotEmpty = computed(() => (props.genreList.length > 0 ? true : false))
+const genreListIsNotEmpty = computed(() => (props.genreList.data.length > 0 ? true : false))
 </script>
 
 <template>
   <AppHead title="Gestion des genres" />
-  <form action="GET">
-    <DashboardAction :type="'search'" :title="'Gestion des genres'">
+  <form action="GET" @submit.prevent="submitFilters">
+    <DashboardAction v-model:search="filters.search" :type="'search'" :title="'Gestion des genres'">
       <ButtonComp @click="openModal('create')">Ajouter</ButtonComp>
     </DashboardAction>
   </form>
@@ -76,7 +80,7 @@ const genreListIsNotEmpty = computed(() => (props.genreList.length > 0 ? true : 
 
   <div class="dashboard-list">
     <div v-if="genreListIsNotEmpty">
-      <div v-for="genre in genreList" :key="genre.id" class="genre-list-item">
+      <div v-for="genre in genreList.data" :key="genre.id" class="genre-list-item">
         <div>
           <span>{{ genre.name }}</span>
         </div>
@@ -91,7 +95,22 @@ const genreListIsNotEmpty = computed(() => (props.genreList.length > 0 ? true : 
         </div>
       </div>
     </div>
-    <div v-else>Aucun genre ajouté</div>
+    <div v-else>Aucun résultat</div>
+
+    <Pagination
+      :page="{
+        currentPage: props.genreList.meta.currentPage,
+        firstPage: props.genreList.meta.firstPage,
+        lastPage: props.genreList.meta.lastPage,
+      }"
+      :url="{
+        firstPageUrl: props.genreList.meta.firstPageUrl,
+        lastPageUrl: props.genreList.meta.lastPageUrl,
+        nextPageUrl: props.genreList.meta.nextPageUrl,
+        previousPageUrl: props.genreList.meta.previousPageUrl,
+      }"
+      @update:current-page="fetchNewPageData"
+    />
 
     <!-- create modal -->
     <ActionDialogComp
@@ -107,7 +126,7 @@ const genreListIsNotEmpty = computed(() => (props.genreList.length > 0 ? true : 
         <div v-if="currentTask === 'create' || currentTask === 'edit'">
           <div>
             <LabelComp text="Nom" textPosition="up">
-              <InputComp v-model="form.name" type="text" />
+              <InputComp v-model="form.name" type="text" @input="form.clearErrors('name')" />
             </LabelComp>
           </div>
           <FormErrorComp v-if="form.errors.name" :message="form.errors.name" />

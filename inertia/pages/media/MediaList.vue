@@ -2,15 +2,15 @@
 import type MediaController from '#controllers/media_controller'
 import type { MediaCategories } from '#types/MediaCategories'
 import { InferPageProps } from '@adonisjs/inertia/types'
-import { useForm } from '@inertiajs/vue3'
-import { computed, onMounted, toRef } from 'vue'
+import { computed, toRef } from 'vue'
 import AppHead from '~/components/AppHead.vue'
-import MediaCard from '~/components/MediaCard.vue'
-import MediaFilters from '~/components/MediaFilters.vue'
+import MediaCard from '~/components/media/MediaCard.vue'
+import MediaFilters from '~/components/media/MediaFilters.vue'
 import Pagination from '~/components/Pagination.vue'
 import SearchBar from '~/components/SearchBar.vue'
 import SelectComp from '~/components/ui/SelectComp.vue'
 import { useCategoryInfo } from '~/composables/useCategoryInfo'
+import { usePaginatedMediaFilters } from '~/composables/usePaginatedMediaFilters'
 
 const props = defineProps<{
   mediaList: InferPageProps<MediaController, 'showByCategory'>['mediaList']
@@ -22,58 +22,12 @@ const props = defineProps<{
   gamePlatformsList: InferPageProps<MediaController, 'showByCategory'>['gamePlatformsList']
 }>()
 
-interface IFilters {
-  search: string
-  sortBy: string
-  status: number[]
-  types: number[]
-  genres: number[]
-  platforms: number[]
-  duration: string | undefined
-  favorite: boolean
-}
-
 const categoryRef = toRef(props, 'mediaCategory')
 const { title, categoryFr } = useCategoryInfo(categoryRef)
-
-// argument passed to conserve values when navigate between pages
-const filters = useForm<IFilters>('filterResults', {
-  search: '',
-  sortBy: props.mediaSortOptions[0].value,
-  status: [],
-  types: [],
-  genres: [],
-  platforms: [],
-  duration: '',
-  favorite: false,
-})
-
-// paginate with filters included
-function fetchNewPageData(url: string | null) {
-  filters.get(`${url}`, { preserveState: true })
-}
-
-function resetFormValues() {
-  filters.defaults({
-    sortBy: props.mediaSortOptions[0].value,
-    status: [],
-    types: [],
-    genres: [],
-    platforms: [],
-    duration: '',
-    favorite: false,
-  })
-  if (props.mediaCategory !== 'movie') {
-    filters.defaults('duration', undefined)
-  }
-  filters.reset()
-}
-
-onMounted(() => {
-  if (props.mediaCategory !== 'movie') {
-    filters.duration = undefined
-  }
-})
+const { filters, submitFilters, fetchNewPageData, resetFilters } = usePaginatedMediaFilters(
+  toRef(props, 'mediaCategory'),
+  toRef(props, 'mediaSortOptions')
+)
 
 const mediaListIsNotEmpty = computed(() => {
   return props.mediaList.data.length > 0 ? true : false
@@ -85,10 +39,7 @@ const mediaListIsNotEmpty = computed(() => {
   <h2>{{ categoryFr }}</h2>
   <div class="media-list-container">
     <div>
-      <form
-        method="GET"
-        @submit.prevent="filters.get(`/categories/${props.mediaCategory}`, { preserveState: true })"
-      >
+      <form method="GET" @submit.prevent="submitFilters">
         <div>
           <SearchBar v-model="filters.search" placeholder="Rechercher" />
         </div>
@@ -111,7 +62,7 @@ const mediaListIsNotEmpty = computed(() => {
             :genres-list="mediaGenresList"
             :platforms-list="gamePlatformsList"
             :media-category="mediaCategory"
-            @update:reset-form-values="resetFormValues"
+            @update:reset-form-values="resetFilters"
           />
         </div>
       </form>

@@ -6,11 +6,13 @@ import { computed, watch } from 'vue'
 import ActionDialogComp from '~/components/ActionDialogComp.vue'
 import AppHead from '~/components/AppHead.vue'
 import DashboardAction from '~/components/DashboardAction.vue'
+import Pagination from '~/components/Pagination.vue'
 import ButtonComp from '~/components/ui/ButtonComp.vue'
 import FormErrorComp from '~/components/ui/FormErrorComp.vue'
 import InputComp from '~/components/ui/InputComp.vue'
 import LabelComp from '~/components/ui/LabelComp.vue'
 import { useActionDialog, type ActionDialogConfig } from '~/composables/useActionDialog'
+import { usePaginatedFilters } from '~/composables/usePaginatedFilters'
 import DashboardLayout from '~/layouts/DashboardLayout.vue'
 
 interface IForm {
@@ -38,6 +40,8 @@ const form = useForm<IForm>({
   replacementTypeId: null,
 })
 
+const { filters, submitFilters, fetchNewPageData } = usePaginatedFilters('/admin/types/manage')
+
 watch(
   () => props.errors,
   (newErrors) => {
@@ -59,7 +63,7 @@ function customHandleReplace() {
     return
   }
 
-  form.put(`/type/replace/${typeIdToDelete}`, {
+  form.put(`/admin/types/replace/${typeIdToDelete}`, {
     onSuccess: () => closeModal(),
   })
 }
@@ -73,7 +77,7 @@ function customHandleUpdate() {
   }
 
   // to avoid back end to receive typeId null (potential conflict with params)
-  router.put(`/type/${typeIdToUpdate}`, payload, {
+  router.put(`/admin/types/${typeIdToUpdate}`, payload, {
     onStart: () => (form.processing = true),
     onFinish: () => (form.processing = false),
     onSuccess: () => closeModal(),
@@ -83,7 +87,7 @@ function customHandleUpdate() {
 }
 
 const typeConfig: ActionDialogConfig<IForm, ITypeList> = {
-  resourceApiUrl: '/type',
+  resourceApiUrl: '/admin/types',
   resourceNameConfig: {
     singular: 'type',
     indefinite: 'un',
@@ -105,13 +109,13 @@ const {
   submitForm,
 } = useActionDialog<IForm, ITypeList>(typeConfig)
 
-const typeListIsNotEmpty = computed(() => (props.typeList.length > 0 ? true : false))
+const typeListIsNotEmpty = computed(() => (props.typeList.data.length > 0 ? true : false))
 const filteredTypeList = computed(() => {
   const idToExclude = selectedItem.value?.id
   if (!idToExclude) {
-    return props.typeList
+    return props.typeList.data
   }
-  return props.typeList.filter((type) => type.id !== idToExclude)
+  return props.typeList.data.filter((type) => type.id !== idToExclude)
 })
 
 const isUsedByMedia = computed(() => {
@@ -124,7 +128,7 @@ const isUsedByMedia = computed(() => {
 
 const isSubmitDisabled = computed(() => {
   // avoid submit when no option selected in replace case
-  if (currentTask.value === 'delete' && isUsedByMedia.value) {
+  if (currentTask.value === 'replace' && isUsedByMedia.value) {
     return form.replacementTypeId === null
   }
 
@@ -134,8 +138,8 @@ const isSubmitDisabled = computed(() => {
 
 <template>
   <AppHead title="Gestion des types" />
-  <form action="GET">
-    <DashboardAction :type="'search'" :title="'Gestion des types'">
+  <form action="GET" @submit.prevent="submitFilters">
+    <DashboardAction v-model:search="filters.search" :type="'search'" :title="'Gestion des types'">
       <ButtonComp @click="openModal('create')">Ajouter</ButtonComp>
     </DashboardAction>
   </form>
@@ -147,7 +151,7 @@ const isSubmitDisabled = computed(() => {
 
   <div class="dashboard-list">
     <div v-if="typeListIsNotEmpty">
-      <div v-for="type in typeList" :key="type.id" class="type-list-item">
+      <div v-for="type in typeList.data" :key="type.id" class="type-list-item">
         <div>
           <span>{{ type.name }}</span>
         </div>
@@ -165,7 +169,22 @@ const isSubmitDisabled = computed(() => {
         </div>
       </div>
     </div>
-    <div v-else>Aucun type ajouté</div>
+    <div v-else>Aucun résultat</div>
+
+    <Pagination
+      :page="{
+        currentPage: props.typeList.meta.currentPage,
+        firstPage: props.typeList.meta.firstPage,
+        lastPage: props.typeList.meta.lastPage,
+      }"
+      :url="{
+        firstPageUrl: props.typeList.meta.firstPageUrl,
+        lastPageUrl: props.typeList.meta.lastPageUrl,
+        nextPageUrl: props.typeList.meta.nextPageUrl,
+        previousPageUrl: props.typeList.meta.previousPageUrl,
+      }"
+      @update:current-page="fetchNewPageData"
+    />
 
     <ActionDialogComp
       v-if="currentTask"
@@ -201,6 +220,10 @@ const isSubmitDisabled = computed(() => {
                 </option>
               </select>
             </LabelComp>
+            <FormErrorComp
+              v-if="form.errors.replacementTypeId"
+              :message="form.errors.replacementTypeId"
+            />
           </div>
           <div v-else>
             <span>
