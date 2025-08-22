@@ -8,6 +8,7 @@ const messages = {
   'positive': 'Le champ "{{ field }}" doit être un nombre positif',
   // specific
   'alternativeName.notSameAs': 'Le {{ field }} doit être différent du nom principal',
+  'replacementTypeId.required': 'Le {{ field }} de remplacement est requis',
   'file.extname': 'Fichier invalide. Seuls les formats png, webp, jpg, jpeg sont autorisés',
   'file.size': 'Fichier trop lourd. Seuls les fichiers de 2mb maximum sont autorisés',
   'isExists': "Le {{ field }} choisi n'existe pas",
@@ -24,6 +25,7 @@ const fields = {
   alternativeName: 'nom alternatif',
   statusId: 'progression',
   platformId: 'plateforme',
+  replacementTypeId: 'type',
 }
 
 vine.messagesProvider = new SimpleMessagesProvider(messages, fields)
