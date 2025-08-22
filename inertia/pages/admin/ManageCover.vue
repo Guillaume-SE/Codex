@@ -25,7 +25,7 @@ const form = useForm({
 // }
 
 function submitDeleteCover() {
-  form.delete(`/media/${props.media.id}/cover`)
+  form.delete(`/admin/media/${props.media.id}/cover`)
 }
 
 const openModal = () => {
@@ -59,7 +59,7 @@ function onUpload() {
 }
 async function submitPostCover() {
   form.cover = await cropper?.getFile()
-  ;(form.post(`/media/${props.media.id}/cover`),
+  ;(form.post(`/admin/media/${props.media.id}/cover`),
     {
       onSuccess: () => {
         uploadDialog.value = false

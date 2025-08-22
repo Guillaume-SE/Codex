@@ -13,7 +13,7 @@ defineProps<{
       <nav class="navbar">
         <Link href="/">Accueil</Link>
         <Link href="/categories">Catégories</Link>
-        <Link href="/dashboard">Dashboard</Link>
+        <Link href="/admin/dashboard">Dashboard</Link>
         <Link href="/categories/game">Jeux</Link>
         <Link href="/categories/movie">Films</Link>
         <Link href="/categories/series">Séries</Link>
@@ -26,11 +26,11 @@ defineProps<{
       <h3>Dashboard</h3>
       <div class="dashboard-content">
         <nav class="dashboard-navbar">
-          <Link class="border" href="/dashboard">Général</Link>
-          <Link href="/platform/manage">Plateformes</Link>
-          <Link href="/genre/manage">Genres</Link>
-          <Link href="/type/manage">Types</Link>
-          <Link href="/category/manage">Catégories</Link>
+          <Link href="/admin/dashboard">Général</Link>
+          <Link href="/admin/platforms/manage">Plateformes</Link>
+          <Link href="/admin/genres/manage">Genres</Link>
+          <Link href="/admin/types/manage">Types</Link>
+          <Link href="/admin/categories/manage">Catégories</Link>
         </nav>
         <div class="dashboard-content-container">
           <slot />
@@ -55,8 +55,5 @@ defineProps<{
 .dashboard-navbar {
   display: flex;
   flex-direction: column;
-}
-.border {
-  border: solid 1px black;
 }
 </style>

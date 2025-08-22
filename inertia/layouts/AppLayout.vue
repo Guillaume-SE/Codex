@@ -13,7 +13,7 @@ defineProps<{
       <nav class="navbar">
         <Link href="/">Accueil</Link>
         <Link href="/categories">Catégories</Link>
-        <Link href="/dashboard">Dashboard</Link>
+        <Link href="/admin/dashboard">Dashboard</Link>
         <Link href="/categories/game">Jeux</Link>
         <Link href="/categories/movie">Films</Link>
         <Link href="/categories/series">Séries</Link>

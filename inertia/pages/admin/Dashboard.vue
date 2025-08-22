@@ -8,12 +8,12 @@ import AppHead from '~/components/AppHead.vue'
 import DashboardAction from '~/components/DashboardAction.vue'
 import DashboardMediaListItem from '~/components/DashboardMediaListItem.vue'
 import Pagination from '~/components/Pagination.vue'
-import FormErrorComp from '~/components/ui/FormErrorComp.vue'
 import {
   useActionText,
   type ActionType,
   type IResourceNameConfig,
 } from '~/composables/useActionText'
+import { usePaginatedFilters } from '~/composables/usePaginatedFilters'
 import DashboardLayout from '~/layouts/DashboardLayout.vue'
 
 const props = defineProps<{
@@ -28,16 +28,12 @@ defineOptions({
 interface IForm {
   mediaId: number | null
 }
-interface IFilters {
-  search: string
-}
 
 const form = useForm<IForm>({
   mediaId: null,
 })
-const filters = useForm<IFilters>('filterResults', {
-  search: '',
-})
+
+const { filters, submitFilters, fetchNewPageData } = usePaginatedFilters('/admin/dashboard')
 
 const mediaName = ref<string>('')
 const actionDialogRef = useTemplateRef<InstanceType<typeof ActionDialogComp>>('actionDialogRef')
@@ -52,19 +48,12 @@ const { title: dialogTitle, actionText: dialogActionText } = useActionText(curre
 
 function submitForm() {
   const mediaId = form.mediaId
-  form.delete(`media/${mediaId}`, {
+  form.delete(`/admin/media/${mediaId}`, {
     onSuccess: () => {
       form.reset()
     },
   })
   closeModal()
-}
-function submitFilters() {
-  filters.get('/dashboard', { preserveState: true })
-}
-// paginate with filters included
-function fetchNewPageData(url: string | null) {
-  filters.get(`${url}`, { preserveState: true })
 }
 
 function openModal(payload: { id: number; name: string }) {
@@ -89,7 +78,7 @@ const isMediaListEmpty = computed(() => {
   <AppHead title="Dashboard" />
   <form action="GET" @submit.prevent="submitFilters">
     <DashboardAction v-model:search="filters.search" :type="'search'" :title="'Gestion des media'">
-      <Link href="/media/manage">Ajouter un media</Link>
+      <Link href="/admin/media/create">Ajouter un media</Link>
     </DashboardAction>
   </form>
   <div class="dashboard-list-item-header">
@@ -105,7 +94,7 @@ const isMediaListEmpty = computed(() => {
     :media="media"
     @delete-item="openModal"
   />
-  <div v-else class="empty-list-message">
+  <div v-else>
     <p>Aucun média ajouté pour le moment.</p>
   </div>
 
@@ -136,15 +125,6 @@ const isMediaListEmpty = computed(() => {
     @close="closeModal"
   >
     <template #form-content>
-      <div v-if="currentTask === 'create' || currentTask === 'edit'">
-        <div>
-          <!-- <LabelComp text="Nom" textPosition="up"> -->
-          <!-- <InputComp v-model="form.name" type="text" /> -->
-          <!-- </LabelComp> -->
-        </div>
-        <!-- <FormErrorComp v-if="form.errors.name" :message="form.errors.name" /> -->
-      </div>
-
       <div v-if="currentTask === 'delete'">
         <span>
           Confirmer la suppression de <strong>{{ mediaName }}</strong> ?

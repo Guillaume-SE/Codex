@@ -198,7 +198,7 @@ function handleUpdate() {
       break
   }
 
-  router.put(`/media/${props.media.id}`, payload, {
+  router.put(`/admin/media/${props.media.id}`, payload, {
     onStart: () => (form.processing = true),
     onFinish: () => (form.processing = false),
     onError: handleFormError,
@@ -206,7 +206,7 @@ function handleUpdate() {
 }
 
 function handleCreate() {
-  form.post('/media', {
+  form.post('/admin/media', {
     onError: handleFormError,
   })
 }

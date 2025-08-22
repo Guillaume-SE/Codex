@@ -22,7 +22,7 @@ function requestDeletion() {
   <div class="dashboard-list-item">
     <div class="dashboard-item-name-container">
       <div v-if="props.media.cover" class="dashboard-list_img">
-        <Link :href="`/media/${props.media.id}/cover`">
+        <Link :href="`/admin/media/${props.media.id}/cover`">
           <img
             class="img-preview"
             loading="lazy"
@@ -33,19 +33,19 @@ function requestDeletion() {
         </Link>
       </div>
       <div v-else class="dashboard-list_img">
-        <Link :href="`/media/${props.media.id}/cover`">
+        <Link :href="`/admin/media/${props.media.id}/cover`">
           <div class="no-cover-preview">
             <ImageNotAvailableIcon />
           </div>
         </Link>
       </div>
-      <Link :href="`/media/manage/${props.media.id}`">
+      <Link :href="`/admin/media/${props.media.id}/edit`">
         <p class="dashboard-item-name">{{ props.media.name }}</p>
       </Link>
     </div>
 
     <div>
-      <Link :href="`/media/${props.media.id}/review`">
+      <Link :href="`/admin/media/${props.media.id}/review`">
         <RatingBox :rating="props.media.review?.rating ? props.media.review.rating : null" />
       </Link>
     </div>
