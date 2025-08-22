@@ -7,7 +7,6 @@ const statusStyles: Record<MediaStatuses, { bg: string; icon: string }> = {
   'en pause': { bg: 'background-paused', icon: 'icon-paused' },
   'abandonné': { bg: 'background-dropped', icon: 'icon-dropped' },
   'prévu': { bg: 'background-planned', icon: 'icon-planned' },
-  'attendu': { bg: 'background-anticipated', icon: 'icon-anticipated' },
 }
 
 export function useStatusStyles(status: MaybeRef<string>) {

@@ -24,10 +24,6 @@ export default class MediaStatusSeeder extends BaseSeeder {
         id: 5,
         name: 'prévu',
       },
-      {
-        id: 6,
-        name: 'attendu',
-      },
     ])
   }
 }
