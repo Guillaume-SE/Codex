@@ -11,7 +11,7 @@ export default class DashboardController {
     const filters = await request.validateUsing(searchValidator)
     const mediaList = await MediaService.getFiltered(filters, page, 20)
 
-    mediaList.baseUrl('/dashboard')
+    mediaList.baseUrl('/admin/dashboard')
 
     const paginatedMediaList = MediaPresenter.presentPaginated(mediaList)
 
