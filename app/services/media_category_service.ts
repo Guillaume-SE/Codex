@@ -2,15 +2,15 @@ import Genre from '#models/genre'
 import MediaCategory from '#models/media_category'
 import MediaType from '#models/media_type'
 import type { MediaCategories } from '#types/MediaCategories'
-import { typesAndGenresAssociationValidator } from '#validators/media_category_validator'
+import { categoryAssociationValidator } from '#validators/media_category_validator'
 import { inject } from '@adonisjs/core'
 import { Infer } from '@vinejs/vine/types'
 
-type updatedData = Omit<Infer<typeof typesAndGenresAssociationValidator>, 'params'>
+type updatedData = Infer<typeof categoryAssociationValidator>
 
 @inject()
 export default class MediaCategoryService {
-  public async associateTypesAndGenres(data: updatedData, categoryId: number) {
+  public async associate(data: updatedData, categoryId: number) {
     const category = await MediaCategory.findOrFail(categoryId)
 
     await category.related('genres').sync(data.genres)
