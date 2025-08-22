@@ -1,39 +1,17 @@
 <script setup lang="ts">
-import type {
-  IAnimeMediaPresented,
-  IBaseMediaPresented,
-  IBookMediaPresented,
-  IGameMediaPresented,
-  IMovieMediaPresented,
-  ISeriesMediaPresented,
-} from '#interfaces/media_presented_interface'
+import type { IMediaPresented } from '#interfaces/media_presented_interface'
 import { computed } from 'vue'
 import AppHead from '~/components/AppHead.vue'
 import ImageNotAvailableIcon from '~/components/icons/ImageNotAvailableIcon.vue'
+import MediaSpecificDetails from '~/components/media/MediaSpecificDetails.vue'
 import RatingBox from '~/components/RatingBox.vue'
 import StatusProgressBadge from '~/components/StatusProgressBadge.vue'
 import { useFormattedDateToLocale } from '~/composables/useFormattedDate'
-import { useFormattedDuration } from '~/composables/useFormattedDuration'
 
 const props = defineProps<{
-  media:
-    | IBaseMediaPresented
-    | IGameMediaPresented
-    | IMovieMediaPresented
-    | ISeriesMediaPresented
-    | IAnimeMediaPresented
-    | IBookMediaPresented
+  media: IMediaPresented
 }>()
 
-const isGameMedia = (media: Object): media is IGameMediaPresented => 'gameInfos' in media
-const isMovieMedia = (media: Object): media is IMovieMediaPresented => 'movieInfos' in media
-const isSeriesMedia = (media: Object): media is ISeriesMediaPresented => 'seriesInfos' in media
-const isAnimeMedia = (media: Object): media is IAnimeMediaPresented => 'animeInfos' in media
-const isBookMedia = (media: Object): media is IBookMediaPresented => 'bookInfos' in media
-
-const formattedDuration = computed(() =>
-  isMovieMedia(props.media) ? useFormattedDuration(props.media.movieInfos.duration) : null
-)
 const hasReviewRating = computed(() =>
   props.media.review?.rating ? props.media.review.rating : null
 )
@@ -77,29 +55,10 @@ const formattedDate = useFormattedDateToLocale
     <div>
       <h3>Détails</h3>
       <div>
-        <!-- alt name -->
         <p v-if="media.alternativeName">Nom alternatif: {{ media.alternativeName }}</p>
         <!-- released -->
         <p>Date de sortie: {{ formattedDate(media.released) || 'N/A' }}</p>
-        <!-- games infos -->
-        <p v-if="isGameMedia(media)">Joué sur: {{ media.gameInfos.platform || 'N/A' }}</p>
-        <!-- movies infos -->
-        <p v-if="isMovieMedia(media)">Durée: {{ formattedDuration || 'N/A' }}</p>
-        <!-- series infos -->
-        <p v-if="isSeriesMedia(media)">
-          Nombre d'épisodes:
-          {{ media.seriesInfos.seasonLength || 'N/A' }}
-        </p>
-        <!-- anime infos -->
-        <p v-if="isAnimeMedia(media)">
-          Nombre d'épisodes:
-          {{ media.animeInfos.seasonLength || 'N/A' }}
-        </p>
-        <!-- books infos -->
-        <p v-if="isBookMedia(media)">
-          Pages:
-          {{ media.bookInfos.pages || 'N/A' }}
-        </p>
+        <MediaSpecificDetails :media="media" />
       </div>
     </div>
     <div>
