@@ -10,11 +10,13 @@ type updatedData = Infer<typeof categoryAssociationValidator>
 
 @inject()
 export default class MediaCategoryService {
-  public async associate(data: updatedData, categoryId: number) {
+  public async associate(data: updatedData, categoryId: number): Promise<string> {
     const category = await MediaCategory.findOrFail(categoryId)
 
     await category.related('genres').sync(data.genres)
     await category.related('types').sync(data.types)
+
+    return category.name
   }
 
   public async getCategoryTypes(category: MediaCategories) {
