@@ -9,10 +9,8 @@ type updatedData = Infer<typeof updateMediaTypeValidator>
 @inject()
 export default class MediaTypeService {
   public async storeOrUpdate(data: updatedData, typeId?: number | undefined) {
-    let type = new MediaType()
-    if (typeId) {
-      type = await MediaType.findOrFail(typeId)
-    }
+    const type = typeId ? await MediaType.findOrFail(typeId) : new MediaType()
+
     await type.merge(data).save()
   }
 
@@ -38,5 +36,19 @@ export default class MediaTypeService {
     await type.delete()
 
     return typeName
+  }
+
+  static async getFiltered(filters: { search?: string }, page: number = 1, results: number = 10) {
+    const mediaQuery = await MediaType.query()
+      .if(filters.search, (q) => {
+        q.where((subQuery) => {
+          subQuery.where('name', 'like', `%${filters.search}%`)
+        })
+      })
+      .withCount('media')
+      .orderBy('name', 'asc')
+      .paginate(page, results)
+
+    return mediaQuery
   }
 }

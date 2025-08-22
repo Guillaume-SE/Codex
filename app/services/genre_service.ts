@@ -8,10 +8,7 @@ type updatedData = Infer<typeof updateGenreValidator>
 @inject()
 export default class GenreService {
   public async storeOrUpdate(data: updatedData, genreId?: number | undefined) {
-    let genre = new Genre()
-    if (genreId) {
-      genre = await Genre.findOrFail(genreId)
-    }
+    const genre = genreId ? await Genre.findOrFail(genreId) : new Genre()
     await genre.merge(data).save()
   }
 
@@ -22,5 +19,19 @@ export default class GenreService {
     await genre.delete()
 
     return genreName
+  }
+
+  static async getFiltered(filters: { search?: string }, page: number = 1, results: number = 10) {
+    const mediaQuery = await Genre.query()
+      .if(filters.search, (q) => {
+        q.where((subQuery) => {
+          subQuery.where('name', 'like', `%${filters.search}%`)
+        })
+      })
+      .withCount('media')
+      .orderBy('name', 'asc')
+      .paginate(page, results)
+
+    return mediaQuery
   }
 }
