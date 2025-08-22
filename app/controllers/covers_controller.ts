@@ -1,8 +1,8 @@
-import { MediaPresenterFactory } from '#classes/MediaPresenter'
+import { MediaPresenter } from '#classes/MediaPresenter'
 import Cover from '#models/cover'
 import CoverService from '#services/cover_service'
 import MediaService from '#services/media_service'
-import { manageCoverValidator } from '#validators/cover_validator'
+import { coverValidator } from '#validators/cover_validator'
 import { inject } from '@adonisjs/core'
 import type { HttpContext } from '@adonisjs/core/http'
 
@@ -15,7 +15,7 @@ export default class CoversController {
 
   async showManage({ params, inertia }: HttpContext) {
     const media = await this.mediaService.getOne(params.mediaId)
-    const presentedMedia = MediaPresenterFactory.presentMedia(media)
+    const presentedMedia = MediaPresenter.present(media)
 
     return inertia.render('admin/ManageCover', {
       media: presentedMedia,
@@ -23,19 +23,15 @@ export default class CoversController {
   }
 
   async manageOne({ params, request, response }: HttpContext) {
-    const mediaId = params.mediaId
-
-    const { cover } = await request.validateUsing(manageCoverValidator)
+    const { cover } = await request.validateUsing(coverValidator)
     const uploadedCover = await this.coverService.store(cover)
-    await this.coverService.saveStoredCoverFilenames(uploadedCover, mediaId)
+    await this.coverService.saveStoredCoverFilenames(uploadedCover, params.mediaId)
 
     return response.redirect().toRoute('dashboard.home')
   }
 
   public async deleteOne({ params, response }: HttpContext) {
-    const mediaId = params.mediaId
-
-    const cover = await Cover.findByOrFail('media_id', mediaId)
+    const cover = await Cover.findByOrFail('media_id', params.mediaId)
 
     await this.coverService.deleteFile({
       original: cover.originalCoverFilename,
