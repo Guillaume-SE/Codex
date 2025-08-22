@@ -34,10 +34,11 @@ export default class MediaCategoriesController {
     })
   }
 
-  public async associate({ params, response, request }: HttpContext) {
+  public async associate({ params, session, response, request }: HttpContext) {
     const data = await request.validateUsing(categoryAssociationValidator)
-    await this.mediaCategoryService.associate(data, params.categoryId)
+    const category = await this.mediaCategoryService.associate(data, params.categoryId)
 
+    session.flash('success', `${category}: liste modifiée avec succès`)
     return response.redirect().toRoute('categories.manage')
   }
 }
