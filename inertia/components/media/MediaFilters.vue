@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import type MediaController from '#controllers/media_controller'
 import { InferPageProps } from '@adonisjs/inertia/types'
+import ButtonComp from '~/components/ui/ButtonComp.vue'
 import InputComp from '~/components/ui/InputComp.vue'
 import LabelComp from '~/components/ui/LabelComp.vue'
 import SelectComp from '~/components/ui/SelectComp.vue'
 import { useCapitalizeFirstLetter } from '~/composables/useCapitalizeFirstLetter'
-import ButtonComp from './ui/ButtonComp.vue'
 
 defineProps<{
   statusesList: InferPageProps<MediaController, 'showByCategory'>['mediaStatusesList']
