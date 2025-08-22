@@ -69,7 +69,7 @@ router
     router.get('/types/manage', [MediaTypesController, 'showManage']).as('types.index')
     router.post('/types', [MediaTypesController, 'store']).as('types.store')
     router.put('/types/:typeId', [MediaTypesController, 'update']).as('types.update')
-    router.put('/types/replace/:typeId', [MediaTypesController, 'replaceOne']).as('types.replace')
+    router.put('/types/replace/:typeId', [MediaTypesController, 'replace']).as('types.replace')
     router.delete('/types/:typeId', [MediaTypesController, 'destroy']).as('types.destroy')
 
     router.get('/platforms/manage', [GamePlatformsController, 'showManage']).as('platforms.index')

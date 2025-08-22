@@ -55,7 +55,7 @@ export default class MediaTypesController {
     return response.redirect().toRoute('types.index')
   }
 
-  public async replaceOne({ request, params, session, response }: HttpContext) {
+  public async replace({ request, params, session, response }: HttpContext) {
     const { replacementTypeId } = await request.validateUsing(replaceMediaTypeValidator)
     const typeDeleted = await this.mediaTypeService.replaceAndDelete(
       params.typeId,
