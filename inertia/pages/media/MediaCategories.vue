@@ -3,7 +3,7 @@ import type MediaController from '#controllers/media_controller'
 import { InferPageProps } from '@adonisjs/inertia/types'
 import { Link } from '@inertiajs/vue3'
 import AppHead from '~/components/AppHead.vue'
-import MediaCard from '~/components/MediaCard.vue'
+import MediaCard from '~/components/media/MediaCard.vue'
 
 defineProps<{
   categoriesOverview: InferPageProps<MediaController, 'showCategories'>['categoriesOverview']
