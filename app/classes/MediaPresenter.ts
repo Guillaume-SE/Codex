@@ -1,5 +1,7 @@
 import { IPaginated } from '#interfaces/paginated_interface'
 import type Media from '#models/media'
+import type { MediaCategories } from '#types/MediaCategories'
+import type { MediaStatuses } from '#types/MediaStatuses'
 import { ModelPaginatorContract } from '@adonisjs/lucid/types/model'
 import { DateTime } from 'luxon'
 
@@ -10,8 +12,8 @@ interface IGenre {
 
 export class MediaPresenter {
   id: number
-  status: string
-  category: string
+  status: MediaStatuses
+  category: MediaCategories
   type: string
   name: string
   alternativeName: string | null

@@ -1,7 +1,10 @@
+import type { MediaCategories } from '#types/MediaCategories'
+import type { MediaStatuses } from '#types/MediaStatuses'
+
 export interface IMediaPresented {
   id: number
-  status: string
-  category: string
+  status: MediaStatuses
+  category: MediaCategories
   type: string
   name: string
   alternativeName: string | null
