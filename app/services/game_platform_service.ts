@@ -8,10 +8,8 @@ type updatedData = Infer<typeof updateGamePlatformValidator>
 @inject()
 export default class GamePlatformService {
   public async storeOrUpdate(data: updatedData, platformId?: number | undefined) {
-    let platform = new GamePlatform()
-    if (platformId) {
-      platform = await GamePlatform.findOrFail(platformId)
-    }
+    const platform = platformId ? await GamePlatform.findOrFail(platformId) : new GamePlatform()
+
     await platform.merge(data).save()
   }
 
