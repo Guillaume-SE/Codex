@@ -26,9 +26,9 @@ const { backgroundColor, iconColor } = useStatusStyles(toRef(props, 'status'))
 .status-progress-container {
   display: flex;
   align-items: center;
-  padding: 5px 10px;
+  padding: 5px;
   width: 80px;
-  border-radius: 10px;
+  border-radius: 5px;
 }
 
 .status-progress-text {
@@ -60,9 +60,6 @@ const { backgroundColor, iconColor } = useStatusStyles(toRef(props, 'status'))
 .icon-planned {
   background-color: #ad47ff;
 }
-.icon-anticipated {
-  background-color: #79716b;
-}
 
 .background-in-progress {
   background-color: #daebfe;
@@ -78,8 +75,5 @@ const { backgroundColor, iconColor } = useStatusStyles(toRef(props, 'status'))
 }
 .background-planned {
   background-color: #f3e8ff;
-}
-.background-anticipated {
-  background-color: #f5f5f4;
 }
 </style>
