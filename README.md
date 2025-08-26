@@ -49,8 +49,8 @@ It also allows me to keep up to date with the ones I've planned to see, the ones
 
 ## Future plans
 
+- Switch images upload to a cloud service.
 - Restrict access to certain pages and functions to non-administrator users.
-- Pilot all data with a dashboard.
 - Statistical display of media distribution according to various criteria.
 - Adding a feature to track "collections".
 
@@ -82,7 +82,7 @@ node ace db:seed -i
 
 ## Status
 
-5 august 2025 : Working on errors handling globaly in the project.
+26 august 2025 : Dashboard features completed. Next step: transition from a local image upload system to a cloud-based system with quality improvements.
 
 ## Other
 
