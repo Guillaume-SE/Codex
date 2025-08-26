@@ -50,7 +50,7 @@ export const MediaFactory = factory
       MediaStatusesEnum.EN_COURS,
       MediaStatusesEnum.TERMINE,
       MediaStatusesEnum.EN_PAUSE,
-      MediaStatusesEnum.ABANDONNE,
+      MediaStatusesEnum.ARRETE,
       MediaStatusesEnum.PREVU,
     ])
     row.released = DateTime.fromJSDate(faker.date.past())

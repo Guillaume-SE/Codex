@@ -18,7 +18,7 @@ export default class MediaStatusSeeder extends BaseSeeder {
       },
       {
         id: 4,
-        name: 'abandonné',
+        name: 'arrêté',
       },
       {
         id: 5,

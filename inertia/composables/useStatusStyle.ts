@@ -4,8 +4,8 @@ import { computed, toRef, type MaybeRef } from 'vue'
 const statusStyles: Record<MediaStatuses, { bg: string; icon: string }> = {
   'en cours': { bg: 'background-in-progress', icon: 'icon-in-progress' },
   'terminé': { bg: 'background-completed', icon: 'icon-completed' },
-  'en pause': { bg: 'background-paused', icon: 'icon-paused' },
-  'abandonné': { bg: 'background-dropped', icon: 'icon-dropped' },
+  'en pause': { bg: 'background-on-hold', icon: 'icon-on-hold' },
+  'arrêté': { bg: 'background-dropped', icon: 'icon-dropped' },
   'prévu': { bg: 'background-planned', icon: 'icon-planned' },
 }
 
