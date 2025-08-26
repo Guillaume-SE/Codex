@@ -30,6 +30,7 @@ defineProps<{
           <Link href="/admin/platforms/manage">Plateformes</Link>
           <Link href="/admin/genres/manage">Genres</Link>
           <Link href="/admin/types/manage">Types</Link>
+          <Link href="/admin/publishers/manage">Editeurs</Link>
           <Link href="/admin/categories/manage">Catégories</Link>
         </nav>
         <div class="dashboard-content-container">
