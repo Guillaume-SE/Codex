@@ -5,6 +5,7 @@ import LabelComp from '~/components/ui/LabelComp.vue'
 
 defineProps<{
   form: any
+  bookPublishers: any[]
 }>()
 
 defineOptions({
@@ -13,10 +14,11 @@ defineOptions({
 </script>
 
 <template>
-  <LabelComp text="Nombres de pages" textPosition="up">
-    <div>
-      <InputComp v-model="form.pages" type="number" min="1" />
-    </div>
-  </LabelComp>
-  <FormErrorComp v-if="form.errors.pages" :message="form.errors.pages" />
+  <span>Editeur</span>
+  <div v-for="publisher in bookPublishers">
+    <LabelComp :text="publisher.name" textPosition="down">
+      <InputComp v-model="form.publisherId" type="radio" :value="publisher.id" />
+    </LabelComp>
+  </div>
+  <FormErrorComp v-if="form.errors.publisherId" :message="form.errors.publisherId" />
 </template>

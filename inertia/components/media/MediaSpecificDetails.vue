@@ -24,5 +24,5 @@ const formattedDuration = computed(() =>
 
   <p v-if="media.animeInfos">Nombre d'épisodes: {{ media.animeInfos.seasonLength || 'N/A' }}</p>
 
-  <p v-if="media.bookInfos">Pages: {{ media.bookInfos.pages || 'N/A' }}</p>
+  <p v-if="media.bookInfos">Editeur: {{ media.bookInfos.publisher || 'N/A' }}</p>
 </template>

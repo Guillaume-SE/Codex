@@ -20,6 +20,7 @@ const props = defineProps<{
   mediaTypesList: InferPageProps<MediaController, 'showByCategory'>['mediaTypesList']
   mediaGenresList: InferPageProps<MediaController, 'showByCategory'>['mediaGenresList']
   gamePlatformsList: InferPageProps<MediaController, 'showByCategory'>['gamePlatformsList']
+  bookPublishersList: InferPageProps<MediaController, 'showByCategory'>['bookPublishersList']
 }>()
 
 const categoryRef = toRef(props, 'mediaCategory')
@@ -56,11 +57,13 @@ const mediaListIsNotEmpty = computed(() => {
             v-model:genres="filters.genres"
             v-model:platforms="filters.platforms"
             v-model:duration="filters.duration"
+            v-model:publishers="filters.publishers"
             v-model:favorite="filters.favorite"
             :statuses-list="mediaStatusesList"
             :types-list="mediaTypesList"
             :genres-list="mediaGenresList"
             :platforms-list="gamePlatformsList"
+            :publishers-list="bookPublishersList"
             :media-category="mediaCategory"
             @update:reset-form-values="resetFilters"
           />

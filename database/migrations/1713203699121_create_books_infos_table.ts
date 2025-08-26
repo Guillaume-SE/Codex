@@ -14,7 +14,14 @@ export default class extends BaseSchema {
         .onDelete('CASCADE')
         .onUpdate('CASCADE')
         .notNullable()
-      table.integer('pages').unsigned().nullable()
+      table
+        .integer('publisher_id')
+        .unsigned()
+        .references('id')
+        .inTable('book_publishers')
+        .onDelete('SET NULL')
+        .onUpdate('CASCADE')
+        .nullable()
     })
   }
 

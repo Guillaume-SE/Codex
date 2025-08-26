@@ -8,6 +8,7 @@ const GenresController = () => import('#controllers/genres_controller')
 const MediaTypesController = () => import('#controllers/media_types_controller')
 const MediaCategoriesController = () => import('#controllers/media_categories_controller')
 const GamePlatformsController = () => import('#controllers/game_platforms_controller')
+const BookPublishersController = () => import('#controllers/book_publishers_controller')
 const HomeController = () => import('#controllers/home_controller')
 const StorageController = () => import('#controllers/storage_controller')
 const DashboardController = () => import('#controllers/dashboard_controller')
@@ -78,6 +79,17 @@ router
     router
       .delete('/platforms/:platformId', [GamePlatformsController, 'destroy'])
       .as('platforms.destroy')
+
+    router
+      .get('/publishers/manage', [BookPublishersController, 'showManage'])
+      .as('publishers.index')
+    router.post('/publishers', [BookPublishersController, 'store']).as('publishers.store')
+    router
+      .put('/publishers/:publisherId', [BookPublishersController, 'update'])
+      .as('publishers.update')
+    router
+      .delete('/publishers/:publisherId', [BookPublishersController, 'destroy'])
+      .as('publishers.destroy')
 
     router
       .get('/categories/manage', [MediaCategoriesController, 'showManage'])

@@ -36,7 +36,7 @@ export class MediaPresenter {
   movieInfos?: { duration: number | null }
   animeInfos?: { seasonLength: number | null }
   seriesInfos?: { seasonLength: number | null }
-  bookInfos?: { pages: number | null }
+  bookInfos?: { publisher: string | null }
 
   constructor(media: Media) {
     this.id = media.id
@@ -72,7 +72,7 @@ export class MediaPresenter {
         this.gameInfos = { platform: media.gameInfo?.gamePlatform?.name ?? null }
         break
       case 'book':
-        this.bookInfos = { pages: media.bookInfo?.pages ?? null }
+        this.bookInfos = { publisher: media.bookInfo?.bookPublisher?.name ?? null }
         break
       case 'movie':
         this.movieInfos = { duration: media.movieInfo?.duration ?? null }

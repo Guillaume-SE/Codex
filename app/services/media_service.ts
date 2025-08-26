@@ -24,6 +24,7 @@ interface IFilters {
   genres?: number[]
   platforms?: number[]
   duration?: number | null
+  publishers?: number[]
   favorite?: boolean
 }
 
@@ -44,7 +45,7 @@ export default class MediaService {
       movie: { relation: 'movieInfo', dataKeys: ['duration'] },
       series: { relation: 'seriesInfo', dataKeys: ['seriesSeasonLength'] },
       anime: { relation: 'animeInfo', dataKeys: ['animeSeasonLength'] },
-      book: { relation: 'bookInfo', dataKeys: ['pages'] },
+      book: { relation: 'bookInfo', dataKeys: ['publisherId'] },
     }
 
     const {
@@ -53,7 +54,7 @@ export default class MediaService {
       duration,
       seriesSeasonLength,
       animeSeasonLength,
-      pages,
+      publisherId,
       ...generalMediaData
     } = data
 
@@ -160,6 +161,11 @@ export default class MediaService {
           subQuery.where('duration', '<=', filters.duration!)
         })
       })
+      .if(filters.publishers, (q) => {
+        q.whereHas('bookInfo', (subQuery) => {
+          subQuery.whereIn('publisher_id', filters.publishers!)
+        })
+      })
       .if(filters.favorite, (q) => {
         q.whereHas('review', (subQuery) => {
           subQuery.where('is_favorite', '=', filters.favorite!)
@@ -196,13 +202,15 @@ export default class MediaService {
         .load('category')
         .load('type')
         .load('genres')
-        .load('gameInfo', (gamesQuery) => {
-          gamesQuery.preload('gamePlatform')
+        .load('gameInfo', (q) => {
+          q.preload('gamePlatform')
         })
         .load('movieInfo')
         .load('seriesInfo')
         .load('animeInfo')
-        .load('bookInfo')
+        .load('bookInfo', (q) => {
+          q.preload('bookPublisher')
+        })
         .load('cover')
         .load('review')
     })

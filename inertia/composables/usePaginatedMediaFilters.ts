@@ -9,6 +9,7 @@ interface IFilters {
   genres: number[]
   platforms: number[]
   duration: string | undefined
+  publishers: number[]
   favorite: boolean
 }
 
@@ -35,6 +36,9 @@ function cleanFilters(filters: IFilters, defaultSortBy: string) {
   if (filters.duration && filters.duration.length > 0) {
     cleaned.duration = filters.duration
   }
+  if (filters.publishers && filters.publishers.length > 0) {
+    cleaned.publishers = filters.publishers
+  }
   if (filters.favorite === true) {
     cleaned.favorite = filters.favorite
   }
@@ -57,6 +61,7 @@ export function usePaginatedMediaFilters(
     genres: [],
     platforms: [],
     duration: '',
+    publishers: [],
     favorite: false,
   })
 
@@ -85,6 +90,7 @@ export function usePaginatedMediaFilters(
       genres: [],
       platforms: [],
       duration: '',
+      publishers: [],
       favorite: false,
     })
     // Conditionally set a default for 'duration'

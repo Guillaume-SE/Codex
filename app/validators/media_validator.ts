@@ -32,7 +32,11 @@ export const mediaValidator = vine.compile(
     // .requiredWhen((field) => field.parent.categoryId === MediaCategoriesEnum.SERIES)
     animeSeasonLength: vine.number().positive().nullable().optional(),
     // .requiredWhen((field) => field.parent.categoryId === MediaCategoriesEnum.ANIME)
-    pages: vine.number().positive().nullable().optional(),
+    publisherId: vine
+      .number()
+      .isExists({ table: 'book_publishers', column: 'id' })
+      .nullable()
+      .optional(),
     // .requiredWhen((field) => field.parent.categoryId === MediaCategoriesEnum.BOOK),
   })
 )
@@ -66,6 +70,9 @@ export const mediaFiltersValidator = vine.compile(
       .array(vine.number().isExists({ table: 'game_platforms', column: 'id' }))
       .optional(),
     duration: vine.number().nullable().optional(),
+    publishers: vine
+      .array(vine.number().isExists({ table: 'book_publishers', column: 'id' }))
+      .optional(),
     favorite: vine.boolean().optional(),
   })
 )

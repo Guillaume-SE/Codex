@@ -12,6 +12,7 @@ defineProps<{
   typesList: InferPageProps<MediaController, 'showByCategory'>['mediaTypesList']
   genresList: InferPageProps<MediaController, 'showByCategory'>['mediaGenresList']
   platformsList: InferPageProps<MediaController, 'showByCategory'>['gamePlatformsList']
+  publishersList: InferPageProps<MediaController, 'showByCategory'>['bookPublishersList']
   mediaCategory: string
 }>()
 
@@ -20,6 +21,7 @@ const typesModel = defineModel<number[]>('types')
 const genresModel = defineModel<number[]>('genres')
 const platformsModel = defineModel<number[]>('platforms')
 const durationModel = defineModel<string | undefined>('duration')
+const publishersModel = defineModel<number[]>('publishers')
 const favoriteModel = defineModel<boolean>('favorite')
 
 const emit = defineEmits(['update:resetFormValues'])
@@ -93,6 +95,17 @@ const movieDurationOptions = [
   <div v-if="mediaCategory === 'movie'">
     <span>Durée maximale</span>
     <SelectComp v-model="durationModel" :options="movieDurationOptions" />
+  </div>
+  <!-- publishers -->
+  <div v-if="mediaCategory === 'book'">
+    <span>Editeurs</span>
+    <ul>
+      <li v-for="publisher in publishersList" :key="publisher.id">
+        <LabelComp :text="capitalizeFirstLetter(publisher.name)" textPosition="down">
+          <InputComp v-model="publishersModel" type="checkbox" :value="publisher.id" />
+        </LabelComp>
+      </li>
+    </ul>
   </div>
   <!-- data display -->
   <div>

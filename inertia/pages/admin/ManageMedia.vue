@@ -29,7 +29,7 @@ interface IForm {
   duration: string | null
   seriesSeasonLength: string | null
   animeSeasonLength: string | null
-  pages: string | null
+  publisherId: string | null
 }
 
 type MediaProp = InferPageProps<MediaController, 'showManage'>['media']
@@ -39,6 +39,7 @@ const props = defineProps<{
   categories: InferPageProps<MediaController, 'showManage'>['categories']
   categoryAssociations: InferPageProps<MediaController, 'showManage'>['categoryAssociations']
   gamePlatforms: InferPageProps<MediaController, 'showManage'>['gamePlatforms']
+  bookPublishers: InferPageProps<MediaController, 'showManage'>['bookPublishers']
   media?: InferPageProps<MediaController, 'showManage'>['media']
   errors: Record<string, string[]>
 }>()
@@ -65,7 +66,7 @@ const fieldSteps: Record<keyof IForm, number> = {
   duration: 3,
   seriesSeasonLength: 3,
   animeSeasonLength: 3,
-  pages: 3,
+  publisherId: 3,
   statusId: 3,
 }
 
@@ -110,7 +111,7 @@ function getInitialFormData(media?: MediaProp) {
       duration: null,
       seriesSeasonLength: null,
       animeSeasonLength: null,
-      pages: null,
+      publisherId: null,
     }
   }
   return {
@@ -125,7 +126,7 @@ function getInitialFormData(media?: MediaProp) {
     duration: media.movieInfo?.duration,
     seriesSeasonLength: media.seriesInfo?.seriesSeasonLength,
     animeSeasonLength: media.animeInfo?.animeSeasonLength,
-    pages: media.bookInfo?.pages,
+    publisherId: media.bookInfo?.publisherId,
   }
 }
 
@@ -189,7 +190,7 @@ function handleUpdate() {
       payload.animeSeasonLength = form.animeSeasonLength
       break
     case 'book':
-      payload.pages = form.pages
+      payload.publisherId = form.publisherId
       break
   }
 
@@ -327,6 +328,7 @@ function submit() {
               :is="categoryFieldComponents[currentCategory.name]"
               :form="form"
               :gamePlatforms="gamePlatforms"
+              :bookPublishers="bookPublishers"
             />
           </div>
           <!-- status -->

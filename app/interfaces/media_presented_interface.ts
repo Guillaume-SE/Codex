@@ -27,5 +27,5 @@ export interface IMediaPresented {
   movieInfos?: { duration: number | null }
   animeInfos?: { seasonLength: number | null }
   seriesInfos?: { seasonLength: number | null }
-  bookInfos?: { pages: number | null }
+  bookInfos?: { publisher: string | null }
 }

@@ -1,4 +1,5 @@
 import { MediaPresenter } from '#classes/MediaPresenter'
+import BookPublisher from '#models/book_publisher'
 import GamePlatform from '#models/game_platform'
 import MediaStatus from '#models/media_status'
 import MediaCategoryService from '#services/media_category_service'
@@ -31,6 +32,7 @@ export default class MediaController {
 
     const statuses = await MediaStatus.query().orderBy('name', 'desc')
     const gamePlatforms = await GamePlatform.query().orderBy('name')
+    const bookPublishers = await BookPublisher.query().orderBy('name')
     const categoriesWithRelations = await this.mediaCategoryService.getCategoriesWithRelations()
 
     const categoryAssociations = categoriesWithRelations.reduce((acc, category) => {
@@ -46,6 +48,7 @@ export default class MediaController {
       categories: categoriesWithRelations,
       categoryAssociations,
       gamePlatforms,
+      bookPublishers,
       media,
     })
   }
@@ -89,10 +92,11 @@ export default class MediaController {
 
     const mediaList = await MediaService.getFiltered(filters, page, 15, categoryName)
     const mediaSortOptions = MediaService.sortOptions
-    const mediaStatusesList = await MediaStatus.all()
+    const mediaStatusesList = await MediaStatus.query().orderBy('id')
     const mediaTypesList = await this.mediaCategoryService.getCategoryTypes(categoryName)
     const mediaGenresList = await this.mediaCategoryService.getCategoryGenres(categoryName)
-    const gamePlatformsList = await GamePlatform.all()
+    const gamePlatformsList = await GamePlatform.query().orderBy('name')
+    const bookPublishersList = await BookPublisher.query().orderBy('name')
 
     // needed for pagination
     mediaList.baseUrl(`/categories/${categoryName}`)
@@ -107,6 +111,7 @@ export default class MediaController {
       mediaTypesList,
       mediaGenresList,
       gamePlatformsList,
+      bookPublishersList,
     })
   }
 

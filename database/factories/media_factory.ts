@@ -51,13 +51,13 @@ export const MediaFactory = factory
     ])
     row.released = DateTime.fromJSDate(faker.date.past())
   })
-  // .state('releasingSoon', (row, { faker }) => {
-  //   row.statusId = MediaStatusesEnum.ATTENDU
-  //   row.released =
-  //     faker.helpers.maybe(() => DateTime.fromJSDate(faker.date.soon({ days: 7 })), {
-  //       probability: 0.7,
-  //     }) ?? null
-  // })
+  .state('releasingSoon', (row, { faker }) => {
+    row.statusId = MediaStatusesEnum.PREVU
+    row.released =
+      faker.helpers.maybe(() => DateTime.fromJSDate(faker.date.soon({ days: 7 })), {
+        probability: 0.7,
+      }) ?? null
+  })
   .relation('animeInfo', () => AnimeInfoFactory)
   .relation('seriesInfo', () => SeriesInfoFactory)
   .relation('gameInfo', () => GameInfoFactory)
