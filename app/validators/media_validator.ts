@@ -8,7 +8,6 @@ export const mediaValidator = vine.compile(
     statusId: vine.number().isExists({ table: 'media_statuses', column: 'id' }),
     typeId: vine.number().isExists({ table: 'media_types', column: 'id' }),
     name: vine.string().trim(),
-    alternativeName: vine.string().trim().notSameAs('name').nullable(),
     released: vine
       .date()
       .transform((value) => {

@@ -132,9 +132,7 @@ export default class MediaService {
       // searchbar term
       .if(filters.search, (q) => {
         q.where((subQuery) => {
-          subQuery
-            .where('name', 'like', `%${filters.search}%`)
-            .orWhere('alternative_name', 'like', `%${filters.search}%`)
+          subQuery.where('name', 'like', `%${filters.search}%`)
         })
       })
       .if(filters.status, (q) => {

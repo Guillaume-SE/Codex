@@ -7,7 +7,6 @@ const messages = {
   'string': 'Le champ "{{ field }}" doit être du texte',
   'positive': 'Le champ "{{ field }}" doit être un nombre positif',
   // specific
-  'alternativeName.notSameAs': 'Le {{ field }} doit être différent du nom principal',
   'replacementTypeId.required': 'Le {{ field }} de remplacement est requis',
   'file.extname': 'Fichier invalide. Seuls les formats png, webp, jpg, jpeg sont autorisés',
   'file.size': 'Fichier trop lourd. Seuls les fichiers de 2mb maximum sont autorisés',
@@ -22,7 +21,6 @@ const fields = {
   typeId: 'type',
   genreId: 'genre',
   name: 'nom',
-  alternativeName: 'nom alternatif',
   statusId: 'progression',
   platformId: 'plateforme',
   replacementTypeId: 'type',

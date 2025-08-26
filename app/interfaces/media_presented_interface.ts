@@ -7,7 +7,6 @@ export interface IMediaPresented {
   category: MediaCategories
   type: string
   name: string
-  alternativeName: string | null
   released: string | null
   synopsis: string | null
   addedOn: string | null

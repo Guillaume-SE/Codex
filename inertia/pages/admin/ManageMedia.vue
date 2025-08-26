@@ -22,7 +22,6 @@ interface IForm {
   categoryId: string
   typeId: string
   name: string
-  alternativeName: string | null
   released: string | null
   synopsis: string | null
   genreId: number[]
@@ -58,7 +57,6 @@ const fieldSteps: Record<keyof IForm, number> = {
   typeId: 1,
   // Step 2
   name: 2,
-  alternativeName: 2,
   released: 2,
   synopsis: 2,
   genreId: 2,
@@ -105,7 +103,6 @@ function getInitialFormData(media?: MediaProp) {
       categoryId: '',
       typeId: '',
       name: '',
-      alternativeName: null,
       released: null,
       synopsis: '',
       genreId: [],
@@ -121,7 +118,6 @@ function getInitialFormData(media?: MediaProp) {
     categoryId: media.categoryId,
     typeId: media.typeId,
     name: media.name,
-    alternativeName: media.alternativeName,
     released: media.released ? formatDate(media.released) : null,
     synopsis: media.synopsis,
     genreId: media.genres.map((g: { id: number }) => g.id),
@@ -174,7 +170,6 @@ function handleUpdate() {
     categoryId: form.categoryId,
     typeId: form.typeId,
     name: form.name,
-    alternativeName: form.alternativeName,
     released: form.released,
     synopsis: form.synopsis,
     genreId: form.genreId,
@@ -291,20 +286,6 @@ function submit() {
               <InputComp v-model="form.name" type="text" @input="form.clearErrors('name')" />
             </LabelComp>
             <FormErrorComp v-if="form.errors.name" :message="form.errors.name" />
-          </div>
-          <!-- alternative name -->
-          <div>
-            <LabelComp text="Nom alternatif:" text-position="up">
-              <InputComp
-                v-model="form.alternativeName"
-                type="text"
-                @input="form.clearErrors('alternativeName')"
-              />
-            </LabelComp>
-            <FormErrorComp
-              v-if="form.errors.alternativeName"
-              :message="form.errors.alternativeName"
-            />
           </div>
           <!-- released date -->
           <div>

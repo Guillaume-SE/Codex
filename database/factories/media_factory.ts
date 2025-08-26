@@ -15,10 +15,6 @@ export const MediaFactory = factory
   .define(Media, async ({ faker }) => {
     return {
       name: faker.music.songName(),
-      alternativeName:
-        faker.helpers.maybe(() => faker.music.songName(), {
-          probability: 0.4,
-        }) ?? null,
       synopsis:
         faker.helpers.maybe(() => faker.lorem.paragraph(), {
           probability: 0.8,

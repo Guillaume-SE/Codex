@@ -55,7 +55,6 @@ const formattedDate = useFormattedDateToLocale
     <div>
       <h3>Détails</h3>
       <div>
-        <p v-if="media.alternativeName">Nom alternatif: {{ media.alternativeName }}</p>
         <!-- released -->
         <p>Date de sortie: {{ formattedDate(media.released) || 'N/A' }}</p>
         <MediaSpecificDetails :media="media" />

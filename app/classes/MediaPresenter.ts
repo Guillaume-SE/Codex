@@ -16,7 +16,6 @@ export class MediaPresenter {
   category: MediaCategories
   type: string
   name: string
-  alternativeName: string | null
   released: DateTime | null
   synopsis: string | null
   addedOn: DateTime
@@ -45,7 +44,6 @@ export class MediaPresenter {
     this.category = media.category.name
     this.type = media.type.name
     this.name = media.name
-    this.alternativeName = media.alternativeName
     this.released = media.released
     this.synopsis = media.synopsis
     this.addedOn = media.createdAt

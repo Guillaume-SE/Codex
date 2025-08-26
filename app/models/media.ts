@@ -31,9 +31,6 @@ export default class Media extends BaseModel {
   @column()
   declare name: string
 
-  @column({ columnName: 'alternative_name', serializeAs: 'alternativeName' })
-  declare alternativeName: string | null
-
   @column.dateTime()
   declare released: DateTime | null
 
