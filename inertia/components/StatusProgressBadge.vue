@@ -51,7 +51,7 @@ const { backgroundColor, iconColor } = useStatusStyles(toRef(props, 'status'))
 .icon-completed {
   background-color: #00bd7c;
 }
-.icon-paused {
+.icon-on-hold {
   background-color: #f1b000;
 }
 .icon-dropped {
@@ -67,7 +67,7 @@ const { backgroundColor, iconColor } = useStatusStyles(toRef(props, 'status'))
 .background-completed {
   background-color: #d0fae5;
 }
-.background-paused {
+.background-on-hold {
   background-color: #fef9c1;
 }
 .background-dropped {
