@@ -2,7 +2,7 @@
 import type MediaTypesController from '#controllers/media_types_controller'
 import { InferPageProps } from '@adonisjs/inertia/types'
 import { router, useForm } from '@inertiajs/vue3'
-import { computed, watch } from 'vue'
+import { computed } from 'vue'
 import ActionDialogComp from '~/components/ActionDialogComp.vue'
 import AppHead from '~/components/AppHead.vue'
 import DashboardAction from '~/components/DashboardAction.vue'
@@ -12,6 +12,7 @@ import FormErrorComp from '~/components/ui/FormErrorComp.vue'
 import InputComp from '~/components/ui/InputComp.vue'
 import LabelComp from '~/components/ui/LabelComp.vue'
 import { useActionDialog, type ActionDialogConfig } from '~/composables/useActionDialog'
+import { useErrorSyncer } from '~/composables/useErrorSyncer'
 import { usePaginatedFilters } from '~/composables/usePaginatedFilters'
 import DashboardLayout from '~/layouts/DashboardLayout.vue'
 
@@ -29,7 +30,7 @@ interface ITypeList {
 
 const props = defineProps<{
   typeList: InferPageProps<MediaTypesController, 'showManage'>['typeList']
-  errors: Record<string, string[]>
+  errors?: Record<string, string[]>
 }>()
 
 defineOptions({ layout: DashboardLayout })
@@ -42,20 +43,7 @@ const form = useForm<IForm>({
 
 const { filters, submitFilters, fetchNewPageData } = usePaginatedFilters('/admin/types/manage')
 
-watch(
-  () => props.errors,
-  (newErrors) => {
-    form.clearErrors()
-
-    const formattedErrors = Object.fromEntries(
-      Object.entries(newErrors).map(([key, value]) => [key, value[0]])
-    )
-    form.setError(formattedErrors as any)
-  },
-  {
-    deep: true,
-  }
-)
+useErrorSyncer(props, form)
 
 function customHandleReplace() {
   const typeIdToDelete = selectedItem.value?.id
@@ -68,24 +56,6 @@ function customHandleReplace() {
   })
 }
 
-function customHandleUpdate() {
-  const typeIdToUpdate = selectedItem.value?.id
-  if (!typeIdToUpdate) return
-
-  const payload = {
-    name: form.name,
-  }
-
-  // to avoid back end to receive typeId null (potential conflict with params)
-  router.put(`/admin/types/${typeIdToUpdate}`, payload, {
-    onStart: () => (form.processing = true),
-    onFinish: () => (form.processing = false),
-    onSuccess: () => closeModal(),
-    preserveState: true,
-    preserveScroll: true,
-  })
-}
-
 const typeConfig: ActionDialogConfig<IForm, ITypeList> = {
   resourceApiUrl: '/admin/types',
   resourceNameConfig: {
@@ -94,7 +64,8 @@ const typeConfig: ActionDialogConfig<IForm, ITypeList> = {
     definite: 'le',
   },
   form: form,
-  customSubmitHandlers: { replace: customHandleReplace, edit: customHandleUpdate },
+  // customSubmitHandlers: { replace: customHandleReplace, edit: customHandleUpdate },
+  customSubmitHandlers: { replace: customHandleReplace },
 }
 
 const {
@@ -107,7 +78,7 @@ const {
   openModal,
   closeModal,
   submitForm,
-} = useActionDialog<IForm, ITypeList>(typeConfig)
+} = useActionDialog<IForm, ITypeList>(typeConfig, 'actionDialogRef')
 
 const typeListIsNotEmpty = computed(() => (props.typeList.data.length > 0 ? true : false))
 const filteredTypeList = computed(() => {
