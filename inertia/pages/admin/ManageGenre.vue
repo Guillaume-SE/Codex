@@ -28,7 +28,7 @@ interface IGenreList {
 
 const props = defineProps<{
   genreList: InferPageProps<GenresController, 'showManage'>['genreList']
-  errors: Record<string, string[]>
+  errors?: Record<string, string[]>
 }>()
 
 defineOptions({ layout: DashboardLayout })
@@ -60,7 +60,7 @@ const {
   openModal,
   closeModal,
   submitForm,
-} = useActionDialog<IForm, IGenreList>(genreConfig)
+} = useActionDialog<IForm, IGenreList>(genreConfig, 'actionDialogRef')
 
 const genreListIsNotEmpty = computed(() => (props.genreList.data.length > 0 ? true : false))
 </script>

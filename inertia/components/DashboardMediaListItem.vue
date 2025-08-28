@@ -11,7 +11,7 @@ const props = defineProps<{
   media: InferPageProps<DashboardController, 'showDashboard'>['mediaList']['data'][0]
 }>()
 
-const emit = defineEmits(['delete-item'])
+const emit = defineEmits(['delete-item', 'manage-cover'])
 
 function requestDeletion() {
   emit('delete-item', { id: props.media.id, name: props.media.name })
@@ -21,23 +21,18 @@ function requestDeletion() {
 <template>
   <div class="dashboard-list-item">
     <div class="dashboard-item-name-container">
-      <div v-if="props.media.cover" class="dashboard-list_img">
-        <Link :href="`/admin/media/${props.media.id}/cover`">
+      <div class="dashboard-list_img clickable-cover" @click="emit('manage-cover', props.media)">
+        <div v-if="props.media.cover">
           <img
             class="img-preview"
             loading="lazy"
             :src="`/storage/${props.media.cover.smallUrl}`"
-            :srcset="`/storage/${props.media.cover.smallUrl}, /storage/${props.media.cover.mediumUrl} 2x`"
             :alt="`cover de ${props.media.name}`"
           />
-        </Link>
-      </div>
-      <div v-else class="dashboard-list_img">
-        <Link :href="`/admin/media/${props.media.id}/cover`">
-          <div class="no-cover-preview">
-            <ImageNotAvailableIcon />
-          </div>
-        </Link>
+        </div>
+        <div v-else class="no-cover-preview">
+          <ImageNotAvailableIcon />
+        </div>
       </div>
       <Link :href="`/admin/media/${props.media.id}/edit`">
         <p class="dashboard-item-name">{{ props.media.name }}</p>
@@ -94,5 +89,14 @@ function requestDeletion() {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+.clickable-cover {
+  cursor: pointer;
+  transition: transform 0.2s ease-in-out;
+}
+
+.clickable-cover:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 </style>

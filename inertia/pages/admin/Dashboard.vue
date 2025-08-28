@@ -1,24 +1,22 @@
 <script setup lang="ts">
 import type DashboardController from '#controllers/dashboard_controller'
+import type { IMediaPresented } from '#interfaces/media_presented_interface'
 import { InferPageProps } from '@adonisjs/inertia/types'
 import { Link, useForm } from '@inertiajs/vue3'
-import { computed, nextTick, ref, useTemplateRef } from 'vue'
+import { computed, ref } from 'vue'
 import ActionDialogComp from '~/components/ActionDialogComp.vue'
 import AppHead from '~/components/AppHead.vue'
 import DashboardAction from '~/components/DashboardAction.vue'
 import DashboardMediaListItem from '~/components/DashboardMediaListItem.vue'
+import CoverManageDialog from '~/components/media/CoverManageDialog.vue'
 import Pagination from '~/components/Pagination.vue'
-import {
-  useActionText,
-  type ActionType,
-  type IResourceNameConfig,
-} from '~/composables/useActionText'
+import { ActionDialogConfig, useActionDialog } from '~/composables/useActionDialog'
 import { usePaginatedFilters } from '~/composables/usePaginatedFilters'
 import DashboardLayout from '~/layouts/DashboardLayout.vue'
 
 const props = defineProps<{
   mediaList: InferPageProps<DashboardController, 'showDashboard'>['mediaList']
-  errors: Record<string, string[]>
+  errors?: Record<string, string[]>
 }>()
 
 defineOptions({
@@ -29,44 +27,43 @@ interface IForm {
   mediaId: number | null
 }
 
-const form = useForm<IForm>({
+interface IMediaItem {
+  id: number
+  name: string
+}
+
+const deleteForm = useForm<IForm>({
   mediaId: null,
 })
 
+const deleteMediaApiUrl = ref('')
+const coverModalRef = ref<InstanceType<typeof CoverManageDialog> | null>(null)
+
 const { filters, submitFilters, fetchNewPageData } = usePaginatedFilters('/admin/dashboard')
 
-const mediaName = ref<string>('')
-const actionDialogRef = useTemplateRef<InstanceType<typeof ActionDialogComp>>('actionDialogRef')
-const currentTask = ref<ActionType | null>(null)
-
-const mediaConfig: IResourceNameConfig = {
-  singular: 'media',
-  indefinite: 'un',
-  definite: 'le',
-}
-const { title: dialogTitle, actionText: dialogActionText } = useActionText(currentTask, mediaConfig)
-
-function submitForm() {
-  const mediaId = form.mediaId
-  form.delete(`/admin/media/${mediaId}`, {
-    onSuccess: () => {
-      form.reset()
-    },
-  })
-  closeModal()
+const deleteDialogConfig: ActionDialogConfig<IForm, IMediaItem> = {
+  resourceApiUrl: deleteMediaApiUrl,
+  resourceNameConfig: { singular: 'media', indefinite: 'un', definite: 'le' },
+  form: deleteForm,
 }
 
-function openModal(payload: { id: number; name: string }) {
-  currentTask.value = 'delete'
-  form.mediaId = payload.id
-  mediaName.value = payload.name
-  nextTick(() => {
-    actionDialogRef.value?.showModal()
-  })
+const {
+  actionDialogRef: deleteDialogRef,
+  currentTask: currentDeleteTask,
+  selectedItemName: selectedMediaName,
+  dialogTitle: deleteDialogTitle,
+  dialogActionText: deleteDialogActionText,
+  openModal: openDeleteModal,
+  closeModal: closeDeleteModal,
+  submitForm: submitDeleteForm,
+} = useActionDialog(deleteDialogConfig, 'deleteDialogRef')
+
+function handleDeleteMedia(media: { id: number; name: string }) {
+  deleteMediaApiUrl.value = '/admin/media'
+  openDeleteModal('delete', media)
 }
-const closeModal = () => {
-  form.mediaId = null
-  actionDialogRef.value?.close()
+function handleManageCover(media: IMediaPresented) {
+  coverModalRef.value?.open(media)
 }
 
 const isMediaListEmpty = computed(() => {
@@ -92,7 +89,8 @@ const isMediaListEmpty = computed(() => {
     v-for="media in mediaList.data"
     :key="media.id"
     :media="media"
-    @delete-item="openModal"
+    @manage-cover="handleManageCover"
+    @delete-item="handleDeleteMedia"
   />
   <div v-else>
     <p>Aucun média ajouté pour le moment.</p>
@@ -116,22 +114,23 @@ const isMediaListEmpty = computed(() => {
 
   <!-- delete modal -->
   <ActionDialogComp
-    v-if="currentTask"
-    ref="actionDialogRef"
-    :title="dialogTitle"
-    :form="form"
-    :action-text="dialogActionText"
-    @submit="submitForm"
-    @close="closeModal"
+    ref="deleteDialogRef"
+    :title="deleteDialogTitle"
+    :form="deleteForm"
+    :action-text="deleteDialogActionText"
+    @submit="submitDeleteForm"
+    @close="closeDeleteModal"
   >
     <template #form-content>
-      <div v-if="currentTask === 'delete'">
+      <div v-if="currentDeleteTask === 'delete'">
         <span>
-          Confirmer la suppression de <strong>{{ mediaName }}</strong> ?
+          Confirmer la suppression de <strong>{{ selectedMediaName }}</strong> ?
         </span>
       </div>
     </template>
   </ActionDialogComp>
+
+  <CoverManageDialog ref="coverModalRef" />
 </template>
 
 <style scoped>
@@ -142,5 +141,15 @@ const isMediaListEmpty = computed(() => {
   padding: 10px;
   border-bottom: 2px solid #333;
   font-weight: bold;
+}
+.img-thumbnail {
+  max-width: 100px;
+  height: auto;
+  border-radius: 4px;
+  margin: 10px 0;
+  display: block;
+}
+.file-input {
+  margin-top: 10px;
 }
 </style>
