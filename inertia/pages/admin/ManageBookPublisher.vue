@@ -28,7 +28,7 @@ interface IPublisherList {
 
 const props = defineProps<{
   publisherList: InferPageProps<BookPublishersController, 'showManage'>['publisherList']
-  errors: Record<string, string[]>
+  errors?: Record<string, string[]>
 }>()
 
 defineOptions({ layout: DashboardLayout })
@@ -60,7 +60,7 @@ const {
   openModal,
   closeModal,
   submitForm,
-} = useActionDialog<IForm, IPublisherList>(publisherConfig)
+} = useActionDialog<IForm, IPublisherList>(publisherConfig, 'actionDialogRef')
 
 const publisherListIsNotEmpty = computed(() => (props.publisherList.data.length > 0 ? true : false))
 </script>

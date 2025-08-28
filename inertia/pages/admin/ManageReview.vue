@@ -19,7 +19,7 @@ interface IForm {
 
 const props = defineProps<{
   media: InferPageProps<ReviewController, 'showManage'>['media']
-  errors: Record<string, string[]>
+  errors?: Record<string, string[]>
 }>()
 
 defineOptions({

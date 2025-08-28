@@ -3,7 +3,7 @@ import type MediaController from '#controllers/media_controller'
 import { InferPageProps } from '@adonisjs/inertia/types'
 import { router, useForm } from '@inertiajs/vue3'
 import type { Component } from 'vue'
-import { computed, onMounted, ref, watch } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import AppHead from '~/components/AppHead.vue'
 import AnimeFields from '~/components/media/AnimeFields.vue'
 import BookFields from '~/components/media/BookFields.vue'
@@ -14,6 +14,7 @@ import ButtonComp from '~/components/ui/ButtonComp.vue'
 import FormErrorComp from '~/components/ui/FormErrorComp.vue'
 import InputComp from '~/components/ui/InputComp.vue'
 import LabelComp from '~/components/ui/LabelComp.vue'
+import { useErrorSyncer } from '~/composables/useErrorSyncer'
 import { useFormatCategoryNameInFr } from '~/composables/useFormatCategoryNameInFr'
 import { useFormattedDate } from '~/composables/useFormattedDate'
 
@@ -41,7 +42,7 @@ const props = defineProps<{
   gamePlatforms: InferPageProps<MediaController, 'showManage'>['gamePlatforms']
   bookPublishers: InferPageProps<MediaController, 'showManage'>['bookPublishers']
   media?: InferPageProps<MediaController, 'showManage'>['media']
-  errors: Record<string, string[]>
+  errors?: Record<string, string[]>
 }>()
 
 const categoryFieldComponents: Record<string, Component> = {
@@ -132,20 +133,7 @@ function getInitialFormData(media?: MediaProp) {
 
 const form = useForm<IForm>(getInitialFormData(props.media))
 
-watch(
-  () => props.errors,
-  (newErrors) => {
-    form.clearErrors()
-    // transform and set the new errors
-    const formattedErrors = Object.fromEntries(
-      Object.entries(newErrors).map(([key, value]) => [key, value[0]])
-    )
-    form.setError(formattedErrors as any)
-  },
-  {
-    deep: true,
-  }
-)
+useErrorSyncer(props, form)
 
 function nextStep() {
   currentStep.value++

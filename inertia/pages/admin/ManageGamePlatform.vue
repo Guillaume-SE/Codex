@@ -28,7 +28,7 @@ interface IPlatformList {
 
 const props = defineProps<{
   platformList: InferPageProps<GamePlatformsController, 'showManage'>['platformList']
-  errors: Record<string, string[]>
+  errors?: Record<string, string[]>
 }>()
 
 defineOptions({ layout: DashboardLayout })
@@ -60,7 +60,7 @@ const {
   openModal,
   closeModal,
   submitForm,
-} = useActionDialog<IForm, IPlatformList>(platformConfig)
+} = useActionDialog<IForm, IPlatformList>(platformConfig, 'actionDialogRef')
 
 const platformListIsNotEmpty = computed(() => (props.platformList.data.length > 0 ? true : false))
 </script>
