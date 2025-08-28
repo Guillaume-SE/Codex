@@ -1,5 +1,5 @@
 import { type InertiaForm } from '@inertiajs/vue3'
-import { computed, nextTick, ref, useTemplateRef } from 'vue'
+import { computed, nextTick, ref, useTemplateRef, type MaybeRef } from 'vue'
 import type ActionDialogComp from '~/components/ActionDialogComp.vue'
 import { useActionText, type ActionType, type IResourceNameConfig } from './useActionText'
 import { useResourceForm } from './useResourceForm'
@@ -12,7 +12,7 @@ import { useResourceForm } from './useResourceForm'
  */
 
 export interface ActionDialogConfig<T extends object, U> {
-  resourceApiUrl: string
+  resourceApiUrl: MaybeRef<string>
   resourceNameConfig: IResourceNameConfig
   form: InertiaForm<T>
   getItemId?: (item: U) => number | string | null
@@ -21,14 +21,15 @@ export interface ActionDialogConfig<T extends object, U> {
 }
 
 export function useActionDialog<T extends object, U extends object>(
-  config: ActionDialogConfig<T, U>
+  config: ActionDialogConfig<T, U>,
+  templateRefKey: string
 ) {
   const { resourceApiUrl, resourceNameConfig, form, getItemId, getItemName } = config
 
   // handle form url creation
   const { create, update, destroy } = useResourceForm(form, resourceApiUrl)
 
-  const actionDialogRef = useTemplateRef<InstanceType<typeof ActionDialogComp>>('actionDialogRef')
+  const actionDialogRef = useTemplateRef<InstanceType<typeof ActionDialogComp>>(templateRefKey)
   const currentTask = ref<ActionType | null>(null)
   const selectedItem = ref<U | null>(null)
 
@@ -82,7 +83,7 @@ export function useActionDialog<T extends object, U extends object>(
       return
     }
 
-    // to handle delete submit who need to pass by a put (like replacing a media type that are required)
+    // to handle specific case like type who need a replace or cover who need different url
     const customHandler = config.customSubmitHandlers?.[task]
     if (customHandler) {
       customHandler()
