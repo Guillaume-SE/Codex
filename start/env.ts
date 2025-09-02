@@ -15,12 +15,12 @@ export default await Env.create(new URL('../', import.meta.url), {
   DB_PASSWORD: Env.schema.string.optional(),
   DB_DATABASE: Env.schema.string(),
 
+  CLOUDINARY_CLOUD_NAME: Env.schema.string(),
+  CLOUDINARY_API_KEY: Env.schema.string(),
+  CLOUDINARY_API_SECRET: Env.schema.string(),
+
+  CLOUDINARY_BASE_URL: Env.schema.string(),
   DEFAULT_COVER_EXTENSION: Env.schema.string(),
-  UPLOAD_BASE_PATH_DIR: Env.schema.string(),
-  ORIGINAL_COVER_DIR: Env.schema.string(),
-  SMALL_COVER_DIR: Env.schema.string(),
-  MEDIUM_COVER_DIR: Env.schema.string(),
-  LARGE_COVER_DIR: Env.schema.string(),
 
   /*
   |----------------------------------------------------------

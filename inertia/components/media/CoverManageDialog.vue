@@ -15,6 +15,7 @@ const coverDialogConfig: ActionDialogConfig<{ cover: File | null }, IMediaPresen
   resourceNameConfig: { singular: 'cover', indefinite: 'une', definite: 'la' },
   form: coverForm,
   customSubmitHandlers: {
+    // edit: handleUpdateCover,
     delete: handleDeleteCover,
   },
 }
@@ -49,8 +50,8 @@ function handleDeleteCover() {
 
 function open(media: IMediaPresented) {
   apiUrl.value = `/admin/media/${media.id}/cover`
-  const task = media.cover ? 'edit' : 'create'
-  openModal(task, media)
+  // const task = media.cover ? 'edit' : 'create'
+  openModal('create', media)
 }
 
 watch(currentTask, (newTask) => {
@@ -74,7 +75,7 @@ defineExpose({ open })
     @close="closeModal"
   >
     <template #form-content>
-      <div v-if="currentTask === 'create' || currentTask === 'edit'">
+      <div v-if="currentTask === 'create'">
         <h4>
           Cover pour <strong>{{ selectedItem?.name }}</strong>
         </h4>
@@ -88,7 +89,7 @@ defineExpose({ open })
             <span>Actuelle</span>
             <img
               v-if="selectedItem?.cover"
-              :src="`/storage/${selectedItem.cover.smallUrl}`"
+              :src="`${selectedItem.cover.smallCoverUrl}`"
               class="img-thumbnail"
               alt="Cover actuelle"
             />
@@ -111,7 +112,6 @@ defineExpose({ open })
           type="file"
           accept="image/png, image/jpeg, image/webp"
           @input="handleCoverSelect"
-          class="file-input"
         />
         <progress v-if="coverForm.progress" :value="coverForm.progress.percentage" max="100" />
         <div v-if="coverForm.errors.cover" class="form-error">{{ coverForm.errors.cover }}</div>
@@ -137,13 +137,10 @@ defineExpose({ open })
   text-align: center;
 }
 .img-thumbnail {
-  max-width: 100px;
-  height: auto;
+  width: 100px;
+  height: 150px;
   border-radius: 4px;
   display: block;
   margin: 5px auto;
-}
-.file-input {
-  margin-top: 10px;
 }
 </style>

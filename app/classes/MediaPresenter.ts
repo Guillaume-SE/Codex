@@ -4,6 +4,7 @@ import type { MediaCategories } from '#types/MediaCategories'
 import type { MediaStatuses } from '#types/MediaStatuses'
 import { ModelPaginatorContract } from '@adonisjs/lucid/types/model'
 import { DateTime } from 'luxon'
+import { CoverPresenter } from './CoverPresenter.js'
 
 interface IGenre {
   id: number
@@ -27,10 +28,8 @@ export class MediaPresenter {
     lastUpdate: DateTime
   }
   cover?: {
-    originalUrl: string
-    smallUrl: string
-    mediumUrl: string
-    largeUrl: string
+    smallCoverUrl: string
+    largeCoverUrl: string
   }
   gameInfos?: { platform: string | null }
   movieInfos?: { duration: number | null }
@@ -59,11 +58,10 @@ export class MediaPresenter {
     }
 
     if (media.cover) {
+      const coverPresenter = new CoverPresenter(media.cover)
       this.cover = {
-        originalUrl: media.cover.originalCoverUrl,
-        smallUrl: media.cover.smallCoverUrl,
-        mediumUrl: media.cover.mediumCoverUrl,
-        largeUrl: media.cover.largeCoverUrl,
+        smallCoverUrl: coverPresenter.smallCoverUrl(),
+        largeCoverUrl: coverPresenter.largeCoverUrl(),
       }
     }
 

@@ -26,7 +26,7 @@ function requestDeletion() {
           <img
             class="img-preview"
             loading="lazy"
-            :src="`/storage/${props.media.cover.smallUrl}`"
+            :src="`${props.media.cover.smallCoverUrl}`"
             :alt="`cover de ${props.media.name}`"
           />
         </div>

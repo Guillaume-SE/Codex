@@ -24,12 +24,6 @@ yarn-error.log
 # Platform specific
 .DS_Store
 
-# images uploaded
-uploads/covers/original
-uploads/covers/small
-uploads/covers/medium
-uploads/covers/large
-
 # others
 note.md
 todo.md

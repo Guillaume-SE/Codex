@@ -18,10 +18,8 @@ export interface IMediaPresented {
     lastUpdate: string | null
   }
   cover?: {
-    originalUrl: string
-    smallUrl: string
-    mediumUrl: string
-    largeUrl: string
+    smallCoverUrl: string
+    largeCoverUrl: string
   }
   gameInfos?: { platform: string | null }
   movieInfos?: { duration: number | null }

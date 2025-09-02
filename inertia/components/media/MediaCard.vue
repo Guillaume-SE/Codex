@@ -19,8 +19,8 @@ defineProps<{
         <img
           class="img-medium"
           loading="lazy"
-          :src="`/storage/${media.cover.smallUrl}`"
-          :srcset="`/storage/${media.cover.smallUrl}, /storage/${media.cover.mediumUrl} 2x`"
+          :src="`${media.cover.smallCoverUrl}`"
+          :srcset="`${media.cover.smallCoverUrl}, ${media.cover.largeCoverUrl} 2x`"
           :alt="`cover de ${media.name}`"
         />
       </div>
@@ -60,7 +60,13 @@ defineProps<{
   overflow: hidden;
   text-overflow: ellipsis;
 }
-
+.icon-favorite {
+  width: 30px;
+  height: auto;
+  position: absolute;
+  top: -10px;
+  right: -2px;
+}
 .media-card-info-container {
   display: flex;
   justify-content: space-between;

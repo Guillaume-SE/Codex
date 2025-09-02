@@ -31,8 +31,8 @@ const formattedDate = useFormattedDateToLocale
       <img
         class="img-large"
         loading="lazy"
-        :src="`/storage/${media.cover.mediumUrl}`"
-        :srcset="`/storage/${media.cover.mediumUrl}, /storage/${media.cover.largeUrl} 2x`"
+        :src="`${media.cover.smallCoverUrl}`"
+        :srcset="`${media.cover.smallCoverUrl}, ${media.cover.largeCoverUrl} 2x`"
         :alt="`cover de ${media.name}`"
       />
     </div>

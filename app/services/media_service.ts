@@ -94,13 +94,7 @@ export default class MediaService {
     await media.delete()
 
     if (cover) {
-      await this.coverService.deleteFile({
-        original: cover.originalCoverFilename,
-        small: cover.smallCoverFilename,
-        medium: cover.mediumCoverFilename,
-        large: cover.largeCoverFilename,
-      })
-      await cover.delete()
+      await this.coverService.delete(cover.cloudinaryIdentifier)
     }
 
     return mediaName
