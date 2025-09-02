@@ -14,6 +14,6 @@ export default class StorageController {
       return response.badRequest('Malformed path')
     }
 
-    return response.download(app.makePath(env.get('UPLOAD_BASE_PATH_DIR'), normalizedPath))
+    // return response.download(app.makePath(env.get('UPLOAD_BASE_PATH_DIR'), normalizedPath))
   }
 }
