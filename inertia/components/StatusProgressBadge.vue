@@ -27,14 +27,14 @@ const { backgroundColor, iconColor } = useStatusStyles(toRef(props, 'status'))
   display: flex;
   align-items: center;
   padding: 5px;
-  width: 80px;
+  width: 90px;
   border-radius: 5px;
 }
 
 .status-progress-text {
   /* color: #fafafa; */
   color: #0f172a;
-  font-weight: 700;
+  font-weight: 600;
   font-size: 0.8rem;
 }
 
