@@ -31,6 +31,17 @@ const { backgroundColor, iconColor } = useStatusStyles(toRef(props, 'status'))
   border-radius: 5px;
 }
 
+/* .status-progress-container-rounded {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px;
+  margin: 10px;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+} */
+
 .status-progress-text {
   /* color: #fafafa; */
   color: #0f172a;
@@ -63,17 +74,22 @@ const { backgroundColor, iconColor } = useStatusStyles(toRef(props, 'status'))
 
 .background-in-progress {
   background-color: #daebfe;
+  /* background-color: #0f172a; */
 }
 .background-completed {
   background-color: #d0fae5;
+  /* background-color: #0f172a; */
 }
 .background-on-hold {
   background-color: #fef9c1;
+  /* background-color: #0f172a; */
 }
 .background-dropped {
   background-color: #ffe2e1;
+  /* background-color: #0f172a; */
 }
 .background-planned {
   background-color: #f3e8ff;
+  /* background-color: #0f172a; */
 }
 </style>
