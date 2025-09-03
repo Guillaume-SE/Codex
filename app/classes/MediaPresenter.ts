@@ -37,6 +37,11 @@ export class MediaPresenter {
   seriesInfos?: { seasonLength: number | null }
   bookInfos?: { publisher: string | null }
 
+  defaultCover: {
+    small: string
+    large: string
+  }
+
   constructor(media: Media) {
     this.id = media.id
     this.status = media.status.name
@@ -63,6 +68,11 @@ export class MediaPresenter {
         smallCoverUrl: coverPresenter.smallCoverUrl(),
         largeCoverUrl: coverPresenter.largeCoverUrl(),
       }
+    }
+
+    this.defaultCover = {
+      small: CoverPresenter.smallDefaultUrl(),
+      large: CoverPresenter.largeDefaultUrl(),
     }
 
     switch (media.category.name) {

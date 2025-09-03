@@ -57,8 +57,11 @@ router
     router.put('/media/:mediaId/review', [ReviewsController, 'update']).as('reviews.update')
 
     // Covers
-    // router.get('/media/:mediaId/cover', [CoversController, 'showManage']).as('covers.manage')
+    router.get('/media/:mediaId/cover', [CoversController, 'showManage']).as('covers.manage')
     router.post('/media/:mediaId/cover', [CoversController, 'storeOrUpdate']).as('covers.store')
+    router
+      .post('media/cover/default', [CoversController, 'updateDefault'])
+      .as('covers.default.update')
     router.delete('/media/:mediaId/cover', [CoversController, 'destroy']).as('covers.destroy')
 
     // --- Other Management Pages (Genres, Types, Platforms) ---

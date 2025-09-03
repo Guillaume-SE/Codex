@@ -26,4 +26,9 @@ export interface IMediaPresented {
   animeInfos?: { seasonLength: number | null }
   seriesInfos?: { seasonLength: number | null }
   bookInfos?: { publisher: string | null }
+
+  defaultCover: {
+    small: string
+    large: string
+  }
 }

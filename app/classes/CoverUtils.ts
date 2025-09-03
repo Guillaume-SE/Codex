@@ -30,13 +30,12 @@ export class CoverUtils {
     const key = existingPublicId || cuid()
 
     const result = await cloudinary.uploader.upload(filePath, {
-      public_id:
-        'https://fastly.picsum.photos/id/11/2500/1667.jpg?hmac=xxjFJtAPgshYkysU_aqx2sZir-kIOjNR9vx0te7GycQ', // unique identifier
+      public_id: key, // unique identifier
       overwrite: true, // overwrite an existing image with the same public_id
       invalidate: true, // allow cache stored file to force update
       resource_type: 'auto', // auto detect the type of the file uploaded
       quality: 'auto:good', // compromise between file size and quality
-      tags: ['default'], // max 1000 tags and max 255 chars.
+      tags: [tag], // max 1000 tags and max 255 chars.
       asset_folder: 'codex', // place to store files without put it in the public id
       // type: 'private', in case we don't want user to see the image in without options (before watermark etc...)
       eager: [
