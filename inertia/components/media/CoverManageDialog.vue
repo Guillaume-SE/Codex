@@ -72,6 +72,7 @@ defineExpose({ open })
     :title="dialogTitle"
     :form="coverForm"
     :action-text="dialogActionText"
+    :is-action-disabled="coverForm.processing || !coverPreviewUrl"
     @submit="submitForm"
     @close="closeModal"
   >
@@ -91,7 +92,7 @@ defineExpose({ open })
             <MediaCover
               :cover="selectedItem.cover"
               alt="cover actuelle"
-              :default-cover="selectedItem.defaultCover"
+              :default-cover-url="selectedItem.defaultCover"
             />
           </div>
           <div class="cover-preview-box">
