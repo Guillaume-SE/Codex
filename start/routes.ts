@@ -57,7 +57,7 @@ router
     router.put('/media/:mediaId/review', [ReviewsController, 'update']).as('reviews.update')
 
     // Covers
-    router.get('/media/:mediaId/cover', [CoversController, 'showManage']).as('covers.manage')
+    router.get('/media/covers', [CoversController, 'showManage']).as('covers.manage')
     router.post('/media/:mediaId/cover', [CoversController, 'storeOrUpdate']).as('covers.store')
     router
       .post('media/cover/default', [CoversController, 'updateDefault'])
