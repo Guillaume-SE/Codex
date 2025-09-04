@@ -30,7 +30,7 @@ const formattedDate = useFormattedDateToLocale
     <MediaCover
       :cover="media.cover"
       :alt="`cover de ${media.name}`"
-      :default-cover="media.defaultCover"
+      :default-cover-url="media.defaultCover"
       size="large"
     />
     <div>

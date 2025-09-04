@@ -1,3 +1,5 @@
+import { CoverPresenter } from '#classes/CoverPresenter'
+import { CoverUtils } from '#classes/CoverUtils'
 import { MediaPresenter } from '#classes/MediaPresenter'
 import Cover from '#models/cover'
 import Media from '#models/media'
@@ -14,14 +16,13 @@ export default class CoversController {
     readonly mediaService: MediaService
   ) {}
 
-  // async showManage({ params, inertia }: HttpContext) {
-  //   const media = await this.mediaService.getOne(params.mediaId)
-  //   const presentedMedia = MediaPresenter.present(media)
+  async showManage({ inertia }: HttpContext) {
+    const defaultCoverUrl = CoverPresenter.defaultCoverUrl()
 
-  //   return inertia.render('admin/ManageCover', {
-  //     media: presentedMedia,
-  //   })
-  // }
+    return inertia.render('admin/ManageCover', {
+      defaultCoverUrl,
+    })
+  }
 
   async storeOrUpdate({ params, request, session, response }: HttpContext) {
     const { cover: newCover } = await request.validateUsing(coverValidator)
@@ -39,6 +40,14 @@ export default class CoversController {
 
     const messageAction = existingCover ? 'modifiée' : 'ajoutée'
     session.flash('success', `Cover de ${media.name} ${messageAction} avec succès`)
+    return response.redirect().toRoute('dashboard.home')
+  }
+
+  async updateDefault({ request, session, response }: HttpContext) {
+    const { cover } = await request.validateUsing(coverValidator)
+
+    await this.coverService.uploadDefault(cover)
+    session.flash('success', `Cover par défaut modifiée avec succès`)
     return response.redirect().toRoute('dashboard.home')
   }
 

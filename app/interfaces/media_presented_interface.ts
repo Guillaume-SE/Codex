@@ -27,8 +27,5 @@ export interface IMediaPresented {
   seriesInfos?: { seasonLength: number | null }
   bookInfos?: { publisher: string | null }
 
-  defaultCover: {
-    small: string
-    large: string
-  }
+  defaultCover: string
 }

@@ -37,6 +37,14 @@ export default class CoverService {
     await media.related('cover').updateOrCreate(searchPayload, data)
   }
 
+  async uploadDefault(file: MultipartFile) {
+    if (file.tmpPath === undefined) {
+      throw new Error("Aucun chemin disponible pour l'image")
+    }
+    const coverUtils = new CoverUtils()
+    await coverUtils.uploadDefaultCover(file.tmpPath)
+  }
+
   async delete(publicId: string) {
     const coverUtils = new CoverUtils()
     await coverUtils.destroy(publicId)

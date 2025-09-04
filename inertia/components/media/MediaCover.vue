@@ -4,7 +4,7 @@ import { computed, ref } from 'vue'
 const props = defineProps<{
   cover: { smallCoverUrl: string; largeCoverUrl: string } | undefined
   alt: string
-  defaultCover: { small: string; large: string }
+  defaultCoverUrl: string
   size?: 'small' | 'large'
 }>()
 
@@ -40,8 +40,7 @@ const sizeClass = computed(() => (props.size ? `size-${props.size}` : 'size-smal
       class="cover-image"
       :class="{ 'is-loaded': backupImageStatus === 'loaded' }"
       loading="lazy"
-      :src="defaultCover.small"
-      :srcset="`${defaultCover.small}, ${defaultCover.large} 2x`"
+      :src="defaultCoverUrl"
       alt="Image de remplacement"
       @load="backupImageStatus = 'loaded'"
       @error="backupImageStatus = 'error'"

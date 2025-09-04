@@ -18,7 +18,7 @@ defineProps<{
       <MediaCover
         :cover="media.cover"
         :alt="`cover de ${media.name}`"
-        :default-cover="media.defaultCover"
+        :default-cover-url="media.defaultCover"
       />
       <p class="media-card-title">
         {{ media.name }}

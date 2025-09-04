@@ -1,10 +1,10 @@
+import { CoverPresenter } from '#classes/CoverPresenter'
 import { IPaginated } from '#interfaces/paginated_interface'
 import type Media from '#models/media'
 import type { MediaCategories } from '#types/MediaCategories'
 import type { MediaStatuses } from '#types/MediaStatuses'
 import { ModelPaginatorContract } from '@adonisjs/lucid/types/model'
 import { DateTime } from 'luxon'
-import { CoverPresenter } from './CoverPresenter.js'
 
 interface IGenre {
   id: number
@@ -37,10 +37,7 @@ export class MediaPresenter {
   seriesInfos?: { seasonLength: number | null }
   bookInfos?: { publisher: string | null }
 
-  defaultCover: {
-    small: string
-    large: string
-  }
+  defaultCover: string
 
   constructor(media: Media) {
     this.id = media.id
@@ -70,10 +67,7 @@ export class MediaPresenter {
       }
     }
 
-    this.defaultCover = {
-      small: CoverPresenter.smallDefaultUrl(),
-      large: CoverPresenter.largeDefaultUrl(),
-    }
+    this.defaultCover = CoverPresenter.defaultCoverUrl()
 
     switch (media.category.name) {
       case 'game':
