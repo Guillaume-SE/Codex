@@ -1,33 +1,26 @@
 <script setup lang="ts">
-import { router, useForm } from '@inertiajs/vue3'
+import { useForm } from '@inertiajs/vue3'
 import { nextTick, ref, useTemplateRef } from 'vue'
 import ActionDialogComp from '~/components/ActionDialogComp.vue'
+import ButtonComp from '~/components/ui/ButtonComp.vue'
+
+const props = defineProps<{
+  defaultCoverUrl: string
+}>()
 
 const form = useForm({ cover: null as File | null })
 const previewUrl = ref<string | null>(null)
+const isOverlayVisible = ref(false)
 const actionDialogRef = useTemplateRef<InstanceType<typeof ActionDialogComp>>('actionDialogRef')
-const currentTask = ref<'upload' | 'delete' | null>(null)
-
-function submitNewDefaultCover() {
-  form.post('/admin/media/cover/default', {
-    onSuccess: () => {},
-    onFinish: () => form.reset('cover'),
-  })
-}
-
-function deleteDefaultCover() {
-  router.delete('/admin/media/cover/default', {
-    onSuccess: () => {
-      closeModal()
-    },
-  })
-}
 
 function handleFileSelect(event: Event) {
   const target = event.target as HTMLInputElement
   const file = target.files?.[0]
   if (file) {
     form.cover = file
+    if (previewUrl.value) {
+      URL.revokeObjectURL(previewUrl.value)
+    }
     previewUrl.value = URL.createObjectURL(file)
   } else {
     form.cover = null
@@ -35,18 +28,34 @@ function handleFileSelect(event: Event) {
   }
 }
 
+function submitNewDefaultCover() {
+  form.post('/admin/media/cover/default', {
+    onSuccess: () => closeModal(),
+    onFinish: () => form.reset('cover'),
+  })
+}
+
 function openModal() {
-  currentTask.value = 'upload'
   form.reset()
+  previewUrl.value = null
+  isOverlayVisible.value = false
   nextTick(() => {
     actionDialogRef.value?.showModal()
   })
 }
 function closeModal() {
   actionDialogRef.value?.close()
+  isOverlayVisible.value = false
+  if (previewUrl.value) {
+    URL.revokeObjectURL(previewUrl.value)
+  }
+  previewUrl.value = null
   form.reset()
   form.clearErrors()
-  currentTask.value = null
+}
+
+function toggleOverlay() {
+  isOverlayVisible.value = !isOverlayVisible.value
 }
 
 defineExpose({ open: openModal })
@@ -54,36 +63,81 @@ defineExpose({ open: openModal })
 
 <template>
   <ActionDialogComp
-    @submit="submitNewDefaultCover"
-    @close="closeModal"
     ref="actionDialogRef"
     title="Modifier la cover par défaut"
-    :form="form"
     action-text="Modifier"
+    :form="form"
+    :is-action-disabled="form.processing || !previewUrl"
+    @submit="submitNewDefaultCover"
+    @close="closeModal"
   >
     <template #form-content>
-      <div class="cover-comparison"></div>
+      <div class="cover-comparison">
+        <div class="cover-preview-box">
+          <span>Actuelle</span>
+          <div class="cover-container size-small new-preview-container">
+            <img class="cover-image" :src="props.defaultCoverUrl" alt="Cover par défaut actuelle" />
+            <div v-if="isOverlayVisible" class="preview-overlay">
+              <span>Aucune cover</span>
+            </div>
+          </div>
+        </div>
 
-      <input type="file" @input="handleFileSelect" />
+        <div class="cover-preview-box">
+          <span>Nouvelle</span>
+          <div class="cover-container size-small new-preview-container">
+            <img
+              v-if="previewUrl"
+              class="cover-image"
+              :src="previewUrl"
+              alt="Aperçu de la nouvelle cover"
+            />
+            <span v-else>En attente du fichier</span>
 
-      <ButtonComp @click="deleteDefaultCover"> Supprimer la cover par défaut </ButtonComp>
+            <div v-if="previewUrl && isOverlayVisible" class="preview-overlay">
+              <span>Aucune cover</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="toggle-container">
+        <ButtonComp @click="toggleOverlay" class="toggle-button">
+          {{ isOverlayVisible ? 'Masquer' : 'Afficher' }} l'overlay
+        </ButtonComp>
+      </div>
+
+      <div>
+        <label for="cover-upload">Choisir un nouveau fichier :</label>
+        <input
+          id="cover-upload"
+          type="file"
+          accept="image/png, image/jpeg, image/webp"
+          @input="handleFileSelect"
+        />
+        <progress v-if="form.progress" :value="form.progress.percentage" max="100" />
+        <div v-if="form.errors.cover" class="form-error">{{ form.errors.cover }}</div>
+      </div>
     </template>
   </ActionDialogComp>
 </template>
 
 <style scoped>
 .cover-container {
-  width: 150px;
-  height: 225px;
   border-radius: 8px;
   overflow: hidden;
   position: relative;
-  background-color: #333;
   margin: 5px auto;
+  background-color: #333;
   display: flex;
   justify-content: center;
   align-items: center;
   color: white;
+}
+
+.size-small {
+  width: 150px;
+  height: 225px;
 }
 
 .cover-image {
@@ -97,8 +151,37 @@ defineExpose({ open: openModal })
   gap: 20px;
   margin-bottom: 20px;
 }
+
 .cover-preview-box {
   flex: 1;
   text-align: center;
+}
+
+.new-preview-container {
+  position: relative;
+}
+
+.preview-overlay {
+  position: absolute;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.8);
+  z-index: 2;
+  color: white;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 600;
+  font-size: 1.1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 10px;
+}
+.toggle-container {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.toggle-button {
+  margin-top: 10px;
 }
 </style>
