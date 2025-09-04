@@ -20,8 +20,6 @@ export default await Env.create(new URL('../', import.meta.url), {
   CLOUDINARY_API_SECRET: Env.schema.string(),
 
   CLOUDINARY_BASE_URL: Env.schema.string(),
-  CLOUDINARY_PLACEHOLDER_ID: Env.schema.string(),
-  DEFAULT_COVER_EXTENSION: Env.schema.string(),
 
   /*
   |----------------------------------------------------------
