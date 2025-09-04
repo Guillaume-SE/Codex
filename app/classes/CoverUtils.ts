@@ -22,6 +22,13 @@ export class CoverUtils {
     })
   }
 
+  private commonUploadOptions = {
+    overwrite: true, // overwrite an existing image with the same public_id
+    invalidate: true, // allow cache stored file to force update
+    resource_type: 'auto', // auto detect the type of the file uploaded (image, video or raw)
+    asset_folder: 'codex', // place to store (without him to be prefixed to the public id)
+  } as const
+
   async upload(
     filePath: string,
     tag: MediaCategories,
@@ -31,32 +38,34 @@ export class CoverUtils {
 
     const result = await cloudinary.uploader.upload(filePath, {
       public_id: key, // unique identifier
-      overwrite: true, // overwrite an existing image with the same public_id
-      invalidate: true, // allow cache stored file to force update
-      resource_type: 'auto', // auto detect the type of the file uploaded
       quality: 'auto:good', // compromise between file size and quality
-      tags: [tag], // max 1000 tags and max 255 chars.
-      asset_folder: 'codex', // place to store files without put it in the public id
-      // type: 'private', in case we don't want user to see the image in without options (before watermark etc...)
       eager: [
-        {
-          width: 220,
-          height: 330,
-          crop: 'fill',
-          gravity: 'center',
-        },
-        {
-          width: 440,
-          height: 660,
-          crop: 'fill',
-          gravity: 'center',
-        },
+        { width: 220, height: 330, crop: 'fill', gravity: 'center' },
+        { width: 440, height: 660, crop: 'fill', gravity: 'center' },
       ],
+      ...this.commonUploadOptions,
+      tags: [tag], // max 1000 tags and max 255 chars.
+      format: 'webp',
     })
 
-    console.log(result)
+    console.log('classic', result)
 
     return { publicId: key, version: result.version }
+  }
+
+  async uploadDefaultCover(filePath: string): Promise<ICloudinaryResults> {
+    const result = await cloudinary.uploader.upload(filePath, {
+      ...this.commonUploadOptions,
+      public_id: 'default',
+      quality: 'auto:eco', // hidden behind overlay no details quality needed (low even possible)
+      format: 'jpg',
+      eager: [{ width: 220, height: 330, crop: 'fill', gravity: 'center' }], // hiden behind overaly so no need a 2x size
+      tags: ['default'],
+    })
+
+    console.log('default', result)
+
+    return { publicId: result.public_id, version: result.version }
   }
 
   async destroy(publicId: string) {
