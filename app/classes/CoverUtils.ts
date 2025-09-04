@@ -48,8 +48,6 @@ export class CoverUtils {
       format: 'webp',
     })
 
-    console.log('classic', result)
-
     return { publicId: key, version: result.version }
   }
 
@@ -62,8 +60,6 @@ export class CoverUtils {
       eager: [{ width: 220, height: 330, crop: 'fill', gravity: 'center' }], // hiden behind overaly so no need a 2x size
       tags: ['default'],
     })
-
-    console.log('default', result)
 
     return { publicId: result.public_id, version: result.version }
   }
