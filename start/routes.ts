@@ -10,7 +10,7 @@ const MediaCategoriesController = () => import('#controllers/media_categories_co
 const GamePlatformsController = () => import('#controllers/game_platforms_controller')
 const BookPublishersController = () => import('#controllers/book_publishers_controller')
 const HomeController = () => import('#controllers/home_controller')
-const StorageController = () => import('#controllers/storage_controller')
+// const StorageController = () => import('#controllers/storage_controller')
 const DashboardController = () => import('#controllers/dashboard_controller')
 
 router.where('mediaId', router.matchers.number())
@@ -21,7 +21,7 @@ router.where('genreId', router.matchers.number())
 
 router.group(() => {
   router.get('/', [HomeController, 'showHome']).as('home')
-  router.get('/storage/*', [StorageController, 'show'])
+  // router.get('/storage/*', [StorageController, 'show'])
   router.get('/users/:id', [UsersController, 'show']).as('users.show')
 
   // Public media browsing routes
@@ -57,9 +57,12 @@ router
     router.put('/media/:mediaId/review', [ReviewsController, 'update']).as('reviews.update')
 
     // Covers
-    router.get('/media/:mediaId/cover', [CoversController, 'showManage']).as('covers.manage')
-    router.post('/media/:mediaId/cover', [CoversController, 'manageOne']).as('covers.store')
-    router.delete('/media/:mediaId/cover', [CoversController, 'deleteOne']).as('covers.destroy')
+    router.get('/media/covers', [CoversController, 'showManage']).as('covers.manage')
+    router.post('/media/:mediaId/cover', [CoversController, 'storeOrUpdate']).as('covers.store')
+    router
+      .post('media/cover/default', [CoversController, 'updateDefault'])
+      .as('covers.default.update')
+    router.delete('/media/:mediaId/cover', [CoversController, 'destroy']).as('covers.destroy')
 
     // --- Other Management Pages (Genres, Types, Platforms) ---
     router.get('/genres/manage', [GenresController, 'showManage']).as('genres.index')

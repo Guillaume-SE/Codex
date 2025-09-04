@@ -1,6 +1,6 @@
 import { AnimeInfoFactory } from '#database/factories/anime_info_factory'
 import { BookInfoFactory } from '#database/factories/book_info_factory'
-import { CoverFactory } from '#database/factories/cover_factory'
+// import { CoverFactory } from '#database/factories/cover_factory'
 import { GameInfoFactory } from '#database/factories/game_info_factory'
 import { MovieInfoFactory } from '#database/factories/movie_info_factory'
 import { ReviewFactory } from '#database/factories/review_factory'
@@ -64,5 +64,5 @@ export const MediaFactory = factory
   .relation('bookInfo', () => BookInfoFactory)
   .relation('movieInfo', () => MovieInfoFactory)
   .relation('review', () => ReviewFactory)
-  .relation('cover', () => CoverFactory)
+  // .relation('cover', () => CoverFactory)
   .build()

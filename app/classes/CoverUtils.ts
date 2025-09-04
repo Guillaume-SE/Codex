@@ -1,63 +1,72 @@
 import env from '#start/env'
+import type { MediaCategories } from '#types/MediaCategories'
 import { cuid } from '@adonisjs/core/helpers'
-import { PathLike } from 'fs'
-import sharp from 'sharp'
+import { v2 as cloudinary } from 'cloudinary'
 
-interface IProcessImageOptions {
-  width?: number
-  height?: number
-  format: keyof sharp.FormatEnum
-}
-
-interface ICoverFilenames {
-  original: string
-  small: string
-  medium: string
-  large: string
+interface ICloudinaryResults {
+  publicId: string
+  version: number
 }
 
 export class CoverUtils {
-  protected DEFAULT_COVER_EXTENSION: string | PathLike = env.get('DEFAULT_COVER_EXTENSION')
-  protected ORIGINAL_COVER_DIR: string | PathLike = env.get('ORIGINAL_COVER_DIR')
-  protected SMALL_COVER_DIR: string | PathLike = env.get('SMALL_COVER_DIR')
-  protected MEDIUM_COVER_DIR: string | PathLike = env.get('MEDIUM_COVER_DIR')
-  protected LARGE_COVER_DIR: string | PathLike = env.get('LARGE_COVER_DIR')
+  private CLOUDINARY_CLOUD_NAME: string = env.get('CLOUDINARY_CLOUD_NAME')
+  private CLOUDINARY_API_KEY: string = env.get('CLOUDINARY_API_KEY')
+  private CLOUDINARY_API_SECRET: string = env.get('CLOUDINARY_API_SECRET')
 
-  async getFileDimensions(filepath: string) {
-    const dimensions = await sharp(filepath).metadata()
-    return {
-      width: dimensions.width,
-      height: dimensions.height,
-    }
+  constructor() {
+    cloudinary.config({
+      cloud_name: this.CLOUDINARY_CLOUD_NAME,
+      api_key: this.CLOUDINARY_API_KEY,
+      api_secret: this.CLOUDINARY_API_SECRET,
+      secure: true,
+    })
   }
 
-  async processImage(filePath: string, options: IProcessImageOptions) {
-    return sharp(filePath)
-      .resize({
-        width: options.width,
-        height: options.height,
-        fit: 'cover',
-      })
-      .toFormat('jpg', { mozjpeg: true })
-      .toBuffer()
+  private commonUploadOptions = {
+    overwrite: true, // overwrite an existing image with the same public_id
+    invalidate: true, // allow cache stored file to force update
+    resource_type: 'auto', // auto detect the type of the file uploaded (image, video or raw)
+    asset_folder: 'codex', // place to store (without him to be prefixed to the public id)
+  } as const
+
+  async upload(
+    filePath: string,
+    tag: MediaCategories,
+    existingPublicId?: string
+  ): Promise<ICloudinaryResults> {
+    const key = existingPublicId || cuid()
+
+    const result = await cloudinary.uploader.upload(filePath, {
+      public_id: key, // unique identifier
+      quality: 'auto:good', // compromise between file size and quality
+      eager: [
+        { width: 220, height: 330, crop: 'fill', gravity: 'center' },
+        { width: 440, height: 660, crop: 'fill', gravity: 'center' },
+      ],
+      ...this.commonUploadOptions,
+      tags: [tag], // max 1000 tags and max 255 chars.
+      format: 'webp',
+    })
+
+    return { publicId: key, version: result.version }
   }
 
-  createFilenames(): ICoverFilenames {
-    const key = cuid()
-    return {
-      original: `${key}${this.DEFAULT_COVER_EXTENSION}`,
-      small: `${key}-150x225${this.DEFAULT_COVER_EXTENSION}`,
-      medium: `${key}-300x450${this.DEFAULT_COVER_EXTENSION}`,
-      large: `${key}-large${this.DEFAULT_COVER_EXTENSION}`,
-    }
+  async uploadDefaultCover(filePath: string): Promise<ICloudinaryResults> {
+    const result = await cloudinary.uploader.upload(filePath, {
+      ...this.commonUploadOptions,
+      public_id: 'default',
+      quality: 'auto:eco', // hidden behind overlay no details quality needed (low even possible)
+      format: 'jpg',
+      eager: [{ width: 220, height: 330, crop: 'fill', gravity: 'center' }], // hiden behind overaly so no need a 2x size
+      tags: ['default'],
+    })
+
+    return { publicId: result.public_id, version: result.version }
   }
 
-  getFullPaths(filenames: ICoverFilenames) {
-    return {
-      original: `${this.ORIGINAL_COVER_DIR}${filenames.original}`,
-      small: `${this.SMALL_COVER_DIR}${filenames.small}`,
-      medium: `${this.MEDIUM_COVER_DIR}${filenames.medium}`,
-      large: `${this.LARGE_COVER_DIR}${filenames.large}`,
-    }
+  async destroy(publicId: string) {
+    cloudinary.uploader.destroy(publicId, {
+      invalidate: true,
+    })
   }
 }

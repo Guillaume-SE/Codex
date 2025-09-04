@@ -3,6 +3,7 @@ import type { IMediaPresented } from '#interfaces/media_presented_interface'
 import { useForm } from '@inertiajs/vue3'
 import { ref, watch } from 'vue'
 import ActionDialogComp from '~/components/ActionDialogComp.vue'
+import MediaCover from '~/components/media/MediaCover.vue'
 import ButtonComp from '~/components/ui/ButtonComp.vue'
 import { ActionDialogConfig, useActionDialog } from '~/composables/useActionDialog'
 
@@ -15,6 +16,7 @@ const coverDialogConfig: ActionDialogConfig<{ cover: File | null }, IMediaPresen
   resourceNameConfig: { singular: 'cover', indefinite: 'une', definite: 'la' },
   form: coverForm,
   customSubmitHandlers: {
+    // edit: handleUpdateCover,
     delete: handleDeleteCover,
   },
 }
@@ -49,8 +51,8 @@ function handleDeleteCover() {
 
 function open(media: IMediaPresented) {
   apiUrl.value = `/admin/media/${media.id}/cover`
-  const task = media.cover ? 'edit' : 'create'
-  openModal(task, media)
+  // const task = media.cover ? 'edit' : 'create'
+  openModal('create', media)
 }
 
 watch(currentTask, (newTask) => {
@@ -70,11 +72,12 @@ defineExpose({ open })
     :title="dialogTitle"
     :form="coverForm"
     :action-text="dialogActionText"
+    :is-action-disabled="coverForm.processing || !coverPreviewUrl"
     @submit="submitForm"
     @close="closeModal"
   >
     <template #form-content>
-      <div v-if="currentTask === 'create' || currentTask === 'edit'">
+      <div v-if="currentTask === 'create'">
         <h4>
           Cover pour <strong>{{ selectedItem?.name }}</strong>
         </h4>
@@ -84,15 +87,13 @@ defineExpose({ open })
         </ButtonComp>
 
         <div class="cover-comparison">
-          <div class="cover-preview-box">
+          <div v-if="selectedItem" class="cover-preview-box">
             <span>Actuelle</span>
-            <img
-              v-if="selectedItem?.cover"
-              :src="`/storage/${selectedItem.cover.smallUrl}`"
-              class="img-thumbnail"
-              alt="Cover actuelle"
+            <MediaCover
+              :cover="selectedItem.cover"
+              alt="cover actuelle"
+              :default-cover-url="selectedItem.defaultCover"
             />
-            <p v-else>Aucune</p>
           </div>
           <div class="cover-preview-box">
             <span>Nouvelle</span>
@@ -102,7 +103,7 @@ defineExpose({ open })
               class="img-thumbnail"
               alt="Aperçu de la nouvelle cover"
             />
-            <p v-else>Aucune</p>
+            <p v-else class="img-thumbnail placeholder">En attente du fichier</p>
           </div>
         </div>
         <label for="cover-upload">Choisir un nouveau fichier :</label>
@@ -111,7 +112,6 @@ defineExpose({ open })
           type="file"
           accept="image/png, image/jpeg, image/webp"
           @input="handleCoverSelect"
-          class="file-input"
         />
         <progress v-if="coverForm.progress" :value="coverForm.progress.percentage" max="100" />
         <div v-if="coverForm.errors.cover" class="form-error">{{ coverForm.errors.cover }}</div>
@@ -129,21 +129,48 @@ defineExpose({ open })
 <style scoped>
 .cover-comparison {
   display: flex;
+  justify-content: center;
+  align-items: flex-start;
   gap: 20px;
   margin-bottom: 20px;
 }
+
 .cover-preview-box {
-  flex: 1;
+  flex-basis: 220px;
+  flex-shrink: 0;
   text-align: center;
 }
-.img-thumbnail {
-  max-width: 100px;
-  height: auto;
-  border-radius: 4px;
+
+.cover-preview-box span {
   display: block;
-  margin: 5px auto;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #ccc;
 }
-.file-input {
-  margin-top: 10px;
+
+/* target the child MediaCover component using :deep() */
+:deep(.cover-container),
+:deep(.cover-placeholder),
+.img-thumbnail {
+  width: 220px;
+  height: 330px;
+  border-radius: 8px;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  background-color: #ccc;
+  overflow: hidden;
+}
+
+.img-thumbnail {
+  object-fit: cover;
+}
+
+.placeholder {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #888;
+  font-style: italic;
 }
 </style>

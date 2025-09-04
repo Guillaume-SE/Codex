@@ -2,7 +2,7 @@
 import type { IMediaPresented } from '#interfaces/media_presented_interface'
 import { computed } from 'vue'
 import AppHead from '~/components/AppHead.vue'
-import ImageNotAvailableIcon from '~/components/icons/ImageNotAvailableIcon.vue'
+import MediaCover from '~/components/media/MediaCover.vue'
 import MediaSpecificDetails from '~/components/media/MediaSpecificDetails.vue'
 import RatingBox from '~/components/RatingBox.vue'
 import StatusProgressBadge from '~/components/StatusProgressBadge.vue'
@@ -27,18 +27,12 @@ const formattedDate = useFormattedDateToLocale
       <StatusProgressBadge :status="media.status" />
     </div>
     <!-- cover -->
-    <div v-if="media.cover">
-      <img
-        class="img-large"
-        loading="lazy"
-        :src="`/storage/${media.cover.mediumUrl}`"
-        :srcset="`/storage/${media.cover.mediumUrl}, /storage/${media.cover.largeUrl} 2x`"
-        :alt="`cover de ${media.name}`"
-      />
-    </div>
-    <div v-else class="no-cover-large">
-      <ImageNotAvailableIcon />
-    </div>
+    <MediaCover
+      :cover="media.cover"
+      :alt="`cover de ${media.name}`"
+      :default-cover-url="media.defaultCover"
+      size="large"
+    />
     <div>
       <!-- all genres -->
       <ul>

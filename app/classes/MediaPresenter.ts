@@ -1,3 +1,4 @@
+import { CoverPresenter } from '#classes/CoverPresenter'
 import { IPaginated } from '#interfaces/paginated_interface'
 import type Media from '#models/media'
 import type { MediaCategories } from '#types/MediaCategories'
@@ -27,16 +28,16 @@ export class MediaPresenter {
     lastUpdate: DateTime
   }
   cover?: {
-    originalUrl: string
-    smallUrl: string
-    mediumUrl: string
-    largeUrl: string
+    smallCoverUrl: string
+    largeCoverUrl: string
   }
   gameInfos?: { platform: string | null }
   movieInfos?: { duration: number | null }
   animeInfos?: { seasonLength: number | null }
   seriesInfos?: { seasonLength: number | null }
   bookInfos?: { publisher: string | null }
+
+  defaultCover: string
 
   constructor(media: Media) {
     this.id = media.id
@@ -59,13 +60,14 @@ export class MediaPresenter {
     }
 
     if (media.cover) {
+      const coverPresenter = new CoverPresenter(media.cover)
       this.cover = {
-        originalUrl: media.cover.originalCoverUrl,
-        smallUrl: media.cover.smallCoverUrl,
-        mediumUrl: media.cover.mediumCoverUrl,
-        largeUrl: media.cover.largeCoverUrl,
+        smallCoverUrl: coverPresenter.smallCoverUrl(),
+        largeCoverUrl: coverPresenter.largeCoverUrl(),
       }
     }
+
+    this.defaultCover = CoverPresenter.defaultCoverUrl()
 
     switch (media.category.name) {
       case 'game':

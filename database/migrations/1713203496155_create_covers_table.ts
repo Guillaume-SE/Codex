@@ -14,10 +14,8 @@ export default class extends BaseSchema {
         .onDelete('CASCADE')
         .onUpdate('CASCADE')
         .notNullable()
-      table.string('original_cover_filename').notNullable()
-      table.string('small_cover_filename').notNullable()
-      table.string('medium_cover_filename').notNullable()
-      table.string('large_cover_filename').notNullable()
+      table.string('cloudinary_identifier').notNullable()
+      table.string('latest_version').notNullable()
     })
   }
 

@@ -4,7 +4,7 @@ import type { MediaCategories } from '#types/MediaCategories'
 import { Link } from '@inertiajs/vue3'
 import RatingBox from '~/components/RatingBox.vue'
 import StatusProgressBadge from '~/components/StatusProgressBadge.vue'
-import ImageNotAvailableIcon from '~/components/icons/ImageNotAvailableIcon.vue'
+import MediaCover from '~/components/media/MediaCover.vue'
 
 defineProps<{
   media: IMediaPresented
@@ -15,18 +15,11 @@ defineProps<{
 <template>
   <div class="media-card">
     <Link :href="`/categories/${mediaCategory}/${media.id}`">
-      <div v-if="media.cover">
-        <img
-          class="img-medium"
-          loading="lazy"
-          :src="`/storage/${media.cover.smallUrl}`"
-          :srcset="`/storage/${media.cover.smallUrl}, /storage/${media.cover.mediumUrl} 2x`"
-          :alt="`cover de ${media.name}`"
-        />
-      </div>
-      <div v-else class="no-cover-small">
-        <ImageNotAvailableIcon />
-      </div>
+      <MediaCover
+        :cover="media.cover"
+        :alt="`cover de ${media.name}`"
+        :default-cover-url="media.defaultCover"
+      />
       <p class="media-card-title">
         {{ media.name }}
       </p>
@@ -60,7 +53,14 @@ defineProps<{
   overflow: hidden;
   text-overflow: ellipsis;
 }
-
+.icon-favorite {
+  width: 30px;
+  height: auto;
+  position: absolute;
+  top: -10px;
+  right: -2px;
+  z-index: 3;
+}
 .media-card-info-container {
   display: flex;
   justify-content: space-between;

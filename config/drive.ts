@@ -10,12 +10,12 @@ const driveConfig = defineConfig({
    * services each using the same or a different driver.
    */
   services: {
-    fs: services.fs({
-      location: app.makePath(env.get('UPLOAD_BASE_PATH_DIR')),
-      serveFiles: true,
-      routeBasePath: '/uploads',
-      visibility: 'public',
-    }),
+    // fs: services.fs({
+    //   location: app.makePath(env.get('UPLOAD_BASE_PATH_DIR')),
+    //   serveFiles: true,
+    //   routeBasePath: '/uploads',
+    //   visibility: 'public',
+    // }),
   },
 })
 
