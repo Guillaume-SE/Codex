@@ -64,5 +64,4 @@ export const MediaFactory = factory
   .relation('bookInfo', () => BookInfoFactory)
   .relation('movieInfo', () => MovieInfoFactory)
   .relation('review', () => ReviewFactory)
-  // .relation('cover', () => CoverFactory)
   .build()
