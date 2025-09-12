@@ -6,7 +6,6 @@ import MediaCover from '~/components/media/MediaCover.vue'
 import MediaSpecificDetails from '~/components/media/MediaSpecificDetails.vue'
 import RatingBox from '~/components/RatingBox.vue'
 import StatusProgressBadge from '~/components/StatusProgressBadge.vue'
-import { useFormattedDateToLocale } from '~/composables/useFormattedDate'
 
 const props = defineProps<{
   media: IMediaPresented
@@ -15,7 +14,6 @@ const props = defineProps<{
 const hasReviewRating = computed(() =>
   props.media.review?.rating ? props.media.review.rating : null
 )
-const formattedDate = useFormattedDateToLocale
 </script>
 
 <template>
@@ -50,7 +48,7 @@ const formattedDate = useFormattedDateToLocale
       <h3>Détails</h3>
       <div>
         <!-- released -->
-        <p>Date de sortie: {{ formattedDate(media.released) || 'N/A' }}</p>
+        <p>Date de sortie: {{ media.released || 'N/A' }}</p>
         <MediaSpecificDetails :media="media" />
       </div>
     </div>
@@ -58,7 +56,7 @@ const formattedDate = useFormattedDateToLocale
       <h3>Avis</h3>
       <RatingBox :rating="hasReviewRating" />
       <div v-if="media.review">
-        <div>Mis à jour le {{ formattedDate(media.review!.lastUpdate, true) }}</div>
+        <div>Mis à jour {{ media.review!.lastUpdate }}</div>
       </div>
     </div>
   </div>
