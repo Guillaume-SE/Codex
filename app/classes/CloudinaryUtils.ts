@@ -1,3 +1,4 @@
+import { ICloudinaryUsage } from '#interfaces/cloudinary_usage_interface'
 import env from '#start/env'
 import type { MediaCategories } from '#types/MediaCategories'
 import { cuid } from '@adonisjs/core/helpers'
@@ -8,7 +9,7 @@ interface ICloudinaryResults {
   version: number
 }
 
-export class CoverUtils {
+export class CloudinaryUtils {
   private CLOUDINARY_CLOUD_NAME: string = env.get('CLOUDINARY_CLOUD_NAME')
   private CLOUDINARY_API_KEY: string = env.get('CLOUDINARY_API_KEY')
   private CLOUDINARY_API_SECRET: string = env.get('CLOUDINARY_API_SECRET')
@@ -57,7 +58,7 @@ export class CoverUtils {
       public_id: 'default',
       quality: 'auto:eco', // hidden behind overlay no details quality needed (low even possible)
       format: 'jpg',
-      eager: [{ width: 220, height: 330, crop: 'fill', gravity: 'center' }], // hiden behind overaly so no need a 2x size
+      eager: [{ width: 220, height: 330, crop: 'fill', gravity: 'center' }], // hiden behind overlay so don't need a 2x size
       tags: ['default'],
     })
 
@@ -68,5 +69,13 @@ export class CoverUtils {
     cloudinary.uploader.destroy(publicId, {
       invalidate: true,
     })
+  }
+
+  async getUsage(): Promise<ICloudinaryUsage> {
+    const result = await cloudinary.api.usage()
+
+    console.log(result)
+
+    return result
   }
 }

@@ -1,4 +1,4 @@
-import { CoverUtils } from '#classes/CoverUtils'
+import { CloudinaryUtils } from '#classes/CloudinaryUtils'
 import Media from '#models/media'
 import type { MediaCategories } from '#types/MediaCategories'
 import { inject } from '@adonisjs/core'
@@ -20,8 +20,8 @@ export default class CoverService {
       throw new Error("Aucun chemin disponible pour l'image")
     }
 
-    const coverUtils = new CoverUtils()
-    const uploadedCover = await coverUtils.upload(file.tmpPath, category, existingPublicId)
+    const cloudinaryUtils = new CloudinaryUtils()
+    const uploadedCover = await cloudinaryUtils.upload(file.tmpPath, category, existingPublicId)
 
     return { publicId: uploadedCover.publicId, version: uploadedCover.version }
   }
@@ -41,12 +41,19 @@ export default class CoverService {
     if (file.tmpPath === undefined) {
       throw new Error("Aucun chemin disponible pour l'image")
     }
-    const coverUtils = new CoverUtils()
-    await coverUtils.uploadDefaultCover(file.tmpPath)
+    const cloudinaryUtils = new CloudinaryUtils()
+    await cloudinaryUtils.uploadDefaultCover(file.tmpPath)
   }
 
   async delete(publicId: string) {
-    const coverUtils = new CoverUtils()
-    await coverUtils.destroy(publicId)
+    const cloudinaryUtils = new CloudinaryUtils()
+    await cloudinaryUtils.destroy(publicId)
+  }
+
+  async getUsage() {
+    const cloudinaryUtils = new CloudinaryUtils()
+    const cloudinaryUsage = await cloudinaryUtils.getUsage()
+
+    return cloudinaryUsage
   }
 }

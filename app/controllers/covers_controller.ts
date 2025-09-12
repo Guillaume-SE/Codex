@@ -1,6 +1,5 @@
+import { CloudinaryUsagePresenter } from '#classes/CloudinaryUsagePresenter'
 import { CoverPresenter } from '#classes/CoverPresenter'
-import { CoverUtils } from '#classes/CoverUtils'
-import { MediaPresenter } from '#classes/MediaPresenter'
 import Cover from '#models/cover'
 import Media from '#models/media'
 import CoverService from '#services/cover_service'
@@ -18,9 +17,14 @@ export default class CoversController {
 
   async showManage({ inertia }: HttpContext) {
     const defaultCoverUrl = CoverPresenter.defaultCoverUrl()
+    const cloudinaryUsage = await this.coverService.getUsage()
+    const usagePresenter = CloudinaryUsagePresenter.present(cloudinaryUsage)
+
+    console.log(usagePresenter)
 
     return inertia.render('admin/ManageCover', {
       defaultCoverUrl,
+      cloudinaryUsage: usagePresenter,
     })
   }
 

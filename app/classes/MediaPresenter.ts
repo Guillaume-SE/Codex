@@ -3,6 +3,7 @@ import { IPaginated } from '#interfaces/paginated_interface'
 import type Media from '#models/media'
 import type { MediaCategories } from '#types/MediaCategories'
 import type { MediaStatuses } from '#types/MediaStatuses'
+import { formatToDateMed, formatToRelative } from '#utils/formatDate'
 import { ModelPaginatorContract } from '@adonisjs/lucid/types/model'
 import { DateTime } from 'luxon'
 
@@ -17,7 +18,7 @@ export class MediaPresenter {
   category: MediaCategories
   type: string
   name: string
-  released: DateTime | null
+  released: string | null
   synopsis: string | null
   addedOn: DateTime
   genres: string[]
@@ -25,7 +26,7 @@ export class MediaPresenter {
     rating: number | null
     opinion: string | null
     isFavorite: boolean
-    lastUpdate: DateTime
+    lastUpdate: string
   }
   cover?: {
     smallCoverUrl: string
@@ -45,7 +46,7 @@ export class MediaPresenter {
     this.category = media.category.name
     this.type = media.type.name
     this.name = media.name
-    this.released = media.released
+    this.released = formatToDateMed(media.released)
     this.synopsis = media.synopsis
     this.addedOn = media.createdAt
     this.genres = media.genres.map((genre: IGenre) => genre.name)
@@ -55,7 +56,7 @@ export class MediaPresenter {
         rating: media.review.rating,
         opinion: media.review.opinion,
         isFavorite: media.review.isFavorite,
-        lastUpdate: media.review.updatedAt,
+        lastUpdate: formatToRelative(media.review.updatedAt),
       }
     }
 

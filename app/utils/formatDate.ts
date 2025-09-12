@@ -1,25 +1,36 @@
-export function formatDate(isoDate: string) {
-  const date = new Date(isoDate)
-  const year = date.getFullYear()
-  // padStart() to ensure all months are with 2 numbers at least (like 01 for Jan.)
-  const month = String(date.getMonth() + 1).padStart(2, '0')
-  const day = String(date.getDate()).padStart(2, '0')
-  return `${year}-${month}-${day}`
+import { DateTime } from 'luxon'
+
+// safely create a DateTime object from any input
+function toDateTime(dateInput: DateTime | string | null | undefined): DateTime {
+  if (!dateInput) return DateTime.invalid('Null or undefined input')
+  if (typeof dateInput === 'string') return DateTime.fromISO(dateInput)
+
+  return dateInput
 }
 
-export function formatDateToLocale(isoDate: string | number, withTime: boolean = false) {
-  const date = new Date(isoDate)
-  const formattedDate = date.toLocaleDateString()
+// for relative time display (e.g., "il y a 2 jours")
+export function formatToRelative(dateInput: DateTime | string | null | undefined): string {
+  const dt = toDateTime(dateInput)
+  if (!dt.isValid) return 'Date invalide'
 
-  if (withTime) {
-    const formattedTime = date.toLocaleTimeString(undefined, {
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: false,
-    })
+  const relativeDate = dt.toRelative({ locale: 'fr' })
+  return relativeDate ?? 'Date invalide'
+}
 
-    return `${formattedDate} à ${formattedTime}`
-  }
+// for standard date display (e.g., "20 nov. 1995")
+export function formatToDateMed(dateInput: DateTime | string | null | undefined): string {
+  const dt = toDateTime(dateInput)
+  if (!dt.isValid) return 'Date invalide'
 
-  return formattedDate
+  return dt.toLocaleString(DateTime.DATE_MED, { locale: 'fr' })
+}
+
+// for pre-filling HTML date inputs. Returns date in "yyyy-MM-dd" format.
+export function formatToISOForInput(
+  dateInput: DateTime | string | null | undefined
+): string | null {
+  const dt = toDateTime(dateInput)
+  if (!dt.isValid) return null
+
+  return dt.toISODate()
 }
