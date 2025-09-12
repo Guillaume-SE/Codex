@@ -4,6 +4,7 @@ import type { MediaCategories } from '#types/MediaCategories'
 import { Link } from '@inertiajs/vue3'
 import RatingBox from '~/components/RatingBox.vue'
 import StatusProgressBadge from '~/components/StatusProgressBadge.vue'
+import FavoriteIconFilled from '~/components/icons/FavoriteIconFilled.vue'
 import MediaCover from '~/components/media/MediaCover.vue'
 
 defineProps<{
@@ -28,14 +29,8 @@ defineProps<{
       <StatusProgressBadge :status="media.status" />
       <RatingBox :rating="media.review?.rating ? media.review.rating : null" />
     </div>
-    <div>
-      <img
-        v-if="media.review?.isFavorite"
-        class="icon-favorite"
-        :src="'/public/images/icons/favorite-icon-relief.svg'"
-        alt="coup de cœur"
-        title="Coup de cœur"
-      />
+    <div v-if="media.review?.isFavorite">
+      <FavoriteIconFilled class="icon-favorite" size="25" />
     </div>
   </div>
 </template>
@@ -54,8 +49,6 @@ defineProps<{
   text-overflow: ellipsis;
 }
 .icon-favorite {
-  width: 30px;
-  height: auto;
   position: absolute;
   top: -10px;
   right: -2px;
