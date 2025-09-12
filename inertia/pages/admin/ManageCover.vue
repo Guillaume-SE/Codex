@@ -3,12 +3,14 @@ import type CoversController from '#controllers/covers_controller'
 import { InferPageProps } from '@adonisjs/inertia/types'
 import { ref } from 'vue'
 import AppHead from '~/components/AppHead.vue'
+import CloudinaryUsageCard from '~/components/CloudinaryUsageCard.vue'
 import DefaultCoverManageDialog from '~/components/media/DefaultCoverManageDialog.vue'
 import ButtonComp from '~/components/ui/ButtonComp.vue'
 import DashboardLayout from '~/layouts/DashboardLayout.vue'
 
 defineProps<{
   defaultCoverUrl: InferPageProps<CoversController, 'showManage'>['defaultCoverUrl']
+  cloudinaryUsage: InferPageProps<CoversController, 'showManage'>['cloudinaryUsage']
 }>()
 
 defineOptions({
@@ -31,6 +33,10 @@ function handleManageCover() {
       <span>Gestion de la cover par défaut utilisée sur le site.</span>
     </div>
     <ButtonComp @click="handleManageCover"> Modifier la cover par défaut </ButtonComp>
+  </div>
+
+  <div>
+    <CloudinaryUsageCard :cloudinary-usage="cloudinaryUsage" />
   </div>
 
   <DefaultCoverManageDialog ref="coverModalRef" :default-cover-url="defaultCoverUrl" />
