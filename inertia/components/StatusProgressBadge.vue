@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { MediaStatuses } from '#types/MediaStatuses'
 import { type PropType, toRef } from 'vue'
+import StatusDotComp from '~/components/ui/StatusDotComp.vue'
 import { useStatusStyles } from '~/composables/useStatusStyle'
 
 const props = defineProps({
@@ -10,12 +11,12 @@ const props = defineProps({
   },
 })
 
-const { backgroundColor, iconColor } = useStatusStyles(toRef(props, 'status'))
+const { backgroundHex, iconHex } = useStatusStyles(toRef(props, 'status'))
 </script>
 
 <template>
-  <div :class="[backgroundColor, 'status-progress-container']">
-    <div :class="[iconColor, 'status-progress-icon']"></div>
+  <div class="status-progress-container">
+    <StatusDotComp class="status-icon" size="12" :color="iconHex" />
     <span class="status-progress-text">
       {{ status }}
     </span>
@@ -29,6 +30,7 @@ const { backgroundColor, iconColor } = useStatusStyles(toRef(props, 'status'))
   padding: 5px;
   width: 90px;
   border-radius: 5px;
+  background-color: v-bind(backgroundHex);
 }
 
 /* .status-progress-container-rounded {
@@ -49,47 +51,7 @@ const { backgroundColor, iconColor } = useStatusStyles(toRef(props, 'status'))
   font-size: 0.8rem;
 }
 
-.status-progress-icon {
-  width: 12px;
-  height: 12px;
+.status-icon {
   margin-right: 5px;
-  border-radius: 50%;
-}
-
-.icon-in-progress {
-  background-color: #2c7fff;
-}
-.icon-completed {
-  background-color: #00bd7c;
-}
-.icon-on-hold {
-  background-color: #f1b000;
-}
-.icon-dropped {
-  background-color: #ff1f56;
-}
-.icon-planned {
-  background-color: #ad47ff;
-}
-
-.background-in-progress {
-  background-color: #daebfe;
-  /* background-color: #0f172a; */
-}
-.background-completed {
-  background-color: #d0fae5;
-  /* background-color: #0f172a; */
-}
-.background-on-hold {
-  background-color: #fef9c1;
-  /* background-color: #0f172a; */
-}
-.background-dropped {
-  background-color: #ffe2e1;
-  /* background-color: #0f172a; */
-}
-.background-planned {
-  background-color: #f3e8ff;
-  /* background-color: #0f172a; */
 }
 </style>
