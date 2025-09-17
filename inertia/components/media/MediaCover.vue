@@ -122,7 +122,6 @@ const sizeClass = computed(() => (props.size ? `size-${props.size}` : 'size-smal
   z-index: 2;
   color: white;
   /* color: black; */
-  font-family: 'Montserrat', sans-serif;
   font-weight: 600;
   font-size: 1.1rem;
   display: flex;

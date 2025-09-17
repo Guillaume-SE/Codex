@@ -72,7 +72,7 @@ defineExpose({ open })
     :title="dialogTitle"
     :form="coverForm"
     :action-text="dialogActionText"
-    :is-action-disabled="coverForm.processing || !coverPreviewUrl"
+    :is-action-disabled="coverForm.processing"
     @submit="submitForm"
     @close="closeModal"
   >

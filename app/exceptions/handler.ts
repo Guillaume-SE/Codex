@@ -1,3 +1,4 @@
+import CloudinaryApiException from '#exceptions/cloudinary_api_exception'
 import { ExceptionHandler, HttpContext } from '@adonisjs/core/http'
 import app from '@adonisjs/core/services/app'
 import type { StatusPageRange, StatusPageRenderer } from '@adonisjs/core/types/http'
@@ -30,6 +31,11 @@ export default class HttpExceptionHandler extends ExceptionHandler {
    * response to the client
    */
   async handle(error: unknown, ctx: HttpContext) {
+    if (error instanceof CloudinaryApiException) {
+      ctx.session.flash('error', error.message)
+      return ctx.response.redirect().back()
+    }
+
     return super.handle(error, ctx)
   }
 

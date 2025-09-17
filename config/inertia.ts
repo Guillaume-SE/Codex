@@ -11,8 +11,11 @@ const inertiaConfig = defineConfig({
    * Data that should be shared with all rendered pages
    */
   sharedData: {
-    errors: (ctx) => ctx.session?.flashMessages.get('errors') ?? {},
     success: (ctx) => ctx.session?.flashMessages.get('success'),
+    // for form validation errors
+    errors: (ctx) => ctx.session?.flashMessages.get('errors') ?? {},
+    // for single error message
+    error: (ctx) => ctx.session?.flashMessages.get('error'),
   },
 
   /**

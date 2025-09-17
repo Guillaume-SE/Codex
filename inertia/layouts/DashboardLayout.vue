@@ -4,6 +4,7 @@ import ToastNotification from '~/components/ui/ToastNotification.vue'
 
 defineProps<{
   success?: string
+  error?: string
 }>()
 </script>
 
@@ -39,7 +40,9 @@ defineProps<{
         </div>
       </div>
     </div>
-    <ToastNotification v-if="success" :message="success" />
+    <ToastNotification v-if="success" :message="success" type="success" />
+    <ToastNotification v-if="error" :message="error" type="error" />
+    <span>{{ error }}</span>
   </main>
 </template>
 

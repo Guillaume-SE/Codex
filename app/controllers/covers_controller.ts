@@ -20,8 +20,6 @@ export default class CoversController {
     const cloudinaryUsage = await this.coverService.getUsage()
     const usagePresenter = CloudinaryUsagePresenter.present(cloudinaryUsage)
 
-    console.log(usagePresenter)
-
     return inertia.render('admin/ManageCover', {
       defaultCoverUrl,
       cloudinaryUsage: usagePresenter,
