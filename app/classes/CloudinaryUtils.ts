@@ -1,3 +1,4 @@
+import CloudinaryApiException from '#exceptions/cloudinary_api_exception'
 import { ICloudinaryUsage } from '#interfaces/cloudinary_usage_interface'
 import env from '#start/env'
 import type { MediaCategories } from '#types/MediaCategories'
@@ -37,45 +38,58 @@ export class CloudinaryUtils {
   ): Promise<ICloudinaryResults> {
     const key = existingPublicId || cuid()
 
-    const result = await cloudinary.uploader.upload(filePath, {
-      public_id: key, // unique identifier
-      quality: 'auto:good', // compromise between file size and quality
-      eager: [
-        { width: 220, height: 330, crop: 'fill', gravity: 'center' },
-        { width: 440, height: 660, crop: 'fill', gravity: 'center' },
-      ],
-      ...this.commonUploadOptions,
-      tags: [tag], // max 1000 tags and max 255 chars.
-      format: 'webp',
-    })
+    try {
+      const result = await cloudinary.uploader.upload(filePath, {
+        public_id: key, // unique identifier
+        quality: 'auto:good', // compromise between file size and quality
+        eager: [
+          { width: 220, height: 330, crop: 'fill', gravity: 'center' },
+          { width: 440, height: 660, crop: 'fill', gravity: 'center' },
+        ],
+        ...this.commonUploadOptions,
+        tags: [tag], // max 1000 tags and max 255 chars.
+        format: 'webp',
+      })
 
-    return { publicId: key, version: result.version }
+      return { publicId: key, version: result.version }
+    } catch (error) {
+      throw new CloudinaryApiException(error.message, { cause: error })
+    }
   }
 
   async uploadDefaultCover(filePath: string): Promise<ICloudinaryResults> {
-    const result = await cloudinary.uploader.upload(filePath, {
-      ...this.commonUploadOptions,
-      public_id: 'default',
-      quality: 'auto:eco', // hidden behind overlay no details quality needed (low even possible)
-      format: 'jpg',
-      eager: [{ width: 220, height: 330, crop: 'fill', gravity: 'center' }], // hiden behind overlay so don't need a 2x size
-      tags: ['default'],
-    })
+    try {
+      const result = await cloudinary.uploader.upload(filePath, {
+        ...this.commonUploadOptions,
+        public_id: 'default',
+        quality: 'auto:eco', // hidden behind overlay no details quality needed (low even possible)
+        format: 'jpg',
+        eager: [{ width: 220, height: 330, crop: 'fill', gravity: 'center' }], // hiden behind overlay so don't need a 2x size
+        tags: ['default'],
+      })
 
-    return { publicId: result.public_id, version: result.version }
+      return { publicId: result.public_id, version: result.version }
+    } catch (error) {
+      throw new CloudinaryApiException(error.message, { cause: error })
+    }
   }
 
   async destroy(publicId: string) {
-    cloudinary.uploader.destroy(publicId, {
-      invalidate: true,
-    })
+    try {
+      cloudinary.uploader.destroy(publicId, {
+        invalidate: true,
+      })
+    } catch (error) {
+      throw new CloudinaryApiException(error.message, { cause: error })
+    }
   }
 
   async getUsage(): Promise<ICloudinaryUsage> {
-    const result = await cloudinary.api.usage()
-
-    console.log(result)
-
-    return result
+    try {
+      const result = await cloudinary.api.usage()
+      return result
+    } catch (error) {
+      throw new CloudinaryApiException(error.error.message, { cause: error })
+    }
   }
 }
