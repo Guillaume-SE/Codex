@@ -18,10 +18,10 @@ const hasReviewRating = computed(() =>
 
 <template>
   <AppHead :title="media.name" />
-  <div class="media-profile-container">
+  <div>
     <!-- name -->
-    <div class="media-profile-title-container">
-      <h2 class="media-profile-name">{{ media.name }}</h2>
+    <div>
+      <h2>{{ media.name }}</h2>
       <StatusProgressBadge :status="media.status" />
     </div>
     <!-- cover -->

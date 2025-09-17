@@ -42,49 +42,6 @@ fieldset {
   margin-bottom: 20px;
 }
 
-.img-large {
-  /* width: 220px;
-  aspect-ratio: 2/3 auto; */
-  border-radius: 3px;
-}
-
-.no-cover-preview {
-  width: 30px;
-  height: 100%;
-  display: flex;
-  align-items: center;
-}
-
-.no-cover-large {
-  width: 100%;
-  max-width: 225px;
-  aspect-ratio: 2/3;
-  max-height: 336px;
-  display: flex;
-  align-items: center;
-}
-.no-cover-small {
-  width: 100%;
-  width: 150px;
-  height: 225px;
-  display: flex;
-  align-items: center;
-}
-
-.default-cover {
-  width: 80%;
-  height: auto;
-  margin: auto;
-}
-
-.media-profile-title-container {
-  display: flex;
-  align-items: center;
-}
-.media-profile-name {
-  margin-right: 10px;
-}
-
 .manage-review-rating-container {
   display: flex;
   flex-direction: row;
