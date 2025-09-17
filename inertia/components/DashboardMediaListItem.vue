@@ -31,7 +31,7 @@ function requestDeletion() {
           />
         </div>
         <div v-else class="no-cover-preview">
-          <ImageNotAvailableIcon />
+          <ImageNotAvailableIcon color="#9ca3af" />
         </div>
       </div>
       <Link :href="`/admin/media/${props.media.id}/edit`">
@@ -78,7 +78,7 @@ function requestDeletion() {
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #f0f0f0;
+  background-color: #e5e7eb;
 }
 .dashboard-item-name-container {
   display: flex;
