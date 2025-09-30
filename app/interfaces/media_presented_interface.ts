@@ -9,7 +9,7 @@ export interface IMediaPresented {
   name: string
   released: string | null
   synopsis: string | null
-  addedOn: string | null
+  addedOn: string
   genres: string[]
   review?: {
     rating: number | null

@@ -20,7 +20,7 @@ export class MediaPresenter {
   name: string
   released: string | null
   synopsis: string | null
-  addedOn: DateTime
+  addedOn: string
   genres: string[]
   review?: {
     rating: number | null
@@ -48,7 +48,7 @@ export class MediaPresenter {
     this.name = media.name
     this.released = formatToDateMed(media.released)
     this.synopsis = media.synopsis
-    this.addedOn = media.createdAt
+    this.addedOn = formatToRelative(media.createdAt)
     this.genres = media.genres.map((genre: IGenre) => genre.name)
 
     if (media.review) {
