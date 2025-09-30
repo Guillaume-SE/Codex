@@ -74,7 +74,8 @@
     "luxon": "^3.7.1",
     "mysql2": "^3.14.3",
     "reflect-metadata": "^0.2.2",
-    "vue": "^3.5.18"
+    "vue": "^3.5.18",
+    "vue-sonner": "^2.0.8"
   },
   "eslintConfig": {
     "extends": "@adonisjs/eslint-config/app"
