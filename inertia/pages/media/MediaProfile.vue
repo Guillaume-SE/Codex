@@ -51,6 +51,9 @@ const hasReviewRating = computed(() =>
         <p>Date de sortie: {{ media.released || 'N/A' }}</p>
         <MediaSpecificDetails :media="media" />
       </div>
+      <div>
+        <p>Ajouté {{ media.addedOn }}</p>
+      </div>
     </div>
     <div>
       <h3>Avis</h3>
