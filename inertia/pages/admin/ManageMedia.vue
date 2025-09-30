@@ -2,7 +2,7 @@
 import type MediaController from '#controllers/media_controller'
 import { formatToISOForInput } from '#utils/formatDate'
 import { InferPageProps } from '@adonisjs/inertia/types'
-import { router, useForm } from '@inertiajs/vue3'
+import { useForm } from '@inertiajs/vue3'
 import type { Component } from 'vue'
 import { computed, onMounted, ref } from 'vue'
 import AppHead from '~/components/AppHead.vue'
