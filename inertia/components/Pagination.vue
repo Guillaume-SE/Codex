@@ -16,65 +16,38 @@ const props = defineProps<{
     nextPageUrl: string | null
   }
 }>()
-
-interface IHandlePaginationOptions {
-  toFirstPage?: boolean
-  toPreviousPage?: boolean
-  toNextPage?: boolean
-  toLastPage?: boolean
-}
-
-function handlePaginationClick(paginationOptions: IHandlePaginationOptions) {
-  const currentPageIsNotFirstPage = props.page.currentPage > props.page.firstPage
-  const currentPageIsNotLastPage = props.page.currentPage < props.page.lastPage
-
-  if (currentPageIsNotFirstPage) {
-    if (paginationOptions.toFirstPage) {
-      return emit('update:currentPage', props.url.firstPageUrl)
-    } else if (paginationOptions.toPreviousPage) {
-      return emit('update:currentPage', props.url.previousPageUrl)
-    }
-  }
-  if (currentPageIsNotLastPage) {
-    if (paginationOptions.toLastPage) {
-      return emit('update:currentPage', props.url.lastPageUrl)
-    } else if (paginationOptions.toNextPage) {
-      return emit('update:currentPage', props.url.nextPageUrl)
-    }
-  }
-}
 </script>
 
 <template>
   <nav>
     <ButtonComp
-      :disabled="props.page.currentPage === props.page.firstPage"
-      @click="handlePaginationClick({ toFirstPage: true })"
+      :disabled="!props.url.previousPageUrl"
+      @click="emit('update:currentPage', props.url.firstPageUrl)"
     >
-      <span>|<</span>
+      <span>|&lt;</span>
     </ButtonComp>
 
     <ButtonComp
-      :disabled="props.page.currentPage === props.page.firstPage"
-      @click="handlePaginationClick({ toPreviousPage: true })"
+      :disabled="!props.url.previousPageUrl"
+      @click="emit('update:currentPage', props.url.previousPageUrl!)"
     >
-      <span><</span>
+      <span>&lt;</span>
     </ButtonComp>
 
     <span>{{ props.page.currentPage }} / {{ props.page.lastPage }}</span>
 
     <ButtonComp
-      :disabled="props.page.currentPage === props.page.lastPage"
-      @click="handlePaginationClick({ toNextPage: true })"
+      :disabled="!props.url.nextPageUrl"
+      @click="emit('update:currentPage', props.url.nextPageUrl!)"
     >
-      <span>></span>
+      <span>&gt;</span>
     </ButtonComp>
 
     <ButtonComp
-      :disabled="props.page.currentPage === props.page.lastPage"
-      @click="handlePaginationClick({ toLastPage: true })"
+      :disabled="!props.url.nextPageUrl"
+      @click="emit('update:currentPage', props.url.lastPageUrl)"
     >
-      <span>>|</span>
+      <span>&gt;|</span>
     </ButtonComp>
   </nav>
 </template>
