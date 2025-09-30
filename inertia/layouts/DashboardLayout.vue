@@ -40,7 +40,7 @@ defineProps<{
       </div>
     </div>
   </main>
-  <ToastManager :success="success" :error="error" />
+  <ToastManager />
 </template>
 
 <style scoped>
