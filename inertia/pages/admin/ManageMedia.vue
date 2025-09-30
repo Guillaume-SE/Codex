@@ -153,37 +153,7 @@ function handleFormError(errors: Record<string, string>) {
 function handleUpdate() {
   if (!props.media?.id) return
 
-  const payload: Partial<IForm> = {
-    statusId: form.statusId,
-    categoryId: form.categoryId,
-    typeId: form.typeId,
-    name: form.name,
-    released: form.released,
-    synopsis: form.synopsis,
-    genreId: form.genreId,
-  }
-
-  switch (currentCategory.value?.name) {
-    case 'game':
-      payload.platformId = form.platformId
-      break
-    case 'movie':
-      payload.duration = form.duration
-      break
-    case 'series':
-      payload.seriesSeasonLength = form.seriesSeasonLength
-      break
-    case 'anime':
-      payload.animeSeasonLength = form.animeSeasonLength
-      break
-    case 'book':
-      payload.publisherId = form.publisherId
-      break
-  }
-
-  router.put(`/admin/media/${props.media.id}`, payload, {
-    onStart: () => (form.processing = true),
-    onFinish: () => (form.processing = false),
+  form.put(`/admin/media/${props.media.id}`, {
     onError: handleFormError,
   })
 }
