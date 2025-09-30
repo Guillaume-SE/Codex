@@ -78,6 +78,7 @@ const isMediaListEmpty = computed(() => {
       <Link href="/admin/media/create">Ajouter un media</Link>
     </DashboardAction>
   </form>
+
   <div class="dashboard-list-item-header">
     <span>Nom</span>
     <span>Note</span>

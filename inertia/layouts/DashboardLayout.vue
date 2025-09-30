@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3'
-import ToastNotification from '~/components/ui/ToastNotification.vue'
+import ToastManager from '~/components/ToastManager.vue'
 
 defineProps<{
   success?: string
@@ -9,20 +9,19 @@ defineProps<{
 </script>
 
 <template>
+  <header>
+    <nav class="navbar">
+      <Link href="/">Accueil</Link>
+      <Link href="/categories">Catégories</Link>
+      <Link href="/admin/dashboard">Dashboard</Link>
+      <Link href="/categories/game">Jeux</Link>
+      <Link href="/categories/movie">Films</Link>
+      <Link href="/categories/series">Séries</Link>
+      <Link href="/categories/anime">Anime</Link>
+      <Link href="/categories/book">Livres</Link>
+    </nav>
+  </header>
   <main>
-    <header>
-      <nav class="navbar">
-        <Link href="/">Accueil</Link>
-        <Link href="/categories">Catégories</Link>
-        <Link href="/admin/dashboard">Dashboard</Link>
-        <Link href="/categories/game">Jeux</Link>
-        <Link href="/categories/movie">Films</Link>
-        <Link href="/categories/series">Séries</Link>
-        <Link href="/categories/anime">Anime</Link>
-        <Link href="/categories/book">Livres</Link>
-      </nav>
-    </header>
-
     <div class="dashboard-container">
       <h3>Dashboard</h3>
       <div class="dashboard-content">
@@ -40,10 +39,8 @@ defineProps<{
         </div>
       </div>
     </div>
-    <ToastNotification v-if="success" :message="success" type="success" />
-    <ToastNotification v-if="error" :message="error" type="error" />
-    <span>{{ error }}</span>
   </main>
+  <ToastManager :success="success" :error="error" />
 </template>
 
 <style scoped>
