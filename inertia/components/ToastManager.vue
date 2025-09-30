@@ -1,23 +1,23 @@
 <script setup lang="ts">
-import { watchEffect } from 'vue'
+import { router } from '@inertiajs/vue3'
+import { onUnmounted } from 'vue'
 import { toast, Toaster } from 'vue-sonner'
 
-const props = defineProps<{
-  success?: string
-  error?: string
-}>()
+const unsubscribe = router.on('success', (event) => {
+  const successMessage = event.detail.page.props.success
+  const errorMessage = event.detail.page.props.error
 
-watchEffect(
-  () => {
-    if (props.success) {
-      toast.success(props.success)
-    }
-    if (props.error) {
-      toast.error(props.error)
-    }
-  },
-  { flush: 'post' }
-)
+  if (successMessage) {
+    toast.success(successMessage as string)
+  }
+  if (errorMessage) {
+    toast.error(errorMessage as string)
+  }
+})
+
+onUnmounted(() => {
+  unsubscribe()
+})
 </script>
 
 <template>
