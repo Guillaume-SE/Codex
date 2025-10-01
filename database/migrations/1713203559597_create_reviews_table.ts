@@ -15,7 +15,6 @@ export default class extends BaseSchema {
         .onUpdate('CASCADE')
         .notNullable()
       table.integer('rating').unsigned().nullable()
-      table.text('opinion').nullable()
       table.boolean('is_favorite').defaultTo(false).notNullable()
       table.timestamp('updated_at').notNullable()
     })

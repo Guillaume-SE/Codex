@@ -23,7 +23,7 @@ It also allows me to keep up to date with the ones I've planned to see, the ones
 
 ## Database diagram and relationship explanations
 
-![db-diagram-dark](https://github.com/user-attachments/assets/625d4471-6598-4995-a752-4619396f0ee9)
+<img width="1413" height="961" alt="diagram-db-light" src="https://github.com/user-attachments/assets/497c776c-d38a-49b0-9deb-73e58bad90f6" />
 
 - `users`: as the project aims to contain only my media entries, I chose not to link the "users" table to "reviews". It will only be used for authentication.
 
