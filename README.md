@@ -18,7 +18,7 @@ It also allows me to keep up to date with the ones I've planned to see, the ones
 
 - Manage and curate a taxonomy of medias (books, movies, series, video games).
 - Cascade deletion of the cover file when the related media is deleted.
-- Handles storing user-uploaded cover images with automatic resize ([Sharp](https://sharp.pixelplumbing.com/)).
+- Handles storing uploaded cover images with automatic resize and optimizations ([Cloudinary](https://cloudinary.com/)).
 - Details page for each media, retrieved by media id.
 
 ## Database diagram and relationship explanations
@@ -49,7 +49,6 @@ It also allows me to keep up to date with the ones I've planned to see, the ones
 
 ## Future plans
 
-- Switch images upload to a cloud service.
 - Restrict access to certain pages and functions to non-administrator users.
 - Statistical display of media distribution according to various criteria.
 - Adding a feature to track "collections".
@@ -82,7 +81,7 @@ node ace db:seed -i
 
 ## Status
 
-26 august 2025 : Dashboard features completed. Next step: transition from a local image upload system to a cloud-based system with quality improvements.
+1 october 2025: covers upload now handled by Cloudinary, next step will be to work on a v1 for the app style.
 
 ## Other
 
