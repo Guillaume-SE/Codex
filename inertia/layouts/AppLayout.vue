@@ -24,5 +24,5 @@ defineProps<{
   <main>
     <slot />
   </main>
-  <ToastManager :success="success" :error="error" />
+  <ToastManager />
 </template>
