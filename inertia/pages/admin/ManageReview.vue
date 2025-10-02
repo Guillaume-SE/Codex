@@ -9,7 +9,6 @@ import ButtonComp from '~/components/ui/ButtonComp.vue'
 import FormErrorComp from '~/components/ui/FormErrorComp.vue'
 import InputComp from '~/components/ui/InputComp.vue'
 import LabelComp from '~/components/ui/LabelComp.vue'
-import DashboardLayout from '~/layouts/DashboardLayout.vue'
 
 interface IForm {
   rating: string | number | null
@@ -21,10 +20,6 @@ const props = defineProps<{
   media: InferPageProps<ReviewController, 'showManage'>['media']
   errors?: Record<string, string[]>
 }>()
-
-defineOptions({
-  layout: DashboardLayout,
-})
 
 const form = useForm<IForm>({
   rating: '',

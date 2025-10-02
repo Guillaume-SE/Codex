@@ -6,22 +6,18 @@ import { Link, useForm } from '@inertiajs/vue3'
 import { computed, ref } from 'vue'
 import ActionDialogComp from '~/components/ActionDialogComp.vue'
 import AppHead from '~/components/AppHead.vue'
-import DashboardAction from '~/components/DashboardAction.vue'
-import DashboardMediaListItem from '~/components/DashboardMediaListItem.vue'
+import DashboardAction from '~/components/dashboard/DashboardAction.vue'
+import DashboardContainer from '~/components/dashboard/DashboardContainer.vue'
+import DashboardMediaListItem from '~/components/dashboard/DashboardMediaListItem.vue'
 import CoverManageDialog from '~/components/media/CoverManageDialog.vue'
 import Pagination from '~/components/Pagination.vue'
 import { ActionDialogConfig, useActionDialog } from '~/composables/useActionDialog'
 import { usePaginatedFilters } from '~/composables/usePaginatedFilters'
-import DashboardLayout from '~/layouts/DashboardLayout.vue'
 
 const props = defineProps<{
   mediaList: InferPageProps<DashboardController, 'showDashboard'>['mediaList']
   errors?: Record<string, string[]>
 }>()
-
-defineOptions({
-  layout: DashboardLayout,
-})
 
 interface IForm {
   mediaId: number | null
@@ -73,45 +69,51 @@ const isMediaListEmpty = computed(() => {
 
 <template>
   <AppHead title="Dashboard" />
-  <form action="GET" @submit.prevent="submitFilters">
-    <DashboardAction v-model:search="filters.search" :type="'search'" :title="'Gestion des media'">
-      <Link href="/admin/media/create">Ajouter un media</Link>
-    </DashboardAction>
-  </form>
+  <DashboardContainer>
+    <form action="GET" @submit.prevent="submitFilters">
+      <DashboardAction
+        v-model:search="filters.search"
+        :type="'search'"
+        :title="'Gestion des media'"
+      >
+        <Link href="/admin/media/create">Ajouter un media</Link>
+      </DashboardAction>
+    </form>
 
-  <div class="dashboard-list-item-header">
-    <span>Nom</span>
-    <span>Note</span>
-    <span>Statut</span>
-  </div>
+    <div class="dashboard-list-item-header">
+      <span>Nom</span>
+      <span>Note</span>
+      <span>Statut</span>
+    </div>
 
-  <DashboardMediaListItem
-    v-if="!isMediaListEmpty"
-    v-for="media in mediaList.data"
-    :key="media.id"
-    :media="media"
-    @manage-cover="handleManageCover"
-    @delete-item="handleDeleteMedia"
-  />
-  <div v-else>
-    <p>Aucun média ajouté pour le moment.</p>
-  </div>
+    <DashboardMediaListItem
+      v-if="!isMediaListEmpty"
+      v-for="media in mediaList.data"
+      :key="media.id"
+      :media="media"
+      @manage-cover="handleManageCover"
+      @delete-item="handleDeleteMedia"
+    />
+    <div v-else>
+      <p>Aucun média ajouté pour le moment.</p>
+    </div>
 
-  <!-- pagination -->
-  <Pagination
-    :page="{
-      currentPage: props.mediaList.meta.currentPage,
-      firstPage: props.mediaList.meta.firstPage,
-      lastPage: props.mediaList.meta.lastPage,
-    }"
-    :url="{
-      firstPageUrl: props.mediaList.meta.firstPageUrl,
-      lastPageUrl: props.mediaList.meta.lastPageUrl,
-      nextPageUrl: props.mediaList.meta.nextPageUrl,
-      previousPageUrl: props.mediaList.meta.previousPageUrl,
-    }"
-    @update:current-page="fetchNewPageData"
-  />
+    <!-- pagination -->
+    <Pagination
+      :page="{
+        currentPage: props.mediaList.meta.currentPage,
+        firstPage: props.mediaList.meta.firstPage,
+        lastPage: props.mediaList.meta.lastPage,
+      }"
+      :url="{
+        firstPageUrl: props.mediaList.meta.firstPageUrl,
+        lastPageUrl: props.mediaList.meta.lastPageUrl,
+        nextPageUrl: props.mediaList.meta.nextPageUrl,
+        previousPageUrl: props.mediaList.meta.previousPageUrl,
+      }"
+      @update:current-page="fetchNewPageData"
+    />
+  </DashboardContainer>
 
   <!-- delete modal -->
   <ActionDialogComp
