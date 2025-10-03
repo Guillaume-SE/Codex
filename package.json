@@ -56,7 +56,7 @@
     "vite": "6.0.0"
   },
   "dependencies": {
-    "@adonisjs/auth": "^9.4.2",
+    "@adonisjs/auth": "^9.5.0",
     "@adonisjs/core": "^6.19.0",
     "@adonisjs/drive": "^3.4.1",
     "@adonisjs/inertia": "3.0.0",
@@ -69,6 +69,7 @@
     "@vinejs/vine": "^3.0.1",
     "@vue/server-renderer": "^3.5.18",
     "@vueuse/core": "^13.6.0",
+    "argon2": "^0.43.1",
     "cloudinary": "^2.7.0",
     "edge.js": "^6.3.0",
     "luxon": "^3.7.1",

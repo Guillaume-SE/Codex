@@ -6,7 +6,6 @@ import { createInertiaApp } from '@inertiajs/vue3'
 import type { DefineComponent } from 'vue'
 import { createSSRApp, h } from 'vue'
 import AppLayout from '~/layouts/AppLayout.vue'
-// import DashboardLayout from '~/layouts/DashboardLayout.vue'
 import '../css/app.css'
 
 const appName = import.meta.env.VITE_APP_NAME || 'Codex'
@@ -16,12 +15,6 @@ createInertiaApp({
 
   title: (title) => `${appName} - ${title}`,
 
-  // resolve: (name) => {
-  //   return resolvePageComponent(
-  //     `../pages/${name}.vue`,
-  //     import.meta.glob<DefineComponent>('../pages/**/*.vue')
-  //   )
-  // },
   resolve: async (name) => {
     const page = await resolvePageComponent(
       `../pages/${name}.vue`,
@@ -29,7 +22,6 @@ createInertiaApp({
     )
 
     page.default.layout = page?.default.layout || AppLayout
-    // page.default.layout = name.startsWith('dashboard/') ? DashboardLayout : AppLayout
 
     return page
   },

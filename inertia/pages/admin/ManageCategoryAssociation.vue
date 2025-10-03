@@ -4,22 +4,18 @@ import { InferPageProps } from '@adonisjs/inertia/types'
 import { useForm } from '@inertiajs/vue3'
 import { computed, ref, watch } from 'vue'
 import AppHead from '~/components/AppHead.vue'
+import DashboardContainer from '~/components/dashboard/DashboardContainer.vue'
 import ButtonComp from '~/components/ui/ButtonComp.vue'
 import InputComp from '~/components/ui/InputComp.vue'
 import LabelComp from '~/components/ui/LabelComp.vue'
 import { useCapitalizeFirstLetter } from '~/composables/useCapitalizeFirstLetter'
 import { useFormatCategoryNameInFr } from '~/composables/useFormatCategoryNameInFr'
-import DashboardLayout from '~/layouts/DashboardLayout.vue'
 
 const props = defineProps<{
   categories: InferPageProps<MediaCategoriesController, 'showManage'>['categories']
   typesList: InferPageProps<MediaCategoriesController, 'showManage'>['typesList']
   genresList: InferPageProps<MediaCategoriesController, 'showManage'>['genresList']
 }>()
-
-defineOptions({
-  layout: DashboardLayout,
-})
 
 interface IForm {
   genres: number[]
@@ -52,33 +48,35 @@ const formatCategoryName = useFormatCategoryNameInFr
 
 <template>
   <AppHead title="Gestion des catégories" />
-  <select v-model="selectedCategoryId">
-    <option v-for="category in categories" :value="category.id">
-      {{ formatCategoryName(category.name) }}
-    </option>
-  </select>
+  <DashboardContainer>
+    <select v-model="selectedCategoryId">
+      <option v-for="category in categories" :value="category.id">
+        {{ formatCategoryName(category.name) }}
+      </option>
+    </select>
 
-  <div>
-    <!-- type list -->
     <div>
-      <span>Liste des types</span>
+      <!-- type list -->
+      <div>
+        <span>Liste des types</span>
+      </div>
+      <div v-for="type in typesList">
+        <LabelComp :text="capitalizeFirstLetter(type.name)" textPosition="down">
+          <InputComp v-model="form.types" type="checkbox" :value="type.id" />
+        </LabelComp>
+      </div>
+      <!-- genres list -->
+      <div>
+        <span>Liste des genres</span>
+      </div>
+      <div v-for="genre in genresList">
+        <LabelComp :text="capitalizeFirstLetter(genre.name)" textPosition="down">
+          <InputComp v-model="form.genres" type="checkbox" :value="genre.id" />
+        </LabelComp>
+      </div>
     </div>
-    <div v-for="type in typesList">
-      <LabelComp :text="capitalizeFirstLetter(type.name)" textPosition="down">
-        <InputComp v-model="form.types" type="checkbox" :value="type.id" />
-      </LabelComp>
-    </div>
-    <!-- genres list -->
     <div>
-      <span>Liste des genres</span>
+      <ButtonComp @click="submit">Valider</ButtonComp>
     </div>
-    <div v-for="genre in genresList">
-      <LabelComp :text="capitalizeFirstLetter(genre.name)" textPosition="down">
-        <InputComp v-model="form.genres" type="checkbox" :value="genre.id" />
-      </LabelComp>
-    </div>
-  </div>
-  <div>
-    <ButtonComp @click="submit">Valider</ButtonComp>
-  </div>
+  </DashboardContainer>
 </template>

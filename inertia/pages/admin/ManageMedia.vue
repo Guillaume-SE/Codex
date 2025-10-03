@@ -6,6 +6,7 @@ import { useForm } from '@inertiajs/vue3'
 import type { Component } from 'vue'
 import { computed, onMounted, ref } from 'vue'
 import AppHead from '~/components/AppHead.vue'
+import DashboardContainer from '~/components/dashboard/DashboardContainer.vue'
 import AnimeFields from '~/components/media/AnimeFields.vue'
 import BookFields from '~/components/media/BookFields.vue'
 import GameFields from '~/components/media/GameFields.vue'
@@ -175,143 +176,145 @@ function submit() {
 
 <template>
   <AppHead title="Gestion de media" />
-  <div>
-    <h3 v-if="isUpdateMode">Mise à jour de {{ props.media?.name }}</h3>
-    <h3 v-else>Ajout d'un nouveau media</h3>
+  <DashboardContainer>
+    <div>
+      <h3 v-if="isUpdateMode">Mise à jour de {{ props.media?.name }}</h3>
+      <h3 v-else>Ajout d'un nouveau media</h3>
 
-    <div class="step-indicator">
-      <ul class="step-container">
-        <li class="step" :class="{ active: currentStep >= 1 }">1. Catégorie</li>
-        <li class="step" :class="{ active: currentStep >= 2 }">2. Détails</li>
-        <li class="step" :class="{ active: currentStep >= 3 }">3. Spécificités</li>
-      </ul>
-    </div>
+      <div class="step-indicator">
+        <ul class="step-container">
+          <li class="step" :class="{ active: currentStep >= 1 }">1. Catégorie</li>
+          <li class="step" :class="{ active: currentStep >= 2 }">2. Détails</li>
+          <li class="step" :class="{ active: currentStep >= 3 }">3. Spécificités</li>
+        </ul>
+      </div>
 
-    <form @submit.prevent="submit">
-      <fieldset :disabled="!isMounted">
-        <!-- category -->
-        <div v-if="currentStep === 1">
-          <div v-if="isUpdateMode">
-            <span>Catégorie</span>
+      <form @submit.prevent="submit">
+        <fieldset :disabled="!isMounted">
+          <!-- category -->
+          <div v-if="currentStep === 1">
+            <div v-if="isUpdateMode">
+              <span>Catégorie</span>
+              <div>
+                <span>{{ formatCategoryName(props.media?.category.name) }}</span>
+              </div>
+            </div>
+            <div v-else>
+              <span>Catégorie (requis)</span>
+              <div v-for="category in categories">
+                <LabelComp :text="formatCategoryName(category.name)" textPosition="down">
+                  <InputComp
+                    v-model="form.categoryId"
+                    type="radio"
+                    :value="category.id"
+                    @input="form.clearErrors('categoryId')"
+                  />
+                </LabelComp>
+              </div>
+              <FormErrorComp v-if="form.errors.categoryId" :message="form.errors.categoryId" />
+            </div>
+            <!-- type -->
             <div>
-              <span>{{ formatCategoryName(props.media?.category.name) }}</span>
+              <span>Type (requis)</span>
+              <div v-if="filteredTypesList.length === 0">
+                <span>En attente d'un choix de catégorie</span>
+              </div>
+              <div v-for="type in filteredTypesList">
+                <LabelComp :text="type.text" textPosition="down">
+                  <InputComp
+                    v-model="form.typeId"
+                    type="radio"
+                    :value="type.value"
+                    @input="form.clearErrors('typeId')"
+                  />
+                </LabelComp>
+              </div>
+              <FormErrorComp v-if="form.errors.typeId" :message="form.errors.typeId" />
+            </div>
+
+            <div class="form-navigation">
+              <ButtonComp type="button" @click="nextStep" :disabled="isStep1Invalid">
+                Suivant
+              </ButtonComp>
             </div>
           </div>
-          <div v-else>
-            <span>Catégorie (requis)</span>
-            <div v-for="category in categories">
-              <LabelComp :text="formatCategoryName(category.name)" textPosition="down">
-                <InputComp
-                  v-model="form.categoryId"
-                  type="radio"
-                  :value="category.id"
-                  @input="form.clearErrors('categoryId')"
-                />
+
+          <div v-if="currentStep === 2">
+            <!-- name -->
+            <div>
+              <LabelComp text="Nom de l'œuvre (requis):" text-position="up">
+                <InputComp v-model="form.name" type="text" @input="form.clearErrors('name')" />
               </LabelComp>
+              <FormErrorComp v-if="form.errors.name" :message="form.errors.name" />
             </div>
-            <FormErrorComp v-if="form.errors.categoryId" :message="form.errors.categoryId" />
-          </div>
-          <!-- type -->
-          <div>
-            <span>Type (requis)</span>
-            <div v-if="filteredTypesList.length === 0">
-              <span>En attente d'un choix de catégorie</span>
-            </div>
-            <div v-for="type in filteredTypesList">
-              <LabelComp :text="type.text" textPosition="down">
-                <InputComp
-                  v-model="form.typeId"
-                  type="radio"
-                  :value="type.value"
-                  @input="form.clearErrors('typeId')"
-                />
+            <!-- released date -->
+            <div>
+              <LabelComp text="Date de sortie:" text-position="up">
+                <InputComp v-model="form.released" type="date" />
               </LabelComp>
+              <FormErrorComp v-if="form.errors.released" :message="form.errors.released" />
             </div>
-            <FormErrorComp v-if="form.errors.typeId" :message="form.errors.typeId" />
-          </div>
-
-          <div class="form-navigation">
-            <ButtonComp type="button" @click="nextStep" :disabled="isStep1Invalid">
-              Suivant
-            </ButtonComp>
-          </div>
-        </div>
-
-        <div v-if="currentStep === 2">
-          <!-- name -->
-          <div>
-            <LabelComp text="Nom de l'œuvre (requis):" text-position="up">
-              <InputComp v-model="form.name" type="text" @input="form.clearErrors('name')" />
-            </LabelComp>
-            <FormErrorComp v-if="form.errors.name" :message="form.errors.name" />
-          </div>
-          <!-- released date -->
-          <div>
-            <LabelComp text="Date de sortie:" text-position="up">
-              <InputComp v-model="form.released" type="date" />
-            </LabelComp>
-            <FormErrorComp v-if="form.errors.released" :message="form.errors.released" />
-          </div>
-          <!-- synopsis -->
-          <div>
-            <LabelComp text="Synopsis:" text-position="up" for="synopsis">
-              <textarea v-model="form.synopsis" id="synopsis"></textarea>
-            </LabelComp>
-            <FormErrorComp v-if="form.errors.synopsis" :message="form.errors.synopsis" />
-          </div>
-          <!-- genres -->
-          <div>
-            <span>Genres</span>
-            <div v-if="filteredGenresList.length === 0">
-              <span>En attente d'un choix de catégorie</span>
-            </div>
-            <div v-for="genre in filteredGenresList">
-              <LabelComp :text="genre.text" textPosition="down">
-                <InputComp v-model="form.genreId" type="checkbox" :value="genre.value" />
+            <!-- synopsis -->
+            <div>
+              <LabelComp text="Synopsis:" text-position="up" for="synopsis">
+                <textarea v-model="form.synopsis" id="synopsis"></textarea>
               </LabelComp>
+              <FormErrorComp v-if="form.errors.synopsis" :message="form.errors.synopsis" />
             </div>
-            <FormErrorComp v-if="form.errors.genreId" :message="form.errors.genreId" />
-          </div>
-
-          <div class="form-navigation">
-            <ButtonComp type="button" @click="prevStep">Précédent</ButtonComp>
-            <ButtonComp type="button" @click="nextStep">Suivant</ButtonComp>
-          </div>
-        </div>
-
-        <div v-if="currentStep === 3">
-          <div v-if="currentCategory">
-            <component
-              :is="categoryFieldComponents[currentCategory.name]"
-              :form="form"
-              :gamePlatforms="gamePlatforms"
-              :bookPublishers="bookPublishers"
-            />
-          </div>
-          <!-- status -->
-          <div>
-            <span>Progression (requis)</span>
-            <div v-for="status in statuses">
-              <LabelComp :text="status.name" textPosition="down">
-                <InputComp
-                  v-model="form.statusId"
-                  type="radio"
-                  :value="status.id"
-                  @input="form.clearErrors('statusId')"
-                />
-              </LabelComp>
+            <!-- genres -->
+            <div>
+              <span>Genres</span>
+              <div v-if="filteredGenresList.length === 0">
+                <span>En attente d'un choix de catégorie</span>
+              </div>
+              <div v-for="genre in filteredGenresList">
+                <LabelComp :text="genre.text" textPosition="down">
+                  <InputComp v-model="form.genreId" type="checkbox" :value="genre.value" />
+                </LabelComp>
+              </div>
+              <FormErrorComp v-if="form.errors.genreId" :message="form.errors.genreId" />
             </div>
-            <FormErrorComp v-if="form.errors.statusId" :message="form.errors.statusId" />
+
+            <div class="form-navigation">
+              <ButtonComp type="button" @click="prevStep">Précédent</ButtonComp>
+              <ButtonComp type="button" @click="nextStep">Suivant</ButtonComp>
+            </div>
           </div>
 
-          <div class="form-navigation">
-            <ButtonComp type="button" @click="prevStep">Précédent</ButtonComp>
-            <ButtonComp type="submit" :disabled="form.processing">Enregistrer</ButtonComp>
+          <div v-if="currentStep === 3">
+            <div v-if="currentCategory">
+              <component
+                :is="categoryFieldComponents[currentCategory.name]"
+                :form="form"
+                :gamePlatforms="gamePlatforms"
+                :bookPublishers="bookPublishers"
+              />
+            </div>
+            <!-- status -->
+            <div>
+              <span>Progression (requis)</span>
+              <div v-for="status in statuses">
+                <LabelComp :text="status.name" textPosition="down">
+                  <InputComp
+                    v-model="form.statusId"
+                    type="radio"
+                    :value="status.id"
+                    @input="form.clearErrors('statusId')"
+                  />
+                </LabelComp>
+              </div>
+              <FormErrorComp v-if="form.errors.statusId" :message="form.errors.statusId" />
+            </div>
+
+            <div class="form-navigation">
+              <ButtonComp type="button" @click="prevStep">Précédent</ButtonComp>
+              <ButtonComp type="submit" :disabled="form.processing">Enregistrer</ButtonComp>
+            </div>
           </div>
-        </div>
-      </fieldset>
-    </form>
-  </div>
+        </fieldset>
+      </form>
+    </div>
+  </DashboardContainer>
 </template>
 
 <style scoped>

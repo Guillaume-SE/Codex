@@ -35,13 +35,6 @@ fieldset {
   border: none;
 }
 
-.navbar {
-  display: flex;
-  justify-content: space-around;
-  margin-top: 20px;
-  margin-bottom: 20px;
-}
-
 .manage-review-rating-container {
   display: flex;
   flex-direction: row;
