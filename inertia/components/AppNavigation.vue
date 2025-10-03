@@ -10,14 +10,19 @@ const user = computed(() => page.props.user)
   <nav class="navbar">
     <Link href="/">Accueil</Link>
     <Link href="/categories">Catégories</Link>
-    <Link href="/admin/dashboard">Dashboard</Link>
     <Link href="/categories/game">Jeux</Link>
     <Link href="/categories/movie">Films</Link>
     <Link href="/categories/series">Séries</Link>
     <Link href="/categories/anime">Anime</Link>
     <Link href="/categories/book">Livres</Link>
-    <Link href="/login">Login</Link>
-    <Link v-if="user" method="post" href="/logout" as="button">Logout</Link>
+
+    <template v-if="user">
+      <Link href="/admin/dashboard">Dashboard</Link>
+      <Link v-if="user" method="post" href="/logout" as="button">Logout</Link>
+    </template>
+    <template v-else>
+      <Link href="/login">Login</Link>
+    </template>
   </nav>
 </template>
 
