@@ -32,6 +32,10 @@ defineProps<{
     <input v-model="model" type="number" :min="min || ''" :max="max || ''" />
   </template>
 
+  <template v-else-if="type === 'password'">
+    <input v-model="model" type="password" />
+  </template>
+
   <template v-else>
     <input v-model="model" type="text" :placeholder="placeholder || ''" />
   </template>
