@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Link } from '@inertiajs/vue3'
+import AppNavigation from '~/components/AppNavigation.vue'
 import ToastManager from '~/components/ToastManager.vue'
 
 defineProps<{
@@ -10,16 +10,7 @@ defineProps<{
 
 <template>
   <header>
-    <nav class="navbar">
-      <Link href="/">Accueil</Link>
-      <Link href="/categories">Catégories</Link>
-      <Link href="/admin/dashboard">Dashboard</Link>
-      <Link href="/categories/game">Jeux</Link>
-      <Link href="/categories/movie">Films</Link>
-      <Link href="/categories/series">Séries</Link>
-      <Link href="/categories/anime">Anime</Link>
-      <Link href="/categories/book">Livres</Link>
-    </nav>
+    <AppNavigation />
   </header>
   <main>
     <slot />

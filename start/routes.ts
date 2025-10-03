@@ -1,5 +1,5 @@
 import router from '@adonisjs/core/services/router'
-// import { middleware } from './kernel.js'
+import { middleware } from './kernel.js'
 const UsersController = () => import('#controllers/users_controller')
 const MediaController = () => import('#controllers/media_controller')
 const CoversController = () => import('#controllers/covers_controller')
@@ -10,8 +10,9 @@ const MediaCategoriesController = () => import('#controllers/media_categories_co
 const GamePlatformsController = () => import('#controllers/game_platforms_controller')
 const BookPublishersController = () => import('#controllers/book_publishers_controller')
 const HomeController = () => import('#controllers/home_controller')
-// const StorageController = () => import('#controllers/storage_controller')
 const DashboardController = () => import('#controllers/dashboard_controller')
+const SessionController = () => import('#controllers/session_controller')
+// const StorageController = () => import('#controllers/storage_controller')
 
 router.where('mediaId', router.matchers.number())
 router.where('platformId', router.matchers.number())
@@ -19,10 +20,15 @@ router.where('categoryId', router.matchers.number())
 router.where('typeId', router.matchers.number())
 router.where('genreId', router.matchers.number())
 
+// AUTH
+router.get('/login', [SessionController, 'show']).as('session.show').use(middleware.guest())
+router.post('/login', [SessionController, 'login']).as('session.login').use(middleware.guest())
+router.post('/logout', [SessionController, 'logout']).as('session.logout').use(middleware.auth())
+
 router.group(() => {
   router.get('/', [HomeController, 'showHome']).as('home')
   // router.get('/storage/*', [StorageController, 'show'])
-  router.get('/users/:id', [UsersController, 'show']).as('users.show')
+  // router.get('/users/:id', [UsersController, 'show']).as('users.show')
 
   // Public media browsing routes
   router.get('/categories', [MediaController, 'showCategories']).as('categories.index')
@@ -102,4 +108,4 @@ router
       .as('categories.associate')
   })
   .prefix('/admin')
-// .use(middleware.auth())
+  .use(middleware.auth())
