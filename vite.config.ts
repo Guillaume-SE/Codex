@@ -6,11 +6,6 @@ import { defineConfig } from 'vite'
 
 export default defineConfig({
   plugins: [
-    adonisjs({
-      entrypoints: ['resources/js/app.js'],
-
-      reload: ['resources/views/**/*.edge'],
-    }),
     inertia({ ssr: { enabled: true, entrypoint: 'inertia/app/ssr.ts' } }),
     vue(),
     adonisjs({
