@@ -103,3 +103,11 @@ const ratingValues = [null, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
     </div>
   </DashboardContainer>
 </template>
+
+<style scoped>
+.manage-review-rating-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+}
+</style>

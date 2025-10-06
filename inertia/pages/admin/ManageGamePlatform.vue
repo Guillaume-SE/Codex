@@ -148,6 +148,11 @@ const platformListIsNotEmpty = computed(() => (props.platformList.data.length > 
 
 <style scoped>
 .dashboard-list-item-header {
+  display: grid;
+  gap: 15px;
+  padding: 10px;
+  border-bottom: 2px solid #333;
+  font-weight: bold;
   grid-template-columns: 2fr 1fr 1fr 1fr;
 }
 .platform-list-item {
