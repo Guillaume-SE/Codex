@@ -27,8 +27,12 @@ function submit() {
     <div>
       <form @submit.prevent="submit">
         <div v-if="errors?.E_INVALID_CREDENTIALS">
-          <span>Identifiant ou mot de passe incorrect</span>
+          <span>{{ errors.E_INVALID_CREDENTIALS }}</span>
         </div>
+        <div v-if="errors?.E_TOO_MANY_REQUESTS">
+          <span>{{ errors.E_TOO_MANY_REQUESTS }}</span>
+        </div>
+
         <div>
           <LabelComp text="Identifiant" textPosition="up">
             <InputComp v-model="form.uid" type="text" placeholder="Entrez votre email ou pseudo" />
