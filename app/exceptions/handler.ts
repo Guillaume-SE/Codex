@@ -1,4 +1,5 @@
 import CloudinaryApiException from '#exceptions/cloudinary_api_exception'
+import { errors as authErrors } from '@adonisjs/auth'
 import { ExceptionHandler, HttpContext } from '@adonisjs/core/http'
 import app from '@adonisjs/core/services/app'
 import type { StatusPageRange, StatusPageRenderer } from '@adonisjs/core/types/http'
@@ -33,6 +34,10 @@ export default class HttpExceptionHandler extends ExceptionHandler {
   async handle(error: unknown, ctx: HttpContext) {
     if (error instanceof CloudinaryApiException) {
       ctx.session.flash('error', error.message)
+      return ctx.response.redirect().back()
+    }
+    if (error instanceof authErrors.E_INVALID_CREDENTIALS) {
+      ctx.session.flashErrors({ E_INVALID_CREDENTIALS: 'Identifiant ou mot de passe incorrect' })
       return ctx.response.redirect().back()
     }
 
