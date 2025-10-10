@@ -1,6 +1,5 @@
 import router from '@adonisjs/core/services/router'
 import { middleware } from './kernel.js'
-const UsersController = () => import('#controllers/users_controller')
 const MediaController = () => import('#controllers/media_controller')
 const CoversController = () => import('#controllers/covers_controller')
 const ReviewsController = () => import('#controllers/reviews_controller')
@@ -28,7 +27,6 @@ router.post('/logout', [SessionController, 'logout']).as('session.logout').use(m
 router.group(() => {
   router.get('/', [HomeController, 'showHome']).as('home')
   // router.get('/storage/*', [StorageController, 'show'])
-  // router.get('/users/:id', [UsersController, 'show']).as('users.show')
 
   // Public media browsing routes
   router.get('/categories', [MediaController, 'showCategories']).as('categories.index')

@@ -1,49 +1,10 @@
-* {
-  margin: 0;
-  padding: 0;
-  font-family: 'Montserrat', serif;
-  box-sizing: border-box;
-}
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+@import 'tailwindcss';
+@import 'tailwindcss/preflight';
+@import 'tailwindcss/utilities';
+@import 'vue-sonner/style.css';
+@plugin "daisyui";
 
-html,
-body {
-  height: 100%;
-  width: 100%;
-}
-
-a,
-ul,
-ol {
-  text-decoration: none;
-}
-
-ul,
-ol {
-  list-style: none;
-}
-
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-  text-wrap: balance;
-}
-
-fieldset {
-  border: none;
-}
-
-.manage-review-rating-container {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-evenly;
-}
-.dashboard-list-item-header {
-  display: grid;
-  gap: 15px;
-  padding: 10px;
-  border-bottom: 2px solid #333;
-  font-weight: bold;
+@theme {
+  --font-sans: 'Montserrat', sans-serif;
 }

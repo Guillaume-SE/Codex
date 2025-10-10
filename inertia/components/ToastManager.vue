@@ -23,7 +23,3 @@ onUnmounted(() => {
 <template>
   <Toaster rich-colors position="bottom-right" closeButton />
 </template>
-
-<style>
-@import 'vue-sonner/style.css';
-</style>

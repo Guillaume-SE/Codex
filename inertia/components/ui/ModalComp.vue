@@ -25,7 +25,9 @@ useClickOutsideDialog(modalRef, target, () => {
 <template>
   <dialog ref="modalRef" class="modal">
     <div ref="modalContentRef" class="modal-content">
-      <ButtonComp @click.stop="emit('close-modal')" class="close-button">&times;</ButtonComp>
+      <ButtonComp @click.stop="emit('close-modal')" class="close-button" aria-label="Fermer">
+        &times;
+      </ButtonComp>
       <slot name="header"></slot>
       <slot name="content"></slot>
     </div>
