@@ -1,20 +1,22 @@
-import User from '#models/user'
+import AuthService from '#services/auth_service'
 import { loginValidator } from '#validators/auth_validator'
 import { inject } from '@adonisjs/core'
 import type { HttpContext } from '@adonisjs/core/http'
 
-@inject()
 export default class SessionController {
   async show({ inertia }: HttpContext) {
     return inertia.render('auth/Login')
   }
 
-  async login({ request, auth, response }: HttpContext) {
-    const { uid, password, remember } = await request.validateUsing(loginValidator)
+  @inject()
+  async login({ request, response }: HttpContext, authService: AuthService) {
+    const data = await request.validateUsing(loginValidator)
 
-    const user = await User.verifyCredentials(uid, password)
+    const user = await authService.login(data)
 
-    await auth.use('web').login(user, remember)
+    if (!user) {
+      return response.redirect().back()
+    }
 
     return response.redirect().toRoute('dashboard.home')
   }
