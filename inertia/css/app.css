@@ -3,9 +3,8 @@
 @import 'tailwindcss/preflight';
 @import 'tailwindcss/utilities';
 @import 'vue-sonner/style.css';
-/* * {
-  font-family: 'Montserrat', serif;
-} */
+@plugin "daisyui";
+
 @theme {
-  --font-display: 'Montserrat', 'serif';
+  --font-sans: 'Montserrat', sans-serif;
 }
