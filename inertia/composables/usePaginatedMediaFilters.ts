@@ -1,5 +1,5 @@
 import { useForm } from '@inertiajs/vue3'
-import { computed, onMounted, toRef, watch, type MaybeRef } from 'vue'
+import { computed, toRef, watch, type MaybeRef } from 'vue'
 
 interface IFilters {
   search: string
@@ -8,7 +8,7 @@ interface IFilters {
   types: number[]
   genres: number[]
   platforms: number[]
-  duration: string | undefined
+  duration: string | number | undefined
   publishers: number[]
   favorite: boolean
 }
@@ -33,7 +33,7 @@ function cleanFilters(filters: IFilters, defaultSortBy: string) {
   if (filters.platforms && filters.platforms.length > 0) {
     cleaned.platforms = filters.platforms
   }
-  if (filters.duration && filters.duration.length > 0) {
+  if (filters.duration && filters.duration !== '') {
     cleaned.duration = filters.duration
   }
   if (filters.publishers && filters.publishers.length > 0) {
