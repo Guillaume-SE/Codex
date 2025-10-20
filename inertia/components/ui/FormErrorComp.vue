@@ -17,9 +17,9 @@ const displayMessage = computed(() => {
 </script>
 
 <template>
-  <div v-if="displayMessage" class="form-text-error">
-    <span>{{ displayMessage }}</span>
-  </div>
+  <span v-if="displayMessage" class="form-text-error">
+    {{ displayMessage }}
+  </span>
 </template>
 
 <style scoped>
