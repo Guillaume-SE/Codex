@@ -20,4 +20,3 @@ const platform = [
 ] as const
 
 export type GamePlatform = (typeof platform)[number]
-export { platform as validGamePlatform }
