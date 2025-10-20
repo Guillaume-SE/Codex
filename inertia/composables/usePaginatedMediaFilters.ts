@@ -15,32 +15,21 @@ interface IFilters {
 
 function cleanFilters(filters: IFilters, defaultSortBy: string) {
   const cleaned: Partial<IFilters> = {}
-  if (filters.search && filters.search.length > 0) {
-    cleaned.search = filters.search
-  }
-  if (filters.sortBy && filters.sortBy !== defaultSortBy) {
-    cleaned.sortBy = filters.sortBy
-  }
-  if (filters.status && filters.status.length > 0) {
-    cleaned.status = filters.status
-  }
-  if (filters.types && filters.types.length > 0) {
-    cleaned.types = filters.types
-  }
-  if (filters.genres && filters.genres.length > 0) {
-    cleaned.genres = filters.genres
-  }
-  if (filters.platforms && filters.platforms.length > 0) {
-    cleaned.platforms = filters.platforms
-  }
-  if (filters.duration && filters.duration !== '') {
-    cleaned.duration = filters.duration
-  }
-  if (filters.publishers && filters.publishers.length > 0) {
-    cleaned.publishers = filters.publishers
-  }
-  if (filters.favorite === true) {
-    cleaned.favorite = filters.favorite
+  const isEmpty = (value: any) =>
+    value === '' || value === false || (Array.isArray(value) && value.length === 0)
+
+  for (const key in filters) {
+    const filterKey = key as keyof IFilters
+    const value = filters[filterKey]
+
+    if (filterKey === 'sortBy' && value === defaultSortBy) {
+      continue // Skip if it's the default sort
+    }
+
+    // If the value is not empty, add it to the cleaned object
+    if (!isEmpty(value)) {
+      ;(cleaned as any)[filterKey] = value
+    }
   }
   return cleaned
 }
@@ -94,21 +83,21 @@ export function usePaginatedMediaFilters(
       favorite: false,
     })
     // Conditionally set a default for 'duration'
-    if (categoryRef.value !== 'movie') {
-      filters.defaults('duration', undefined)
-    } else {
-      filters.defaults('duration', '')
-    }
+    // if (categoryRef.value !== 'movie') {
+    //   filters.defaults('duration', undefined)
+    // } else {
+    //   filters.defaults('duration', '')
+    // }
     filters.reset()
   }
 
-  watch(
-    categoryRef,
-    (newCategory) => {
-      filters.duration = newCategory === 'movie' ? '' : undefined
-    },
-    { immediate: true }
-  )
+  // watch(
+  //   categoryRef,
+  //   (newCategory) => {
+  //     filters.duration = newCategory === 'movie' ? '' : undefined
+  //   },
+  //   { immediate: true }
+  // )
 
   // onMounted(() => {
   //   if (categoryRef.value !== 'movie') {
