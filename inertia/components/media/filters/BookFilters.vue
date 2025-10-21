@@ -1,10 +1,12 @@
 <script setup lang="ts">
+import FilterTitleComp from '~/components/ui/FilterTitleComp.vue'
 import InputComp from '~/components/ui/InputComp.vue'
 import LabelComp from '~/components/ui/LabelComp.vue'
 import { useCapitalizeFirstLetter } from '~/composables/useCapitalizeFirstLetter'
 
 defineProps<{
   publishersList: any[]
+  isActive: boolean | undefined
 }>()
 
 const publishersModel = defineModel<number[]>('publishers')
@@ -17,7 +19,7 @@ const capitalizeFirstLetter = useCapitalizeFirstLetter
 </script>
 
 <template>
-  <span>Editeurs</span>
+  <FilterTitleComp title="Editeur" :is-active="isActive" />
   <ul>
     <li v-for="publisher in publishersList" :key="publisher.id">
       <InputComp

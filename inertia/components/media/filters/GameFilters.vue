@@ -1,9 +1,11 @@
 <script setup lang="ts">
+import FilterTitleComp from '~/components/ui/FilterTitleComp.vue'
 import InputComp from '~/components/ui/InputComp.vue'
 import LabelComp from '~/components/ui/LabelComp.vue'
 
 defineProps<{
   platformsList: any[]
+  isActive: boolean
 }>()
 
 const platformsModel = defineModel<number[]>('platforms')
@@ -14,7 +16,7 @@ defineOptions({
 </script>
 
 <template>
-  <span>Plateformes</span>
+  <FilterTitleComp title="Plateforme" :is-active="isActive" />
   <ul>
     <li v-for="platform in platformsList" :key="platform.id">
       <InputComp
