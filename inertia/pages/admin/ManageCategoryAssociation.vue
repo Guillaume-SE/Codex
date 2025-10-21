@@ -61,18 +61,21 @@ const formatCategoryName = useFormatCategoryNameInFr
         <span>Liste des types</span>
       </div>
       <div v-for="type in typesList">
-        <LabelComp :text="capitalizeFirstLetter(type.name)" textPosition="down">
-          <InputComp v-model="form.types" type="checkbox" :value="type.id" />
-        </LabelComp>
+        <InputComp v-model="form.types" type="checkbox" :value="type.id" :id="`type-${type.id}`" />
+        <LabelComp :labelFor="`type-${type.id}`" :text="capitalizeFirstLetter(type.name)" />
       </div>
       <!-- genres list -->
       <div>
         <span>Liste des genres</span>
       </div>
       <div v-for="genre in genresList">
-        <LabelComp :text="capitalizeFirstLetter(genre.name)" textPosition="down">
-          <InputComp v-model="form.genres" type="checkbox" :value="genre.id" />
-        </LabelComp>
+        <InputComp
+          v-model="form.genres"
+          type="checkbox"
+          :value="genre.id"
+          :id="`genre-${genre.id}`"
+        />
+        <LabelComp :labelFor="`genre-${genre.id}`" :text="capitalizeFirstLetter(genre.name)" />
       </div>
     </div>
     <div>

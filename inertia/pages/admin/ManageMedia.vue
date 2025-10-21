@@ -202,32 +202,35 @@ function submit() {
             <div v-else>
               <span>Catégorie (requis)</span>
               <div v-for="category in categories">
-                <LabelComp :text="formatCategoryName(category.name)" textPosition="down">
-                  <InputComp
-                    v-model="form.categoryId"
-                    type="radio"
-                    :value="category.id"
-                    @input="form.clearErrors('categoryId')"
-                  />
-                </LabelComp>
+                <InputComp
+                  v-model="form.categoryId"
+                  type="radio"
+                  :value="category.id"
+                  :id="`category-${category.id}`"
+                  @input="form.clearErrors('categoryId')"
+                />
+                <LabelComp
+                  :labelFor="`category-${category.id}`"
+                  :text="formatCategoryName(category.name)"
+                />
               </div>
               <FormErrorComp v-if="form.errors.categoryId" :message="form.errors.categoryId" />
             </div>
             <!-- type -->
             <div>
               <span>Type (requis)</span>
-              <div v-if="filteredTypesList.length === 0">
-                <span>En attente d'un choix de catégorie</span>
-              </div>
+              <span v-if="filteredTypesList.length === 0">
+                En attente d'un choix de catégorie
+              </span>
               <div v-for="type in filteredTypesList">
-                <LabelComp :text="type.text" textPosition="down">
-                  <InputComp
-                    v-model="form.typeId"
-                    type="radio"
-                    :value="type.value"
-                    @input="form.clearErrors('typeId')"
-                  />
-                </LabelComp>
+                <InputComp
+                  v-model="form.typeId"
+                  type="radio"
+                  :value="type.value"
+                  :id="`type-${type.value}`"
+                  @input="form.clearErrors('typeId')"
+                />
+                <LabelComp :labelFor="`type-${type.value}`" :text="type.text" />
               </div>
               <FormErrorComp v-if="form.errors.typeId" :message="form.errors.typeId" />
             </div>
@@ -242,35 +245,41 @@ function submit() {
           <div v-if="currentStep === 2">
             <!-- name -->
             <div>
-              <LabelComp text="Nom de l'œuvre (requis):" text-position="up">
-                <InputComp v-model="form.name" type="text" @input="form.clearErrors('name')" />
-              </LabelComp>
+              <LabelComp labelFor="name" text="Nom de l'œuvre (requis)" />
+              <InputComp
+                v-model="form.name"
+                type="text"
+                id="name"
+                @input="form.clearErrors('name')"
+              />
               <FormErrorComp v-if="form.errors.name" :message="form.errors.name" />
             </div>
             <!-- released date -->
             <div>
-              <LabelComp text="Date de sortie:" text-position="up">
-                <InputComp v-model="form.released" type="date" />
-              </LabelComp>
+              <LabelComp labelFor="released" text="Date de sortie" />
+              <InputComp v-model="form.released" type="date" id="released" />
               <FormErrorComp v-if="form.errors.released" :message="form.errors.released" />
             </div>
             <!-- synopsis -->
             <div>
-              <LabelComp text="Synopsis:" text-position="up" for="synopsis">
-                <textarea v-model="form.synopsis" id="synopsis"></textarea>
-              </LabelComp>
+              <LabelComp labelFor="synopsis" text="Synopsis" />
+              <textarea v-model="form.synopsis" id="synopsis"></textarea>
               <FormErrorComp v-if="form.errors.synopsis" :message="form.errors.synopsis" />
             </div>
             <!-- genres -->
             <div>
               <span>Genres</span>
-              <div v-if="filteredGenresList.length === 0">
-                <span>En attente d'un choix de catégorie</span>
-              </div>
+              <span v-if="filteredGenresList.length === 0">
+                En attente d'un choix de catégorie
+              </span>
               <div v-for="genre in filteredGenresList">
-                <LabelComp :text="genre.text" textPosition="down">
-                  <InputComp v-model="form.genreId" type="checkbox" :value="genre.value" />
-                </LabelComp>
+                <InputComp
+                  v-model="form.genreId"
+                  type="checkbox"
+                  :value="genre.value"
+                  :id="`genre-${genre.value}`"
+                />
+                <LabelComp :labelFor="`genre-${genre.value}`" :text="genre.text" />
               </div>
               <FormErrorComp v-if="form.errors.genreId" :message="form.errors.genreId" />
             </div>
@@ -294,14 +303,14 @@ function submit() {
             <div>
               <span>Progression (requis)</span>
               <div v-for="status in statuses">
-                <LabelComp :text="status.name" textPosition="down">
-                  <InputComp
-                    v-model="form.statusId"
-                    type="radio"
-                    :value="status.id"
-                    @input="form.clearErrors('statusId')"
-                  />
-                </LabelComp>
+                <InputComp
+                  v-model="form.statusId"
+                  type="radio"
+                  :value="status.id"
+                  :id="`status-${status.id}`"
+                  @input="form.clearErrors('statusId')"
+                />
+                <LabelComp :labelFor="`status-${status.id}`" :text="status.name" />
               </div>
               <FormErrorComp v-if="form.errors.statusId" :message="form.errors.statusId" />
             </div>

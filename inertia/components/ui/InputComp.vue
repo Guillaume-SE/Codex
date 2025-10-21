@@ -1,42 +1,29 @@
 <script setup lang="ts">
+import { computed } from 'vue'
+
 const model = defineModel()
 
-defineProps<{
+const props = defineProps<{
   type: string
-  placeholder?: string
-  id?: string
-  value?: string | number | object | null | boolean
-  min?: string
-  max?: string
+  variant?: 'toggle'
 }>()
+
+defineOptions({
+  inheritAttrs: false,
+})
+
+const baseClasses = computed(() => {
+  if (props.type === 'checkbox') {
+    return props.variant === 'toggle' ? 'toggle' : 'checkbox'
+  } else if (props.type === 'radio') {
+    return 'radio'
+  } else if (props.type === 'range') {
+    return 'range'
+  }
+  return 'input'
+})
 </script>
 
 <template>
-  <template v-if="type === 'checkbox'">
-    <input v-model="model" type="checkbox" :id="id" :value="value || ''" />
-  </template>
-
-  <template v-else-if="type === 'search'">
-    <input v-model="model" type="search" :placeholder="placeholder || ''" />
-  </template>
-
-  <template v-else-if="type === 'radio'">
-    <input v-model="model" type="radio" :value="value" />
-  </template>
-
-  <template v-else-if="type === 'date'">
-    <input v-model="model" type="date" />
-  </template>
-
-  <template v-else-if="type === 'number'">
-    <input v-model="model" type="number" :min="min || ''" :max="max || ''" />
-  </template>
-
-  <template v-else-if="type === 'password'">
-    <input v-model="model" type="password" />
-  </template>
-
-  <template v-else>
-    <input v-model="model" type="text" :placeholder="placeholder || ''" />
-  </template>
+  <input v-model="model" :type="type" :class="[baseClasses]" v-bind="$attrs" />
 </template>

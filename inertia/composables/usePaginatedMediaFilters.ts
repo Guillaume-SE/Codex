@@ -1,5 +1,5 @@
 import { useForm } from '@inertiajs/vue3'
-import { computed, onMounted, toRef, watch, type MaybeRef } from 'vue'
+import { computed, toRef, type MaybeRef } from 'vue'
 
 interface IFilters {
   search: string
@@ -8,39 +8,36 @@ interface IFilters {
   types: number[]
   genres: number[]
   platforms: number[]
-  duration: string | undefined
+  duration: string
   publishers: number[]
   favorite: boolean
 }
 
+export const MAX_MOVIE_DURATION = '300'
+
 function cleanFilters(filters: IFilters, defaultSortBy: string) {
   const cleaned: Partial<IFilters> = {}
-  if (filters.search && filters.search.length > 0) {
-    cleaned.search = filters.search
-  }
-  if (filters.sortBy && filters.sortBy !== defaultSortBy) {
-    cleaned.sortBy = filters.sortBy
-  }
-  if (filters.status && filters.status.length > 0) {
-    cleaned.status = filters.status
-  }
-  if (filters.types && filters.types.length > 0) {
-    cleaned.types = filters.types
-  }
-  if (filters.genres && filters.genres.length > 0) {
-    cleaned.genres = filters.genres
-  }
-  if (filters.platforms && filters.platforms.length > 0) {
-    cleaned.platforms = filters.platforms
-  }
-  if (filters.duration && filters.duration.length > 0) {
-    cleaned.duration = filters.duration
-  }
-  if (filters.publishers && filters.publishers.length > 0) {
-    cleaned.publishers = filters.publishers
-  }
-  if (filters.favorite === true) {
-    cleaned.favorite = filters.favorite
+  const isEmpty = (value: any) =>
+    value === '' || value === false || (Array.isArray(value) && value.length === 0)
+
+  for (const key in filters) {
+    const filterKey = key as keyof IFilters
+    const value = filters[filterKey]
+
+    if (filterKey === 'sortBy' && value === defaultSortBy) {
+      continue
+    }
+
+    if (filterKey === 'duration') {
+      if (Number(value) >= Number(MAX_MOVIE_DURATION)) {
+        continue
+      }
+    }
+
+    // If the value is not empty, add it to the cleaned object
+    if (!isEmpty(value)) {
+      ;(cleaned as any)[filterKey] = value
+    }
   }
   return cleaned
 }
@@ -60,7 +57,7 @@ export function usePaginatedMediaFilters(
     types: [],
     genres: [],
     platforms: [],
-    duration: '',
+    duration: MAX_MOVIE_DURATION,
     publishers: [],
     favorite: false,
   })
@@ -89,32 +86,12 @@ export function usePaginatedMediaFilters(
       types: [],
       genres: [],
       platforms: [],
-      duration: '',
+      duration: MAX_MOVIE_DURATION,
       publishers: [],
       favorite: false,
     })
-    // Conditionally set a default for 'duration'
-    if (categoryRef.value !== 'movie') {
-      filters.defaults('duration', undefined)
-    } else {
-      filters.defaults('duration', '')
-    }
     filters.reset()
   }
-
-  watch(
-    categoryRef,
-    (newCategory) => {
-      filters.duration = newCategory === 'movie' ? '' : undefined
-    },
-    { immediate: true }
-  )
-
-  // onMounted(() => {
-  //   if (categoryRef.value !== 'movie') {
-  //     filters.duration = undefined
-  //   }
-  // })
 
   return { filters, submitFilters, fetchNewPageData, resetFilters }
 }

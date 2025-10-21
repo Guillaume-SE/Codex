@@ -14,11 +14,10 @@ defineOptions({
 </script>
 
 <template>
-  <span>Editeur</span>
+  <span>Edité par</span>
   <div v-for="publisher in bookPublishers">
-    <LabelComp :text="publisher.name" textPosition="down">
-      <InputComp v-model="form.publisherId" type="radio" :value="publisher.id" />
-    </LabelComp>
+    <LabelComp labelFor="publisher" :text="publisher.name" />
+    <InputComp v-model="form.publisherId" type="radio" :value="publisher.id" id="publisher" />
   </div>
   <FormErrorComp v-if="form.errors.publisherId" :message="form.errors.publisherId" />
 </template>

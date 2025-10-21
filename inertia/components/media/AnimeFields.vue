@@ -13,10 +13,7 @@ defineOptions({
 </script>
 
 <template>
-  <LabelComp text="Nombres d'épisodes" textPosition="up">
-    <div>
-      <InputComp v-model="form.animeSeasonLength" type="number" min="1" />
-    </div>
-  </LabelComp>
+  <LabelComp labelFor="animeSeasonLength" text="Nombres d'épisodes" />
+  <InputComp v-model="form.animeSeasonLength" type="number" min="1" id="animeSeasonLength" />
   <FormErrorComp v-if="form.errors.animeSeasonLength" :message="form.errors.animeSeasonLength" />
 </template>

@@ -16,10 +16,11 @@ defineOptions({
 
 <template>
   <span>Joué sur</span>
-  <div v-for="platform in gamePlatforms">
-    <LabelComp :text="platform.name" textPosition="down">
-      <InputComp v-model="form.platformId" type="radio" :value="platform.id" />
-    </LabelComp>
-  </div>
+  <ul>
+    <li v-for="platform in gamePlatforms">
+      <InputComp v-model="form.platformId" type="radio" :value="platform.id" id="platform" />
+      <LabelComp labelFor="platform" :text="platform.name" />
+    </li>
+  </ul>
   <FormErrorComp v-if="form.errors.platformId" :message="form.errors.platformId" />
 </template>
