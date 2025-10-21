@@ -12,6 +12,7 @@ import ButtonComp from '~/components/ui/ButtonComp.vue'
 import FormErrorComp from '~/components/ui/FormErrorComp.vue'
 import InputComp from '~/components/ui/InputComp.vue'
 import LabelComp from '~/components/ui/LabelComp.vue'
+import SelectComp from '~/components/ui/SelectComp.vue'
 import { useActionDialog, type ActionDialogConfig } from '~/composables/useActionDialog'
 import { useErrorSyncer } from '~/composables/useErrorSyncer'
 import { usePaginatedFilters } from '~/composables/usePaginatedFilters'
@@ -62,7 +63,6 @@ const typeConfig: ActionDialogConfig<IForm, ITypeList> = {
     definite: 'le',
   },
   form: form,
-  // customSubmitHandlers: { replace: customHandleReplace, edit: customHandleUpdate },
   customSubmitHandlers: { replace: customHandleReplace },
 }
 
@@ -189,12 +189,15 @@ const isSubmitDisabled = computed(() => {
           </span>
           <div>
             <span>Remplacer par</span>
-            <select v-model="form.replacementTypeId">
-              <option disabled :value="null">Choisir un type</option>
+            <SelectComp
+              v-model="form.replacementTypeId"
+              placeholder="Choisir un type"
+              :placeholder-value="null"
+            >
               <option v-for="type in filteredTypeList" :value="type.id">
                 {{ type.name }}
               </option>
-            </select>
+            </SelectComp>
           </div>
           <FormErrorComp
             v-if="form.errors.replacementTypeId"
