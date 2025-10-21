@@ -23,7 +23,7 @@ const statusModel = defineModel<number[]>('status')
 const typesModel = defineModel<number[]>('types')
 const genresModel = defineModel<number[]>('genres')
 const platformsModel = defineModel<number[]>('platforms')
-const durationModel = defineModel<string | number | undefined>('duration')
+const durationModel = defineModel<string>('duration')
 const publishersModel = defineModel<number[]>('publishers')
 const favoriteModel = defineModel<boolean>('favorite')
 
@@ -34,18 +34,6 @@ function resetFormValues() {
 }
 
 const capitalizeFirstLetter = useCapitalizeFirstLetter
-
-const movieDurationOptions = [
-  { text: 'Toute durée', value: '' },
-  { text: '1h00', value: 60 },
-  { text: '1h30', value: 90 },
-  { text: '2h00', value: 120 },
-  { text: '2h30', value: 160 },
-  { text: '3h00', value: 180 },
-  { text: '3h30', value: 210 },
-  { text: '4h00', value: 240 },
-  { text: '4h30', value: 270 },
-]
 
 const categoryFilterComponents: Record<string, Component> = {
   game: GameFilters,
@@ -97,15 +85,16 @@ const categoryFilterComponents: Record<string, Component> = {
     </ul>
   </div>
   <!-- category related filters -->
-  <component
-    :is="categoryFilterComponents[mediaCategory]"
-    :platforms-list="platformsList"
-    :movie-duration-options="movieDurationOptions"
-    :publishers-list="publishersList"
-    v-model:platforms="platformsModel"
-    v-model:duration="durationModel"
-    v-model:publishers="publishersModel"
-  />
+  <div>
+    <component
+      :is="categoryFilterComponents[mediaCategory]"
+      :platforms-list="platformsList"
+      :publishers-list="publishersList"
+      v-model:platforms="platformsModel"
+      v-model:duration="durationModel"
+      v-model:publishers="publishersModel"
+    />
+  </div>
   <!-- data display -->
   <div>
     <span>Affichage</span>
@@ -118,5 +107,5 @@ const categoryFilterComponents: Record<string, Component> = {
       class="border-slate-500 bg-slate-400 checked:border-green-500 checked:bg-green-400 checked:text-green-800"
     />
   </div>
-  <ButtonComp type="submit"> Appliquer </ButtonComp>
+  <ButtonComp type="submit">Appliquer</ButtonComp>
 </template>

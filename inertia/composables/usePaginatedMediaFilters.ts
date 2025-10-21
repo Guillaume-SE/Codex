@@ -1,5 +1,5 @@
 import { useForm } from '@inertiajs/vue3'
-import { computed, toRef, watch, type MaybeRef } from 'vue'
+import { computed, toRef, type MaybeRef } from 'vue'
 
 interface IFilters {
   search: string
@@ -8,10 +8,12 @@ interface IFilters {
   types: number[]
   genres: number[]
   platforms: number[]
-  duration: string | number | undefined
+  duration: string
   publishers: number[]
   favorite: boolean
 }
+
+export const MAX_MOVIE_DURATION = '300'
 
 function cleanFilters(filters: IFilters, defaultSortBy: string) {
   const cleaned: Partial<IFilters> = {}
@@ -23,7 +25,13 @@ function cleanFilters(filters: IFilters, defaultSortBy: string) {
     const value = filters[filterKey]
 
     if (filterKey === 'sortBy' && value === defaultSortBy) {
-      continue // Skip if it's the default sort
+      continue
+    }
+
+    if (filterKey === 'duration') {
+      if (Number(value) >= Number(MAX_MOVIE_DURATION)) {
+        continue
+      }
     }
 
     // If the value is not empty, add it to the cleaned object
@@ -49,7 +57,7 @@ export function usePaginatedMediaFilters(
     types: [],
     genres: [],
     platforms: [],
-    duration: '',
+    duration: MAX_MOVIE_DURATION,
     publishers: [],
     favorite: false,
   })
@@ -78,32 +86,12 @@ export function usePaginatedMediaFilters(
       types: [],
       genres: [],
       platforms: [],
-      duration: '',
+      duration: MAX_MOVIE_DURATION,
       publishers: [],
       favorite: false,
     })
-    // Conditionally set a default for 'duration'
-    // if (categoryRef.value !== 'movie') {
-    //   filters.defaults('duration', undefined)
-    // } else {
-    //   filters.defaults('duration', '')
-    // }
     filters.reset()
   }
-
-  // watch(
-  //   categoryRef,
-  //   (newCategory) => {
-  //     filters.duration = newCategory === 'movie' ? '' : undefined
-  //   },
-  //   { immediate: true }
-  // )
-
-  // onMounted(() => {
-  //   if (categoryRef.value !== 'movie') {
-  //     filters.duration = undefined
-  //   }
-  // })
 
   return { filters, submitFilters, fetchNewPageData, resetFilters }
 }
