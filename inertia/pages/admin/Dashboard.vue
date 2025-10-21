@@ -95,7 +95,7 @@ const isMediaListEmpty = computed(() => {
       @delete-item="handleDeleteMedia"
     />
     <div v-else>
-      <p>Aucun média ajouté pour le moment.</p>
+      <p>Aucun résultat correspondant.</p>
     </div>
 
     <!-- pagination -->
