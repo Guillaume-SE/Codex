@@ -13,10 +13,7 @@ defineOptions({
 </script>
 
 <template>
-  <LabelComp text="Durée du film (en minutes):" textPosition="up">
-    <div>
-      <InputComp v-model="form.duration" type="number" min="1" />
-    </div>
-  </LabelComp>
+  <LabelComp labelFor="duration" text="Durée du film (en minutes)" />
+  <InputComp v-model="form.duration" type="number" min="1" id="duration" />
   <FormErrorComp v-if="form.errors.duration" :message="form.errors.duration" />
 </template>

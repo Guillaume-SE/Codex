@@ -175,9 +175,8 @@ const isSubmitDisabled = computed(() => {
     <template #form-content>
       <div v-if="currentTask === 'create' || currentTask === 'edit'">
         <div>
-          <LabelComp text="Nom" textPosition="up">
-            <InputComp v-model="form.name" type="text" @input="form.clearErrors('name')" />
-          </LabelComp>
+          <LabelComp labelFor="name" text="Nom" />
+          <InputComp v-model="form.name" type="text" id="name" @input="form.clearErrors('name')" />
         </div>
         <FormErrorComp v-if="form.errors.name" :message="form.errors.name" />
       </div>
@@ -188,14 +187,15 @@ const isSubmitDisabled = computed(() => {
             Le type <strong>{{ selectedItemName }}</strong> est utilisé. Veuillez choisir un type de
             remplacement avant de le supprimer.
           </span>
-          <LabelComp text="Remplacer par :" text-position="up">
+          <div>
+            <span>Remplacer par</span>
             <select v-model="form.replacementTypeId">
               <option disabled :value="null">Choisir un type</option>
               <option v-for="type in filteredTypeList" :value="type.id">
                 {{ type.name }}
               </option>
             </select>
-          </LabelComp>
+          </div>
           <FormErrorComp
             v-if="form.errors.replacementTypeId"
             :message="form.errors.replacementTypeId"
