@@ -12,16 +12,12 @@ defineOptions({
   inheritAttrs: false,
 })
 
-const inputClasses = computed(() => {
+const baseClasses = computed(() => {
   if (props.type === 'checkbox') {
     return props.variant === 'toggle' ? 'toggle' : 'checkbox'
-  }
-
-  if (props.type === 'radio') {
+  } else if (props.type === 'radio') {
     return 'radio'
-  }
-
-  if (props.type === 'range') {
+  } else if (props.type === 'range') {
     return 'range'
   }
   return 'input'
@@ -29,5 +25,5 @@ const inputClasses = computed(() => {
 </script>
 
 <template>
-  <input v-model="model" :type="type" :class="[inputClasses]" v-bind="$attrs" />
+  <input v-model="model" :type="type" :class="[baseClasses]" v-bind="$attrs" />
 </template>
