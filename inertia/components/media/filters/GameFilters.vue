@@ -14,18 +14,16 @@ defineOptions({
 </script>
 
 <template>
-  <div>
-    <span>Plateformes</span>
-    <ul>
-      <li v-for="platform in platformsList" :key="platform.id">
-        <InputComp
-          v-model="platformsModel"
-          type="checkbox"
-          :value="platform.id"
-          :id="`platform-${platform.id}`"
-        />
-        <LabelComp :labelFor="`platform-${platform.id}`" :text="platform.name" />
-      </li>
-    </ul>
-  </div>
+  <span>Plateformes</span>
+  <ul>
+    <li v-for="platform in platformsList" :key="platform.id">
+      <InputComp
+        v-model="platformsModel"
+        type="checkbox"
+        :value="platform.id"
+        :id="`platform-${platform.id}`"
+      />
+      <LabelComp :labelFor="`platform-${platform.id}`" :text="platform.name" />
+    </li>
+  </ul>
 </template>
