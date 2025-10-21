@@ -1,14 +1,16 @@
 <script setup lang="ts">
 import type MediaController from '#controllers/media_controller'
 import { InferPageProps } from '@adonisjs/inertia/types'
-import type { Component } from 'vue'
+import { computed, type Component } from 'vue'
 import BookFilters from '~/components/media/filters/BookFilters.vue'
 import GameFilters from '~/components/media/filters/GameFilters.vue'
 import MovieFilters from '~/components/media/filters/MovieFilters.vue'
 import ButtonComp from '~/components/ui/ButtonComp.vue'
+import FilterTitleComp from '~/components/ui/FilterTitleComp.vue'
 import InputComp from '~/components/ui/InputComp.vue'
 import LabelComp from '~/components/ui/LabelComp.vue'
 import { useCapitalizeFirstLetter } from '~/composables/useCapitalizeFirstLetter'
+import { MAX_MOVIE_DURATION } from '~/composables/usePaginatedMediaFilters'
 
 defineProps<{
   statusesList: InferPageProps<MediaController, 'showByCategory'>['mediaStatusesList']
@@ -33,6 +35,18 @@ function resetFormValues() {
   return emit('update:resetFormValues')
 }
 
+const isStatusActive = computed(() => statusModel.value && statusModel.value.length > 0)
+const isTypesActive = computed(() => typesModel.value && typesModel.value.length > 0)
+const isGenresActive = computed(() => genresModel.value && genresModel.value.length > 0)
+const isFavoriteActive = computed(() => favoriteModel.value === true)
+const isCategoryFilterActive = computed(() => {
+  const platformsActive = platformsModel.value && platformsModel.value.length > 0
+  const publishersActive = publishersModel.value && publishersModel.value.length > 0
+  const durationActive = durationModel.value && durationModel.value !== MAX_MOVIE_DURATION
+
+  return platformsActive || publishersActive || durationActive
+})
+
 const capitalizeFirstLetter = useCapitalizeFirstLetter
 
 const categoryFilterComponents: Record<string, Component> = {
@@ -46,7 +60,7 @@ const categoryFilterComponents: Record<string, Component> = {
   <ButtonComp type="submit" @click="resetFormValues"> Réinitialiser les filtres </ButtonComp>
   <!-- status -->
   <div>
-    <span>Progression</span>
+    <FilterTitleComp title="Progression" :is-active="isStatusActive" />
     <ul>
       <li v-for="status in statusesList" :key="status.id">
         <InputComp
@@ -61,7 +75,7 @@ const categoryFilterComponents: Record<string, Component> = {
   </div>
   <!-- types -->
   <div>
-    <span>Types</span>
+    <FilterTitleComp title="Type" :is-active="isTypesActive" />
     <ul>
       <li v-for="type in typesList" :key="type.id">
         <InputComp v-model="typesModel" type="checkbox" :value="type.id" :id="`type-${type.id}`" />
@@ -71,7 +85,7 @@ const categoryFilterComponents: Record<string, Component> = {
   </div>
   <!-- genres -->
   <div>
-    <span>Genres</span>
+    <FilterTitleComp title="Genre" :is-active="isGenresActive" />
     <ul>
       <li v-for="genre in genresList" :key="genre.id">
         <InputComp
@@ -88,6 +102,7 @@ const categoryFilterComponents: Record<string, Component> = {
   <div>
     <component
       :is="categoryFilterComponents[mediaCategory]"
+      :is-active="isCategoryFilterActive"
       :platforms-list="platformsList"
       :publishers-list="publishersList"
       v-model:platforms="platformsModel"
@@ -97,7 +112,7 @@ const categoryFilterComponents: Record<string, Component> = {
   </div>
   <!-- data display -->
   <div>
-    <span>Affichage</span>
+    <FilterTitleComp title="Affichage" :is-active="isFavoriteActive" />
     <LabelComp labelFor="favorite" text="Uniquement favoris" />
     <InputComp
       v-model="favoriteModel"
