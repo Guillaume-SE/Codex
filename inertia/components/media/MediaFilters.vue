@@ -114,13 +114,7 @@ const categoryFilterComponents: Record<string, Component> = {
   <div>
     <FilterTitleComp title="Affichage" :is-active="isFavoriteActive" />
     <LabelComp labelFor="favorite" text="Uniquement favoris" />
-    <InputComp
-      v-model="favoriteModel"
-      id="favorite"
-      type="checkbox"
-      variant="toggle"
-      class="border-slate-500 bg-slate-400 checked:border-green-500 checked:bg-green-400 checked:text-green-800"
-    />
+    <InputComp v-model="favoriteModel" id="favorite" type="checkbox" variant="toggle" />
   </div>
   <ButtonComp type="submit">Appliquer</ButtonComp>
 </template>
