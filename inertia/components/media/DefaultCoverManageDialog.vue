@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useForm } from '@inertiajs/vue3'
-import { nextTick, ref, useTemplateRef } from 'vue'
-import ActionDialogComp from '~/components/ActionDialogComp.vue'
+import { ref, watch } from 'vue'
+import ActionModal from '~/components/ActionModal.vue'
 import ButtonComp from '~/components/ui/ButtonComp.vue'
 
 const props = defineProps<{
@@ -11,7 +11,7 @@ const props = defineProps<{
 const form = useForm({ cover: null as File | null })
 const previewUrl = ref<string | null>(null)
 const isOverlayVisible = ref(false)
-const actionDialogRef = useTemplateRef<InstanceType<typeof ActionDialogComp>>('actionDialogRef')
+const isModalOpen = ref(false)
 
 function handleFileSelect(event: Event) {
   const target = event.target as HTMLInputElement
@@ -39,37 +39,39 @@ function openModal() {
   form.reset()
   previewUrl.value = null
   isOverlayVisible.value = false
-  nextTick(() => {
-    actionDialogRef.value?.showModal()
-  })
+  isModalOpen.value = true
 }
 function closeModal() {
-  actionDialogRef.value?.close()
+  isModalOpen.value = false
   isOverlayVisible.value = false
-  if (previewUrl.value) {
-    URL.revokeObjectURL(previewUrl.value)
-  }
-  previewUrl.value = null
-  form.reset()
-  form.clearErrors()
 }
 
 function toggleOverlay() {
   isOverlayVisible.value = !isOverlayVisible.value
 }
 
+watch(isModalOpen, (isOpen) => {
+  if (!isOpen) {
+    if (previewUrl.value) {
+      URL.revokeObjectURL(previewUrl.value)
+    }
+    previewUrl.value = null
+    form.reset()
+    form.clearErrors()
+    isOverlayVisible.value = false
+  }
+})
+
 defineExpose({ open: openModal })
 </script>
 
 <template>
-  <ActionDialogComp
-    ref="actionDialogRef"
+  <ActionModal
+    v-model:show="isModalOpen"
     title="Modifier la cover par défaut"
     action-text="Modifier"
-    :form="form"
     :is-action-disabled="form.processing || !previewUrl"
     @submit="submitNewDefaultCover"
-    @close="closeModal"
   >
     <template #form-content>
       <div class="cover-comparison">
@@ -119,7 +121,7 @@ defineExpose({ open: openModal })
         <div v-if="form.errors.cover" class="form-error">{{ form.errors.cover }}</div>
       </div>
     </template>
-  </ActionDialogComp>
+  </ActionModal>
 </template>
 
 <style scoped>
