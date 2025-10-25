@@ -11,7 +11,7 @@ withDefaults(defineProps<IButtonProps>(), {
 </script>
 
 <template>
-  <button :type="type" :disabled="disabled">
+  <button :type="type" :disabled="disabled" class="btn">
     <slot>Valider</slot>
   </button>
 </template>
