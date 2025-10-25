@@ -1,6 +1,5 @@
 import { type InertiaForm } from '@inertiajs/vue3'
-import { computed, nextTick, ref, useTemplateRef, type MaybeRef } from 'vue'
-import type ActionDialogComp from '~/components/ActionDialogComp.vue'
+import { computed, MaybeRef, nextTick, ref } from 'vue'
 import { useActionText, type ActionType, type IResourceNameConfig } from './useActionText'
 import { useResourceForm } from './useResourceForm'
 
@@ -21,15 +20,14 @@ export interface ActionDialogConfig<T extends object, U> {
 }
 
 export function useActionDialog<T extends object, U extends object>(
-  config: ActionDialogConfig<T, U>,
-  templateRefKey: string
+  config: ActionDialogConfig<T, U>
 ) {
   const { resourceApiUrl, resourceNameConfig, form, getItemId, getItemName } = config
 
   // handle form url creation
   const { create, update, destroy } = useResourceForm(form, resourceApiUrl)
 
-  const actionDialogRef = useTemplateRef<InstanceType<typeof ActionDialogComp>>(templateRefKey)
+  const isModalOpen = ref(false)
   const currentTask = ref<ActionType | null>(null)
   const selectedItem = ref<U | null>(null)
 
@@ -54,25 +52,24 @@ export function useActionDialog<T extends object, U extends object>(
   const openModal = (task: ActionType, item: U | null = null) => {
     currentTask.value = task
     selectedItem.value = item
-
     form.reset()
+
     if (task === 'edit' && item) {
       prefillFormForEdit(item)
     }
 
-    nextTick(() => {
-      actionDialogRef.value?.showModal()
-    })
+    isModalOpen.value = true
   }
 
   const closeModal = () => {
-    if (actionDialogRef.value) {
-      actionDialogRef.value.close()
-    }
-    form.reset()
-    form.clearErrors()
-    currentTask.value = null
-    selectedItem.value = null
+    isModalOpen.value = false
+
+    nextTick(() => {
+      form.reset()
+      form.clearErrors()
+      currentTask.value = null
+      selectedItem.value = null
+    })
   }
 
   // SUBMIT PART
@@ -111,7 +108,7 @@ export function useActionDialog<T extends object, U extends object>(
   }
 
   return {
-    actionDialogRef,
+    isModalOpen,
     currentTask,
     selectedItem,
     selectedItemName,
