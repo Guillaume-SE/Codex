@@ -2,7 +2,7 @@
 import type { IMediaPresented } from '#interfaces/media_presented_interface'
 import { useForm } from '@inertiajs/vue3'
 import { ref, watch } from 'vue'
-import ActionDialogComp from '~/components/ActionDialogComp.vue'
+import ActionModal from '~/components/ActionModal.vue'
 import MediaCover from '~/components/media/MediaCover.vue'
 import ButtonComp from '~/components/ui/ButtonComp.vue'
 import { ActionDialogConfig, useActionDialog } from '~/composables/useActionDialog'
@@ -21,7 +21,7 @@ const coverDialogConfig: ActionDialogConfig<{ cover: File | null }, IMediaPresen
   },
 }
 const {
-  actionDialogRef,
+  isModalOpen,
   currentTask,
   selectedItem,
   dialogTitle,
@@ -29,7 +29,7 @@ const {
   openModal,
   closeModal,
   submitForm,
-} = useActionDialog(coverDialogConfig, 'coverDialogRef')
+} = useActionDialog(coverDialogConfig)
 
 function handleCoverSelect(event: Event) {
   const target = event.target as HTMLInputElement
@@ -51,7 +51,6 @@ function handleDeleteCover() {
 
 function open(media: IMediaPresented) {
   apiUrl.value = `/admin/media/${media.id}/cover`
-  // const task = media.cover ? 'edit' : 'create'
   openModal('create', media)
 }
 
@@ -67,10 +66,9 @@ defineExpose({ open })
 </script>
 
 <template>
-  <ActionDialogComp
-    ref="coverDialogRef"
+  <ActionModal
+    v-model:show="isModalOpen"
     :title="dialogTitle"
-    :form="coverForm"
     :action-text="dialogActionText"
     :is-action-disabled="coverForm.processing"
     @submit="submitForm"
@@ -123,7 +121,7 @@ defineExpose({ open })
         <p>Cette action est irréversible.</p>
       </div>
     </template>
-  </ActionDialogComp>
+  </ActionModal>
 </template>
 
 <style scoped>

@@ -3,7 +3,7 @@ import type GamePlatformsController from '#controllers/game_platforms_controller
 import { InferPageProps } from '@adonisjs/inertia/types'
 import { useForm } from '@inertiajs/vue3'
 import { computed } from 'vue'
-import ActionDialogComp from '~/components/ActionDialogComp.vue'
+import ActionModal from '~/components/ActionModal.vue'
 import AppHead from '~/components/AppHead.vue'
 import DashboardAction from '~/components/dashboard/DashboardAction.vue'
 import DashboardContainer from '~/components/dashboard/DashboardContainer.vue'
@@ -49,7 +49,7 @@ const platformConfig: ActionDialogConfig<IForm, IPlatformList> = {
 }
 
 const {
-  actionDialogRef,
+  isModalOpen,
   currentTask,
   selectedItem,
   selectedItemName,
@@ -58,7 +58,7 @@ const {
   openModal,
   closeModal,
   submitForm,
-} = useActionDialog<IForm, IPlatformList>(platformConfig, 'actionDialogRef')
+} = useActionDialog<IForm, IPlatformList>(platformConfig)
 
 const platformListIsNotEmpty = computed(() => (props.platformList.data.length > 0 ? true : false))
 </script>
@@ -117,9 +117,9 @@ const platformListIsNotEmpty = computed(() => (props.platformList.data.length > 
     </div>
   </DashboardContainer>
 
-  <ActionDialogComp
+  <ActionModal
     v-if="currentTask"
-    ref="actionDialogRef"
+    v-model:show="isModalOpen"
     :title="dialogTitle"
     :form="form"
     :action-text="dialogActionText"
@@ -140,7 +140,7 @@ const platformListIsNotEmpty = computed(() => (props.platformList.data.length > 
         >
       </div>
     </template>
-  </ActionDialogComp>
+  </ActionModal>
 </template>
 
 <style scoped>

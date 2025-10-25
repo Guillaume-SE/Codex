@@ -3,7 +3,7 @@ import type MediaTypesController from '#controllers/media_types_controller'
 import { InferPageProps } from '@adonisjs/inertia/types'
 import { useForm } from '@inertiajs/vue3'
 import { computed } from 'vue'
-import ActionDialogComp from '~/components/ActionDialogComp.vue'
+import ActionModal from '~/components/ActionModal.vue'
 import AppHead from '~/components/AppHead.vue'
 import DashboardAction from '~/components/dashboard/DashboardAction.vue'
 import DashboardContainer from '~/components/dashboard/DashboardContainer.vue'
@@ -67,7 +67,7 @@ const typeConfig: ActionDialogConfig<IForm, ITypeList> = {
 }
 
 const {
-  actionDialogRef,
+  isModalOpen,
   currentTask,
   selectedItem,
   selectedItemName,
@@ -76,7 +76,7 @@ const {
   openModal,
   closeModal,
   submitForm,
-} = useActionDialog<IForm, ITypeList>(typeConfig, 'actionDialogRef')
+} = useActionDialog<IForm, ITypeList>(typeConfig)
 
 const typeListIsNotEmpty = computed(() => (props.typeList.data.length > 0 ? true : false))
 const filteredTypeList = computed(() => {
@@ -162,9 +162,9 @@ const isSubmitDisabled = computed(() => {
     </div>
   </DashboardContainer>
 
-  <ActionDialogComp
+  <ActionModal
     v-if="currentTask"
-    ref="actionDialogRef"
+    v-model:show="isModalOpen"
     :title="dialogTitle"
     :form="form"
     :action-text="dialogActionText"
@@ -211,7 +211,7 @@ const isSubmitDisabled = computed(() => {
         </div>
       </div>
     </template>
-  </ActionDialogComp>
+  </ActionModal>
 </template>
 
 <style scoped>
