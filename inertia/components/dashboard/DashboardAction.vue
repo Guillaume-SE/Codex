@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import SearchBar from '~/components/SearchBar.vue'
+import SearchBar from '~/components/ui/SearchBar.vue'
 
 const model = defineModel<string>('search')
 
