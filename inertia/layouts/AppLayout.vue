@@ -16,7 +16,9 @@ defineProps<{
     <header>
       <AppNavigation :user="user" />
     </header>
-    <main class="bg-muted/40 flex min-h-[calc(100vh_-_theme(spacing.16))] flex-1 flex-col">
+    <main
+      class="bg-base-200 bg-muted/40 flex min-h-[calc(100vh_-_theme(spacing.16))] flex-1 flex-col"
+    >
       <slot />
     </main>
     <footer></footer>
