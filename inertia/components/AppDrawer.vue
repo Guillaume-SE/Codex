@@ -31,7 +31,6 @@ function closeDrawer() {
         <li @click="closeDrawer"><Link href="/categories/anime">Anime</Link></li>
         <li @click="closeDrawer"><Link href="/categories/series">Séries</Link></li>
         <li @click="closeDrawer"><Link href="/categories/book">Livres</Link></li>
-        <li @click="closeDrawer">Collection</li>
       </ul>
     </div>
   </div>

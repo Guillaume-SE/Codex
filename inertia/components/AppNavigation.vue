@@ -40,7 +40,6 @@ defineProps<{
         <li><Link href="/categories/anime">Anime</Link></li>
         <li><Link href="/categories/series">Séries</Link></li>
         <li><Link href="/categories/book">Livres</Link></li>
-        <li><a>Collection</a></li>
       </ul>
     </div>
 
