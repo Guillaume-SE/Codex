@@ -3,7 +3,7 @@ import type BookPublishersController from '#controllers/book_publishers_controll
 import { InferPageProps } from '@adonisjs/inertia/types'
 import { useForm } from '@inertiajs/vue3'
 import { computed } from 'vue'
-import ActionDialogComp from '~/components/ActionDialogComp.vue'
+import ActionModal from '~/components/ActionModal.vue'
 import AppHead from '~/components/AppHead.vue'
 import DashboardAction from '~/components/dashboard/DashboardAction.vue'
 import DashboardContainer from '~/components/dashboard/DashboardContainer.vue'
@@ -49,7 +49,7 @@ const publisherConfig: ActionDialogConfig<IForm, IPublisherList> = {
 }
 
 const {
-  actionDialogRef,
+  isModalOpen,
   currentTask,
   selectedItem,
   selectedItemName,
@@ -58,7 +58,7 @@ const {
   openModal,
   closeModal,
   submitForm,
-} = useActionDialog<IForm, IPublisherList>(publisherConfig, 'actionDialogRef')
+} = useActionDialog<IForm, IPublisherList>(publisherConfig)
 
 const publisherListIsNotEmpty = computed(() => (props.publisherList.data.length > 0 ? true : false))
 </script>
@@ -121,9 +121,9 @@ const publisherListIsNotEmpty = computed(() => (props.publisherList.data.length 
     </div>
   </DashboardContainer>
 
-  <ActionDialogComp
+  <ActionModal
     v-if="currentTask"
-    ref="actionDialogRef"
+    v-model:show="isModalOpen"
     :title="dialogTitle"
     :form="form"
     :action-text="dialogActionText"
@@ -145,7 +145,7 @@ const publisherListIsNotEmpty = computed(() => (props.publisherList.data.length 
         >
       </div>
     </template>
-  </ActionDialogComp>
+  </ActionModal>
 </template>
 
 <style scoped>

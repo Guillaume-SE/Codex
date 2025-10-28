@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import ButtonComp from './ui/ButtonComp.vue'
-import InputComp from './ui/InputComp.vue'
+import ButtonComp from '~/components/ui/ButtonComp.vue'
+import InputComp from '~/components/ui/InputComp.vue'
 
 const model = defineModel<string>()
 

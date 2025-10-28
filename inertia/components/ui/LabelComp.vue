@@ -6,7 +6,7 @@ defineProps<{
 </script>
 
 <template>
-  <label :for="labelFor">
+  <label :for="labelFor" class="label">
     <span>{{ text }}</span>
   </label>
 </template>

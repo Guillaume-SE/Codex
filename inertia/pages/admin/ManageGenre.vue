@@ -3,7 +3,7 @@ import type GenresController from '#controllers/genres_controller'
 import { InferPageProps } from '@adonisjs/inertia/types'
 import { useForm } from '@inertiajs/vue3'
 import { computed } from 'vue'
-import ActionDialogComp from '~/components/ActionDialogComp.vue'
+import ActionModal from '~/components/ActionModal.vue'
 import AppHead from '~/components/AppHead.vue'
 import DashboardAction from '~/components/dashboard/DashboardAction.vue'
 import DashboardContainer from '~/components/dashboard/DashboardContainer.vue'
@@ -49,16 +49,16 @@ const genreConfig: ActionDialogConfig<IForm, IGenreList> = {
 }
 
 const {
-  actionDialogRef,
+  isModalOpen,
   currentTask,
   selectedItem,
   selectedItemName,
   dialogTitle,
   dialogActionText,
+  dialogVariant,
   openModal,
-  closeModal,
   submitForm,
-} = useActionDialog<IForm, IGenreList>(genreConfig, 'actionDialogRef')
+} = useActionDialog<IForm, IGenreList>(genreConfig)
 
 const genreListIsNotEmpty = computed(() => (props.genreList.data.length > 0 ? true : false))
 </script>
@@ -118,21 +118,19 @@ const genreListIsNotEmpty = computed(() => (props.genreList.data.length > 0 ? tr
   </DashboardContainer>
 
   <!-- create modal -->
-  <ActionDialogComp
-    v-if="currentTask"
-    ref="actionDialogRef"
+  <ActionModal
+    v-model:show="isModalOpen"
     :title="dialogTitle"
-    :form="form"
     :action-text="dialogActionText"
+    :is-action-disabled="form.processing"
+    :is-loading="form.processing"
+    :variant="dialogVariant"
     @submit="submitForm"
-    @close="closeModal"
   >
     <template #form-content>
       <div v-if="currentTask === 'create' || currentTask === 'edit'">
-        <div>
-          <LabelComp labelFor="name" text="Nom" />
-          <InputComp v-model="form.name" type="text" id="name" @input="form.clearErrors('name')" />
-        </div>
+        <LabelComp labelFor="name" text="Nom" />
+        <InputComp v-model="form.name" type="text" id="name" @input="form.clearErrors('name')" />
         <FormErrorComp v-if="form.errors.name" :message="form.errors.name" />
       </div>
 
@@ -143,7 +141,7 @@ const genreListIsNotEmpty = computed(() => (props.genreList.data.length > 0 ? tr
         >
       </div>
     </template>
-  </ActionDialogComp>
+  </ActionModal>
 </template>
 
 <style scoped>

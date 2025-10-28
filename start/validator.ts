@@ -24,6 +24,8 @@ const fields = {
   statusId: 'progression',
   platformId: 'plateforme',
   replacementTypeId: 'type',
+  uid: 'identifiant',
+  password: 'mot de passe',
 }
 
 vine.messagesProvider = new SimpleMessagesProvider(messages, fields)

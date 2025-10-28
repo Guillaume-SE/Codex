@@ -1,36 +1,56 @@
 <script setup lang="ts">
-import { Link, usePage } from '@inertiajs/vue3'
-import { computed } from 'vue'
+import type User from '#models/user'
+import { Link } from '@inertiajs/vue3'
+import UserMenu from '~/components//UserMenu.vue'
+import NotificationAction from '~/components/ui/NotificationAction.vue'
+import ThemeController from '~/components/ui/ThemeController.vue'
 
-const page = usePage()
-const user = computed(() => page.props.user)
+defineProps<{
+  user?: User
+}>()
 </script>
 
 <template>
-  <nav class="navbar">
-    <Link href="/">Accueil</Link>
-    <Link href="/categories">Catégories</Link>
-    <Link href="/categories/game">Jeux</Link>
-    <Link href="/categories/movie">Films</Link>
-    <Link href="/categories/series">Séries</Link>
-    <Link href="/categories/anime">Anime</Link>
-    <Link href="/categories/book">Livres</Link>
+  <nav class="navbar bg-base-200 w-full items-baseline">
+    <div class="navbar-start">
+      <div class="flex-none md:hidden">
+        <label for="my-drawer-2" aria-label="open sidebar" class="btn btn-square btn-ghost">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            class="inline-block h-6 w-6 stroke-current"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M4 6h16M4 12h16M4 18h16"
+            ></path>
+          </svg>
+        </label>
+      </div>
+      <Link class="btn btn-lg btn-ghost font-bold" href="/">Codex</Link>
+    </div>
 
-    <template v-if="user">
-      <Link href="/admin/dashboard">Dashboard</Link>
-      <Link v-if="user" method="post" href="/logout" as="button">Logout</Link>
-    </template>
-    <template v-else>
-      <Link href="/login">Login</Link>
-    </template>
+    <div class="navbar-center hidden md:flex">
+      <ul class="menu menu-horizontal px-1 font-bold">
+        <li><Link href="/categories/game">Jeux</Link></li>
+        <li><Link href="/categories/movie">Films</Link></li>
+        <li><Link href="/categories/anime">Anime</Link></li>
+        <li><Link href="/categories/series">Séries</Link></li>
+        <li><Link href="/categories/book">Livres</Link></li>
+      </ul>
+    </div>
+
+    <div class="navbar-end">
+      <div class="flex-none">
+        <ThemeController />
+
+        <NotificationAction :show-dot="!!user" />
+
+        <UserMenu :user="user" />
+      </div>
+    </div>
   </nav>
 </template>
-
-<style scoped>
-.navbar {
-  display: flex;
-  justify-content: space-around;
-  margin-top: 20px;
-  margin-bottom: 20px;
-}
-</style>

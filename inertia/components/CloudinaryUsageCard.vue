@@ -1,17 +1,14 @@
 <script setup lang="ts">
 import type CoversController from '#controllers/covers_controller'
 import { InferPageProps } from '@adonisjs/inertia/types'
-import { computed, useTemplateRef } from 'vue'
+import { computed, ref } from 'vue'
 import InfoIcon from '~/components/icons/InfoIcon.vue'
-import ButtonComp from '~/components/ui/ButtonComp.vue'
-import ModalComp from '~/components/ui/ModalComp.vue'
+import Modal from '~/components/Modal.vue'
 import StatusDotComp from '~/components/ui/StatusDotComp.vue'
 
 const props = defineProps<{
   cloudinaryUsage: InferPageProps<CoversController, 'showManage'>['cloudinaryUsage']
 }>()
-
-const infoModalRef = useTemplateRef<InstanceType<typeof ModalComp>>('infoModalRef')
 
 // template cleaner purpose
 const { transformations, bandwidth, storage } = props.cloudinaryUsage.breakdown
@@ -20,13 +17,7 @@ const transformationsWidth = computed(() => transformations.percentOfLimit)
 const bandwidthWidth = computed(() => bandwidth.percentOfLimit)
 const storageWidth = computed(() => storage.percentOfLimit)
 
-function openInfoModal() {
-  infoModalRef.value?.showModal()
-}
-
-function closeInfoModal() {
-  infoModalRef.value?.close()
-}
+const infoModalVisible = ref(false)
 </script>
 
 <template>
@@ -40,7 +31,7 @@ function closeInfoModal() {
 
     <div class="credits-title">
       <h3>Utilisation des crédits</h3>
-      <button @click="openInfoModal" class="info-button" aria-label="Plus d'informations">
+      <button @click="infoModalVisible = true" class="info-button" aria-label="Plus d'informations">
         <InfoIcon size="18" />
       </button>
     </div>
@@ -101,9 +92,9 @@ function closeInfoModal() {
     </div>
   </div>
 
-  <ModalComp ref="infoModalRef" @close-modal="closeInfoModal">
+  <Modal v-model:show="infoModalVisible">
     <template #header>
-      <h2>Fonctionnement des crédits</h2>
+      <h4 class="font-bold">Fonctionnement des crédits</h4>
     </template>
     <template #content>
       <p>
@@ -112,7 +103,7 @@ function closeInfoModal() {
       </p>
 
       <div class="rates-box">
-        <p class="rates-box-text"><strong>Équivalence des crédits :</strong></p>
+        <span class="font-bold">Équivalence des crédits :</span>
         <span>1 crédit = 1 000 transformations</span>
         <span>1 crédit = 1 Go de bande passante</span>
         <span>1 crédit = 1 Go de stockage</span>
@@ -133,11 +124,8 @@ function closeInfoModal() {
           réel.
         </li>
       </ul>
-      <div class="modal-footer">
-        <ButtonComp type="button" @click="closeInfoModal">Retour</ButtonComp>
-      </div>
     </template>
-  </ModalComp>
+  </Modal>
 </template>
 
 <style scoped>
@@ -275,10 +263,6 @@ function closeInfoModal() {
   gap: 0.5rem;
   font-size: 0.9rem;
 }
-.rates-box-text {
-  margin: 0;
-  font-weight: 600;
-}
 
 .info-button {
   background: none;
@@ -289,22 +273,5 @@ function closeInfoModal() {
   align-items: center;
   justify-content: center;
   border-radius: 50%;
-}
-
-.modal-info-list {
-  list-style: none;
-  padding: 0;
-  margin-top: 1rem;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-.modal-info-list li {
-  line-height: 1.5;
-}
-.modal-footer {
-  display: flex;
-  justify-content: flex-end;
-  margin-top: 1.5rem;
 }
 </style>

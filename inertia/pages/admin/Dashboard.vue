@@ -4,7 +4,7 @@ import type { IMediaPresented } from '#interfaces/media_presented_interface'
 import { InferPageProps } from '@adonisjs/inertia/types'
 import { Link, useForm } from '@inertiajs/vue3'
 import { computed, ref } from 'vue'
-import ActionDialogComp from '~/components/ActionDialogComp.vue'
+import ActionModal from '~/components/ActionModal.vue'
 import AppHead from '~/components/AppHead.vue'
 import DashboardAction from '~/components/dashboard/DashboardAction.vue'
 import DashboardContainer from '~/components/dashboard/DashboardContainer.vue'
@@ -44,15 +44,14 @@ const deleteDialogConfig: ActionDialogConfig<IForm, IMediaItem> = {
 }
 
 const {
-  actionDialogRef: deleteDialogRef,
+  isModalOpen: isDeleteModalOpen,
   currentTask: currentDeleteTask,
   selectedItemName: selectedMediaName,
   dialogTitle: deleteDialogTitle,
   dialogActionText: deleteDialogActionText,
   openModal: openDeleteModal,
-  closeModal: closeDeleteModal,
   submitForm: submitDeleteForm,
-} = useActionDialog(deleteDialogConfig, 'deleteDialogRef')
+} = useActionDialog(deleteDialogConfig)
 
 function handleDeleteMedia(media: { id: number; name: string }) {
   deleteMediaApiUrl.value = '/admin/media'
@@ -116,13 +115,11 @@ const isMediaListEmpty = computed(() => {
   </DashboardContainer>
 
   <!-- delete modal -->
-  <ActionDialogComp
-    ref="deleteDialogRef"
+  <ActionModal
+    v-model:show="isDeleteModalOpen"
     :title="deleteDialogTitle"
-    :form="deleteForm"
     :action-text="deleteDialogActionText"
     @submit="submitDeleteForm"
-    @close="closeDeleteModal"
   >
     <template #form-content>
       <div v-if="currentDeleteTask === 'delete'">
@@ -131,7 +128,7 @@ const isMediaListEmpty = computed(() => {
         </span>
       </div>
     </template>
-  </ActionDialogComp>
+  </ActionModal>
 
   <CoverManageDialog ref="coverModalRef" />
 </template>

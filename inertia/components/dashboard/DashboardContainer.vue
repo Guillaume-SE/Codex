@@ -17,7 +17,8 @@ import DashboardNavigation from '~/components/dashboard/DashboardNavigation.vue'
 <style scoped>
 .dashboard-container {
   width: 80%;
-  margin: 30px auto;
+  margin: auto;
+  padding-top: 50px;
 }
 .dashboard-content {
   display: flex;
