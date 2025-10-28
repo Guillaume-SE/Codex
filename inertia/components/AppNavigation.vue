@@ -34,7 +34,7 @@ defineProps<{
     </div>
 
     <div class="navbar-center hidden md:flex">
-      <ul class="menu menu-horizontal md:menu-sm lg:menu-md px-1 font-bold">
+      <ul class="menu menu-horizontal px-1 font-bold">
         <li><Link href="/categories/game">Jeux</Link></li>
         <li><Link href="/categories/movie">Films</Link></li>
         <li><Link href="/categories/anime">Anime</Link></li>
