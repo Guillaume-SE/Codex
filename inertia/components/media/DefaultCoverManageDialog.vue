@@ -71,6 +71,7 @@ defineExpose({ open: openModal })
     title="Modifier la cover par défaut"
     action-text="Modifier"
     :is-action-disabled="form.processing || !previewUrl"
+    :is-loading="form.processing"
     @submit="submitNewDefaultCover"
   >
     <template #form-content>
@@ -87,7 +88,7 @@ defineExpose({ open: openModal })
 
         <div class="cover-preview-box">
           <span>Nouvelle</span>
-          <div class="cover-container size-small new-preview-container">
+          <div class="cover-container size-small relative">
             <img
               v-if="previewUrl"
               class="cover-image"
@@ -104,7 +105,7 @@ defineExpose({ open: openModal })
       </div>
 
       <div class="toggle-container">
-        <ButtonComp @click="toggleOverlay" class="toggle-button">
+        <ButtonComp @click="toggleOverlay">
           {{ isOverlayVisible ? 'Masquer' : 'Afficher' }} l'overlay
         </ButtonComp>
       </div>
@@ -159,10 +160,6 @@ defineExpose({ open: openModal })
   text-align: center;
 }
 
-.new-preview-container {
-  position: relative;
-}
-
 .preview-overlay {
   position: absolute;
   inset: 0;
@@ -181,9 +178,5 @@ defineExpose({ open: openModal })
 .toggle-container {
   text-align: center;
   margin-bottom: 20px;
-}
-
-.toggle-button {
-  margin-top: 10px;
 }
 </style>
