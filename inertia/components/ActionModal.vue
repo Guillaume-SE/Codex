@@ -1,13 +1,20 @@
 <script setup lang="ts">
 import Modal from '~/components/Modal.vue'
-import ButtonComp from './ui/ButtonComp.vue'
+import ButtonComp, { type ButtonVariant } from '~/components/ui/ButtonComp.vue'
 
-defineProps<{
-  show: boolean
-  title: string
-  actionText: string
-  isActionDisabled?: boolean
-}>()
+withDefaults(
+  defineProps<{
+    show: boolean
+    title: string
+    actionText: string
+    isActionDisabled?: boolean
+    isLoading?: boolean
+    variant?: ButtonVariant
+  }>(),
+  {
+    variant: 'primary',
+  }
+)
 
 const emit = defineEmits(['submit', 'update:show'])
 </script>
@@ -19,21 +26,28 @@ const emit = defineEmits(['submit', 'update:show'])
     </template>
 
     <template #content>
-      <form @submit.prevent="emit('submit')">
+      <form :id="`${title}-form`" @submit.prevent="emit('submit')">
         <div class="py-4">
           <slot name="form-content"></slot>
         </div>
-
-        <div class="modal-action">
-          <form method="dialog">
-            <ButtonComp type="button">Retour</ButtonComp>
-          </form>
-
-          <ButtonComp type="submit" :disabled="isActionDisabled">
-            {{ actionText }}
-          </ButtonComp>
-        </div>
       </form>
+    </template>
+
+    <template #action>
+      <div class="modal-action">
+        <ButtonComp @click="emit('update:show', false)">Retour</ButtonComp>
+
+        <!-- :form binding since the button is outside of the form -->
+        <ButtonComp
+          type="submit"
+          :form="`${title}-form`"
+          :disabled="isActionDisabled"
+          :loading="isLoading"
+          :variant="variant"
+        >
+          <span>{{ actionText }}</span>
+        </ButtonComp>
+      </div>
     </template>
   </Modal>
 </template>
