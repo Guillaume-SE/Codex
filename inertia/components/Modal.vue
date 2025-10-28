@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
+import ButtonComp from '~/components/ui/ButtonComp.vue'
 
 const props = defineProps<{
   show: boolean
@@ -29,21 +30,28 @@ function onClose() {
     <div class="modal-box">
       <!-- close with cross -->
       <form method="dialog">
-        <button class="btn btn-sm btn-circle btn-ghost absolute top-2 right-2">✕</button>
+        <ButtonComp
+          type="submit"
+          size="sm"
+          variant="ghost"
+          aria-label="close"
+          class="btn-circle absolute top-2 right-2"
+        >
+          <span>✕</span>
+        </ButtonComp>
       </form>
-      <slot name="header"></slot>
 
+      <slot name="header"></slot>
       <slot name="content"></slot>
 
-      <div>
-        <slot name="action"></slot>
+      <slot name="action">
         <div class="modal-action">
           <form method="dialog">
             <!-- any button in this form will close the modal -->
-            <button class="btn">Fermer</button>
+            <ButtonComp type="submit">Fermer</ButtonComp>
           </form>
         </div>
-      </div>
+      </slot>
     </div>
     <!-- close when click outside, no style needed -->
     <form method="dialog" class="modal-backdrop">
