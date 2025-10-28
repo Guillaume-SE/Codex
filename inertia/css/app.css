@@ -5,9 +5,9 @@
   themes: false;
   exclude: rootscrollgutter;
 }
-/* @theme {
+@theme {
   --font-sans: 'Montserrat', sans-serif;
-} */
+}
 
 @plugin "daisyui/theme" {
   name: 'winter';
