@@ -3,7 +3,7 @@ import { Link } from '@inertiajs/vue3'
 import { computed } from 'vue'
 import Loader from '~/components/ui/Loader.vue'
 
-export type ButtonVariant = 'primary' | 'secondary' | 'accent' | 'ghost' | 'link' | 'error'
+export type ButtonVariant = 'primary' | 'secondary' | 'neutral' | 'ghost' | 'link' | 'error'
 
 const props = withDefaults(
   defineProps<{
@@ -29,7 +29,7 @@ const buttonClasses = computed(() => {
   const variantMap = {
     primary: 'btn-primary',
     secondary: 'btn-secondary',
-    accent: 'btn-accent',
+    neutral: 'btn-neutral',
     ghost: 'btn-ghost',
     link: 'btn-link',
     error: 'btn-error',
