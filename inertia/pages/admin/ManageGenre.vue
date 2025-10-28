@@ -55,8 +55,8 @@ const {
   selectedItemName,
   dialogTitle,
   dialogActionText,
+  dialogVariant,
   openModal,
-  closeModal,
   submitForm,
 } = useActionDialog<IForm, IGenreList>(genreConfig)
 
@@ -119,20 +119,18 @@ const genreListIsNotEmpty = computed(() => (props.genreList.data.length > 0 ? tr
 
   <!-- create modal -->
   <ActionModal
-    v-if="currentTask"
     v-model:show="isModalOpen"
     :title="dialogTitle"
-    :form="form"
     :action-text="dialogActionText"
+    :is-action-disabled="form.processing"
+    :is-loading="form.processing"
+    :variant="dialogVariant"
     @submit="submitForm"
-    @close="closeModal"
   >
     <template #form-content>
       <div v-if="currentTask === 'create' || currentTask === 'edit'">
-        <div>
-          <LabelComp labelFor="name" text="Nom" />
-          <InputComp v-model="form.name" type="text" id="name" @input="form.clearErrors('name')" />
-        </div>
+        <LabelComp labelFor="name" text="Nom" />
+        <InputComp v-model="form.name" type="text" id="name" @input="form.clearErrors('name')" />
         <FormErrorComp v-if="form.errors.name" :message="form.errors.name" />
       </div>
 

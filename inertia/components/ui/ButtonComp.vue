@@ -3,14 +3,16 @@ import { Link } from '@inertiajs/vue3'
 import { computed } from 'vue'
 import Loader from '~/components/ui/Loader.vue'
 
+export type ButtonVariant = 'primary' | 'secondary' | 'accent' | 'ghost' | 'link' | 'error'
+
 const props = withDefaults(
   defineProps<{
     type?: 'button' | 'submit'
     href?: string
     disabled?: boolean
     loading?: boolean
-    variant?: 'primary' | 'secondary' | 'accent' | 'ghost' | 'link'
-    size?: 'xs' | 'sm' | 'lg'
+    variant?: ButtonVariant
+    size?: 'xs' | 'sm' | 'lg' | 'xl'
     outline?: boolean
   }>(),
   {
@@ -24,9 +26,18 @@ defineOptions({
 })
 
 const buttonClasses = computed(() => {
+  const variantMap = {
+    primary: 'btn-primary',
+    secondary: 'btn-secondary',
+    accent: 'btn-accent',
+    ghost: 'btn-ghost',
+    link: 'btn-link',
+    error: 'btn-error',
+  }
+
   return [
     'btn',
-    props.variant ? `btn-${props.variant}` : '',
+    props.variant ? variantMap[props.variant] : '',
     props.size ? `btn-${props.size}` : '',
     { 'btn-outline': props.outline },
     { 'btn-disabled': props.disabled || props.loading },
