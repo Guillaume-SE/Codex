@@ -1,5 +1,6 @@
 import { type InertiaForm } from '@inertiajs/vue3'
 import { computed, MaybeRef, nextTick, ref, watch } from 'vue'
+import type { ButtonVariant } from '~/components/ui/ButtonComp.vue'
 import { useActionText, type ActionType, type IResourceNameConfig } from './useActionText'
 import { useResourceForm } from './useResourceForm'
 
@@ -39,6 +40,13 @@ export function useActionDialog<T extends object, U extends object>(
     currentTask,
     resourceNameConfig
   )
+
+  const dialogVariant = computed((): ButtonVariant => {
+    if (currentTask.value === 'delete') {
+      return 'error'
+    }
+    return 'primary'
+  })
 
   const originalDefaults = JSON.parse(JSON.stringify(form.data()))
 
@@ -124,6 +132,7 @@ export function useActionDialog<T extends object, U extends object>(
     selectedItemName,
     dialogTitle,
     dialogActionText,
+    dialogVariant,
     openModal,
     closeModal,
     submitForm,
