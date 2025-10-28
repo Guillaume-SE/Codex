@@ -17,14 +17,7 @@ const displayMessage = computed(() => {
 </script>
 
 <template>
-  <span v-if="displayMessage" class="form-text-error">
+  <span v-if="displayMessage" class="text-error font-bold">
     {{ displayMessage }}
   </span>
 </template>
-
-<style scoped>
-.form-text-error {
-  color: #fa2d36;
-  font-weight: 500;
-}
-</style>
