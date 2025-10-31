@@ -18,6 +18,7 @@ const props = withDefaults(
   {
     type: 'button',
     disabled: false,
+    variant: 'neutral',
   }
 )
 
