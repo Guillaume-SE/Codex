@@ -78,6 +78,7 @@ const showNextEllipsis = computed(() => {
     <ButtonComp v-if="showNextEllipsis" variant="ghost" :disabled="true"> ... </ButtonComp>
 
     <ButtonComp
+      v-if="page.firstPage !== page.lastPage"
       :class="{
         'btn-primary': page.currentPage === page.lastPage,
         'hover:bg-base-content hover:text-base-100': page.currentPage !== page.lastPage,
