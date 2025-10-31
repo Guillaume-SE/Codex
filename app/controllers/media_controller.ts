@@ -86,7 +86,7 @@ export default class MediaController {
   }
 
   public async showByCategory({ params, request, inertia }: HttpContext) {
-    const page = request.input('page')
+    const page = request.input('page', 1)
     const filters = await request.validateUsing(mediaFiltersValidator)
     const categoryName = params.categoryName
 
