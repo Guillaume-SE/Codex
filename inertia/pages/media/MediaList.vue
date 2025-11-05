@@ -38,11 +38,15 @@ const mediaListIsNotEmpty = computed(() => {
 <template>
   <AppHead :title="title" />
   <h2>{{ categoryFr }}</h2>
-  <div class="media-list-container">
+  <div class="flex">
     <div>
       <form method="GET" @submit.prevent="submitFilters">
         <div>
-          <SearchBar v-model="filters.search" placeholder="Rechercher" @submit="submitFilters" />
+          <SearchBar
+            v-model="filters.search"
+            placeholder="Rechercher un nom"
+            @submit="submitFilters"
+          />
         </div>
 
         <div>
@@ -71,10 +75,7 @@ const mediaListIsNotEmpty = computed(() => {
       </form>
     </div>
     <!-- cards -->
-    <div v-if="mediaListIsNotEmpty">
-      <span>{{ mediaList.meta.total }} résultats</span>
-    </div>
-    <div v-if="mediaListIsNotEmpty" class="media-list-cards-container">
+    <div v-if="mediaListIsNotEmpty" class="flex flex-wrap">
       <MediaCard
         v-for="media in mediaList.data"
         :key="media.id"
@@ -104,14 +105,3 @@ const mediaListIsNotEmpty = computed(() => {
     />
   </div>
 </template>
-
-<style scoped>
-.media-list-container {
-  display: flex;
-}
-.media-list-cards-container {
-  display: flex;
-  flex-wrap: wrap;
-  margin: 5px;
-}
-</style>
