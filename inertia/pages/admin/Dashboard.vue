@@ -72,10 +72,10 @@ const isMediaListEmpty = computed(() => {
     <form action="GET" @submit.prevent="submitFilters">
       <DashboardAction
         v-model:search="filters.search"
-        :type="'search'"
         :title="'Gestion des media'"
+        @submit="submitFilters"
       >
-        <Link href="/admin/media/create">Ajouter un media</Link>
+        <Link href="/admin/media/create">Ajouter +</Link>
       </DashboardAction>
     </form>
 
