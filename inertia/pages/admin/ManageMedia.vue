@@ -16,7 +16,6 @@ import ButtonComp from '~/components/ui/ButtonComp.vue'
 import FormErrorComp from '~/components/ui/FormErrorComp.vue'
 import InputComp from '~/components/ui/InputComp.vue'
 import LabelComp from '~/components/ui/LabelComp.vue'
-import { useErrorSyncer } from '~/composables/useErrorSyncer'
 import { useFormatCategoryNameInFr } from '~/composables/useFormatCategoryNameInFr'
 
 interface IForm {
@@ -132,8 +131,6 @@ function getInitialFormData(media?: MediaProp) {
 }
 
 const form = useForm<IForm>(getInitialFormData(props.media))
-
-useErrorSyncer(props, form)
 
 function nextStep() {
   currentStep.value++
