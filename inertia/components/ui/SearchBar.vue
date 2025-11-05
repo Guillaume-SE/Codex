@@ -19,6 +19,7 @@ function clearInput() {
   model.value = ''
   // After clearing, immediately focus the input again
   inputRef.value?.focus()
+  emit('submit')
 }
 </script>
 
