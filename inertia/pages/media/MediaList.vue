@@ -42,7 +42,7 @@ const mediaListIsNotEmpty = computed(() => {
     <div>
       <form method="GET" @submit.prevent="submitFilters">
         <div>
-          <SearchBar v-model="filters.search" placeholder="Rechercher" />
+          <SearchBar v-model="filters.search" placeholder="Rechercher" @submit="submitFilters" />
         </div>
 
         <div>
