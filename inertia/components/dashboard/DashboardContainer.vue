@@ -5,7 +5,7 @@ import DashboardNavigation from '~/components/dashboard/DashboardNavigation.vue'
 <template>
   <div class="dashboard-container">
     <h3>Dashboard</h3>
-    <div class="dashboard-content">
+    <div class="flex">
       <DashboardNavigation />
       <div class="dashboard-content-container">
         <slot />
@@ -19,9 +19,6 @@ import DashboardNavigation from '~/components/dashboard/DashboardNavigation.vue'
   width: 80%;
   margin: auto;
   padding-top: 50px;
-}
-.dashboard-content {
-  display: flex;
 }
 .dashboard-content-container {
   min-width: 800px;

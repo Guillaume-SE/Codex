@@ -2,35 +2,23 @@
 import SearchBar from '~/components/ui/SearchBar.vue'
 
 const model = defineModel<string>('search')
+const emit = defineEmits(['submit'])
 
 defineProps<{
-  type: 'search' | 'select'
   title: string
 }>()
 </script>
 
 <template>
-  <div class="dashboard-title-container">
+  <div class="flex items-center justify-between">
     <div>
       <h3>{{ title }}</h3>
     </div>
 
-    <div class="dashboard-action">
-      <SearchBar v-if="type === 'search'" v-model="model" placeholder="Rechercher" />
+    <div class="flex justify-end">
+      <SearchBar v-model="model" placeholder="Rechercher un nom" @submit="emit('submit')" />
 
       <slot />
     </div>
   </div>
 </template>
-
-<style scoped>
-.dashboard-title-container {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-.dashboard-action {
-  display: flex;
-  justify-content: end;
-}
-</style>
