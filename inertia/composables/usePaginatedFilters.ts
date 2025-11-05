@@ -2,7 +2,7 @@ import { useForm } from '@inertiajs/vue3'
 
 //  base URL for the resource's management page (e.g., '/platform/manage').
 export function usePaginatedFilters(baseUrl: string) {
-  const filters = useForm<{ search: string }>('filterResults', {
+  const filters = useForm<{ search: string }>('taxonomyFiltersResults', {
     search: '',
   })
 
