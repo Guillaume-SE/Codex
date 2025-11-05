@@ -12,7 +12,7 @@ import DashboardMediaListItem from '~/components/dashboard/DashboardMediaListIte
 import CoverManageDialog from '~/components/media/CoverManageDialog.vue'
 import Pagination from '~/components/Pagination.vue'
 import { ActionDialogConfig, useActionDialog } from '~/composables/useActionDialog'
-import { usePaginatedFilters } from '~/composables/usePaginatedFilters'
+import { usePaginatedFilters } from '~/composables/usePaginatedTaxonomyFilters'
 
 const props = defineProps<{
   mediaList: InferPageProps<DashboardController, 'showDashboard'>['mediaList']
