@@ -10,6 +10,16 @@
   --breakpoint-xs: 25rem;
 }
 
+@layer base {
+  .search-input,
+  .search-input::-webkit-search-decoration,
+  .search-input::-webkit-search-cancel-button,
+  .search-input::-webkit-search-results-button,
+  .search-input::-webkit-search-results-decoration {
+    -webkit-appearance: none;
+  }
+}
+
 @plugin "daisyui/theme" {
   name: 'light';
   default: true;
