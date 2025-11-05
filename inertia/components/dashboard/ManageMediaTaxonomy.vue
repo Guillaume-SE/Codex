@@ -9,7 +9,7 @@ import Pagination from '~/components/Pagination.vue'
 import ButtonComp from '~/components/ui/ButtonComp.vue'
 import { useActionDialog, type ActionDialogConfig } from '~/composables/useActionDialog'
 import type { ActionType, IResourceNameConfig } from '~/composables/useActionText'
-import { usePaginatedFilters } from '~/composables/usePaginatedFilters'
+import { usePaginatedTaxonomyFilters } from '~/composables/usePaginatedTaxonomyFilters'
 
 const props = defineProps<{
   title: string
@@ -23,7 +23,7 @@ const props = defineProps<{
 
 const emit = defineEmits(['modal-closed'])
 
-const { filters, submitFilters, fetchNewPageData } = usePaginatedFilters(
+const { filters, submitFilters, fetchNewPageData } = usePaginatedTaxonomyFilters(
   props.resourceApiUrl + '/manage'
 )
 
