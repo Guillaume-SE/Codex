@@ -34,7 +34,7 @@ function cleanFilters(filters: IFilters, defaultSortBy: string) {
       }
     }
 
-    // If the value is not empty, add it to the cleaned object
+    // if the value is not empty -> add it to the cleaned object
     if (!isEmpty(value)) {
       ;(cleaned as any)[filterKey] = value
     }
@@ -50,7 +50,7 @@ export function usePaginatedMediaFilters(
   const sortOptionsRef = toRef(sortOptions)
 
   // argument passed to conserve values when navigate between pages
-  const filters = useForm<IFilters>('filterResults', {
+  const filters = useForm<IFilters>('mediaFiltersResults', {
     search: '',
     sortBy: sortOptionsRef.value[0].value,
     status: [],
@@ -64,23 +64,24 @@ export function usePaginatedMediaFilters(
 
   const baseUrl = computed(() => `/categories/${categoryRef.value}`)
 
-  function submitFilters() {
+  filters.transform((data) => {
     const defaultSort = sortOptionsRef.value[0].value
-    filters
-      .transform((data) => cleanFilters(data, defaultSort))
-      .get(baseUrl.value, { preserveState: true, preserveScroll: true })
+    return cleanFilters(data, defaultSort)
+  })
+
+  function submitFilters() {
+    filters.get(baseUrl.value, { preserveState: true, preserveScroll: true })
   }
 
   function fetchNewPageData(url: string | null) {
     if (!url) return
-    const defaultSort = sortOptionsRef.value[0].value
-    filters
-      .transform((data) => cleanFilters(data, defaultSort))
-      .get(url, { preserveState: true, preserveScroll: true })
+
+    filters.get(url, { preserveState: true, preserveScroll: true })
   }
 
   function resetFilters() {
     filters.defaults({
+      search: '',
       sortBy: sortOptionsRef.value[0].value,
       status: [],
       types: [],
