@@ -41,7 +41,9 @@ const buttonClasses = computed(() => {
     props.variant ? variantMap[props.variant] : '',
     props.size ? `btn-${props.size}` : '',
     { 'btn-outline': props.outline },
-    { 'btn-disabled': props.disabled || props.loading },
+    {
+      'opacity-30 pointer-events-none': props.disabled || props.loading,
+    },
   ]
 })
 
@@ -71,7 +73,7 @@ function handleLinkClick(event: MouseEvent) {
     v-bind="$attrs"
     :type="type"
     :class="[buttonClasses, $attrs.class]"
-    :disabled="disabled || loading"
+    :aria-disabled="disabled || loading"
   >
     <Loader v-if="loading" />
     <slot />
