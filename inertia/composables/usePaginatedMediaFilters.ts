@@ -1,5 +1,6 @@
 import { useForm } from '@inertiajs/vue3'
-import { computed, toRef, type MaybeRef } from 'vue'
+import { computed, ref, toRef, watch, type MaybeRef } from 'vue'
+import { useDebounce } from '~/composables/useDebounce'
 
 interface IFilters {
   search: string
@@ -62,6 +63,8 @@ export function usePaginatedMediaFilters(
     favorite: false,
   })
 
+  const isSubmitting = ref(false)
+
   const baseUrl = computed(() => `/categories/${categoryRef.value}`)
 
   filters.transform((data) => {
@@ -70,8 +73,44 @@ export function usePaginatedMediaFilters(
   })
 
   function submitFilters() {
-    filters.get(baseUrl.value, { preserveState: true, preserveScroll: true })
+    isSubmitting.value = true
+    filters.get(baseUrl.value, {
+      preserveState: true,
+      preserveScroll: true,
+      onFinish: () => {
+        isSubmitting.value = false
+      },
+    })
   }
+
+  const debouncedSubmit = useDebounce(submitFilters, 500)
+
+  // for filters choice that need a debounce
+  watch(
+    () => ({
+      search: filters.search,
+      favorite: filters.favorite,
+    }),
+    () => {
+      // if an instant submit is already in progress, stop
+      if (isSubmitting.value) return
+
+      debouncedSubmit()
+    },
+    { deep: true }
+  )
+
+  // for filters choice that need instant changes
+  watch(
+    () => filters.sortBy,
+    (newValue, oldValue) => {
+      if (isSubmitting.value) return
+      // if the value actually changes and the component is loaded
+      if (newValue !== oldValue) {
+        submitFilters()
+      }
+    }
+  )
 
   function fetchNewPageData(url: string | null) {
     if (!url) return
@@ -80,6 +119,8 @@ export function usePaginatedMediaFilters(
   }
 
   function resetFilters() {
+    isSubmitting.value = true
+
     filters.defaults({
       search: '',
       sortBy: sortOptionsRef.value[0].value,
@@ -92,7 +133,14 @@ export function usePaginatedMediaFilters(
       favorite: false,
     })
     filters.reset()
+    submitFilters()
   }
 
-  return { filters, submitFilters, fetchNewPageData, resetFilters }
+  return {
+    filters,
+    submitFilters,
+    debouncedSubmit,
+    fetchNewPageData,
+    resetFilters,
+  }
 }
