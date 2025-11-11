@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type MediaController from '#controllers/media_controller'
+import type User from '#models/user'
 import type { MediaCategories } from '#types/MediaCategories'
 import { InferPageProps } from '@adonisjs/inertia/types'
 import { computed, toRef } from 'vue'
@@ -21,6 +22,7 @@ const props = defineProps<{
   mediaGenresList: InferPageProps<MediaController, 'showByCategory'>['mediaGenresList']
   gamePlatformsList: InferPageProps<MediaController, 'showByCategory'>['gamePlatformsList']
   bookPublishersList: InferPageProps<MediaController, 'showByCategory'>['bookPublishersList']
+  user?: User
 }>()
 
 const categoryRef = toRef(props, 'mediaCategory')
@@ -81,6 +83,7 @@ const mediaListIsNotEmpty = computed(() => {
         :key="media.id"
         :media="media"
         :mediaCategory="mediaCategory"
+        :user="user"
       />
     </div>
     <div v-else>
