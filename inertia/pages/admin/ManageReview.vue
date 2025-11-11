@@ -5,11 +5,11 @@ import { useForm } from '@inertiajs/vue3'
 import { computed, onMounted } from 'vue'
 import AppHead from '~/components/AppHead.vue'
 import DashboardContainer from '~/components/dashboard/DashboardContainer.vue'
-import RatingBox from '~/components/RatingBox.vue'
 import ButtonComp from '~/components/ui/ButtonComp.vue'
 import FormErrorComp from '~/components/ui/FormErrorComp.vue'
 import InputComp from '~/components/ui/InputComp.vue'
 import LabelComp from '~/components/ui/LabelComp.vue'
+import RatingBox from '~/components/ui/RatingBox.vue'
 
 interface IForm {
   rating: string | number | null

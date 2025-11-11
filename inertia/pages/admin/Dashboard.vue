@@ -12,7 +12,7 @@ import DashboardMediaListItem from '~/components/dashboard/DashboardMediaListIte
 import CoverManageDialog from '~/components/media/CoverManageDialog.vue'
 import Pagination from '~/components/Pagination.vue'
 import { ActionDialogConfig, useActionDialog } from '~/composables/useActionDialog'
-import { usePaginatedFilters } from '~/composables/usePaginatedTaxonomyFilters'
+import { usePaginatedTaxonomyFilters } from '~/composables/usePaginatedTaxonomyFilters'
 
 const props = defineProps<{
   mediaList: InferPageProps<DashboardController, 'showDashboard'>['mediaList']
@@ -35,7 +35,7 @@ const deleteForm = useForm<IForm>({
 const deleteMediaApiUrl = ref('')
 const coverModalRef = ref<InstanceType<typeof CoverManageDialog> | null>(null)
 
-const { filters, submitFilters, fetchNewPageData } = usePaginatedFilters('/admin/dashboard')
+const { filters, submitFilters, fetchNewPageData } = usePaginatedTaxonomyFilters('/admin/dashboard')
 
 const deleteDialogConfig: ActionDialogConfig<IForm, IMediaItem> = {
   resourceApiUrl: deleteMediaApiUrl,
