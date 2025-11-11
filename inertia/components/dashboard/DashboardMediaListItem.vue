@@ -2,10 +2,10 @@
 import type DashboardController from '#controllers/dashboard_controller'
 import type { InferPageProps } from '@adonisjs/inertia/types'
 import { Link } from '@inertiajs/vue3'
-import RatingBox from '~/components/RatingBox.vue'
-import StatusProgressBadge from '~/components/StatusProgressBadge.vue'
 import ImageNotAvailableIcon from '~/components/icons/ImageNotAvailableIcon.vue'
 import ButtonComp from '~/components/ui/ButtonComp.vue'
+import RatingBox from '~/components/ui/RatingBox.vue'
+import StatusProgressBadge from '~/components/ui/StatusProgressBadge.vue'
 
 const props = defineProps<{
   media: InferPageProps<DashboardController, 'showDashboard'>['mediaList']['data'][0]
