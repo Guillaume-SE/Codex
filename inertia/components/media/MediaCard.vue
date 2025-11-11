@@ -1,16 +1,35 @@
 <script setup lang="ts">
 import type { IMediaPresented } from '#interfaces/media_presented_interface'
+import type User from '#models/user'
 import type { MediaCategories } from '#types/MediaCategories'
 import { Link } from '@inertiajs/vue3'
-import RatingBox from '~/components/RatingBox.vue'
-import StatusProgressBadge from '~/components/StatusProgressBadge.vue'
-import FavoriteIconFilled from '~/components/icons/FavoriteIconFilled.vue'
+import { computed } from 'vue'
 import MediaCover from '~/components/media/MediaCover.vue'
+import FavoriteBadge from '~/components/ui/FavoriteBadge.vue'
+import RatingBox from '~/components/ui/RatingBox.vue'
+import StatusProgressBadge from '~/components/ui/StatusProgressBadge.vue'
 
-defineProps<{
+const props = defineProps<{
   media: IMediaPresented
   mediaCategory: MediaCategories
+  user?: User
 }>()
+
+const favoriteBadgeStatus = computed(() => {
+  const isFavorite = props.media.review?.isFavorite
+  const isLoggedIn = !!props.user
+
+  if (isFavorite) {
+    return 'filled'
+  }
+
+  if (isLoggedIn) {
+    return 'outline'
+  }
+
+  // hide the badge
+  return null
+})
 </script>
 
 <template>
@@ -21,16 +40,17 @@ defineProps<{
         :alt="`cover de ${media.name}`"
         :default-cover-url="media.defaultCover"
       />
-      <p class="media-card-title">
+      <p class="truncate">
         {{ media.name }}
       </p>
     </Link>
     <div class="media-card-info-container">
       <StatusProgressBadge :status="media.status" />
-      <RatingBox :rating="media.review?.rating ? media.review.rating : null" />
-    </div>
-    <div v-if="media.review?.isFavorite">
-      <FavoriteIconFilled class="icon-favorite" size="25" />
+
+      <div class="flex items-center gap-2">
+        <FavoriteBadge v-if="favoriteBadgeStatus" :variant="favoriteBadgeStatus" />
+        <RatingBox :rating="media.review?.rating ? media.review.rating : null" />
+      </div>
     </div>
   </div>
 </template>
@@ -40,20 +60,15 @@ defineProps<{
   width: 150px;
   min-height: 290px;
   margin: 10px;
-  position: relative;
+  /* position: relative; */
 }
 
-.media-card-title {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.icon-favorite {
+/* .icon-favorite {
   position: absolute;
-  top: -10px;
-  right: -2px;
+  top: -2px;
+  right: 2px;
   z-index: 3;
-}
+} */
 .media-card-info-container {
   display: flex;
   justify-content: space-between;
