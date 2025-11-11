@@ -10,16 +10,6 @@
   --breakpoint-xs: 25rem;
 }
 
-@layer base {
-  .search-input,
-  .search-input::-webkit-search-decoration,
-  .search-input::-webkit-search-cancel-button,
-  .search-input::-webkit-search-results-button,
-  .search-input::-webkit-search-results-decoration {
-    -webkit-appearance: none;
-  }
-}
-
 @plugin "daisyui/theme" {
   name: 'light';
   default: true;
@@ -88,4 +78,83 @@
   --border: 1px;
   --depth: 0;
   --noise: 0;
+}
+
+@layer base {
+  .search-input,
+  .search-input::-webkit-search-decoration,
+  .search-input::-webkit-search-cancel-button,
+  .search-input::-webkit-search-results-button,
+  .search-input::-webkit-search-results-decoration {
+    -webkit-appearance: none;
+  }
+}
+
+@layer components {
+  .rating-default {
+    --rating-color: var(--color-base-300);
+    box-shadow: 0 0 0 3px var(--rating-color);
+  }
+  .rating-bad {
+    --rating-color: var(--color-error);
+    box-shadow:
+      0 0 0 3px var(--rating-color),
+      0 0 12px 0px var(--rating-color);
+  }
+  .rating-mid {
+    --rating-color: var(--color-warning);
+    box-shadow:
+      0 0 0 3px var(--rating-color),
+      0 0 12px 0px var(--rating-color);
+  }
+  .rating-good {
+    --rating-color: var(--color-success);
+    box-shadow:
+      0 0 0 3px var(--rating-color),
+      0 0 12px 0px var(--rating-color);
+  }
+
+  /* shining effect */
+  .sheen-effect {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .sheen-effect::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -100%;
+    width: 50%; /* How wide the sheen is */
+    height: 200%; /* Tall enough to cover the button at an angle */
+    /* gradient: transparent -> faded white -> transparent */
+    background: linear-gradient(
+      to right,
+      rgba(255, 255, 255, 0) 0%,
+      rgba(255, 255, 255, 0.3) 50%,
+      rgba(255, 255, 255, 0) 100%
+    );
+    /* Angle the sheen */
+    transform: rotate(20deg);
+    /*
+      - 'sheen-animation' style
+      - 3s duration
+      - 'ease-in-out' timing
+      - '2s' delay before starting the *next* loop
+      - 'infinite' to loop forever
+    */
+    animation: sheen-animation 3s ease-in-out 1s infinite;
+  }
+}
+
+/*
+  moves the sheen from left-to-right.
+*/
+@keyframes sheen-animation {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 100%;
+  }
 }
