@@ -98,19 +98,19 @@
   .rating-bad {
     --rating-color: var(--color-error);
     box-shadow:
-      0 0 0 3px var(--rating-color),
+      0 0 0 2px var(--rating-color),
       0 0 12px 0px var(--rating-color);
   }
   .rating-mid {
     --rating-color: var(--color-warning);
     box-shadow:
-      0 0 0 3px var(--rating-color),
+      0 0 0 2px var(--rating-color),
       0 0 12px 0px var(--rating-color);
   }
   .rating-good {
     --rating-color: var(--color-success);
     box-shadow:
-      0 0 0 3px var(--rating-color),
+      0 0 0 2px var(--rating-color),
       0 0 12px 0px var(--rating-color);
   }
 
