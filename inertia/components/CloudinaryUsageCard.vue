@@ -32,29 +32,23 @@ const infoModalVisible = ref(false)
     <div class="credits-title">
       <h3>Utilisation des crédits</h3>
       <button @click="infoModalVisible = true" class="info-button" aria-label="Plus d'informations">
-        <InfoIcon size="18" />
+        <InfoIcon class="h-5 w-5" />
       </button>
     </div>
     <div class="credits-display">
       <span class="total-credits-text">{{ cloudinaryUsage.credits.display }}</span>
-      <StatusDotComp class="dot" size="12" :status="cloudinaryUsage.credits.status" />
+      <StatusDotComp class="mt-1" :status="cloudinaryUsage.credits.status" animation="ping" />
     </div>
 
     <div class="stacked-progress-bar">
-      <div
-        class="progress-segment segment-transformations"
-        :style="{ width: transformationsWidth + '%' }"
-      ></div>
-      <div
-        class="progress-segment segment-bandwidth"
-        :style="{ width: bandwidthWidth + '%' }"
-      ></div>
-      <div class="progress-segment segment-storage" :style="{ width: storageWidth + '%' }"></div>
+      <div class="progress-segment bg-success" :style="{ width: transformationsWidth + '%' }"></div>
+      <div class="progress-segment bg-info" :style="{ width: bandwidthWidth + '%' }"></div>
+      <div class="progress-segment bg-primary" :style="{ width: storageWidth + '%' }"></div>
     </div>
 
     <ul class="legend">
       <li class="legend-item">
-        <StatusDotComp class="dot" size="12" color="#48bb78" />
+        <StatusDotComp class="mt-1" color-class="bg-success" />
         <div class="legend-content">
           <div class="legend-row">
             <span class="legend-title">Transformations</span>
@@ -65,7 +59,7 @@ const infoModalVisible = ref(false)
       </li>
 
       <li class="legend-item">
-        <StatusDotComp class="dot" size="12" color="#4299e1" />
+        <StatusDotComp class="mt-1" color-class="bg-info" />
         <div class="legend-content">
           <div class="legend-row">
             <span class="legend-title">Bande passante</span>
@@ -76,7 +70,7 @@ const infoModalVisible = ref(false)
       </li>
 
       <li class="legend-item">
-        <StatusDotComp class="dot" size="12" color="#9f7aea" />
+        <StatusDotComp class="mt-1" color-class="bg-primary" />
         <div class="legend-content">
           <div class="legend-row">
             <span class="legend-title">Stockage</span>
@@ -196,15 +190,6 @@ const infoModalVisible = ref(false)
   height: 100%;
   transition: width 0.3s ease-in-out;
 }
-.segment-transformations {
-  background-color: #48bb78;
-}
-.segment-storage {
-  background-color: #9f7aea;
-}
-.segment-bandwidth {
-  background-color: #4299e1;
-}
 
 .legend {
   padding: 0;
@@ -243,10 +228,6 @@ const infoModalVisible = ref(false)
 .usage-detail {
   font-size: 0.8rem;
   color: #a0aec0;
-}
-
-.dot {
-  margin-top: 4px;
 }
 
 .resources-text {
