@@ -1,21 +1,43 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { useRatingColorClass } from '~/composables/useRatingColorClass'
 
 const props = defineProps<{
   rating: number | null | string
 }>()
 
 const numericRating = computed(() => {
-  return props.rating === null ? null : Number(props.rating)
+  if (props.rating === null || props.rating === '') {
+    return null
+  }
+
+  const num = Number(props.rating)
+
+  return isNaN(num) ? null : num
 })
-const ratingColor = computed(() => useRatingColorClass(numericRating.value))
+
+const ratingColor = computed(() => {
+  const val = numericRating.value
+
+  if (val === null) {
+    return 'rating-default'
+  }
+
+  if (val >= 0 && val <= 4) {
+    return 'rating-bad'
+  } else if (val >= 5 && val <= 7) {
+    return 'rating-mid'
+  } else if (val >= 8 && val <= 10) {
+    return 'rating-good'
+  }
+
+  return 'rating-default'
+})
 </script>
 
 <template>
   <div
     :class="[
-      'sheen-effect bg-neutral flex h-8 w-8 items-center justify-center rounded-full font-medium',
+      'bg-neutral flex h-7.5 w-7.5 items-center justify-center rounded-full font-medium',
       ratingColor,
     ]"
   >

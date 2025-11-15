@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import type { MediaStatuses } from '#types/MediaStatuses'
-import { type PropType, toRef } from 'vue'
+import { computed, type PropType } from 'vue'
 import StatusDotComp from '~/components/ui/StatusDotComp.vue'
-import { useStatusStyles } from '~/composables/useStatusStyle'
 
 const props = defineProps({
   status: {
@@ -11,47 +10,30 @@ const props = defineProps({
   },
 })
 
-const { backgroundHex, iconHex } = useStatusStyles(toRef(props, 'status'))
+const dotColorClass = computed(() => {
+  switch (props.status) {
+    case 'en cours':
+      return 'bg-info'
+    case 'terminé':
+      return 'bg-success'
+    case 'en pause':
+      return 'bg-warning'
+    case 'arrêté':
+      return 'bg-error'
+    case 'prévu':
+      return 'bg-primary'
+    default:
+      return 'bg-neutral-content'
+  }
+})
 </script>
 
 <template>
-  <div class="status-progress-container">
-    <StatusDotComp class="status-icon" size="12" :color="iconHex" />
-    <span class="status-progress-text">
+  <div class="bg-neutral inline-flex items-center gap-1.5 rounded-full px-2.5 py-1">
+    <StatusDotComp class="h-2 w-2" :color-class="dotColorClass" />
+
+    <span class="text-neutral-content text-xs font-medium">
       {{ status }}
     </span>
   </div>
 </template>
-
-<style scoped>
-.status-progress-container {
-  display: flex;
-  align-items: center;
-  padding: 5px;
-  width: 90px;
-  border-radius: 5px;
-  background-color: v-bind(backgroundHex);
-}
-
-/* .status-progress-container-rounded {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 5px;
-  margin: 10px;
-  width: 15px;
-  height: 15px;
-  border-radius: 50%;
-} */
-
-.status-progress-text {
-  /* color: #fafafa; */
-  color: #0f172a;
-  font-weight: 600;
-  font-size: 0.8rem;
-}
-
-.status-icon {
-  margin-right: 5px;
-}
-</style>
