@@ -5,6 +5,7 @@ import { ref, watch } from 'vue'
 import ActionModal from '~/components/ActionModal.vue'
 import MediaCover from '~/components/media/MediaCover.vue'
 import ButtonComp from '~/components/ui/ButtonComp.vue'
+import FormErrorComp from '~/components/ui/FormErrorComp.vue'
 import { ActionDialogConfig, useActionDialog } from '~/composables/useActionDialog'
 
 const apiUrl = ref('')
@@ -26,6 +27,7 @@ const {
   selectedItem,
   dialogTitle,
   dialogActionText,
+  dialogVariant,
   openModal,
   closeModal,
   submitForm,
@@ -54,6 +56,11 @@ function open(media: IMediaPresented) {
   openModal('create', media)
 }
 
+function onCoverInput(event: Event) {
+  handleCoverSelect(event)
+  coverForm.clearErrors('cover')
+}
+
 watch(currentTask, (newTask) => {
   if (newTask === null && coverPreviewUrl.value) {
     URL.revokeObjectURL(coverPreviewUrl.value)
@@ -61,7 +68,7 @@ watch(currentTask, (newTask) => {
   }
 })
 
-// Expose the 'open' method to the parent component
+// give it to the parent comp
 defineExpose({ open })
 </script>
 
@@ -71,8 +78,9 @@ defineExpose({ open })
     :title="dialogTitle"
     :action-text="dialogActionText"
     :is-action-disabled="coverForm.processing"
+    :is-loading="coverForm.processing"
+    :variant="dialogVariant"
     @submit="submitForm"
-    @close="closeModal"
   >
     <template #form-content>
       <div v-if="currentTask === 'create'">
@@ -109,10 +117,10 @@ defineExpose({ open })
           id="cover-upload"
           type="file"
           accept="image/png, image/jpeg, image/webp"
-          @input="handleCoverSelect"
+          @input="onCoverInput"
         />
         <progress v-if="coverForm.progress" :value="coverForm.progress.percentage" max="100" />
-        <div v-if="coverForm.errors.cover" class="form-error">{{ coverForm.errors.cover }}</div>
+        <FormErrorComp v-if="coverForm.errors.cover" :message="coverForm.errors.cover" />
       </div>
       <div v-if="currentTask === 'delete'">
         <p>

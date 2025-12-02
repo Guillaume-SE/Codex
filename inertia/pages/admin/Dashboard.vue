@@ -49,6 +49,7 @@ const {
   selectedItemName: selectedMediaName,
   dialogTitle: deleteDialogTitle,
   dialogActionText: deleteDialogActionText,
+  dialogVariant,
   openModal: openDeleteModal,
   submitForm: submitDeleteForm,
 } = useActionDialog(deleteDialogConfig)
@@ -119,6 +120,9 @@ const isMediaListEmpty = computed(() => {
     v-model:show="isDeleteModalOpen"
     :title="deleteDialogTitle"
     :action-text="deleteDialogActionText"
+    :is-action-disabled="deleteForm.processing"
+    :is-loading="deleteForm.processing"
+    :variant="dialogVariant"
     @submit="submitDeleteForm"
   >
     <template #form-content>
