@@ -1,8 +1,4 @@
-<script setup lang="ts">
-defineProps<{
-  size: number | string
-}>()
-</script>
+<script setup lang="ts"></script>
 
 <template>
   <svg
@@ -22,8 +18,6 @@ defineProps<{
 
 <style scoped>
 svg {
-  width: v-bind(size + 'px');
-  height: v-bind(size + 'px');
   color: #a0aec0;
   transition: color 0.2s ease-in-out;
 }

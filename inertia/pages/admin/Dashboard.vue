@@ -12,7 +12,7 @@ import DashboardMediaListItem from '~/components/dashboard/DashboardMediaListIte
 import CoverManageDialog from '~/components/media/CoverManageDialog.vue'
 import Pagination from '~/components/Pagination.vue'
 import { ActionDialogConfig, useActionDialog } from '~/composables/useActionDialog'
-import { usePaginatedFilters } from '~/composables/usePaginatedFilters'
+import { usePaginatedTaxonomyFilters } from '~/composables/usePaginatedTaxonomyFilters'
 
 const props = defineProps<{
   mediaList: InferPageProps<DashboardController, 'showDashboard'>['mediaList']
@@ -35,7 +35,7 @@ const deleteForm = useForm<IForm>({
 const deleteMediaApiUrl = ref('')
 const coverModalRef = ref<InstanceType<typeof CoverManageDialog> | null>(null)
 
-const { filters, submitFilters, fetchNewPageData } = usePaginatedFilters('/admin/dashboard')
+const { filters, submitFilters, fetchNewPageData } = usePaginatedTaxonomyFilters('/admin/dashboard')
 
 const deleteDialogConfig: ActionDialogConfig<IForm, IMediaItem> = {
   resourceApiUrl: deleteMediaApiUrl,
@@ -49,6 +49,7 @@ const {
   selectedItemName: selectedMediaName,
   dialogTitle: deleteDialogTitle,
   dialogActionText: deleteDialogActionText,
+  dialogVariant,
   openModal: openDeleteModal,
   submitForm: submitDeleteForm,
 } = useActionDialog(deleteDialogConfig)
@@ -72,10 +73,10 @@ const isMediaListEmpty = computed(() => {
     <form action="GET" @submit.prevent="submitFilters">
       <DashboardAction
         v-model:search="filters.search"
-        :type="'search'"
         :title="'Gestion des media'"
+        @submit="submitFilters"
       >
-        <Link href="/admin/media/create">Ajouter un media</Link>
+        <Link href="/admin/media/create">Ajouter +</Link>
       </DashboardAction>
     </form>
 
@@ -119,6 +120,9 @@ const isMediaListEmpty = computed(() => {
     v-model:show="isDeleteModalOpen"
     :title="deleteDialogTitle"
     :action-text="deleteDialogActionText"
+    :is-action-disabled="deleteForm.processing"
+    :is-loading="deleteForm.processing"
+    :variant="dialogVariant"
     @submit="submitDeleteForm"
   >
     <template #form-content>

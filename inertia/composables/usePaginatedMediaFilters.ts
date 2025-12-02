@@ -1,5 +1,6 @@
 import { useForm } from '@inertiajs/vue3'
-import { computed, toRef, type MaybeRef } from 'vue'
+import { computed, ref, toRef, watch, type MaybeRef } from 'vue'
+import { useDebounce } from '~/composables/useDebounce'
 
 interface IFilters {
   search: string
@@ -34,7 +35,7 @@ function cleanFilters(filters: IFilters, defaultSortBy: string) {
       }
     }
 
-    // If the value is not empty, add it to the cleaned object
+    // if the value is not empty -> add it to the cleaned object
     if (!isEmpty(value)) {
       ;(cleaned as any)[filterKey] = value
     }
@@ -50,7 +51,7 @@ export function usePaginatedMediaFilters(
   const sortOptionsRef = toRef(sortOptions)
 
   // argument passed to conserve values when navigate between pages
-  const filters = useForm<IFilters>('filterResults', {
+  const filters = useForm<IFilters>('mediaFiltersResults', {
     search: '',
     sortBy: sortOptionsRef.value[0].value,
     status: [],
@@ -62,25 +63,66 @@ export function usePaginatedMediaFilters(
     favorite: false,
   })
 
+  const isSubmitting = ref(false)
+
   const baseUrl = computed(() => `/categories/${categoryRef.value}`)
 
-  function submitFilters() {
+  filters.transform((data) => {
     const defaultSort = sortOptionsRef.value[0].value
-    filters
-      .transform((data) => cleanFilters(data, defaultSort))
-      .get(baseUrl.value, { preserveState: true, preserveScroll: true })
+    return cleanFilters(data, defaultSort)
+  })
+
+  function submitFilters() {
+    isSubmitting.value = true
+    filters.get(baseUrl.value, {
+      preserveState: true,
+      preserveScroll: true,
+      onFinish: () => {
+        isSubmitting.value = false
+      },
+    })
   }
+
+  const debouncedSubmit = useDebounce(submitFilters, 500)
+
+  // for filters choice that need a debounce
+  watch(
+    () => ({
+      search: filters.search,
+      favorite: filters.favorite,
+    }),
+    () => {
+      // if an instant submit is already in progress, stop
+      if (isSubmitting.value) return
+
+      debouncedSubmit()
+    },
+    { deep: true }
+  )
+
+  // for filters choice that need instant changes
+  watch(
+    () => filters.sortBy,
+    (newValue, oldValue) => {
+      if (isSubmitting.value) return
+      // if the value actually changes and the component is loaded
+      if (newValue !== oldValue) {
+        submitFilters()
+      }
+    }
+  )
 
   function fetchNewPageData(url: string | null) {
     if (!url) return
-    const defaultSort = sortOptionsRef.value[0].value
-    filters
-      .transform((data) => cleanFilters(data, defaultSort))
-      .get(url, { preserveState: true, preserveScroll: true })
+
+    filters.get(url, { preserveState: true, preserveScroll: true })
   }
 
   function resetFilters() {
+    isSubmitting.value = true
+
     filters.defaults({
+      search: '',
       sortBy: sortOptionsRef.value[0].value,
       status: [],
       types: [],
@@ -91,7 +133,14 @@ export function usePaginatedMediaFilters(
       favorite: false,
     })
     filters.reset()
+    submitFilters()
   }
 
-  return { filters, submitFilters, fetchNewPageData, resetFilters }
+  return {
+    filters,
+    submitFilters,
+    debouncedSubmit,
+    fetchNewPageData,
+    resetFilters,
+  }
 }

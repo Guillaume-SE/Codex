@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type MediaController from '#controllers/media_controller'
+import type User from '#models/user'
 import type { MediaCategories } from '#types/MediaCategories'
 import { InferPageProps } from '@adonisjs/inertia/types'
 import { computed, toRef } from 'vue'
@@ -21,6 +22,7 @@ const props = defineProps<{
   mediaGenresList: InferPageProps<MediaController, 'showByCategory'>['mediaGenresList']
   gamePlatformsList: InferPageProps<MediaController, 'showByCategory'>['gamePlatformsList']
   bookPublishersList: InferPageProps<MediaController, 'showByCategory'>['bookPublishersList']
+  user?: User
 }>()
 
 const categoryRef = toRef(props, 'mediaCategory')
@@ -38,11 +40,17 @@ const mediaListIsNotEmpty = computed(() => {
 <template>
   <AppHead :title="title" />
   <h2>{{ categoryFr }}</h2>
-  <div class="media-list-container">
+  <span> {{ mediaList.meta.total }} résultats </span>
+
+  <div class="flex">
     <div>
       <form method="GET" @submit.prevent="submitFilters">
         <div>
-          <SearchBar v-model="filters.search" placeholder="Rechercher" />
+          <SearchBar
+            v-model="filters.search"
+            placeholder="Rechercher un nom"
+            @submit="submitFilters"
+          />
         </div>
 
         <div>
@@ -71,15 +79,16 @@ const mediaListIsNotEmpty = computed(() => {
       </form>
     </div>
     <!-- cards -->
-    <div v-if="mediaListIsNotEmpty">
-      <span>{{ mediaList.meta.total }} résultats</span>
-    </div>
-    <div v-if="mediaListIsNotEmpty" class="media-list-cards-container">
+    <div
+      v-if="mediaListIsNotEmpty"
+      class="grid grid-cols-2 justify-items-center sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5"
+    >
       <MediaCard
         v-for="media in mediaList.data"
         :key="media.id"
         :media="media"
         :mediaCategory="mediaCategory"
+        :user="user"
       />
     </div>
     <div v-else>
@@ -104,14 +113,3 @@ const mediaListIsNotEmpty = computed(() => {
     />
   </div>
 </template>
-
-<style scoped>
-.media-list-container {
-  display: flex;
-}
-.media-list-cards-container {
-  display: flex;
-  flex-wrap: wrap;
-  margin: 5px;
-}
-</style>

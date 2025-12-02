@@ -1,45 +1,44 @@
 <script setup lang="ts">
+import type { UsageStatus } from '#types/UsageStatus'
 import { computed } from 'vue'
 
-type Status = 'ok' | 'warning' | 'danger'
-
 const props = defineProps<{
-  color?: string
-  status?: Status
-  size: number | string
+  status?: UsageStatus
+  colorClass?: string
+  animation?: 'bounce' | 'ping'
 }>()
 
-const statusColors: Record<Status, string> = {
-  ok: '#48bb78',
-  warning: '#f6e05e',
-  danger: '#f56565',
-}
-
 const dotColor = computed(() => {
-  // if a specific color is provided, use it
-  if (props.color) {
-    return props.color
+  if (props.colorClass) {
+    return props.colorClass
   }
-  // Otherwise, if a status is provided, look up its color in the map.
+
   if (props.status) {
-    return statusColors[props.status]
+    switch (props.status) {
+      case 'ok':
+        return 'bg-success'
+      case 'warning':
+        return 'bg-warning'
+      case 'danger':
+        return 'bg-error'
+      default:
+        return 'bg-neutral-content'
+    }
   }
-  return '#a0aec0'
+
+  return 'bg-neutral-content'
+})
+
+const dotBouncing = computed(() => {
+  return props.animation === 'bounce' ? 'animate-bounce' : ''
 })
 </script>
 
 <template>
-  <span class="status-dot"></span>
-</template>
+  <div v-if="animation === 'ping'" class="inline-grid place-items-center *:[grid-area:1/1]">
+    <div class="status animate-ping" :class="dotColor"></div>
+    <div class="status" :class="dotColor"></div>
+  </div>
 
-<style scoped>
-.status-dot {
-  width: v-bind(size + 'px');
-  height: v-bind(size + 'px');
-  display: inline-block;
-  border-radius: 50%;
-  flex-shrink: 0;
-  background-color: v-bind(dotColor);
-  transition: background-color 0.3s;
-}
-</style>
+  <div v-else class="status" :class="[dotColor, dotBouncing]"></div>
+</template>

@@ -3,7 +3,7 @@ import { Link } from '@inertiajs/vue3'
 </script>
 
 <template>
-  <nav class="dashboard-navbar">
+  <nav class="mr-5 flex shrink-0 flex-col pr-5">
     <Link href="/admin/dashboard">Général</Link>
     <Link href="/admin/platforms/manage">Plateformes</Link>
     <Link href="/admin/genres/manage">Genres</Link>
@@ -13,14 +13,3 @@ import { Link } from '@inertiajs/vue3'
     <Link href="/admin/media/covers">Covers</Link>
   </nav>
 </template>
-
-<style scoped>
-.dashboard-navbar {
-  display: flex;
-  flex-direction: column;
-  padding-right: 20px;
-  margin-right: 20px;
-  border-right: 1px solid #eee;
-  flex-shrink: 0;
-}
-</style>

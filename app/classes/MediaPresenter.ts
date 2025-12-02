@@ -5,7 +5,6 @@ import type { MediaCategories } from '#types/MediaCategories'
 import type { MediaStatuses } from '#types/MediaStatuses'
 import { formatToDateMed, formatToRelative } from '#utils/formatDate'
 import { ModelPaginatorContract } from '@adonisjs/lucid/types/model'
-import { DateTime } from 'luxon'
 
 interface IGenre {
   id: number

@@ -1,4 +1,5 @@
 import { ICloudinaryUsage } from '#interfaces/cloudinary_usage_interface'
+import type { UsageStatus } from '#types/UsageStatus'
 import { formatBytes } from '#utils/formatBytesTo'
 import { formatToRelative } from '#utils/formatDate'
 
@@ -9,7 +10,7 @@ export class CloudinaryUsagePresenter {
     usage: number
     limit: number
     display: string
-    status: 'ok' | 'warning' | 'danger'
+    status: UsageStatus
   }
   breakdown: {
     transformations: {
@@ -43,7 +44,7 @@ export class CloudinaryUsagePresenter {
     const bandwidthCredits = Math.max(0, usage.bandwidth.credits_usage)
     const storageCredits = Math.max(0, usage.storage.credits_usage)
 
-    let creditStatus: 'ok' | 'warning' | 'danger'
+    let creditStatus: UsageStatus
     if (adjustedTotalCredits <= 20) {
       creditStatus = 'ok'
     } else if (adjustedTotalCredits <= 24) {

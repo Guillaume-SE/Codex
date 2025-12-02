@@ -1,28 +1,15 @@
 <script setup lang="ts">
+import StatusDotComp from '~/components/ui/StatusDotComp.vue'
+
 defineProps<{
   title: string
-  isActive: boolean | undefined
+  isActive?: boolean
 }>()
 </script>
 
 <template>
-  <span class="filter-title">
+  <span class="gap-0.5 font-semibold">
     {{ title }}
-    <span v-if="isActive" class="filter-marker" title="Filtre actif">•</span>
+    <StatusDotComp v-if="isActive" color-class="bg-info" animation="bounce" />
   </span>
 </template>
-
-<style scoped>
-.filter-title {
-  font-weight: 600;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.25rem;
-}
-
-.filter-marker {
-  color: #34d399;
-  font-size: 1.5rem;
-  line-height: 1;
-}
-</style>

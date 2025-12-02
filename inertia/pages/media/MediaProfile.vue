@@ -4,8 +4,8 @@ import { computed } from 'vue'
 import AppHead from '~/components/AppHead.vue'
 import MediaCover from '~/components/media/MediaCover.vue'
 import MediaSpecificDetails from '~/components/media/MediaSpecificDetails.vue'
-import RatingBox from '~/components/RatingBox.vue'
-import StatusProgressBadge from '~/components/StatusProgressBadge.vue'
+import RatingBox from '~/components/ui/RatingBox.vue'
+import StatusProgressBadge from '~/components/ui/StatusProgressBadge.vue'
 
 const props = defineProps<{
   media: IMediaPresented
@@ -25,12 +25,13 @@ const hasReviewRating = computed(() =>
       <StatusProgressBadge :status="media.status" />
     </div>
     <!-- cover -->
-    <MediaCover
-      :cover="media.cover"
-      :alt="`cover de ${media.name}`"
-      :default-cover-url="media.defaultCover"
-      size="large"
-    />
+    <div class="w-64">
+      <MediaCover
+        :cover="media.cover"
+        :alt="`cover de ${media.name}`"
+        :default-cover-url="media.defaultCover"
+      />
+    </div>
     <div>
       <!-- all genres -->
       <ul>

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type MediaController from '#controllers/media_controller'
 import { InferPageProps } from '@adonisjs/inertia/types'
-import { computed, type Component } from 'vue'
+import { computed, onMounted, ref, type Component } from 'vue'
 import BookFilters from '~/components/media/filters/BookFilters.vue'
 import GameFilters from '~/components/media/filters/GameFilters.vue'
 import MovieFilters from '~/components/media/filters/MovieFilters.vue'
@@ -35,11 +35,26 @@ function resetFormValues() {
   return emit('update:resetFormValues')
 }
 
-const isStatusActive = computed(() => statusModel.value && statusModel.value.length > 0)
-const isTypesActive = computed(() => typesModel.value && typesModel.value.length > 0)
-const isGenresActive = computed(() => genresModel.value && genresModel.value.length > 0)
-const isFavoriteActive = computed(() => favoriteModel.value === true)
+const isMounted = ref(false)
+
+onMounted(() => {
+  isMounted.value = true
+})
+
+const isStatusActive = computed(
+  () => isMounted.value && statusModel.value && statusModel.value.length > 0
+)
+const isTypesActive = computed(
+  () => isMounted.value && typesModel.value && typesModel.value.length > 0
+)
+const isGenresActive = computed(
+  () => isMounted.value && genresModel.value && genresModel.value.length > 0
+)
+const isFavoriteActive = computed(() => isMounted.value && favoriteModel.value === true)
+
 const isCategoryFilterActive = computed(() => {
+  if (!isMounted.value) return false
+
   const platformsActive = platformsModel.value && platformsModel.value.length > 0
   const publishersActive = publishersModel.value && publishersModel.value.length > 0
   const durationActive = durationModel.value && durationModel.value !== MAX_MOVIE_DURATION
@@ -57,7 +72,7 @@ const categoryFilterComponents: Record<string, Component> = {
 </script>
 
 <template>
-  <ButtonComp type="submit" @click="resetFormValues"> Réinitialiser les filtres </ButtonComp>
+  <ButtonComp type="button" @click="resetFormValues"> Réinitialiser les filtres </ButtonComp>
   <!-- status -->
   <div>
     <FilterTitleComp title="Progression" :is-active="isStatusActive" />

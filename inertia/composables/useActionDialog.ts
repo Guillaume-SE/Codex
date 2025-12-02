@@ -1,7 +1,11 @@
 import { type InertiaForm } from '@inertiajs/vue3'
 import { computed, MaybeRef, nextTick, ref, watch } from 'vue'
 import type { ButtonVariant } from '~/components/ui/ButtonComp.vue'
-import { useActionText, type ActionType, type IResourceNameConfig } from './useActionText'
+import {
+  useActionText,
+  type ActionType,
+  type IResourceNameConfig,
+} from '~/composables/useActionText'
 import { useResourceForm } from './useResourceForm'
 
 /**
@@ -17,7 +21,7 @@ export interface ActionDialogConfig<T extends object, U> {
   form: InertiaForm<T>
   getItemId?: (item: U) => number | string | null
   getItemName?: (item: U) => string
-  customSubmitHandlers?: Partial<Record<ActionType, () => void>>
+  customSubmitHandlers?: Partial<Record<ActionType, (closeModal: () => void) => void>>
 }
 
 export function useActionDialog<T extends object, U extends object>(
@@ -42,7 +46,7 @@ export function useActionDialog<T extends object, U extends object>(
   )
 
   const dialogVariant = computed((): ButtonVariant => {
-    if (currentTask.value === 'delete') {
+    if (currentTask.value === 'delete' || currentTask.value === 'replace') {
       return 'error'
     }
     return 'primary'
@@ -101,7 +105,7 @@ export function useActionDialog<T extends object, U extends object>(
     // to handle specific case like type who need a replace or cover who need different url
     const customHandler = config.customSubmitHandlers?.[task]
     if (customHandler) {
-      customHandler()
+      customHandler(closeModal)
       return
     }
 
