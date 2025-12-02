@@ -25,12 +25,13 @@ const hasReviewRating = computed(() =>
       <StatusProgressBadge :status="media.status" />
     </div>
     <!-- cover -->
-    <MediaCover
-      :cover="media.cover"
-      :alt="`cover de ${media.name}`"
-      :default-cover-url="media.defaultCover"
-      size="large"
-    />
+    <div class="w-64">
+      <MediaCover
+        :cover="media.cover"
+        :alt="`cover de ${media.name}`"
+        :default-cover-url="media.defaultCover"
+      />
+    </div>
     <div>
       <!-- all genres -->
       <ul>

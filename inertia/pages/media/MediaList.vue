@@ -40,6 +40,8 @@ const mediaListIsNotEmpty = computed(() => {
 <template>
   <AppHead :title="title" />
   <h2>{{ categoryFr }}</h2>
+  <span> {{ mediaList.meta.total }} résultats </span>
+
   <div class="flex">
     <div>
       <form method="GET" @submit.prevent="submitFilters">
@@ -77,7 +79,10 @@ const mediaListIsNotEmpty = computed(() => {
       </form>
     </div>
     <!-- cards -->
-    <div v-if="mediaListIsNotEmpty" class="flex flex-wrap">
+    <div
+      v-if="mediaListIsNotEmpty"
+      class="grid grid-cols-2 justify-items-center sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5"
+    >
       <MediaCard
         v-for="media in mediaList.data"
         :key="media.id"
