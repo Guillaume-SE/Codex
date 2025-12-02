@@ -33,32 +33,50 @@ const favoriteBadgeStatus = computed(() => {
 </script>
 
 <template>
-  <div class="media-card">
-    <Link :href="`/categories/${mediaCategory}/${media.id}`">
-      <MediaCover
-        :cover="media.cover"
-        :alt="`cover de ${media.name}`"
-        :default-cover-url="media.defaultCover"
-      />
-      <p class="truncate">
-        {{ media.name }}
-      </p>
-    </Link>
-    <div class="mt-2 flex items-center justify-between">
-      <StatusProgressBadge :status="media.status" />
+  <div
+    class="bg-base-100 m-2 w-full max-w-[12rem] rounded-xl shadow-xl transition-transform duration-200 hover:scale-105"
+  >
+    <figure class="relative px-3 pt-3">
+      <div
+        class="bg-base-100 absolute top-4 left-2 z-20 flex origin-top-left transform rounded-full p-[2px]"
+      >
+        <StatusProgressBadge :status="media.status" />
+      </div>
 
-      <div class="flex items-center gap-2">
+      <div
+        class="bg-base-100 absolute top-4 right-2 z-20 origin-top-right transform rounded-full p-[3px]"
+      >
         <FavoriteBadge v-if="favoriteBadgeStatus" :variant="favoriteBadgeStatus" />
+      </div>
+
+      <Link
+        :href="`/categories/${mediaCategory}/${media.id}`"
+        class="block h-full w-full"
+        tabindex="-1"
+      >
+        <MediaCover
+          :cover="media.cover"
+          :alt="`cover de ${media.name}`"
+          :default-cover-url="media.defaultCover"
+          class="mt-2 mb-1 h-full"
+        />
+      </Link>
+
+      <div
+        class="bg-base-100 absolute right-2 -bottom-1 z-20 origin-bottom-right transform rounded-full p-[2px]"
+      >
         <RatingBox :rating="media.review?.rating ?? null" />
       </div>
+    </figure>
+
+    <div class="p-3 pt-1 text-left">
+      <Link :href="`/categories/${mediaCategory}/${media.id}`" class="w-full min-w-0">
+        <h2 class="w-full text-xs font-bold" :title="media.name">
+          <span class="block w-full truncate">
+            {{ media.name }}
+          </span>
+        </h2>
+      </Link>
     </div>
   </div>
 </template>
-
-<style scoped>
-.media-card {
-  width: 150px;
-  min-height: 290px;
-  margin: 10px;
-}
-</style>
