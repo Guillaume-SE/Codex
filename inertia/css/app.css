@@ -91,29 +91,6 @@
 }
 
 @layer components {
-  .rating-default {
-    --rating-color: var(--color-base-300);
-    box-shadow: 0 0 0 3px var(--rating-color);
-  }
-  .rating-bad {
-    --rating-color: var(--color-error);
-    box-shadow:
-      0 0 0 2px var(--rating-color),
-      0 0 12px 0px var(--rating-color);
-  }
-  .rating-mid {
-    --rating-color: var(--color-warning);
-    box-shadow:
-      0 0 0 2px var(--rating-color),
-      0 0 12px 0px var(--rating-color);
-  }
-  .rating-good {
-    --rating-color: var(--color-success);
-    box-shadow:
-      0 0 0 2px var(--rating-color),
-      0 0 12px 0px var(--rating-color);
-  }
-
   /* shining effect */
   .sheen-effect {
     position: relative;
@@ -125,8 +102,8 @@
     position: absolute;
     top: -50%;
     left: -100%;
-    width: 50%; /* How wide the sheen is */
-    height: 200%; /* Tall enough to cover the button at an angle */
+    width: 50%;
+    height: 200%;
     /* gradient: transparent -> faded white -> transparent */
     background: linear-gradient(
       to right,
@@ -137,11 +114,7 @@
     /* Angle the sheen */
     transform: rotate(20deg);
     /*
-      - 'sheen-animation' style
-      - 3s duration
-      - 'ease-in-out' timing
-      - '2s' delay before starting the *next* loop
-      - 'infinite' to loop forever
+      - style, duration, timing type, delay before next loop and loop cycle
     */
     animation: sheen-animation 3s ease-in-out 1s infinite;
   }
