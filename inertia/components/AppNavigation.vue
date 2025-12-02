@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type User from '#models/user'
-import { Link } from '@inertiajs/vue3'
+import { Link, usePage } from '@inertiajs/vue3'
 import UserMenu from '~/components//UserMenu.vue'
 import NotificationAction from '~/components/ui/NotificationAction.vue'
 import ThemeController from '~/components/ui/ThemeController.vue'
@@ -8,13 +8,19 @@ import ThemeController from '~/components/ui/ThemeController.vue'
 defineProps<{
   user?: User
 }>()
+
+const page = usePage()
+
+const isLinkActive = (path: string) => {
+  return page.url.startsWith(path)
+}
 </script>
 
 <template>
   <nav class="navbar bg-base-200 w-full items-baseline">
     <div class="navbar-start">
       <div class="flex-none md:hidden">
-        <label for="my-drawer-2" aria-label="open sidebar" class="btn btn-square btn-ghost">
+        <label for="app-drawer" aria-label="open sidebar" class="btn btn-square btn-ghost">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
@@ -30,16 +36,51 @@ defineProps<{
           </svg>
         </label>
       </div>
-      <Link class="btn btn-lg btn-ghost font-bold" href="/">Codex</Link>
+      <Link class="btn btn-lg btn-ghost font-bold" href="/"> Codex </Link>
     </div>
 
     <div class="navbar-center hidden md:flex">
       <ul class="menu menu-horizontal px-1 font-bold">
-        <li><Link href="/categories/game">Jeux</Link></li>
-        <li><Link href="/categories/movie">Films</Link></li>
-        <li><Link href="/categories/anime">Anime</Link></li>
-        <li><Link href="/categories/series">Séries</Link></li>
-        <li><Link href="/categories/book">Livres</Link></li>
+        <li>
+          <Link
+            href="/categories/game"
+            :class="{ 'menu-active': isLinkActive('/categories/game') }"
+          >
+            Jeux
+          </Link>
+        </li>
+        <li>
+          <Link
+            href="/categories/movie"
+            :class="{ 'menu-active': isLinkActive('/categories/movie') }"
+          >
+            Films
+          </Link>
+        </li>
+        <li>
+          <Link
+            href="/categories/anime"
+            :class="{ 'menu-active': isLinkActive('/categories/anime') }"
+          >
+            Anime
+          </Link>
+        </li>
+        <li>
+          <Link
+            href="/categories/series"
+            :class="{ 'menu-active': isLinkActive('/categories/series') }"
+          >
+            Séries
+          </Link>
+        </li>
+        <li>
+          <Link
+            href="/categories/book"
+            :class="{ 'menu-active': isLinkActive('/categories/book') }"
+          >
+            Livres
+          </Link>
+        </li>
       </ul>
     </div>
 
