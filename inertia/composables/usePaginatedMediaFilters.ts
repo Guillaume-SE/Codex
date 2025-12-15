@@ -76,7 +76,6 @@ export function usePaginatedMediaFilters(
     isSubmitting.value = true
     filters.get(baseUrl.value, {
       preserveState: true,
-      preserveScroll: true,
       onFinish: () => {
         isSubmitting.value = false
       },
@@ -115,7 +114,7 @@ export function usePaginatedMediaFilters(
   function fetchNewPageData(url: string | null) {
     if (!url) return
 
-    filters.get(url, { preserveState: true, preserveScroll: true })
+    filters.get(url, { preserveState: true })
   }
 
   function resetFilters() {

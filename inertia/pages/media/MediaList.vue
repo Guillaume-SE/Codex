@@ -5,9 +5,12 @@ import type { MediaCategories } from '#types/MediaCategories'
 import { InferPageProps } from '@adonisjs/inertia/types'
 import { computed, toRef } from 'vue'
 import AppHead from '~/components/AppHead.vue'
+import FilterDrawer from '~/components/media/filters/FilterDrawer.vue'
 import MediaCard from '~/components/media/MediaCard.vue'
 import MediaFilters from '~/components/media/MediaFilters.vue'
 import Pagination from '~/components/Pagination.vue'
+import InputComp from '~/components/ui/InputComp.vue'
+import LabelComp from '~/components/ui/LabelComp.vue'
 import SearchBar from '~/components/ui/SearchBar.vue'
 import SelectComp from '~/components/ui/SelectComp.vue'
 import { useCategoryInfo } from '~/composables/useCategoryInfo'
@@ -39,77 +42,142 @@ const mediaListIsNotEmpty = computed(() => {
 
 <template>
   <AppHead :title="title" />
-  <h2>{{ categoryFr }}</h2>
-  <span> {{ mediaList.meta.total }} résultats </span>
 
-  <div class="flex">
-    <div>
-      <form method="GET" @submit.prevent="submitFilters">
-        <div>
-          <SearchBar
-            v-model="filters.search"
-            placeholder="Rechercher un nom"
-            @submit="submitFilters"
-          />
-        </div>
+  <FilterDrawer>
+    <div class="container mx-auto space-y-6 px-2 py-4">
+      <div class="flex items-center justify-between">
+        <h2 class="text-3xl font-bold capitalize">{{ categoryFr }}</h2>
+        <span class="badge badge-neutral badge-lg">{{ mediaList.meta.total }} résultats</span>
+      </div>
 
-        <div>
-          <h3>Trier</h3>
-          <span>Trier les résultats par</span>
-          <SelectComp v-model="filters.sortBy" :options="mediaSortOptions" />
-          <h3>Filtrer</h3>
-          <!-- filters -->
-          <MediaFilters
-            v-model:status="filters.status"
-            v-model:types="filters.types"
-            v-model:genres="filters.genres"
-            v-model:platforms="filters.platforms"
-            v-model:duration="filters.duration"
-            v-model:publishers="filters.publishers"
-            v-model:favorite="filters.favorite"
-            :statuses-list="mediaStatusesList"
-            :types-list="mediaTypesList"
-            :genres-list="mediaGenresList"
-            :platforms-list="gamePlatformsList"
-            :publishers-list="bookPublishersList"
-            :media-category="mediaCategory"
-            @update:reset-form-values="resetFilters"
-          />
-        </div>
-      </form>
+      <div class="bg-base-100 rounded-xl p-4 shadow-sm">
+        <form method="GET" @submit.prevent="submitFilters" class="flex flex-col gap-4">
+          <div class="flex flex-col gap-4 md:flex-row md:items-end">
+            <div class="w-full md:flex-1">
+              <label class="label py-0 pb-1">
+                <span class="label-text text-base-content/70 text-xs font-bold"> Recherche </span>
+              </label>
+              <SearchBar
+                v-model="filters.search"
+                placeholder="Rechercher un nom..."
+                @submit="submitFilters"
+                class="w-full"
+              />
+            </div>
+
+            <div class="flex flex-wrap items-end gap-4">
+              <div class="min-w-[140px]">
+                <label class="label py-0 pb-1">
+                  <span class="label-text text-base-content/70 text-xs font-bold">Trier par</span>
+                </label>
+                <SelectComp v-model="filters.sortBy" :options="mediaSortOptions" />
+              </div>
+
+              <div>
+                <label for="filter-drawer" class="btn btn-neutral w-full gap-2 md:w-auto">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+                  </svg>
+                  Filtres
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-3 md:pt-2">
+            <InputComp
+              v-model="filters.favorite"
+              id="favorite-toggle"
+              type="checkbox"
+              variant="toggle"
+              class="toggle-primary"
+            />
+            <LabelComp
+              labelFor="favorite-toggle"
+              text="Uniquement les coups de cœur"
+              class="cursor-pointer"
+            />
+          </div>
+        </form>
+      </div>
+
+      <div
+        v-if="mediaListIsNotEmpty"
+        class="grid grid-cols-[repeat(auto-fill,minmax(180px,1fr))] gap-3"
+      >
+        <MediaCard
+          v-for="media in mediaList.data"
+          :key="media.id"
+          :media="media"
+          :mediaCategory="mediaCategory"
+          :user="user"
+        />
+      </div>
+
+      <div v-else class="py-10 text-center">
+        <p>Aucun résultat</p>
+      </div>
+
+      <div class="mt-8 flex justify-center">
+        <Pagination
+          :page="{
+            currentPage: props.mediaList.meta.currentPage,
+            firstPage: props.mediaList.meta.firstPage,
+            lastPage: props.mediaList.meta.lastPage,
+          }"
+          :url="{
+            firstPageUrl: props.mediaList.meta.firstPageUrl,
+            lastPageUrl: props.mediaList.meta.lastPageUrl,
+            nextPageUrl: props.mediaList.meta.nextPageUrl,
+            previousPageUrl: props.mediaList.meta.previousPageUrl,
+          }"
+          @update:current-page="fetchNewPageData"
+        />
+      </div>
     </div>
-    <!-- cards -->
-    <div
-      v-if="mediaListIsNotEmpty"
-      class="grid grid-cols-2 justify-items-center sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5"
-    >
-      <MediaCard
-        v-for="media in mediaList.data"
-        :key="media.id"
-        :media="media"
-        :mediaCategory="mediaCategory"
-        :user="user"
+
+    <template #sidebar>
+      <MediaFilters
+        v-model:status="filters.status"
+        v-model:types="filters.types"
+        v-model:genres="filters.genres"
+        v-model:platforms="filters.platforms"
+        v-model:duration="filters.duration"
+        v-model:publishers="filters.publishers"
+        v-model:favorite="filters.favorite"
+        :statuses-list="mediaStatusesList"
+        :types-list="mediaTypesList"
+        :genres-list="mediaGenresList"
+        :platforms-list="gamePlatformsList"
+        :publishers-list="bookPublishersList"
+        :media-category="mediaCategory"
+        class="flex flex-col gap-4"
       />
-    </div>
-    <div v-else>
-      <p>Aucun résultat</p>
-    </div>
-  </div>
-  <!-- pagination -->
-  <div>
-    <Pagination
-      :page="{
-        currentPage: props.mediaList.meta.currentPage,
-        firstPage: props.mediaList.meta.firstPage,
-        lastPage: props.mediaList.meta.lastPage,
-      }"
-      :url="{
-        firstPageUrl: props.mediaList.meta.firstPageUrl,
-        lastPageUrl: props.mediaList.meta.lastPageUrl,
-        nextPageUrl: props.mediaList.meta.nextPageUrl,
-        previousPageUrl: props.mediaList.meta.previousPageUrl,
-      }"
-      @update:current-page="fetchNewPageData"
-    />
-  </div>
+    </template>
+    <template #footer-action>
+      <div class="flex items-center gap-4">
+        <button
+          type="button"
+          class="btn btn-outline border-base-content/50 text-base-content hover:border-error hover:text-error hover:bg-base-100"
+          @click="resetFilters"
+        >
+          Réinitialiser
+        </button>
+
+        <label for="filter-drawer" class="btn btn-primary flex-1" @click="submitFilters">
+          Voir les résultats
+        </label>
+      </div>
+    </template>
+  </FilterDrawer>
 </template>

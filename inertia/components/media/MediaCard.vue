@@ -34,7 +34,7 @@ const favoriteBadgeStatus = computed(() => {
 
 <template>
   <div
-    class="bg-base-100 m-2 w-full max-w-[12rem] rounded-xl shadow-xl transition-transform duration-200 hover:scale-105"
+    class="bg-base-100 mx-auto w-full max-w-[12rem] rounded-xl shadow-xl transition-transform duration-200 hover:scale-105"
   >
     <figure class="relative px-3 pt-3">
       <div

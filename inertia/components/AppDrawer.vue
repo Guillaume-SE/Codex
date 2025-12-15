@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Link, usePage } from '@inertiajs/vue3'
 import { ref } from 'vue'
+import { navLinks } from '~/composables/useNavigationLink'
 
 const drawerCheckbox = ref<HTMLInputElement | null>(null)
 const page = usePage()
@@ -19,58 +20,38 @@ const isLinkActive = (path: string) => {
 <template>
   <div class="drawer">
     <input id="app-drawer" ref="drawerCheckbox" type="checkbox" class="drawer-toggle" />
-    <div class="drawer-content flex flex-col">
-      <!-- Navbar, header, footer etc -->
+    <div class="drawer-content bg-base-200 flex min-h-screen flex-col">
       <slot />
     </div>
-    <div class="drawer-side">
+    <div class="drawer-side z-[100]">
       <label for="app-drawer" aria-label="close sidebar" class="drawer-overlay"></label>
-      <ul class="menu bg-base-200 min-h-full w-80 p-4">
-        <div class="mx-2 mb-10 px-2 text-xl font-bold" @click="closeDrawer">
-          <Link href="/">Codex</Link>
+
+      <div class="bg-base-200 min-h-full w-80 p-4">
+        <div class="mb-20 flex items-center justify-between">
+          <div class="text-xl font-bold">
+            <Link href="/" @click="closeDrawer">Codex</Link>
+          </div>
+          <label
+            for="app-drawer"
+            aria-label="close-sidebar"
+            class="btn btn-sm btn-circle btn-ghost"
+          >
+            ✕
+          </label>
         </div>
-        <!-- Sidebar content here -->
-        <li @click="closeDrawer">
-          <Link
-            href="/categories/game"
-            :class="{ 'menu-active': isLinkActive('/categories/game') }"
-          >
-            Jeux
-          </Link>
-        </li>
-        <li @click="closeDrawer">
-          <Link
-            href="/categories/movie"
-            :class="{ 'menu-active': isLinkActive('/categories/movie') }"
-          >
-            Films
-          </Link>
-        </li>
-        <li @click="closeDrawer">
-          <Link
-            href="/categories/anime"
-            :class="{ 'menu-active': isLinkActive('/categories/anime') }"
-          >
-            Anime
-          </Link>
-        </li>
-        <li @click="closeDrawer">
-          <Link
-            href="/categories/series"
-            :class="{ 'menu-active': isLinkActive('/categories/series') }"
-          >
-            Séries
-          </Link>
-        </li>
-        <li @click="closeDrawer">
-          <Link
-            href="/categories/book"
-            :class="{ 'menu-active': isLinkActive('/categories/book') }"
-          >
-            Livres
-          </Link>
-        </li>
-      </ul>
+
+        <ul class="menu flex w-full flex-col items-center p-0">
+          <li v-for="link in navLinks" :key="link.href" @click="closeDrawer" class="w-full">
+            <Link
+              :href="link.href"
+              :class="{ 'menu-active': isLinkActive(link.href) }"
+              class="w-full justify-center"
+            >
+              {{ link.label }}
+            </Link>
+          </li>
+        </ul>
+      </div>
     </div>
   </div>
 </template>

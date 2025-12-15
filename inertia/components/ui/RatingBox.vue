@@ -15,23 +15,6 @@ const numericRating = computed(() => {
   return isNaN(num) ? null : num
 })
 
-// const ratingColor = computed(() => {
-//   const val = numericRating.value
-
-//   if (val === null) {
-//     return 'rating-default'
-//   }
-
-//   if (val >= 0 && val <= 4) {
-//     return 'rating-bad'
-//   } else if (val >= 5 && val <= 7) {
-//     return 'rating-mid'
-//   } else if (val >= 8 && val <= 10) {
-//     return 'rating-good'
-//   }
-
-//   return 'rating-default'
-// })
 const ratingColor = computed(() => {
   const val = numericRating.value
 
