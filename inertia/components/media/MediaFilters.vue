@@ -5,11 +5,10 @@ import { computed, onMounted, ref, type Component } from 'vue'
 import BookFilters from '~/components/media/filters/BookFilters.vue'
 import GameFilters from '~/components/media/filters/GameFilters.vue'
 import MovieFilters from '~/components/media/filters/MovieFilters.vue'
-import FilterTitleComp from '~/components/ui/FilterTitleComp.vue'
+import CollapseBox from '~/components/ui/CollapseBox.vue'
 import InputComp from '~/components/ui/InputComp.vue'
 import LabelComp from '~/components/ui/LabelComp.vue'
 import { useCapitalizeFirstLetter } from '~/composables/useCapitalizeFirstLetter'
-import { MAX_MOVIE_DURATION } from '~/composables/usePaginatedMediaFilters'
 
 defineProps<{
   statusesList: InferPageProps<MediaController, 'showByCategory'>['mediaStatusesList']
@@ -45,16 +44,6 @@ const isGenresActive = computed(
   () => isMounted.value && genresModel.value && genresModel.value.length > 0
 )
 
-const isCategoryFilterActive = computed(() => {
-  if (!isMounted.value) return false
-
-  const platformsActive = platformsModel.value && platformsModel.value.length > 0
-  const publishersActive = publishersModel.value && publishersModel.value.length > 0
-  const durationActive = durationModel.value && durationModel.value !== MAX_MOVIE_DURATION
-
-  return platformsActive || publishersActive || durationActive
-})
-
 const capitalizeFirstLetter = useCapitalizeFirstLetter
 
 const categoryFilterComponents: Record<string, Component> = {
@@ -65,58 +54,71 @@ const categoryFilterComponents: Record<string, Component> = {
 </script>
 
 <template>
-  <div>
+  <div class="flex flex-col gap-2">
     <!-- status -->
-    <div>
-      <FilterTitleComp title="Progression" :is-active="isStatusActive" />
-      <ul>
-        <li v-for="status in statusesList" :key="status.id">
+    <CollapseBox label="Progression" :is-active="isStatusActive" start-open>
+      <ul class="space-y-2">
+        <li v-for="status in statusesList" :key="status.id" class="flex items-center gap-3">
           <InputComp
             v-model="statusModel"
             type="checkbox"
             :value="status.id"
             :id="`status-${status.id}`"
+            class="checkbox checkbox-sm checked:checkbox-primary"
           />
-          <LabelComp :labelFor="`status-${status.id}`" :text="capitalizeFirstLetter(status.name)" />
+          <LabelComp
+            :labelFor="`status-${status.id}`"
+            :text="capitalizeFirstLetter(status.name)"
+            class="cursor-pointer"
+          />
         </li>
       </ul>
-    </div>
+    </CollapseBox>
+
     <!-- types -->
-    <div>
-      <FilterTitleComp title="Type" :is-active="isTypesActive" />
-      <ul>
-        <li v-for="type in typesList" :key="type.id">
+    <CollapseBox label="Type" :is-active="isTypesActive">
+      <ul class="space-y-2">
+        <li v-for="type in typesList" :key="type.id" class="flex items-center gap-3">
           <InputComp
             v-model="typesModel"
             type="checkbox"
             :value="type.id"
             :id="`type-${type.id}`"
+            class="checkbox checkbox-sm checked:checkbox-primary"
           />
-          <LabelComp :labelFor="`type-${type.id}`" :text="capitalizeFirstLetter(type.name)" />
+          <LabelComp
+            :labelFor="`type-${type.id}`"
+            :text="capitalizeFirstLetter(type.name)"
+            class="cursor-pointer"
+          />
         </li>
       </ul>
-    </div>
+    </CollapseBox>
+
     <!-- genres -->
-    <div>
-      <FilterTitleComp title="Genre" :is-active="isGenresActive" />
-      <ul>
-        <li v-for="genre in genresList" :key="genre.id">
+    <CollapseBox label="Genre" :is-active="isGenresActive">
+      <ul class="space-y-2">
+        <li v-for="genre in genresList" :key="genre.id" class="flex items-center gap-3">
           <InputComp
             v-model="genresModel"
             type="checkbox"
             :value="genre.id"
             :id="`genre-${genre.id}`"
+            class="checkbox checkbox-sm checked:checkbox-primary"
           />
-          <LabelComp :labelFor="`genre-${genre.id}`" :text="capitalizeFirstLetter(genre.name)" />
+          <LabelComp
+            :labelFor="`genre-${genre.id}`"
+            :text="capitalizeFirstLetter(genre.name)"
+            class="cursor-pointer"
+          />
         </li>
       </ul>
-    </div>
+    </CollapseBox>
 
     <!-- category related filters -->
     <div>
       <component
         :is="categoryFilterComponents[mediaCategory]"
-        :is-active="isCategoryFilterActive"
         :platforms-list="platformsList"
         :publishers-list="publishersList"
         v-model:platforms="platformsModel"
