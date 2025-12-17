@@ -2,6 +2,10 @@
 import { computed } from 'vue'
 import InputComp from '~/components/ui/InputComp.vue'
 
+defineOptions({
+  inheritAttrs: false,
+})
+
 const model = defineModel<string>()
 
 const props = defineProps<{
@@ -13,12 +17,20 @@ const props = defineProps<{
 }>()
 
 const sizeClass = computed(() => {
-  return props.size ? `range-${props.size}` : 'xs'
+  return props.size ? `range-${props.size}` : 'range-xs'
 })
 </script>
 
 <template>
-  <InputComp v-model="model" type="range" :min="min" :max="max" :step="step" :class="sizeClass" />
+  <InputComp
+    v-model="model"
+    v-bind="$attrs"
+    type="range"
+    :min="min"
+    :max="max"
+    :step="step"
+    :class="sizeClass"
+  />
 
   <div class="mt-2 flex justify-between px-2.5 text-xs">
     <span v-for="_ in labels" :key="_">|</span>

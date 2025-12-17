@@ -5,6 +5,7 @@ import type { MediaCategories } from '#types/MediaCategories'
 import { InferPageProps } from '@adonisjs/inertia/types'
 import { computed, toRef } from 'vue'
 import AppHead from '~/components/AppHead.vue'
+import FilterIcon from '~/components/icons/FilterIcon.vue'
 import FilterDrawer from '~/components/media/filters/FilterDrawer.vue'
 import MediaCard from '~/components/media/MediaCard.vue'
 import MediaFilters from '~/components/media/MediaFilters.vue'
@@ -75,19 +76,7 @@ const mediaListIsNotEmpty = computed(() => {
 
               <div>
                 <label for="filter-drawer" class="btn btn-neutral w-full gap-2 md:w-auto">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="16"
-                    height="16"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  >
-                    <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
-                  </svg>
+                  <FilterIcon />
                   Filtres
                 </label>
               </div>
