@@ -3,17 +3,20 @@ import type MediaController from '#controllers/media_controller'
 import type User from '#models/user'
 import type { MediaCategories } from '#types/MediaCategories'
 import { InferPageProps } from '@adonisjs/inertia/types'
+import { usePage } from '@inertiajs/vue3'
 import { computed, toRef } from 'vue'
 import AppHead from '~/components/AppHead.vue'
 import FilterIcon from '~/components/icons/FilterIcon.vue'
 import FilterDrawer from '~/components/media/filters/FilterDrawer.vue'
 import MediaCard from '~/components/media/MediaCard.vue'
+import MediaCardSkeleton from '~/components/media/MediaCardSkeleton.vue'
 import MediaFilters from '~/components/media/MediaFilters.vue'
 import Pagination from '~/components/Pagination.vue'
 import InputComp from '~/components/ui/InputComp.vue'
 import LabelComp from '~/components/ui/LabelComp.vue'
 import SearchBar from '~/components/ui/SearchBar.vue'
 import SelectComp from '~/components/ui/SelectComp.vue'
+import StatusDotComp from '~/components/ui/StatusDotComp.vue'
 import { useCategoryInfo } from '~/composables/useCategoryInfo'
 import { usePaginatedMediaFilters } from '~/composables/usePaginatedMediaFilters'
 
@@ -31,13 +34,33 @@ const props = defineProps<{
 
 const categoryRef = toRef(props, 'mediaCategory')
 const { title, categoryFr } = useCategoryInfo(categoryRef)
-const { filters, submitFilters, fetchNewPageData, resetFilters } = usePaginatedMediaFilters(
-  toRef(props, 'mediaCategory'),
-  toRef(props, 'mediaSortOptions')
-)
+const { filters, submitFilters, fetchNewPageData, resetFilters, isSubmitting } =
+  usePaginatedMediaFilters(toRef(props, 'mediaCategory'), toRef(props, 'mediaSortOptions'))
 
 const mediaListIsNotEmpty = computed(() => {
   return props.mediaList.data.length > 0 ? true : false
+})
+
+const page = usePage()
+
+const isDrawerFilterActive = computed(() => {
+  const urlParams = new URLSearchParams(page.url.split('?')[1])
+
+  // filters outside of the drawer who don't need to proc the dot
+  const outsideDrawerParams = ['page', 'search', 'sortBy', 'favorite']
+
+  for (const [key, value] of urlParams.entries()) {
+    // startWith needed since some params have []
+    const isSafeParam = outsideDrawerParams.some(
+      (safe) => key === safe || key.startsWith(`${safe}[`)
+    )
+
+    if (!isSafeParam) {
+      return true
+    }
+  }
+
+  return false
 })
 </script>
 
@@ -56,7 +79,7 @@ const mediaListIsNotEmpty = computed(() => {
           <div class="flex flex-col gap-4 md:flex-row md:items-end">
             <div class="w-full md:flex-1">
               <label class="label py-0 pb-1">
-                <span class="label-text text-base-content/70 text-xs font-bold"> Recherche </span>
+                <span class="label-text text-base-content/70 text-xs font-bold">Recherche</span>
               </label>
               <SearchBar
                 v-model="filters.search"
@@ -76,8 +99,13 @@ const mediaListIsNotEmpty = computed(() => {
 
               <div>
                 <label for="filter-drawer" class="btn btn-neutral w-full gap-2 md:w-auto">
-                  <FilterIcon />
-                  Filtres
+                  <FilterIcon :class="{ 'text-primary': isDrawerFilterActive }" />
+                  <span>Filtres</span>
+                  <StatusDotComp
+                    v-if="isDrawerFilterActive"
+                    colorClass="bg-primary"
+                    animation="pulse"
+                  />
                 </label>
               </div>
             </div>
@@ -100,8 +128,12 @@ const mediaListIsNotEmpty = computed(() => {
         </form>
       </div>
 
+      <div v-if="isSubmitting" class="grid grid-cols-[repeat(auto-fill,minmax(180px,1fr))] gap-3">
+        <MediaCardSkeleton v-for="n in 12" :key="n" />
+      </div>
+
       <div
-        v-if="mediaListIsNotEmpty"
+        v-else-if="mediaListIsNotEmpty"
         class="grid grid-cols-[repeat(auto-fill,minmax(180px,1fr))] gap-3"
       >
         <MediaCard
