@@ -5,7 +5,7 @@ import { computed } from 'vue'
 const props = defineProps<{
   status?: UsageStatus
   colorClass?: string
-  animation?: 'bounce' | 'ping'
+  animation?: 'bounce' | 'ping' | 'pulse'
 }>()
 
 const dotColor = computed(() => {
@@ -29,8 +29,10 @@ const dotColor = computed(() => {
   return 'bg-neutral-content'
 })
 
-const dotBouncing = computed(() => {
-  return props.animation === 'bounce' ? 'animate-bounce' : ''
+const dotAnimation = computed(() => {
+  if (props.animation === 'bounce') return 'animate-bounce'
+  if (props.animation === 'pulse') return 'animate-pulse'
+  return ''
 })
 </script>
 
@@ -40,5 +42,5 @@ const dotBouncing = computed(() => {
     <div class="status" :class="dotColor"></div>
   </div>
 
-  <div v-else class="status" :class="[dotColor, dotBouncing]"></div>
+  <div v-else class="status" :class="[dotColor, dotAnimation]"></div>
 </template>
