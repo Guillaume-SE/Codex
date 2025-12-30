@@ -90,7 +90,8 @@ export default class MediaController {
     const filters = await request.validateUsing(mediaFiltersValidator)
     const categoryName = params.categoryName
 
-    const mediaList = await MediaService.getFiltered(filters, page, 15, categoryName)
+    // 72 items prevents gaps in the last row of ui pages for 2, 3, 4, 6, and 8-column layouts.
+    const mediaList = await MediaService.getFiltered(filters, page, 72, categoryName)
     const mediaSortOptions = MediaService.sortOptions
     const mediaStatusesList = await MediaStatus.query().orderBy('id')
     const mediaTypesList = await this.mediaCategoryService.getCategoryTypes(categoryName)
