@@ -34,19 +34,20 @@ const favoriteBadgeStatus = computed(() => {
 
 <template>
   <div
-    class="bg-base-100 mx-auto w-full max-w-[12rem] rounded-xl shadow-xl transition-transform duration-200 hover:scale-105"
+    class="bg-base-100 mx-auto w-full max-w-[13rem] rounded-xl border border-transparent transition-all duration-300 ease-out hover:-translate-y-1"
   >
     <figure class="relative px-3 pt-3">
       <div
-        class="bg-base-100 absolute top-4 left-2 z-20 flex origin-top-left transform rounded-full p-[2px]"
+        class="bg-base-100 absolute top-3 left-2 z-20 flex origin-top-left transform rounded-full p-[2px]"
       >
         <StatusProgressBadge :status="media.status" />
       </div>
 
       <div
-        class="bg-base-100 absolute top-4 right-2 z-20 origin-top-right transform rounded-full p-[3px]"
+        v-if="favoriteBadgeStatus"
+        class="bg-base-100 absolute top-3 right-2 z-20 origin-top-right transform rounded-full p-[3px]"
       >
-        <FavoriteBadge v-if="favoriteBadgeStatus" :variant="favoriteBadgeStatus" />
+        <FavoriteBadge :variant="favoriteBadgeStatus" />
       </div>
 
       <Link
