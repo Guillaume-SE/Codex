@@ -10,31 +10,31 @@ export default class extends BaseSeeder {
       .apply('released')
       .with('gameInfo')
       .with('review')
-      .createMany(20)
+      .createMany(80)
 
     const moviesReleased = await MediaFactory.apply('isMovie')
       .apply('released')
       .with('movieInfo')
       .with('review')
-      .createMany(20)
+      .createMany(80)
 
     const seriesReleased = await MediaFactory.apply('isSeries')
       .apply('released')
       .with('seriesInfo')
       .with('review')
-      .createMany(20)
+      .createMany(80)
 
     const animeReleased = await MediaFactory.apply('isAnime')
       .apply('released')
       .with('animeInfo')
       .with('review')
-      .createMany(20)
+      .createMany(80)
 
     const booksReleased = await MediaFactory.apply('isBook')
       .apply('released')
       .with('bookInfo')
       .with('review')
-      .createMany(20)
+      .createMany(80)
 
     // without review and cover
     const gamesReleasingSoon = await MediaFactory.apply('isGame')
