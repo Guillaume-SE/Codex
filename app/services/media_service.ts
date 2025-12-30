@@ -166,8 +166,17 @@ export default class MediaService {
         })
       })
       .if(['rating_asc', 'rating_desc'].includes(sort.value), (query) => {
-        query.join('reviews', 'reviews.id', 'media.id').select('media.*')
+        query
+          .leftJoin('reviews', 'reviews.media_id', 'media.id')
+          .select('media.*')
+          .orderByRaw('CASE WHEN reviews.rating IS NULL THEN 1 ELSE 0 END ASC')
+          .orderBy('reviews.rating', sort.dir)
+          .orderBy('reviews.is_favorite', 'desc')
       })
+      .if(!['rating_asc', 'rating_desc'].includes(sort.value), (query) => {
+        query.orderBy(sort.column, sort.dir)
+      })
+      .orderBy('id', 'desc')
       .preload('status')
       .preload('category')
       .preload('type')
@@ -181,7 +190,6 @@ export default class MediaService {
       .preload('bookInfo')
       .preload('review')
       .preload('cover')
-      .orderBy(sort.column, sort.dir)
       .paginate(page, results)
 
     return mediaQuery

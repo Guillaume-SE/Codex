@@ -81,7 +81,6 @@ export function usePaginatedMediaFilters(
       },
     })
   }
-
   const debouncedSubmit = useDebounce(submitFilters, 500)
 
   // for filters choice that need a debounce
@@ -141,5 +140,6 @@ export function usePaginatedMediaFilters(
     debouncedSubmit,
     fetchNewPageData,
     resetFilters,
+    isSubmitting,
   }
 }
