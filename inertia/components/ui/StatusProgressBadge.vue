@@ -14,7 +14,7 @@ const props = defineProps({
 const dotColorClass = computed(() => {
   switch (props.status) {
     case 'en cours':
-      return 'bg-info'
+      return 'bg-primary'
     case 'terminé':
       return 'bg-success'
     case 'en pause':
@@ -22,7 +22,7 @@ const dotColorClass = computed(() => {
     case 'arrêté':
       return 'bg-error'
     case 'prévu':
-      return 'bg-primary'
+      return 'bg-info'
     default:
       return 'bg-neutral-content'
   }
