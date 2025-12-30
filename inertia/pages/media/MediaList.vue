@@ -17,7 +17,6 @@ import LabelComp from '~/components/ui/LabelComp.vue'
 import SearchBar from '~/components/ui/SearchBar.vue'
 import SelectComp from '~/components/ui/SelectComp.vue'
 import StatusDotComp from '~/components/ui/StatusDotComp.vue'
-import { useCategoryInfo } from '~/composables/useCategoryInfo'
 import { usePaginatedMediaFilters } from '~/composables/usePaginatedMediaFilters'
 
 const props = defineProps<{
@@ -32,8 +31,7 @@ const props = defineProps<{
   user?: User
 }>()
 
-const categoryRef = toRef(props, 'mediaCategory')
-const { title, categoryFr } = useCategoryInfo(categoryRef)
+const page = usePage()
 const { filters, submitFilters, fetchNewPageData, resetFilters, isSubmitting } =
   usePaginatedMediaFilters(toRef(props, 'mediaCategory'), toRef(props, 'mediaSortOptions'))
 
@@ -41,12 +39,9 @@ const mediaListIsNotEmpty = computed(() => {
   return props.mediaList.data.length > 0 ? true : false
 })
 
-const page = usePage()
-
-const isDrawerFilterActive = computed(() => {
+const hasFilterActive = computed(() => {
   const urlParams = new URLSearchParams(page.url.split('?')[1])
-
-  // filters outside of the drawer who don't need to proc the dot
+  // params who don't need to proc the dot
   const outsideDrawerParams = ['page', 'search', 'sortBy', 'favorite']
 
   for (const [key, value] of urlParams.entries()) {
@@ -59,19 +54,31 @@ const isDrawerFilterActive = computed(() => {
       return true
     }
   }
-
   return false
+})
+
+const CATEGORY_CONFIG: Record<MediaCategories, { title: string; label: string }> = {
+  game: { title: 'Liste des jeux', label: 'jeux' },
+  movie: { title: 'Liste des films', label: 'films' },
+  series: { title: 'Liste des séries', label: 'séries' },
+  book: { title: 'Liste des livres', label: 'livres' },
+  anime: { title: 'Liste des animes', label: 'anime' },
+}
+
+const currentCategoryInfo = computed(() => CATEGORY_CONFIG[props.mediaCategory])
+
+const formattedPageResultsText = computed(() => {
+  return props.mediaList.meta.total > 1 ? 'résultats' : 'résultat'
 })
 </script>
 
 <template>
-  <AppHead :title="title" />
+  <AppHead :title="currentCategoryInfo.title" />
 
   <FilterDrawer>
     <div class="container mx-auto space-y-6 px-2 py-4">
       <div class="flex items-center justify-between">
-        <h2 class="text-3xl font-bold capitalize">{{ categoryFr }}</h2>
-        <span class="badge badge-neutral badge-lg">{{ mediaList.meta.total }} résultats</span>
+        <h2 class="text-3xl font-bold capitalize">{{ currentCategoryInfo.label }}</h2>
       </div>
 
       <div class="bg-base-100 rounded-xl p-4 shadow-sm">
@@ -79,7 +86,7 @@ const isDrawerFilterActive = computed(() => {
           <div class="flex flex-col gap-4 md:flex-row md:items-end">
             <div class="w-full md:flex-1">
               <label class="label py-0 pb-1">
-                <span class="label-text text-base-content/70 text-xs font-bold">Recherche</span>
+                <span class="label-text text-xs font-bold">Recherche</span>
               </label>
               <SearchBar
                 v-model="filters.search"
@@ -92,49 +99,68 @@ const isDrawerFilterActive = computed(() => {
             <div class="flex flex-wrap items-end gap-4">
               <div class="min-w-[140px]">
                 <label class="label py-0 pb-1">
-                  <span class="label-text text-base-content/70 text-xs font-bold">Trier par</span>
+                  <span class="label-text text-xs font-bold">Trier par</span>
                 </label>
                 <SelectComp v-model="filters.sortBy" :options="mediaSortOptions" />
               </div>
 
               <div>
-                <label for="filter-drawer" class="btn btn-neutral w-full gap-2 md:w-auto">
-                  <FilterIcon :class="{ 'text-primary': isDrawerFilterActive }" />
+                <label for="filter-drawer" class="btn btn-soft w-full gap-2 md:w-auto">
+                  <FilterIcon :class="{ 'text-primary': hasFilterActive }" />
                   <span>Filtres</span>
-                  <StatusDotComp
-                    v-if="isDrawerFilterActive"
-                    colorClass="bg-primary"
-                    animation="pulse"
-                  />
+                  <StatusDotComp v-if="hasFilterActive" colorClass="bg-primary" />
                 </label>
               </div>
             </div>
           </div>
 
-          <div class="flex items-center gap-3 md:pt-2">
-            <InputComp
-              v-model="filters.favorite"
-              id="favorite-toggle"
-              type="checkbox"
-              variant="toggle"
-              class="toggle-primary"
-            />
-            <LabelComp
-              labelFor="favorite-toggle"
-              text="Uniquement les coups de cœur"
-              class="cursor-pointer"
-            />
+          <div class="flex flex-col justify-between gap-4 pt-2 sm:flex-row sm:items-center">
+            <div class="flex items-center gap-3">
+              <InputComp
+                v-model="filters.favorite"
+                id="favorite-toggle"
+                type="checkbox"
+                variant="toggle"
+                class="toggle-primary"
+              />
+              <LabelComp
+                labelFor="favorite-toggle"
+                text="Uniquement les favoris"
+                class="cursor-pointer"
+              />
+            </div>
+
+            <div
+              class="badge badge-neutral min-w-[100px] justify-center gap-1 self-end font-medium sm:self-auto"
+            >
+              <transition
+                mode="out-in"
+                enter-active-class="transition-all duration-200 ease-out"
+                enter-from-class="opacity-0 translate-y-1"
+                enter-to-class="opacity-100 translate-y-0"
+                leave-active-class="transition-all duration-200 ease-in"
+                leave-from-class="opacity-100 translate-y-0"
+                leave-to-class="opacity-0 -translate-y-1"
+              >
+                <span :key="mediaList.meta.total" class="inline-block">
+                  {{ mediaList.meta.total }} {{ formattedPageResultsText }}
+                </span>
+              </transition>
+            </div>
           </div>
         </form>
       </div>
 
-      <div v-if="isSubmitting" class="grid grid-cols-[repeat(auto-fill,minmax(180px,1fr))] gap-3">
-        <MediaCardSkeleton v-for="n in 12" :key="n" />
+      <div
+        v-if="isSubmitting"
+        class="grid grid-cols-[repeat(auto-fill,minmax(145px,1fr))] gap-x-3 gap-y-8 sm:grid-cols-[repeat(auto-fill,minmax(170px,1fr))]"
+      >
+        <MediaCardSkeleton v-for="n in 24" :key="n" />
       </div>
 
       <div
         v-else-if="mediaListIsNotEmpty"
-        class="grid grid-cols-[repeat(auto-fill,minmax(180px,1fr))] gap-3"
+        class="grid grid-cols-[repeat(auto-fill,minmax(145px,1fr))] gap-x-3 gap-y-8 sm:grid-cols-[repeat(auto-fill,minmax(170px,1fr))]"
       >
         <MediaCard
           v-for="media in mediaList.data"
