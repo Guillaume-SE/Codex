@@ -1,9 +1,10 @@
 <script setup lang="ts">
+import type { ColorVariant } from '#types/ColorVariant'
 import { Link } from '@inertiajs/vue3'
 import { computed } from 'vue'
 import Loader from '~/components/ui/Loader.vue'
 
-export type ButtonVariant = 'primary' | 'secondary' | 'neutral' | 'ghost' | 'link' | 'error'
+export type ButtonVariant = ColorVariant | 'ghost' | 'link'
 
 const props = withDefaults(
   defineProps<{
@@ -26,19 +27,13 @@ defineOptions({
   inheritAttrs: false,
 })
 
-const buttonClasses = computed(() => {
-  const variantMap = {
-    primary: 'btn-primary',
-    secondary: 'btn-secondary',
-    neutral: 'btn-neutral',
-    ghost: 'btn-ghost',
-    link: 'btn-link',
-    error: 'btn-error',
-  }
+const isLink = computed(() => !!props.href)
+const componentTag = computed(() => (isLink.value ? Link : 'button'))
 
+const buttonClasses = computed(() => {
   return [
     'btn',
-    props.variant ? variantMap[props.variant] : '',
+    `btn-${props.variant}`,
     props.size ? `btn-${props.size}` : '',
     { 'btn-outline': props.outline },
     {
@@ -47,7 +42,7 @@ const buttonClasses = computed(() => {
   ]
 })
 
-// usefull since Link as his own way to work
+// prevent click navigation if disabled since Link as his own way to work
 function handleLinkClick(event: MouseEvent) {
   if (props.disabled || props.loading) {
     event.preventDefault()
@@ -56,26 +51,17 @@ function handleLinkClick(event: MouseEvent) {
 </script>
 
 <template>
-  <Link
-    v-if="href"
+  <component
+    :is="componentTag"
     v-bind="$attrs"
-    :href="href"
+    :href="isLink ? href : undefined"
+    :type="isLink ? undefined : type"
+    :disabled="isLink ? undefined : disabled"
     :class="[buttonClasses, $attrs.class]"
     :aria-disabled="disabled || loading"
     @click="handleLinkClick"
   >
     <Loader v-if="loading" />
     <slot />
-  </Link>
-
-  <button
-    v-else
-    v-bind="$attrs"
-    :type="type"
-    :class="[buttonClasses, $attrs.class]"
-    :aria-disabled="disabled || loading"
-  >
-    <Loader v-if="loading" />
-    <slot />
-  </button>
+  </component>
 </template>
