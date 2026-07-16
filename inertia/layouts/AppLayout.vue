@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import { watch } from 'vue'
-import { usePage } from '@inertiajs/vue3'
-import { toast, Toaster } from 'vue-sonner'
+import { Form, Link } from '@adonisjs/inertia/vue'
 import type { Data } from '@generated/data'
-import { Link, Form } from '@adonisjs/inertia/vue'
+import { usePage } from '@inertiajs/vue3'
+import { watch } from 'vue'
+import { toast, Toaster } from 'vue-sonner'
 
+const EXCLUDED_PATHS = ['/login', '/register']
 const page = usePage<Data.SharedProps>()
 
 watch(
@@ -15,7 +16,9 @@ watch(
 watch(
   () => page.props.flash,
   (flashMessages) => {
-    if (flashMessages.error) {
+    const isExcludedFromErrorToast = EXCLUDED_PATHS.some((path) => page.url.startsWith(path))
+
+    if (flashMessages.error && !isExcludedFromErrorToast) {
       toast.error(flashMessages.error)
     }
     if (flashMessages.success) {
@@ -54,7 +57,7 @@ watch(
             </Form>
           </template>
           <template v-else>
-            <Link route="new_account.create">Signup</Link>
+            <Link route="register.create">Register</Link>
             <Link route="session.create">Login</Link>
           </template>
         </nav>
@@ -66,5 +69,5 @@ watch(
     <slot />
   </main>
 
-  <Toaster position="top-center" rich-colors />
+  <Toaster rich-colors position="bottom-right" closeButton />
 </template>

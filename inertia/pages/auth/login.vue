@@ -1,5 +1,11 @@
 <script setup lang="ts">
 import { Form } from '@adonisjs/inertia/vue'
+import type { Data } from '@generated/data'
+import { usePage } from '@inertiajs/vue3'
+import { computed } from 'vue'
+
+const page = usePage<Data.SharedProps>()
+const error = computed(() => page.props.flash.error)
 </script>
 
 <template>
@@ -7,6 +13,10 @@ import { Form } from '@adonisjs/inertia/vue'
     <div>
       <h1>Login</h1>
       <p>Enter your details below to login to your account</p>
+    </div>
+
+    <div v-if="error">
+      {{ error }}
     </div>
 
     <div>
