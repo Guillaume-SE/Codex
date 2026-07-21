@@ -22,15 +22,15 @@ const error = computed(() => page.props.flash.error)
     <div>
       <Form v-slot="{ processing, errors }" route="session.store">
         <div>
-          <label for="email">Email</label>
+          <label for="username">Username</label>
           <input
-            id="email"
-            type="email"
-            name="email"
+            id="Username"
+            type="text"
+            name="username"
             autocomplete="username"
-            :data-invalid="errors.email ? 'true' : undefined"
+            :data-invalid="errors.username ? 'true' : undefined"
           />
-          <div v-if="errors.email">{{ errors.email }}</div>
+          <div v-if="errors.username">{{ errors.username }}</div>
         </div>
 
         <div>

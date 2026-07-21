@@ -1,15 +1,11 @@
 import { UserSchema } from '#database/schema'
-import hash from '@adonisjs/core/services/hash'
-import { compose } from '@adonisjs/core/helpers'
 import { withAuthFinder } from '@adonisjs/auth/mixins/lucid'
+import { compose } from '@adonisjs/core/helpers'
+import hash from '@adonisjs/core/services/hash'
 
-export default class User extends compose(UserSchema, withAuthFinder(hash)) {
-  get initials() {
-    const [first, last] = this.fullName ? this.fullName.split(' ') : this.email.split('@')
-    if (first && last) {
-      return `${first.charAt(0)}${last.charAt(0)}`.toUpperCase()
-    }
+const AuthFinder = withAuthFinder(() => hash.use('scrypt'), {
+  uids: ['username'],
+  passwordColumnName: 'password',
+})
 
-    return `${first.slice(0, 2)}`.toUpperCase()
-  }
-}
+export default class User extends compose(UserSchema, AuthFinder) {}
