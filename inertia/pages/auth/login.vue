@@ -24,7 +24,7 @@ const error = computed(() => page.props.flash.error)
         <div>
           <label for="username">Username</label>
           <input
-            id="Username"
+            id="username"
             type="text"
             name="username"
             autocomplete="username"
@@ -43,6 +43,11 @@ const error = computed(() => page.props.flash.error)
             :data-invalid="errors.password ? 'true' : undefined"
           />
           <div v-if="errors.password">{{ errors.password }}</div>
+        </div>
+
+        <div>
+          <input id="remember" type="checkbox" name="remember" />
+          <label for="remember">Rester connecté</label>
         </div>
 
         <div>

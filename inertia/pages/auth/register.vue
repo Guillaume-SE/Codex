@@ -35,6 +35,11 @@ import { Form } from '@adonisjs/inertia/vue'
         </div>
 
         <div>
+          <input id="remember" type="checkbox" name="remember" checked />
+          <label for="remember">Rester connecté</label>
+        </div>
+
+        <div>
           <button type="submit" class="button" :disabled="processing">Sign up</button>
         </div>
       </Form>
