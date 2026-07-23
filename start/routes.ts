@@ -16,6 +16,9 @@ router
 
 router
   .group(() => {
+    router.get('onboarding', [controllers.auth.Onboardings, 'show'])
+    router.post('onboarding', [controllers.auth.Onboardings, 'destroy'])
+
     router.post('logout', [controllers.auth.Session, 'destroy'])
   })
   .use(middleware.auth())

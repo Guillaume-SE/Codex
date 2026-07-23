@@ -7,11 +7,15 @@ export default class RegisterController {
     return inertia.render('auth/register', {})
   }
 
-  async store({ request, response, auth }: HttpContext) {
+  async store({ request, response, session, auth }: HttpContext) {
     const { remember, ...userData } = await request.validateUsing(registerValidator)
     const user = await User.create(userData)
 
+    if (user.plainRecoveryCode) {
+      session.put('pendingRecoveryCode', user.plainRecoveryCode)
+    }
+
     await auth.use('web').login(user, !!remember)
-    return response.redirect().toIntendedRoute('home')
+    return response.redirect().toRoute('onboardings.show')
   }
 }

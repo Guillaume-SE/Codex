@@ -36,6 +36,18 @@ const routes = {
     tokens: [{"old":"/login","type":0,"val":"login","end":""}],
     types: placeholder as Registry['session.store']['types'],
   },
+  'onboardings.show': {
+    methods: ["GET","HEAD"],
+    pattern: '/onboarding',
+    tokens: [{"old":"/onboarding","type":0,"val":"onboarding","end":""}],
+    types: placeholder as Registry['onboardings.show']['types'],
+  },
+  'onboardings.destroy': {
+    methods: ["POST"],
+    pattern: '/onboarding',
+    tokens: [{"old":"/onboarding","type":0,"val":"onboarding","end":""}],
+    types: placeholder as Registry['onboardings.destroy']['types'],
+  },
   'session.destroy': {
     methods: ["POST"],
     pattern: '/logout',

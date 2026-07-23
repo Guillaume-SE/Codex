@@ -12,4 +12,8 @@ export interface ApiDefinition {
     store: typeof routes['session.store']
     destroy: typeof routes['session.destroy']
   }
+  onboardings: {
+    show: typeof routes['onboardings.show']
+    destroy: typeof routes['onboardings.destroy']
+  }
 }

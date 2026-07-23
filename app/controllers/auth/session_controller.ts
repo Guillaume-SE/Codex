@@ -9,7 +9,6 @@ export default class SessionController {
 
   async store({ request, auth, response }: HttpContext) {
     const { username, password, remember } = await request.validateUsing(loginValidator)
-    console.log(username, password, remember)
     const user = await User.verifyCredentials(username, password)
 
     await auth.use('web').login(user, !!remember)

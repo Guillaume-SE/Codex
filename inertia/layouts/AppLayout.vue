@@ -2,7 +2,7 @@
 import { Form, Link } from '@adonisjs/inertia/vue'
 import type { Data } from '@generated/data'
 import { usePage } from '@inertiajs/vue3'
-import { watch } from 'vue'
+import { computed, watch } from 'vue'
 import { toast, Toaster } from 'vue-sonner'
 
 const EXCLUDED_PATHS = ['/login', '/register']
@@ -27,6 +27,11 @@ watch(
   },
   { immediate: true }
 )
+
+const hasPendingCode = computed(() => {
+  const isOnOnboardingPage = page.url.startsWith('/onboarding')
+  return page.props.hasPendingRecoveryCode && !isOnOnboardingPage
+})
 </script>
 
 <template>
@@ -64,6 +69,13 @@ watch(
       </div>
     </div>
   </header>
+
+  <div v-if="hasPendingCode" class="bg-amber-500 text-black p-3 text-center">
+    <span>⚠️ You haven't confirmed your account recovery code yet!</span>
+    <Link route="onboardings.show" class="underline font-bold ml-2">
+      Click here to view and save it
+    </Link>
+  </div>
 
   <main>
     <slot />
