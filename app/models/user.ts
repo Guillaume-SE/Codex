@@ -1,7 +1,8 @@
 import { UserSchema } from '#database/schema'
+import { errors } from '@adonisjs/auth'
 import { withAuthFinder } from '@adonisjs/auth/mixins/lucid'
 import { DbRememberMeTokensProvider } from '@adonisjs/auth/session'
-import { compose } from '@adonisjs/core/helpers'
+import { compose, safeTiming } from '@adonisjs/core/helpers'
 import string from '@adonisjs/core/helpers/string'
 import hash from '@adonisjs/core/services/hash'
 import { beforeCreate } from '@adonisjs/lucid/orm'
@@ -16,7 +17,7 @@ export default class User extends compose(UserSchema, AuthFinder) {
   declare plainRecoveryCode?: string
 
   private static generateUserFriendlyCode(): string {
-    // replace to avoid weird results with hyphens or underscores
+    // to have consistent code format
     const cleanCode = string.random(32).replace(/[-_]/g, '').toUpperCase()
     return cleanCode
       .slice(0, 16)
@@ -24,12 +25,35 @@ export default class User extends compose(UserSchema, AuthFinder) {
       .join('-')
   }
 
+  async generateNewRecoveryCode(): Promise<string> {
+    const rawRecoveryCode = (this.constructor as typeof User).generateUserFriendlyCode()
+
+    this.plainRecoveryCode = rawRecoveryCode
+    this.recoveryCode = await hash.make(rawRecoveryCode)
+
+    return rawRecoveryCode
+  }
+
   @beforeCreate()
   static async assignDefaults(user: User) {
     user.shareCode = string.random(16)
+    await user.generateNewRecoveryCode()
+  }
 
-    const rawRecoveryCode = this.generateUserFriendlyCode()
-    user.plainRecoveryCode = rawRecoveryCode
-    user.recoveryCode = await hash.make(rawRecoveryCode)
+  static async verifyRecoveryCode(username: string, recoveryCode: string): Promise<User> {
+    return safeTiming(1000, async (timing) => {
+      const user = await this.findBy('username', username)
+
+      if (user && user.recoveryCode) {
+        const isValid = await hash.use('scrypt').verify(user.recoveryCode, recoveryCode)
+        if (isValid) {
+          // if everything ok, early return
+          timing.returnEarly()
+          return user
+        }
+      }
+
+      throw new errors.E_INVALID_CREDENTIALS('Invalid username or recovery code')
+    })
   }
 }

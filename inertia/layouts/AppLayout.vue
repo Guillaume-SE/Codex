@@ -5,7 +5,7 @@ import { usePage } from '@inertiajs/vue3'
 import { computed, watch } from 'vue'
 import { toast, Toaster } from 'vue-sonner'
 
-const EXCLUDED_PATHS = ['/login', '/register']
+const EXCLUDED_PATHS = ['/login', '/register', '/recover-account']
 const page = usePage<Data.SharedProps>()
 
 watch(

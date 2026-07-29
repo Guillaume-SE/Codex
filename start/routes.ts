@@ -11,6 +11,9 @@ router
 
     router.get('login', [controllers.auth.Session, 'create'])
     router.post('login', [controllers.auth.Session, 'store'])
+
+    router.get('recover-account', [controllers.auth.AccountRecovery, 'create'])
+    router.post('recover-account', [controllers.auth.AccountRecovery, 'store'])
   })
   .use(middleware.guest())
 

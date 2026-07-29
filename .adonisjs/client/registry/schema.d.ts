@@ -67,6 +67,30 @@ export interface Registry {
       errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/auth/session_controller').default['store']>>> | { status: 422; response: { errors: SimpleError[] } }
     }
   }
+  'account_recovery.create': {
+    methods: ["GET","HEAD"]
+    pattern: '/recover-account'
+    types: {
+      body: {}
+      paramsTuple: []
+      params: {}
+      query: {}
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/auth/account_recovery_controller').default['create']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/auth/account_recovery_controller').default['create']>>>
+    }
+  }
+  'account_recovery.store': {
+    methods: ["POST"]
+    pattern: '/recover-account'
+    types: {
+      body: ExtractBody<InferInput<(typeof import('#validators/auth_validator').accountRecoverValidator)>>
+      paramsTuple: []
+      params: {}
+      query: ExtractQuery<InferInput<(typeof import('#validators/auth_validator').accountRecoverValidator)>>
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/auth/account_recovery_controller').default['store']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/auth/account_recovery_controller').default['store']>>> | { status: 422; response: { errors: SimpleError[] } }
+    }
+  }
   'onboardings.show': {
     methods: ["GET","HEAD"]
     pattern: '/onboarding'

@@ -36,6 +36,18 @@ const routes = {
     tokens: [{"old":"/login","type":0,"val":"login","end":""}],
     types: placeholder as Registry['session.store']['types'],
   },
+  'account_recovery.create': {
+    methods: ["GET","HEAD"],
+    pattern: '/recover-account',
+    tokens: [{"old":"/recover-account","type":0,"val":"recover-account","end":""}],
+    types: placeholder as Registry['account_recovery.create']['types'],
+  },
+  'account_recovery.store': {
+    methods: ["POST"],
+    pattern: '/recover-account',
+    tokens: [{"old":"/recover-account","type":0,"val":"recover-account","end":""}],
+    types: placeholder as Registry['account_recovery.store']['types'],
+  },
   'onboardings.show': {
     methods: ["GET","HEAD"],
     pattern: '/onboarding',

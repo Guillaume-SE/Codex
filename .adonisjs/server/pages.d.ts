@@ -9,6 +9,7 @@ type ExtractProps<T> = Omit<
 
 declare module '@adonisjs/inertia/types' {
   export interface InertiaPages {
+    'auth/account_recovery/create': ExtractProps<(typeof import('../../inertia/pages/auth/account_recovery/create.vue'))['default']>
     'auth/login': ExtractProps<(typeof import('../../inertia/pages/auth/login.vue'))['default']>
     'auth/onboardings': ExtractProps<(typeof import('../../inertia/pages/auth/onboardings.vue'))['default']>
     'auth/register': ExtractProps<(typeof import('../../inertia/pages/auth/register.vue'))['default']>

@@ -11,8 +11,8 @@ const error = computed(() => page.props.flash.error)
 <template>
   <div class="form-container">
     <div>
-      <h1>Login</h1>
-      <p>Enter your details below to login to your account</p>
+      <h1>Réinitialiser mon mot de passe</h1>
+      <p>Enter your details below to reset your password</p>
     </div>
 
     <div v-if="error">
@@ -20,7 +20,7 @@ const error = computed(() => page.props.flash.error)
     </div>
 
     <div>
-      <Form v-slot="{ processing, errors }" route="session.store">
+      <Form v-slot="{ processing, errors }" route="account_recovery.store">
         <div>
           <label for="username">Username</label>
           <input
@@ -34,7 +34,18 @@ const error = computed(() => page.props.flash.error)
         </div>
 
         <div>
-          <label for="password">Password</label>
+          <label for="recoveryCode">Code de récupération</label>
+          <input
+            id="recoveryCode"
+            type="recoveryCode"
+            name="recoveryCode"
+            :data-invalid="errors.recoveryCode ? 'true' : undefined"
+          />
+          <div v-if="errors.recoveryCode">{{ errors.recoveryCode }}</div>
+        </div>
+
+        <div>
+          <label for="password">Nouveau mot de passe</label>
           <input
             id="password"
             type="password"
@@ -46,17 +57,7 @@ const error = computed(() => page.props.flash.error)
         </div>
 
         <div>
-          <div>
-            <input id="remember" type="checkbox" name="remember" />
-            <label for="remember">Rester connecté</label>
-          </div>
-          <div>
-            <Link route="account_recovery.create"> Mot de passe oublié</Link>
-          </div>
-        </div>
-
-        <div>
-          <button type="submit" class="button" :disabled="processing">Login</button>
+          <button type="submit" class="button" :disabled="processing">Confirmer</button>
         </div>
       </Form>
     </div>

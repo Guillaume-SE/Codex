@@ -5,6 +5,7 @@
 
 export const controllers = {
   auth: {
+    AccountRecovery: () => import('#controllers/auth/account_recovery_controller'),
     Onboardings: () => import('#controllers/auth/onboardings_controller'),
     Register: () => import('#controllers/auth/register_controller'),
     Session: () => import('#controllers/auth/session_controller'),

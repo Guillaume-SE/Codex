@@ -22,3 +22,9 @@ export const loginValidator = vine.create({
   password: password(),
   remember: remember(),
 })
+
+export const accountRecoverValidator = vine.create({
+  username: username(),
+  recoveryCode: vine.string().trim(),
+  password: password().minLength(8),
+})

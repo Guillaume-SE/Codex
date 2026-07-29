@@ -9,6 +9,8 @@ export type ScannedRoutes = {
     'register.store': { paramsTuple?: []; params?: {} }
     'session.create': { paramsTuple?: []; params?: {} }
     'session.store': { paramsTuple?: []; params?: {} }
+    'account_recovery.create': { paramsTuple?: []; params?: {} }
+    'account_recovery.store': { paramsTuple?: []; params?: {} }
     'onboardings.show': { paramsTuple?: []; params?: {} }
     'onboardings.destroy': { paramsTuple?: []; params?: {} }
     'session.destroy': { paramsTuple?: []; params?: {} }
@@ -17,17 +19,20 @@ export type ScannedRoutes = {
     'home': { paramsTuple?: []; params?: {} }
     'register.create': { paramsTuple?: []; params?: {} }
     'session.create': { paramsTuple?: []; params?: {} }
+    'account_recovery.create': { paramsTuple?: []; params?: {} }
     'onboardings.show': { paramsTuple?: []; params?: {} }
   }
   HEAD: {
     'home': { paramsTuple?: []; params?: {} }
     'register.create': { paramsTuple?: []; params?: {} }
     'session.create': { paramsTuple?: []; params?: {} }
+    'account_recovery.create': { paramsTuple?: []; params?: {} }
     'onboardings.show': { paramsTuple?: []; params?: {} }
   }
   POST: {
     'register.store': { paramsTuple?: []; params?: {} }
     'session.store': { paramsTuple?: []; params?: {} }
+    'account_recovery.store': { paramsTuple?: []; params?: {} }
     'onboardings.destroy': { paramsTuple?: []; params?: {} }
     'session.destroy': { paramsTuple?: []; params?: {} }
   }
