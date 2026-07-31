@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Form, Link } from '@adonisjs/inertia/vue'
+import { Form } from '@adonisjs/inertia/vue'
 import type { Data } from '@generated/data'
 import { usePage } from '@inertiajs/vue3'
 import { computed } from 'vue'

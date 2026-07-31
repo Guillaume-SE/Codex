@@ -1,5 +1,7 @@
 import User from '#models/user'
+import { AuthLimiterService } from '#services/auth/auth_limiter_service'
 import { accountRecoverValidator } from '#validators/auth_validator'
+import { inject } from '@adonisjs/core'
 import db from '@adonisjs/lucid/services/db'
 import { Infer } from '@vinejs/vine/types'
 
@@ -10,8 +12,29 @@ export interface AccountRecoverResult {
   newPlainCode: string
 }
 
+@inject()
 export class AccountRecoveryService {
-  async handle({
+  constructor(protected authLimiter: AuthLimiterService) {}
+
+  async handle(payload: AccountRecoveryPayload): Promise<AccountRecoverResult | null> {
+    const result = await this.authLimiter.attempt(
+      {
+        prefix: 'recovery',
+        username: payload.username,
+        userRequests: 3,
+        ipRequests: 10,
+      },
+      () => this.resetUserCredentials(payload)
+    )
+
+    if (!result) {
+      return null
+    }
+
+    return result
+  }
+
+  private async resetUserCredentials({
     username,
     password,
     recoveryCode,
@@ -22,6 +45,7 @@ export class AccountRecoveryService {
     const newPlainCode = await user.generateNewRecoveryCode()
     await user.save()
 
+    // revoke all existing remember-me sessions for security
     await db.from('remember_me_tokens').where('tokenable_id', user.id).delete()
 
     return {

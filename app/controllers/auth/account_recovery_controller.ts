@@ -14,7 +14,13 @@ export default class AccountRecoveryController {
   async store({ request, response, session, auth }: HttpContext) {
     const payload = await request.validateUsing(accountRecoverValidator)
 
-    const { user, newPlainCode } = await this.recoveryService.handle(payload)
+    const result = await this.recoveryService.handle(payload)
+
+    if (!result) {
+      return response.redirect().back()
+    }
+
+    const { user, newPlainCode } = result
 
     await auth.use('web').login(user)
     session.put('pendingRecoveryCode', newPlainCode)
