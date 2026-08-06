@@ -40,7 +40,6 @@ const copyCode = async () => {
       </button>
     </div>
 
-    <!-- Form to submit confirmation and delete code from session -->
     <div>
       <Form v-slot="{ processing }" route="onboardings.destroy">
         <div>

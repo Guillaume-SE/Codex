@@ -70,12 +70,14 @@ const hasPendingCode = computed(() => {
     </div>
   </header>
 
+  <!-- <div v-if="page.props.user"> -->
   <div v-if="hasPendingCode" class="bg-amber-500 text-black p-3 text-center">
     <span>⚠️ You haven't confirmed your account recovery code yet!</span>
     <Link route="onboardings.show" class="underline font-bold ml-2">
       Click here to view and save it
     </Link>
   </div>
+  <!-- </div> -->
 
   <main>
     <slot />

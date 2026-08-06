@@ -6,6 +6,21 @@ import { computed } from 'vue'
 
 const page = usePage<Data.SharedProps>()
 const error = computed(() => page.props.flash.error)
+
+const formatRecoveryCode = (event: Event) => {
+  const input = event.target as HTMLInputElement
+
+  // remove all non-alphanumeric characters
+  const raw = input.value.replace(/[^a-zA-Z0-9]/g, '').toUpperCase()
+
+  // max 16 alphanumeric characters (4 blocks of 4)
+  const trimmed = raw.slice(0, 16)
+
+  // split into chunks of 4 and join with hyphens
+  const formatted = trimmed.match(/.{1,4}/g)?.join('-') || ''
+
+  input.value = formatted
+}
 </script>
 
 <template>
@@ -22,7 +37,7 @@ const error = computed(() => page.props.flash.error)
     <div>
       <Form v-slot="{ processing, errors }" route="account_recovery.store">
         <div>
-          <label for="username">Username</label>
+          <label for="username">Nom utilisateur</label>
           <input
             id="username"
             type="text"
@@ -37,8 +52,15 @@ const error = computed(() => page.props.flash.error)
           <label for="recoveryCode">Code de récupération</label>
           <input
             id="recoveryCode"
-            type="recoveryCode"
+            type="text"
             name="recoveryCode"
+            maxlength="19"
+            placeholder="XXXX-XXXX-XXXX-XXXX"
+            autocorrect="off"
+            autocapitalize="characters"
+            autocomplete="off"
+            spellcheck="false"
+            @input="formatRecoveryCode"
             :data-invalid="errors.recoveryCode ? 'true' : undefined"
           />
           <div v-if="errors.recoveryCode">{{ errors.recoveryCode }}</div>
@@ -50,7 +72,7 @@ const error = computed(() => page.props.flash.error)
             id="password"
             type="password"
             name="password"
-            autocomplete="current-password"
+            autocomplete="new-password"
             :data-invalid="errors.password ? 'true' : undefined"
           />
           <div v-if="errors.password">{{ errors.password }}</div>

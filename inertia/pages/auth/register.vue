@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Form } from '@adonisjs/inertia/vue'
+import { Form, Link } from '@adonisjs/inertia/vue'
 </script>
 
 <template>
@@ -7,6 +7,12 @@ import { Form } from '@adonisjs/inertia/vue'
     <div>
       <h1>Register</h1>
       <p>Enter your details below to create your account</p>
+    </div>
+    <div>
+      <p>
+        Déjà un compte ?
+        <Link route="session.create">Se connecter</Link>
+      </p>
     </div>
 
     <div>

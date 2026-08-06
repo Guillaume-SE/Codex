@@ -15,7 +15,6 @@ export class AuthLimiterService {
 
   /**
    * Runs an authentication action through an IP + Username multi-limiter.
-   * Automatically handles error flashing for rate limits and credentials.
    */
   async attempt<T>(options: AuthLimiterOptions, action: () => Promise<T>): Promise<T | null> {
     const { request, session } = this.ctx
