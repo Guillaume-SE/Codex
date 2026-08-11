@@ -5,7 +5,8 @@ import { DbRememberMeTokensProvider } from '@adonisjs/auth/session'
 import { compose, safeTiming } from '@adonisjs/core/helpers'
 import string from '@adonisjs/core/helpers/string'
 import hash from '@adonisjs/core/services/hash'
-import { beforeCreate } from '@adonisjs/lucid/orm'
+import { beforeCreate, column } from '@adonisjs/lucid/orm'
+import { DateTime } from 'luxon'
 
 const AuthFinder = withAuthFinder(() => hash.use('scrypt'), {
   uids: ['username'],
@@ -15,6 +16,10 @@ const AuthFinder = withAuthFinder(() => hash.use('scrypt'), {
 export default class User extends compose(UserSchema, AuthFinder) {
   static rememberMeTokens = DbRememberMeTokensProvider.forModel(User)
   declare plainRecoveryCode?: string
+
+  // declared here to allow autoCreate args on a specific column
+  @column.dateTime({ autoCreate: true })
+  declare lastLoggedAt: DateTime
 
   private static generateUserFriendlyCode(): string {
     // to have consistent code format

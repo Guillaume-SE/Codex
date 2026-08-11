@@ -24,4 +24,4 @@ router
 
     router.post('logout', [controllers.auth.Session, 'destroy'])
   })
-  .use(middleware.auth())
+  .use([middleware.auth(), middleware.trackLastSeen()])

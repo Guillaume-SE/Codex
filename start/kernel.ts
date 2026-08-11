@@ -30,6 +30,7 @@ router.use([
 ])
 
 export const middleware = router.named({
+  trackLastSeen: () => import('#middleware/track_last_seen_middleware'),
   guest: () => import('#middleware/guest_middleware'),
   auth: () => import('#middleware/auth_middleware'),
 })
