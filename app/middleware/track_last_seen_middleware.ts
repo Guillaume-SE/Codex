@@ -1,4 +1,5 @@
 import type { HttpContext } from '@adonisjs/core/http'
+import logger from '@adonisjs/core/services/logger'
 import type { NextFn } from '@adonisjs/core/types/http'
 import { DateTime } from 'luxon'
 
@@ -11,7 +12,12 @@ export default class TrackLastSeenMiddleware {
 
       if (!user.lastLoggedAt || user.lastLoggedAt < now.minus({ hours: 1 })) {
         user.lastLoggedAt = now
-        await user.save()
+        await user.save().catch((error) => {
+          logger.error(
+            { err: error, userId: user.id },
+            'Failed to update user lastLoggedAt timestamp'
+          )
+        })
       }
     }
 
