@@ -7,6 +7,104 @@
 import { BaseModel, column } from '@adonisjs/lucid/orm'
 import { DateTime } from 'luxon'
 
+export class CategorySchema extends BaseModel {
+  static $columns = ['createdAt', 'id', 'name', 'updatedAt'] as const
+  $columns = CategorySchema.$columns
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime | null
+  @column({ isPrimary: true })
+  declare id: number
+  @column()
+  declare name: string | null
+  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  declare updatedAt: DateTime | null
+}
+
+export class CollectionMediaSchema extends BaseModel {
+  static $columns = ['collectionId', 'createdAt', 'id', 'updatedAt', 'userMediaId'] as const
+  $columns = CollectionMediaSchema.$columns
+  @column()
+  declare collectionId: number
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime | null
+  @column({ isPrimary: true })
+  declare id: number
+  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  declare updatedAt: DateTime | null
+  @column()
+  declare userMediaId: number
+}
+
+export class CollectionSchema extends BaseModel {
+  static $columns = ['createdAt', 'description', 'id', 'isPublic', 'name', 'updatedAt', 'userId'] as const
+  $columns = CollectionSchema.$columns
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime | null
+  @column()
+  declare description: string | null
+  @column({ isPrimary: true })
+  declare id: number
+  @column()
+  declare isPublic: boolean
+  @column()
+  declare name: string | null
+  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  declare updatedAt: DateTime | null
+  @column()
+  declare userId: number
+}
+
+export class FormatSchema extends BaseModel {
+  static $columns = ['categoryId', 'createdAt', 'id', 'name', 'updatedAt'] as const
+  $columns = FormatSchema.$columns
+  @column()
+  declare categoryId: number
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime | null
+  @column({ isPrimary: true })
+  declare id: number
+  @column()
+  declare name: string | null
+  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  declare updatedAt: DateTime | null
+}
+
+export class MediaSchema extends BaseModel {
+  static $columns = ['apiId', 'createdAt', 'formatId', 'id', 'posterUrl', 'providerId', 'released', 'title', 'updatedAt'] as const
+  $columns = MediaSchema.$columns
+  @column()
+  declare apiId: string
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime | null
+  @column()
+  declare formatId: number
+  @column({ isPrimary: true })
+  declare id: number
+  @column()
+  declare posterUrl: string | null
+  @column()
+  declare providerId: number
+  @column()
+  declare released: string | null
+  @column()
+  declare title: string
+  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  declare updatedAt: DateTime | null
+}
+
+export class ProviderSchema extends BaseModel {
+  static $columns = ['createdAt', 'id', 'name', 'updatedAt'] as const
+  $columns = ProviderSchema.$columns
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime | null
+  @column({ isPrimary: true })
+  declare id: number
+  @column()
+  declare name: string
+  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  declare updatedAt: DateTime | null
+}
+
 export class RateLimitSchema extends BaseModel {
   static $columns = ['expire', 'key', 'points'] as const
   $columns = RateLimitSchema.$columns
@@ -35,13 +133,68 @@ export class RememberMeTokenSchema extends BaseModel {
   declare updatedAt: DateTime
 }
 
+export class SettingSchema extends BaseModel {
+  static $columns = ['createdAt', 'id', 'preferences', 'updatedAt', 'userId'] as const
+  $columns = SettingSchema.$columns
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime | null
+  @column({ isPrimary: true })
+  declare id: number
+  @column()
+  declare preferences: any
+  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  declare updatedAt: DateTime | null
+  @column()
+  declare userId: number
+}
+
+export class StatusSchema extends BaseModel {
+  static $columns = ['createdAt', 'id', 'name', 'updatedAt'] as const
+  $columns = StatusSchema.$columns
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime | null
+  @column({ isPrimary: true })
+  declare id: number
+  @column()
+  declare name: string | null
+  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  declare updatedAt: DateTime | null
+}
+
+export class UserMediaSchema extends BaseModel {
+  static $columns = ['createdAt', 'id', 'isFavorite', 'mediaId', 'progression', 'rating', 'sidenote', 'statusId', 'updatedAt', 'userId'] as const
+  $columns = UserMediaSchema.$columns
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime | null
+  @column({ isPrimary: true })
+  declare id: number
+  @column()
+  declare isFavorite: boolean
+  @column()
+  declare mediaId: number
+  @column()
+  declare progression: any
+  @column()
+  declare rating: number | null
+  @column()
+  declare sidenote: string | null
+  @column()
+  declare statusId: number
+  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  declare updatedAt: DateTime | null
+  @column()
+  declare userId: number
+}
+
 export class UserSchema extends BaseModel {
-  static $columns = ['createdAt', 'id', 'password', 'recoveryCode', 'shareCode', 'updatedAt', 'username'] as const
+  static $columns = ['createdAt', 'id', 'lastLoggedAt', 'password', 'recoveryCode', 'shareCode', 'updatedAt', 'username'] as const
   $columns = UserSchema.$columns
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime
   @column({ isPrimary: true })
   declare id: number
+  @column.dateTime()
+  declare lastLoggedAt: DateTime
   @column({ serializeAs: null })
   declare password: string
   @column()

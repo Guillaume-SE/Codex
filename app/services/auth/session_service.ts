@@ -3,7 +3,6 @@ import { AuthLimiterService } from '#services/auth/auth_limiter_service'
 import { loginValidator } from '#validators/auth_validator'
 import { inject } from '@adonisjs/core'
 import { HttpContext } from '@adonisjs/core/http'
-import limiter from '@adonisjs/limiter/services/main'
 import { Infer } from '@vinejs/vine/types'
 
 type Params = {
