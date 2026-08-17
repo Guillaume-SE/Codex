@@ -15,7 +15,7 @@ export class CategorySchema extends BaseModel {
   @column({ isPrimary: true })
   declare id: number
   @column()
-  declare name: string | null
+  declare name: string
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   declare updatedAt: DateTime | null
 }
@@ -47,7 +47,7 @@ export class CollectionSchema extends BaseModel {
   @column()
   declare isPublic: boolean
   @column()
-  declare name: string | null
+  declare name: string
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   declare updatedAt: DateTime | null
   @column()
@@ -64,7 +64,7 @@ export class FormatSchema extends BaseModel {
   @column({ isPrimary: true })
   declare id: number
   @column()
-  declare name: string | null
+  declare name: string
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   declare updatedAt: DateTime | null
 }
@@ -156,7 +156,7 @@ export class StatusSchema extends BaseModel {
   @column({ isPrimary: true })
   declare id: number
   @column()
-  declare name: string | null
+  declare name: string
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   declare updatedAt: DateTime | null
 }
