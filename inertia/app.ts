@@ -7,7 +7,7 @@ import { client } from '~/client'
 import Layout from '~/layouts/AppLayout.vue'
 import './css/app.css'
 
-const appName = import.meta.env.VITE_APP_NAME || 'AdonisJS'
+const appName = import.meta.env.VITE_APP_NAME || 'Codex'
 
 createInertiaApp({
   title: (title) => (title ? `${title} - ${appName}` : appName),
