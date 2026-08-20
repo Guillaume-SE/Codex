@@ -40,14 +40,14 @@ const menuItems = computed(() => {
     <div class="drawer-side z-50">
       <label for="app-drawer" class="drawer-overlay" aria-label="close-sidebar"></label>
 
-      <div class="flex min-h-full w-72 flex-col justify-between bg-base-200 p-6">
+      <div class="flex h-full w-72 flex-col justify-between bg-base-200 p-6">
         <!-- Logo + Navigation -->
         <div>
           <div class="mb-8 flex items-center justify-between">
             <Link
               route="home"
-              @click="isDrawerOpen = false"
               class="text-2xl font-bold tracking-tighter"
+              @click="isDrawerOpen = false"
             >
               Codex<span class="text-primary">.</span>
             </Link>
@@ -65,10 +65,8 @@ const menuItems = computed(() => {
               <Link
                 route="home"
                 :route-params="link.params"
-                :class="[
-                  'py-3 text-base font-bold',
-                  link.isActive ? 'bg-primary text-primary-content' : 'active:bg-base-300',
-                ]"
+                class="py-3 font-semibold"
+                :class="link.isActive ? 'bg-primary text-primary-content' : 'active:bg-base-300'"
               >
                 {{ link.label }}
               </Link>
@@ -79,11 +77,11 @@ const menuItems = computed(() => {
         <!-- User Profile or Guest Actions -->
         <div class="border-t border-base-content/10 pt-4">
           <!-- Logged in user -->
-          <div v-if="user" class="flex flex-col gap-3">
+          <div v-if="user" class="space-y-3">
             <!-- Avatar + Username + Settings Button -->
             <div class="flex items-center justify-between gap-2">
-              <div class="flex items-center gap-3 truncate">
-                <div class="avatar">
+              <div class="flex items-center gap-3 min-w-0">
+                <div class="avatar shrink-0">
                   <div class="w-10 rounded-full ring-1 ring-base-content/10">
                     <img
                       :src="'https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp'"

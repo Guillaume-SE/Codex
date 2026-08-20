@@ -21,29 +21,29 @@ const menuItems = computed(() => {
 </script>
 
 <template>
-  <nav class="navbar min-h-16 px-0">
+  <nav class="navbar px-0 h-16">
     <div class="navbar-start gap-2">
       <label for="app-drawer" aria-label="open-sidebar" class="btn btn-square btn-ghost md:hidden">
         <MenuBarsIcon class="size-6 stroke-current" />
       </label>
 
-      <Link route="home" class="text-2xl font-bold tracking-tighter">
+      <Link route="home" class="text-2xl font-bold tracking-tight">
         Codex<span class="text-primary">.</span>
       </Link>
     </div>
 
     <div class="navbar-center hidden md:flex">
-      <ul class="flex gap-6 font-bold">
+      <ul class="flex gap-6 font-semibold">
         <li v-for="link in menuItems" :key="link.params.category">
           <Link
             route="home"
             :route-params="link.params"
-            :class="[
-              'border-b-2 pb-1 transition-colors duration-200',
+            class="border-b-2 pb-1 transition-colors duration-150"
+            :class="
               link.isActive
                 ? 'border-primary text-primary'
-                : 'border-transparent text-base-content hover:text-primary',
-            ]"
+                : 'border-transparent hover:text-primary'
+            "
           >
             {{ link.label }}
           </Link>
@@ -51,14 +51,10 @@ const menuItems = computed(() => {
       </ul>
     </div>
 
-    <div class="navbar-end">
-      <div class="flex items-center gap-2 sm:gap-3">
-        <ThemeController />
-
-        <NotificationAction v-if="!!page.props.user" :show-dot="!!page.props.user" />
-
-        <UserMenu />
-      </div>
+    <div class="navbar-end gap-2 sm:gap-3">
+      <ThemeController />
+      <NotificationAction v-if="page.props.user" :show-dot="true" />
+      <UserMenu />
     </div>
   </nav>
 </template>
