@@ -2,7 +2,7 @@ import vine from '@vinejs/vine'
 
 // const email = () => vine.string().email().maxLength(254)
 const username = () =>
-  vine.string().trim().minLength(3).maxLength(30).alphaNumeric({
+  vine.string().trim().minLength(2).maxLength(30).alphaNumeric({
     allowSpaces: false,
     allowUnderscores: true,
     allowDashes: true,
