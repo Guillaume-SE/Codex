@@ -37,7 +37,7 @@
     "#config/*": "./config/*.js"
   },
   "devDependencies": {
-    "@adonisjs/assembler": "^8.4.0",
+    "@adonisjs/assembler": "^8.5.0",
     "@adonisjs/eslint-config": "^3.1.0",
     "@adonisjs/prettier-config": "^1.5.0",
     "@adonisjs/tsconfig": "^2.0.0",
@@ -50,7 +50,7 @@
     "@types/luxon": "^3.7.4",
     "@types/node": "~25.9.1",
     "@vitejs/plugin-vue": "^6.0.8",
-    "daisyui": "^5.7.17",
+    "daisyui": "^5.7.20",
     "eslint": "^10.8.1",
     "eslint-plugin-vue": "^10.10.0",
     "hot-hook": "^1.0.0",
@@ -64,7 +64,7 @@
   },
   "dependencies": {
     "@adonisjs/auth": "^10.1.0",
-    "@adonisjs/core": "^7.4.0",
+    "@adonisjs/core": "^7.5.0",
     "@adonisjs/cors": "^3.0.0",
     "@adonisjs/inertia": "^4.2.0",
     "@adonisjs/limiter": "^3.0.1",
