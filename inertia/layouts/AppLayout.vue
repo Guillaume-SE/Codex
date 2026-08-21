@@ -49,11 +49,11 @@ const hasPendingCode = computed(() => {
 
       <div
         v-if="hasPendingCode"
-        class="bg-warning text-warning-content p-2.5 text-center text-sm font-medium"
+        class="border-b border-warning/20 bg-warning/30 px-4 py-2 text-center text-xs font-medium sm:text-sm"
       >
-        <span>You haven't confirmed your account recovery code yet!</span>
-        <Link route="onboardings.show" class="ml-2 font-bold underline">
-          Click here to view and save it
+        <span>Vous n'avez pas encore confirmé votre code de récupération !</span>
+        <Link route="onboardings.show" class="ml-1.5 font-bold underline hover:opacity-80">
+          Cliquez ici pour le consulter
         </Link>
       </div>
     </header>

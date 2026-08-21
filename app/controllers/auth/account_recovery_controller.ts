@@ -24,6 +24,7 @@ export default class AccountRecoveryController {
 
     await auth.use('web').login(user)
     session.put('pendingRecoveryCode', newPlainCode)
+    session.put('pendingRecoveryReason', 'recovery')
 
     return response.redirect().toRoute('onboardings.show')
   }
