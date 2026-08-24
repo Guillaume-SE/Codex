@@ -41,10 +41,10 @@ function closeDropdown() {
       @click="closeDropdown"
     >
       <li>
-        <Link route="home">Dashboard</Link>
+        <Link route="home">Mon profil</Link>
       </li>
       <li>
-        <Link route="home">Compte</Link>
+        <Link route="home">Paramètres</Link>
       </li>
 
       <div class="my-1 border-t border-base-content/10"></div>

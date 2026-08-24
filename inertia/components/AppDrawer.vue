@@ -109,7 +109,7 @@ const menuItems = computed(() => {
                 class="btn btn-sm btn-outline flex-1"
                 @click="isDrawerOpen = false"
               >
-                Dashboard
+                Mon profil
               </Link>
 
               <Form route="session.destroy" class="contents">
