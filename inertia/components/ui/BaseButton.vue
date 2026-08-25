@@ -1,13 +1,14 @@
 <script setup lang="ts">
 import type { DaisyColor, DaisyShape, DaisySize, DaisyVariant } from '#types/daisyui'
 import { Link } from '@adonisjs/inertia/vue'
-import { computed } from 'vue'
+import { computed, markRaw } from 'vue'
 
 const props = withDefaults(
   defineProps<{
     is?: string | object
     href?: string
     route?: string
+    routeParams?: Record<string, any>
     type?: 'button' | 'submit' | 'reset'
     color?: DaisyColor
     size?: DaisySize
@@ -62,10 +63,30 @@ const shapeClasses: Record<DaisyShape, string> = {
   circle: 'btn-circle',
 }
 
+// markRaw prevents Vue from deeply tracking the component definition, which improves performance and prevents warnings
 const tag = computed(() => {
-  if (props.is) return props.is
-  if (props.href || props.route) return Link
+  if (props.is) return typeof props.is === 'object' ? markRaw(props.is) : props.is
+  if (props.href || props.route) return markRaw(Link)
   return 'button'
+})
+
+const dynamicProps = computed(() => {
+  const attrs: Record<string, any> = {}
+
+  if (tag.value === 'button') {
+    attrs.type = props.type
+    if (props.disabled || props.loading) attrs.disabled = true
+  } else {
+    // It is a Link component. Only pass href OR route, never both.
+    if (props.href) {
+      attrs.href = props.href
+    } else if (props.route) {
+      attrs.route = props.route
+      if (props.routeParams) attrs['route-params'] = props.routeParams
+    }
+  }
+
+  return attrs
 })
 
 const buttonClasses = computed(() => [
@@ -84,14 +105,7 @@ const buttonClasses = computed(() => [
 </script>
 
 <template>
-  <component
-    :is="tag"
-    :type="tag === 'button' ? type : undefined"
-    :href="href"
-    :route="route"
-    :disabled="disabled || loading"
-    :class="buttonClasses"
-  >
+  <component :is="tag" v-bind="dynamicProps" :class="buttonClasses">
     <span v-if="loading" class="loading loading-spinner loading-xs" aria-hidden="true" />
     <slot v-else name="prefix" />
 
