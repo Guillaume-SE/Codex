@@ -6,6 +6,10 @@ const { type = 'text', error = false } = defineProps<{
   error?: boolean | string
 }>()
 
+const emit = defineEmits<{
+  input: [event: Event]
+}>()
+
 defineOptions({ inheritAttrs: false })
 </script>
 
@@ -22,6 +26,7 @@ defineOptions({ inheritAttrs: false })
       :type="type"
       class="grow bg-transparent focus:outline-none min-w-0"
       v-bind="$attrs"
+      @input="emit('input', $event)"
     />
 
     <!-- Trailing SVG / Action Slot -->

@@ -18,7 +18,7 @@ const showPassword = ref(false)
   <div class="flex min-h-[calc(100vh-8rem)] items-center justify-center p-4">
     <div class="card w-full max-w-md bg-base-100 border border-base-content/10 shadow-sm">
       <div class="card-body gap-5 p-6 sm:p-8">
-        <h1 class="text-3xl font-bold font-heading tracking-tight">Créer un compte</h1>
+        <h1 class="text-2xl sm:text-3xl font-bold font-heading">Créer un compte</h1>
 
         <Form v-slot="{ processing, errors, clearErrors }" route="register.store" class="space-y-4">
           <!-- Username -->
@@ -31,7 +31,7 @@ const showPassword = ref(false)
               :error="errors.username"
               @input="clearErrors('username')"
             />
-            <p v-if="errors.username" class="text-error text-xs font-medium">
+            <p v-if="errors.username" class="text-error text-xs font-medium mt-1">
               {{ errors.username }}
             </p>
             <p v-else class="text-xs text-base-content/60">
@@ -41,19 +41,12 @@ const showPassword = ref(false)
 
           <!-- Password -->
           <div class="w-full">
-            <BaseLabel htmlFor="password" text="Mot de passe">
-              <template #alt>
-                <Link route="account_recovery.create" class="text-xs text-primary hover:underline">
-                  Mot de passe oublié ?
-                </Link>
-              </template>
-            </BaseLabel>
-
+            <BaseLabel htmlFor="password" text="Mot de passe" />
             <BaseInput
               id="password"
               name="password"
               :type="showPassword ? 'text' : 'password'"
-              autocomplete="current-password"
+              autocomplete="new-password"
               :error="errors.password"
               @input="clearErrors('password')"
             >
@@ -68,7 +61,7 @@ const showPassword = ref(false)
                 </button>
               </template>
             </BaseInput>
-            <p v-if="errors.password" class="text-error text-xs font-medium">
+            <p v-if="errors.password" class="text-error text-xs font-medium mt-1">
               {{ errors.password }}
             </p>
             <p v-else class="text-xs text-base-content/60">Minimum 8 caractères.</p>
@@ -79,7 +72,7 @@ const showPassword = ref(false)
             <BaseCheckbox id="remember" name="remember" label="Rester connecté" checked />
           </div>
 
-          <BaseButton type="submit" block class="mt-2" :loading="processing">
+          <BaseButton type="submit" block class="mt-2" color="primary" :loading="processing">
             Créer mon compte
           </BaseButton>
 

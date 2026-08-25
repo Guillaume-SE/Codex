@@ -4,6 +4,7 @@ import type { Data } from '@generated/data'
 import { usePage } from '@inertiajs/vue3'
 import { computed, ref } from 'vue'
 import AppHead from '~/components/AppHead.vue'
+import BaseButton from '~/components/ui/BaseButton.vue'
 import BaseCheckbox from '~/components/ui/BaseCheckbox.vue'
 import BaseInput from '~/components/ui/BaseInput.vue'
 import BaseLabel from '~/components/ui/BaseLabel.vue'
@@ -21,7 +22,7 @@ const showPassword = ref(false)
   <div class="flex min-h-[calc(100vh-8rem)] items-center justify-center p-4">
     <div class="card w-full max-w-md bg-base-100 border border-base-content/10 shadow-sm">
       <div class="card-body gap-5 p-6 sm:p-8">
-        <h1 class="text-3xl font-bold font-heading tracking-tight">Connexion</h1>
+        <h1 class="text-2xl sm:text-3xl font-bold font-heading">Connexion</h1>
 
         <div v-if="error" class="alert alert-error text-sm py-2.5 rounded-lg">
           <span>{{ error }}</span>
@@ -82,10 +83,9 @@ const showPassword = ref(false)
             <BaseCheckbox id="remember" name="remember" label="Rester connecté" />
           </div>
 
-          <button type="submit" class="btn btn-primary w-full mt-2" :disabled="processing">
-            <span v-if="processing" class="loading loading-spinner loading-xs"></span>
-            <span>Se connecter</span>
-          </button>
+          <BaseButton type="submit" block class="mt-2" color="primary" :loading="processing">
+            Se connecter
+          </BaseButton>
         </Form>
 
         <div class="border-t border-base-content/10 pt-4 text-center text-sm text-base-content/70">

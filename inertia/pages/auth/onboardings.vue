@@ -4,6 +4,8 @@ import type { Data } from '@generated/data'
 import { usePage } from '@inertiajs/vue3'
 import { computed, ref } from 'vue'
 import AppHead from '~/components/AppHead.vue'
+import BaseButton from '~/components/ui/BaseButton.vue'
+import BaseCheckbox from '~/components/ui/BaseCheckbox.vue'
 
 const { recoveryCode } = defineProps<{
   recoveryCode: string
@@ -96,20 +98,22 @@ const copyToClipboard = async (text: string, key: 'username' | 'code') => {
 
         <!-- Confirmation -->
         <Form v-slot="{ processing }" route="onboardings.destroy" class="space-y-4 pt-1">
-          <label for="confirm-saved" class="flex items-center gap-2 cursor-pointer select-none">
-            <input
-              id="confirm-saved"
-              v-model="isSaved"
-              type="checkbox"
-              class="checkbox checkbox-sm checkbox-primary"
-            />
-            <span class="text-sm">J'ai bien enregistré mes identifiants.</span>
-          </label>
+          <BaseCheckbox
+            id="confirm-saved"
+            v-model="isSaved"
+            label="J'ai bien enregistré mes identifiants."
+          />
 
-          <button type="submit" class="btn btn-primary w-full" :disabled="!isSaved || processing">
-            <span v-if="processing" class="loading loading-spinner loading-xs"></span>
-            <span>Accéder à l'application</span>
-          </button>
+          <BaseButton
+            type="submit"
+            color="primary"
+            block
+            class="mt-4"
+            :disabled="!isSaved"
+            :loading="processing"
+          >
+            Accéder à l'application
+          </BaseButton>
         </Form>
       </div>
     </div>
