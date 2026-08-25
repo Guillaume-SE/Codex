@@ -41,15 +41,15 @@ const hasPendingCode = computed(() => {
 <template>
   <AppDrawer>
     <header
-      class="fixed top-0 z-50 w-full border-b border-base-content/10 bg-base-200/95 shadow-sm md:bg-base-200/80 md:backdrop-blur-md"
+      class="fixed top-0 z-50 w-full border-b border-base-content/10 bg-base-200/80 backdrop-blur-md"
     >
-      <div class="mx-auto w-full max-w-340 px-2 sm:px-6 lg:px-8">
+      <div class="app-container">
         <AppNavigation />
       </div>
 
       <div
         v-if="hasPendingCode"
-        class="border-b border-warning/20 bg-warning/30 px-4 py-2 text-center text-xs font-medium sm:text-sm"
+        class="border-t border-warning/20 bg-warning/30 px-4 py-2 text-center text-xs font-medium sm:text-sm"
       >
         <span>Vous n'avez pas encore confirmé votre code de récupération !</span>
         <Link route="onboardings.show" class="ml-1.5 font-bold underline hover:opacity-80">

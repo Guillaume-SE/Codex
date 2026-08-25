@@ -4,6 +4,9 @@ import type { Data } from '@generated/data'
 import { usePage } from '@inertiajs/vue3'
 import { computed, ref } from 'vue'
 import AppHead from '~/components/AppHead.vue'
+import BaseCheckbox from '~/components/ui/BaseCheckbox.vue'
+import BaseInput from '~/components/ui/BaseInput.vue'
+import BaseLabel from '~/components/ui/BaseLabel.vue'
 import VisibilityIcon from '~/components/ui/icons/VisibilityIcon.vue'
 import VisibilityOffIcon from '~/components/ui/icons/VisibilityOffIcon.vue'
 
@@ -26,67 +29,57 @@ const showPassword = ref(false)
 
         <Form v-slot="{ processing, errors, clearErrors }" route="session.store" class="space-y-4">
           <!-- Username -->
-          <div class="w-full gap-1">
-            <label for="username" class="text-sm font-medium">Nom d'utilisateur</label>
-            <input
+          <div class="w-full">
+            <BaseLabel htmlFor="username" text="Nom d'utilisateur" />
+            <BaseInput
               id="username"
-              type="text"
               name="username"
               autocomplete="username"
-              class="input w-full"
-              :data-invalid="errors.username ? 'true' : undefined"
+              :error="errors.username"
               @input="clearErrors('username')"
             />
-            <p v-if="errors.username" class="text-error text-xs font-medium">
+            <p v-if="errors.username" class="text-error text-xs font-medium mt-1">
               {{ errors.username }}
             </p>
           </div>
 
           <!-- Password -->
-          <div class="w-full gap-1">
-            <div class="flex items-center justify-between">
-              <label for="password" class="text-sm font-medium">Mot de passe</label>
-              <Link route="account_recovery.create" class="text-xs text-primary hover:underline">
-                Mot de passe oublié ?
-              </Link>
-            </div>
-            <div class="relative flex items-center">
-              <input
-                id="password"
-                :type="showPassword ? 'text' : 'password'"
-                name="password"
-                autocomplete="current-password"
-                class="input input-bordered w-full pr-10"
-                :data-invalid="errors.password ? 'true' : undefined"
-                @input="clearErrors('password')"
-              />
+          <div class="w-full">
+            <BaseLabel htmlFor="password" text="Mot de passe">
+              <template #alt>
+                <Link route="account_recovery.create" class="text-xs text-primary hover:underline">
+                  Mot de passe oublié ?
+                </Link>
+              </template>
+            </BaseLabel>
 
-              <button
-                type="button"
-                class="btn btn-ghost btn-xs btn-circle absolute right-2 text-base-content/60 hover:text-base-content"
-                :aria-label="showPassword ? 'Masquer le mot de passe' : 'Afficher le mot de passe'"
-                @click="showPassword = !showPassword"
-              >
-                <VisibilityOffIcon v-if="showPassword" class="size-5" />
-                <VisibilityIcon v-else class="size-5" />
-              </button>
-            </div>
-            <p v-if="errors.password" class="text-error text-xs font-medium">
+            <BaseInput
+              id="password"
+              name="password"
+              :type="showPassword ? 'text' : 'password'"
+              autocomplete="current-password"
+              :error="errors.password"
+              @input="clearErrors('password')"
+            >
+              <template #suffix>
+                <button
+                  type="button"
+                  class="btn btn-ghost btn-xs btn-circle text-base-content/60 hover:text-base-content"
+                  @click="showPassword = !showPassword"
+                >
+                  <VisibilityOffIcon v-if="showPassword" class="size-5" />
+                  <VisibilityIcon v-else class="size-5" />
+                </button>
+              </template>
+            </BaseInput>
+            <p v-if="errors.password" class="text-error text-xs font-medium mt-1">
               {{ errors.password }}
             </p>
           </div>
 
           <!-- Remember me -->
           <div class="flex items-center pt-1">
-            <label for="remember" class="flex items-center gap-2 cursor-pointer">
-              <input
-                id="remember"
-                type="checkbox"
-                name="remember"
-                class="checkbox checkbox-sm checkbox-primary"
-              />
-              <span class="text-sm">Rester connecté</span>
-            </label>
+            <BaseCheckbox id="remember" name="remember" label="Rester connecté" />
           </div>
 
           <button type="submit" class="btn btn-primary w-full mt-2" :disabled="processing">
