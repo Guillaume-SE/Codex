@@ -25,7 +25,3 @@ router
     router.post('logout', [controllers.auth.Session, 'destroy'])
   })
   .use([middleware.auth(), middleware.trackLastSeen()])
-
-router.get('/test-500', () => {
-  throw new Error('Triggering test 500 server error')
-})
