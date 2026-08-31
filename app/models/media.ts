@@ -2,10 +2,15 @@ import { MediaSchema } from '#database/schema'
 import Format from '#models/format'
 import Provider from '#models/provider'
 import UserMedia from '#models/user_media'
-import { belongsTo, hasMany } from '@adonisjs/lucid/orm'
+import { belongsTo, column, hasMany } from '@adonisjs/lucid/orm'
 import type { BelongsTo, HasMany } from '@adonisjs/lucid/types/relations'
+import { DateTime } from 'luxon'
 
 export default class Media extends MediaSchema {
+  // declared here to allow autoCreate args on this specific column
+  @column.dateTime({ autoCreate: true })
+  declare lastSyncedAt: DateTime
+
   @belongsTo(() => Provider, {
     foreignKey: 'providerId',
   })
