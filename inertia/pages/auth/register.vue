@@ -78,8 +78,7 @@ const showPassword = ref(false)
 
           <!-- Privacy & Cookie Disclaimer -->
           <p class="text-xs text-center text-base-content/60 pt-1">
-            Vos données restent privées. Seuls des cookies essentiels au fonctionnement du site sont
-            utilisés.
+            Seuls des cookies essentiels au fonctionnement du site sont utilisés.
             <Link route="home" class="underline hover:text-base-content ml-0.5">
               En savoir plus
             </Link>
