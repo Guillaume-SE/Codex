@@ -2,8 +2,9 @@ import { controllers } from '#generated/controllers'
 import { middleware } from '#start/kernel'
 import router from '@adonisjs/core/services/router'
 
-router.on('/').renderInertia('home', {}).as('home')
+router.get('/', [controllers.Home, 'index']).as('home')
 
+// session and log
 router
   .group(() => {
     router.get('register', [controllers.auth.Register, 'create'])
@@ -25,3 +26,9 @@ router
     router.post('logout', [controllers.auth.Session, 'destroy'])
   })
   .use([middleware.auth(), middleware.trackLastSeen()])
+
+// router.get('/discover/:category', [DiscoverController, 'index']).as('discover.index')
+
+// router.get('/list/:category', [ListController, 'index']).as('list.index')
+
+// router.get('/collection', [CollectionController, 'index']).as('collection.index')
