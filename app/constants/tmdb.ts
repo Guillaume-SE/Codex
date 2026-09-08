@@ -5,9 +5,4 @@ export const TMDB_CONSTANTS = {
     medium: 'w500',
     large: 'w780',
   },
-  backdropSizes: {
-    small: 'w300',
-    medium: 'w780',
-    large: 'w1280',
-  },
 } as const

@@ -20,4 +20,7 @@ export interface ApiDefinition {
     show: typeof routes['onboardings.show']
     destroy: typeof routes['onboardings.destroy']
   }
+  media: {
+    show: typeof routes['media.show']
+  }
 }

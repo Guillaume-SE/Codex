@@ -1,6 +1,11 @@
 import { TMDB_CONSTANTS } from '#constants/tmdb'
-import type { UnifiedMediaItem } from '#types/media'
-import type { TmdbRawMovie, TmdbRawSeries } from '#types/tmdb'
+import type { UnifiedMediaDetail, UnifiedMediaItem } from '#types/media'
+import type {
+  TmdbRawMovie,
+  TmdbRawMovieDetail,
+  TmdbRawSeries,
+  TmdbRawSeriesDetail,
+} from '#types/tmdb'
 
 export class TmdbMapper {
   // construct poster url
@@ -35,6 +40,27 @@ export class TmdbMapper {
       releaseDate: item.first_air_date || undefined,
       posterUrl: TmdbMapper.buildImageUrl(item.poster_path),
       rating: item.vote_average ?? undefined,
+    }
+  }
+
+  static toUnifiedMovieDetail(item: TmdbRawMovieDetail): UnifiedMediaDetail {
+    return {
+      ...TmdbMapper.toUnifiedMovie(item),
+      overview: item.overview || undefined,
+      genres: item.genres?.map((g) => g.name) ?? [],
+      status: item.status,
+      runtime: item.runtime ?? undefined,
+    }
+  }
+
+  static toUnifiedSeriesDetail(item: TmdbRawSeriesDetail): UnifiedMediaDetail {
+    return {
+      ...TmdbMapper.toUnifiedSeries(item),
+      overview: item.overview || undefined,
+      genres: item.genres?.map((g) => g.name) ?? [],
+      status: item.status,
+      numberOfSeasons: item.number_of_seasons,
+      numberOfEpisodes: item.number_of_episodes,
     }
   }
 }

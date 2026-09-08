@@ -6,10 +6,25 @@
 /// <reference path="./manifest.d.ts" />
 import type { InferData, InferVariants } from '@adonisjs/core/types/transformers'
 import type { InferSharedProps, InferFlashData } from '@adonisjs/inertia/types'
+import type PresentedMediaDetailTransformer from '#transformers/presented_media_detail_transformer'
+import type PresentedMediaTransformer from '#transformers/presented_media_transformer'
+import type UserMediaTransformer from '#transformers/user_media_transformer'
 import type UserTransformer from '#transformers/user_transformer'
 import type InertiaMiddleware from '#middleware/inertia_middleware'
 
 export namespace Data {
+  export type PresentedMediaDetail = InferData<PresentedMediaDetailTransformer>
+  export namespace PresentedMediaDetail {
+    export type Variants = InferVariants<PresentedMediaDetailTransformer>
+  }
+  export type PresentedMedia = InferData<PresentedMediaTransformer>
+  export namespace PresentedMedia {
+    export type Variants = InferVariants<PresentedMediaTransformer>
+  }
+  export type UserMedia = InferData<UserMediaTransformer>
+  export namespace UserMedia {
+    export type Variants = InferVariants<UserMediaTransformer>
+  }
   export type User = InferData<UserTransformer>
   export namespace User {
     export type Variants = InferVariants<UserTransformer>
