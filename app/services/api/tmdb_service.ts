@@ -1,5 +1,5 @@
-import ResourceNotFoundException from '#exceptions/resource_not_found_exception'
 import { TmdbMapper } from '#mappers/tmdb_mapper'
+import { BaseApiService } from '#services/api/base_api_service'
 import env from '#start/env'
 import type {
   MediaApiProvider,
@@ -20,27 +20,14 @@ export interface TmdbOptions {
   category?: 'movie' | 'series'
 }
 
-export class TmdbService implements MediaApiProvider {
+export class TmdbService extends BaseApiService implements MediaApiProvider {
   readonly providerName = 'tmdb'
-  private baseUrl = 'https://api.themoviedb.org/3'
+  readonly baseUrl = 'https://api.themoviedb.org/3'
 
-  private async request<T>(endpoint: string): Promise<T> {
-    const response = await fetch(`${this.baseUrl}${endpoint}`, {
-      headers: {
-        Accept: 'application/json',
-        Authorization: `Bearer ${env.get('TMDB_READ_TOKEN')}`,
-      },
-    })
-
-    if (response.status === 404) {
-      throw new ResourceNotFoundException(`TMDB resource not found at ${endpoint}`)
+  protected override getHeaders() {
+    return {
+      Authorization: `Bearer ${env.get('TMDB_READ_TOKEN')}`,
     }
-
-    if (!response.ok) {
-      throw new Error(`TMDB API Error [${response.status}]`)
-    }
-
-    return response.json() as Promise<T>
   }
 
   async getRecentRelease(page = 1, options?: TmdbOptions): Promise<UnifiedMediaItem[]> {
