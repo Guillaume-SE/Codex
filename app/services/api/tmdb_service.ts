@@ -33,7 +33,7 @@ export class TmdbService extends BaseApiService implements MediaApiProvider {
   async getRecentRelease(page = 1, options?: TmdbOptions): Promise<UnifiedMediaItem[]> {
     const params = new URLSearchParams({ page: String(page) })
     if (options?.region) {
-      params.append('region', options.region)
+      params.append('language', options.region)
     }
 
     const isSeries = options?.category === 'series'
@@ -49,12 +49,17 @@ export class TmdbService extends BaseApiService implements MediaApiProvider {
   }
 
   async getDetails(apiId: string, category: MediaCategory): Promise<UnifiedMediaDetail> {
+    const endpoint =
+      category === 'series'
+        ? `/tv/${apiId}?append_to_response=videos`
+        : `/movie/${apiId}?append_to_response=videos`
+
     if (category === 'series') {
-      const data = await this.request<TmdbRawSeriesDetail>(`/tv/${apiId}`)
+      const data = await this.request<TmdbRawSeriesDetail>(endpoint)
       return TmdbMapper.toUnifiedSeriesDetail(data)
     }
 
-    const data = await this.request<TmdbRawMovieDetail>(`/movie/${apiId}`)
+    const data = await this.request<TmdbRawMovieDetail>(endpoint)
     return TmdbMapper.toUnifiedMovieDetail(data)
   }
 }

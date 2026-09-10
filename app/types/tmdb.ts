@@ -5,9 +5,17 @@ export interface TmdbPaginatedResponse<T> {
   total_results: number
 }
 
-export interface TmdbGenre {
-  id: number
+export interface TmdbVideo {
+  id: string
+  key: string
   name: string
+  site: string
+  type: string
+  official: boolean
+}
+
+export interface TmdbVideoResults {
+  results: TmdbVideo[]
 }
 
 export interface TmdbRawMovie {
@@ -26,17 +34,27 @@ export interface TmdbRawSeries {
   vote_average?: number
 }
 
-export interface TmdbRawMovieDetail extends TmdbRawMovie {
-  overview?: string
-  genres?: TmdbGenre[]
-  runtime?: number | null
-  status?: string
+export interface TmdbRawBaseDetail {
+  overview: string | null
+  genres: { id: number; name: string }[]
+  status: string
+  origin_country: string[]
+  spoken_languages: { english_name: string; iso_639_1: string; name: string }[]
+  production_companies: { id: number; name: string }[]
+  videos?: TmdbVideoResults
 }
 
-export interface TmdbRawSeriesDetail extends TmdbRawSeries {
-  overview?: string
-  genres?: TmdbGenre[]
-  number_of_seasons?: number
-  number_of_episodes?: number
-  status?: string
+export interface TmdbRawMovieDetail extends TmdbRawMovie, TmdbRawBaseDetail {
+  runtime: number | null
+  budget: number
+  revenue: number
+  belongs_to_collection: {
+    id: number
+    name: string
+  } | null
+}
+
+export interface TmdbRawSeriesDetail extends TmdbRawSeries, TmdbRawBaseDetail {
+  number_of_seasons: number
+  number_of_episodes: number
 }

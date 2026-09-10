@@ -18,11 +18,21 @@ export interface UnifiedMediaDetail extends UnifiedMediaItem {
   overview?: string
   genres: string[]
   status?: string
+  originCountry?: string[]
+  spokenLanguages?: string[]
+  productionCompanies?: {
+    id: number
+    name: string
+  }[]
   // movie specific
   runtime?: number
+  budget?: number
+  revenue?: number
+  belongsToCollection?: { id: number; name: string }
   // series specific
   numberOfSeasons?: number
   numberOfEpisodes?: number
+  trailerKey?: string
 }
 
 export interface MediaApiProvider {
