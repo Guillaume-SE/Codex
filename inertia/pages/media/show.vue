@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { Link } from '@adonisjs/inertia/vue'
 import { Data } from '@generated/data'
 import AppHead from '~/components/AppHead.vue'
 
@@ -55,7 +56,27 @@ const formatCurrency = (amount?: number) => {
             </span>
           </div>
 
-          <h1 class="text-3xl sm:text-4xl font-extrabold">{{ media.title }}</h1>
+          <!-- Main Title & Localized Titles -->
+          <div class="space-y-1">
+            <h1 class="text-3xl sm:text-4xl font-extrabold">{{ media.title }}</h1>
+
+            <div
+              v-if="media.originalTitle || media.frenchTitle"
+              class="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-base-content/70 pt-0.5"
+            >
+              <span v-if="media.originalTitle">
+                <span class="text-base-content/50 font-medium">Original:</span>
+                <span class="font-semibold text-base-content/80 ml-1">{{
+                  media.originalTitle
+                }}</span>
+              </span>
+
+              <span v-if="media.frenchTitle">
+                <span class="text-base-content/50 font-medium">FR:</span>
+                <span class="font-semibold text-base-content/80 ml-1">{{ media.frenchTitle }}</span>
+              </span>
+            </div>
+          </div>
 
           <!-- Key Stats -->
           <div class="flex flex-wrap items-center gap-4 text-sm text-base-content/70">
@@ -83,6 +104,14 @@ const formatCurrency = (amount?: number) => {
           <p v-if="media.overview" class="text-base-content/80 max-w-2xl leading-relaxed">
             {{ media.overview }}
           </p>
+
+          <!-- Key Crew (Directors / Writers / Creators) -->
+          <div v-if="media.crew?.length" class="flex flex-wrap gap-x-6 gap-y-2 text-sm pt-1">
+            <div v-for="member in media.crew" :key="member.id" class="flex items-center gap-1.5">
+              <span class="text-base-content/60 font-medium">{{ member.job }}:</span>
+              <span class="font-semibold">{{ member.name }}</span>
+            </div>
+          </div>
 
           <!-- Budget & Revenue (Movies) -->
           <div v-if="media.budget || media.revenue" class="flex gap-6 text-sm pt-2">
@@ -137,6 +166,91 @@ const formatCurrency = (amount?: number) => {
           >
             <span class="text-xs font-semibold">{{ company.name }}</span>
           </div>
+        </div>
+      </div>
+
+      <!-- Cast Section -->
+      <div v-if="media.cast?.length" class="space-y-4 pt-6 border-t border-base-300">
+        <div class="flex items-center justify-between">
+          <h2 class="text-xl font-bold">Cast</h2>
+          <a
+            v-if="media.provider === 'tmdb'"
+            :href="`https://www.themoviedb.org/${media.category === 'series' ? 'tv' : 'movie'}/${media.apiId}/cast`"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="text-xs text-primary hover:underline font-medium"
+          >
+            Full cast on TMDB →
+          </a>
+        </div>
+
+        <div class="flex gap-4 overflow-x-auto pb-4 scrollbar-thin items-stretch">
+          <div
+            v-for="person in media.cast"
+            :key="person.id"
+            class="w-28 shrink-0 bg-base-200 rounded-box p-2 text-center border border-base-300 flex flex-col items-center"
+          >
+            <div class="w-20 h-20 mx-auto rounded-full overflow-hidden bg-base-300 mb-2 shrink-0">
+              <img
+                v-if="person.profileUrl"
+                :src="person.profileUrl"
+                :alt="person.name"
+                class="w-full h-full object-cover"
+              />
+            </div>
+            <p class="font-bold text-xs truncate w-full">{{ person.name }}</p>
+            <p class="text-[10px] text-base-content/60 truncate w-full">{{ person.character }}</p>
+          </div>
+
+          <!-- See More Cast Tile -->
+          <a
+            v-if="media.provider === 'tmdb'"
+            :href="`https://www.themoviedb.org/${media.category === 'series' ? 'tv' : 'movie'}/${media.apiId}/cast`"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="w-28 shrink-0 bg-base-200 hover:bg-base-300 transition-colors rounded-box p-2 border border-base-300 flex flex-col items-center justify-center text-center gap-2 group cursor-pointer"
+          >
+            <div
+              class="w-10 h-10 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold group-hover:scale-110 transition-transform"
+            >
+              →
+            </div>
+            <span
+              class="text-xs font-semibold text-base-content/80 group-hover:text-primary transition-colors"
+            >
+              See full cast
+            </span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Recommendations Section -->
+      <div v-if="media.recommendations?.length" class="space-y-4 pt-6 border-t border-base-300">
+        <h2 class="text-xl font-bold">You Might Also Like</h2>
+        <div class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-8 gap-4">
+          <Link
+            v-for="item in media.recommendations"
+            :key="item.apiId"
+            route="media.show"
+            :params="{ category: item.category, apiId: item.apiId }"
+            class="group space-y-2"
+          >
+            <div
+              class="aspect-2/3 rounded-box overflow-hidden bg-base-200 border border-base-300 group-hover:border-primary transition-colors"
+            >
+              <img
+                v-if="item.posterUrl"
+                :src="item.posterUrl"
+                :alt="item.title"
+                class="w-full h-full object-cover"
+              />
+            </div>
+            <p
+              class="font-semibold text-xs line-clamp-1 group-hover:text-primary transition-colors"
+            >
+              {{ item.title }}
+            </p>
+          </Link>
         </div>
       </div>
 
