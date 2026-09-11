@@ -51,8 +51,8 @@ export class TmdbService extends BaseApiService implements MediaApiProvider {
   async getDetails(apiId: string, category: MediaCategory): Promise<UnifiedMediaDetail> {
     const endpoint =
       category === 'series'
-        ? `/tv/${apiId}?append_to_response=videos,aggregate_credits,recommendations`
-        : `/movie/${apiId}?append_to_response=videos,credits,recommendations`
+        ? `/tv/${apiId}?append_to_response=videos,alternative_titles,aggregate_credits,recommendations`
+        : `/movie/${apiId}?append_to_response=videos,alternative_titles,credits,recommendations`
 
     if (category === 'series') {
       const data = await this.request<TmdbRawSeriesDetail>(endpoint)

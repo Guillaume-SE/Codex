@@ -17,6 +17,11 @@ export interface CrewMember {
   job: string
 }
 
+// export interface AlternativeTitle {
+//   country: string // e.g., 'FR', 'US', 'GB'
+//   title: string
+// }
+
 export interface UnifiedMediaItem {
   apiId: string
   provider: MediaProvider
@@ -28,6 +33,8 @@ export interface UnifiedMediaItem {
 }
 
 export interface UnifiedMediaDetail extends UnifiedMediaItem {
+  originalTitle?: string
+  frenchTitle?: string
   overview?: string
   genres: string[]
   status?: string

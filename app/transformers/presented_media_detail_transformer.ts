@@ -8,6 +8,8 @@ export default class PresentedMediaDetailTransformer extends BaseTransformer<Uni
       'provider',
       'category',
       'title',
+      'originalTitle',
+      'frenchTitle',
       'releaseDate',
       'posterUrl',
       'rating',

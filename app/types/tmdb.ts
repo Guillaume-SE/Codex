@@ -5,6 +5,17 @@ export interface TmdbPaginatedResponse<T> {
   total_results: number
 }
 
+export interface TmdbAlternativeTitle {
+  iso_3166_1: string
+  title: string
+  type?: string
+}
+
+export interface TmdbAlternativeTitlesResponse {
+  titles?: TmdbAlternativeTitle[] // Used by Movies
+  results?: TmdbAlternativeTitle[] // Used by TV Series
+}
+
 export interface TmdbVideo {
   id: string
   key: string
@@ -56,6 +67,7 @@ export interface TmdbAggregateCredits {
 export interface TmdbRawMovie {
   id: number
   title: string
+  original_title?: string
   release_date?: string
   poster_path?: string | null
   vote_average?: number
@@ -64,6 +76,7 @@ export interface TmdbRawMovie {
 export interface TmdbRawSeries {
   id: number
   name: string
+  original_name?: string
   first_air_date?: string
   poster_path?: string | null
   vote_average?: number
@@ -74,6 +87,7 @@ export interface TmdbRawBaseDetail {
   genres: { id: number; name: string }[]
   status: string
   origin_country: string[]
+  alternative_titles?: TmdbAlternativeTitlesResponse
   spoken_languages: { english_name: string; iso_639_1: string; name: string }[]
   production_companies: { id: number; name: string }[]
   videos?: TmdbVideoResults
