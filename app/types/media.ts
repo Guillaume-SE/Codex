@@ -4,6 +4,19 @@ export const CATEGORY_MATCH_REGEX = new RegExp(`^(${MEDIA_CATEGORIES.join('|')})
 export type MediaCategory = (typeof MEDIA_CATEGORIES)[number]
 export type MediaProvider = 'tmdb' | 'jikan' | 'igdb' | 'hardcover'
 
+export interface CastMember {
+  id: number
+  name: string
+  character: string
+  profileUrl?: string
+}
+
+export interface CrewMember {
+  id: number
+  name: string
+  job: string
+}
+
 export interface UnifiedMediaItem {
   apiId: string
   provider: MediaProvider
@@ -18,12 +31,16 @@ export interface UnifiedMediaDetail extends UnifiedMediaItem {
   overview?: string
   genres: string[]
   status?: string
+  trailerKey?: string
   originCountry?: string[]
   spokenLanguages?: string[]
   productionCompanies?: {
     id: number
     name: string
   }[]
+  crew?: CrewMember[]
+  cast?: CastMember[]
+  recommendations?: UnifiedMediaItem[]
   // movie specific
   runtime?: number
   budget?: number
@@ -32,7 +49,6 @@ export interface UnifiedMediaDetail extends UnifiedMediaItem {
   // series specific
   numberOfSeasons?: number
   numberOfEpisodes?: number
-  trailerKey?: string
 }
 
 export interface MediaApiProvider {

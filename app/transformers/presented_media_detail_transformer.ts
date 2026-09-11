@@ -24,6 +24,9 @@ export default class PresentedMediaDetailTransformer extends BaseTransformer<Uni
       'originCountry',
       'spokenLanguages',
       'productionCompanies',
+      'crew',
+      'cast',
+      'recommendations',
     ])
   }
 }

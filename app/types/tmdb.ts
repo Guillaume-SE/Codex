@@ -18,6 +18,41 @@ export interface TmdbVideoResults {
   results: TmdbVideo[]
 }
 
+export interface TmdbCastMember {
+  id: number
+  name: string
+  character: string
+  profile_path: string | null
+  order: number
+}
+
+export interface TmdbCreatedBy {
+  id: number
+  credit_id: string
+  name: string
+}
+
+export interface TmdbCrewMember {
+  id: number
+  name: string
+  job: string
+}
+
+export interface TmdbAggregateCastMember {
+  id: number
+  name: string
+  roles?: {
+    credit_id: string
+    character: string
+  }[]
+  profile_path: string | null
+  order: number
+}
+
+export interface TmdbAggregateCredits {
+  cast: TmdbAggregateCastMember[]
+}
+
 export interface TmdbRawMovie {
   id: number
   title: string
@@ -42,6 +77,10 @@ export interface TmdbRawBaseDetail {
   spoken_languages: { english_name: string; iso_639_1: string; name: string }[]
   production_companies: { id: number; name: string }[]
   videos?: TmdbVideoResults
+  credits?: {
+    crew: TmdbCrewMember[]
+    cast: TmdbCastMember[]
+  }
 }
 
 export interface TmdbRawMovieDetail extends TmdbRawMovie, TmdbRawBaseDetail {
@@ -52,9 +91,13 @@ export interface TmdbRawMovieDetail extends TmdbRawMovie, TmdbRawBaseDetail {
     id: number
     name: string
   } | null
+  recommendations?: TmdbPaginatedResponse<TmdbRawMovie>
 }
 
 export interface TmdbRawSeriesDetail extends TmdbRawSeries, TmdbRawBaseDetail {
   number_of_seasons: number
   number_of_episodes: number
+  created_by?: TmdbCreatedBy[]
+  aggregate_credits?: TmdbAggregateCredits
+  recommendations?: TmdbPaginatedResponse<TmdbRawSeries>
 }
