@@ -53,7 +53,6 @@ export interface UnifiedMediaDetail extends UnifiedMediaItem {
   crew?: CrewMember[]
   cast?: CastMember[]
   recommendations?: UnifiedMediaItem[]
-  // movie specific
   runtime?: number
   budget?: number
   revenue?: number
@@ -64,7 +63,6 @@ export interface UnifiedMediaDetail extends UnifiedMediaItem {
     posterUrl?: string
     parts?: UnifiedMediaItem[]
   }
-  // series specific
   numberOfSeasons?: number
   numberOfEpisodes?: number
 }
