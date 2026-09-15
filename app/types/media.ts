@@ -17,10 +17,15 @@ export interface CrewMember {
   job: string
 }
 
-// export interface AlternativeTitle {
-//   country: string // e.g., 'FR', 'US', 'GB'
-//   title: string
-// }
+export interface SeasonItem {
+  id: number
+  name: string
+  posterUrl?: string
+  seasonNumber: number
+  episodeCount: number
+  airDate?: string
+  rating?: number
+}
 
 export interface UnifiedMediaItem {
   apiId: string
@@ -52,7 +57,13 @@ export interface UnifiedMediaDetail extends UnifiedMediaItem {
   runtime?: number
   budget?: number
   revenue?: number
-  belongsToCollection?: { id: number; name: string }
+  seasons?: SeasonItem[]
+  belongsToCollection?: {
+    id: number
+    name: string
+    posterUrl?: string
+    parts?: UnifiedMediaItem[]
+  }
   // series specific
   numberOfSeasons?: number
   numberOfEpisodes?: number

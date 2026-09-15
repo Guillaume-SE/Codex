@@ -19,6 +19,7 @@ export default class PresentedMediaDetailTransformer extends BaseTransformer<Uni
       'runtime',
       'numberOfSeasons',
       'numberOfEpisodes',
+      'seasons',
       'trailerKey',
       'budget',
       'revenue',

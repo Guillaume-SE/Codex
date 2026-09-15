@@ -9,6 +9,7 @@ import type {
 } from '#types/media'
 import type {
   TmdbPaginatedResponse,
+  TmdbRawCollectionDetail,
   TmdbRawMovie,
   TmdbRawMovieDetail,
   TmdbRawSeries,
@@ -60,6 +61,17 @@ export class TmdbService extends BaseApiService implements MediaApiProvider {
     }
 
     const data = await this.request<TmdbRawMovieDetail>(endpoint)
-    return TmdbMapper.toUnifiedMovieDetail(data)
+    let collectionParts: UnifiedMediaItem[] = []
+
+    if (data.belongs_to_collection?.id) {
+      collectionParts = await this.getCollectionParts(data.belongs_to_collection.id)
+    }
+
+    return TmdbMapper.toUnifiedMovieDetail(data, collectionParts)
+  }
+
+  async getCollectionParts(collectionId: number): Promise<UnifiedMediaItem[]> {
+    const data = await this.request<TmdbRawCollectionDetail>(`/collection/${collectionId}`)
+    return data.parts?.map(TmdbMapper.toUnifiedMovie) ?? []
   }
 }

@@ -179,7 +179,10 @@ export class TmdbMapper {
     }
   }
 
-  static toUnifiedMovieDetail(item: TmdbRawMovieDetail): UnifiedMediaDetail {
+  static toUnifiedMovieDetail(
+    item: TmdbRawMovieDetail,
+    collectionParts: UnifiedMediaItem[] = []
+  ): UnifiedMediaDetail {
     const baseItem = TmdbMapper.toUnifiedMovie(item)
     const originalTitle = item.original_title !== item.title ? item.original_title : undefined
 
@@ -195,6 +198,8 @@ export class TmdbMapper {
         ? {
             id: item.belongs_to_collection.id,
             name: item.belongs_to_collection.name,
+            posterUrl: buildImageUrl(item.belongs_to_collection.poster_path),
+            parts: collectionParts,
           }
         : undefined,
       crew: extractMovieCrew(item.credits?.crew),
@@ -215,6 +220,16 @@ export class TmdbMapper {
       frenchTitle: extractFrenchTitle(item.alternative_titles, baseItem.title, originalTitle),
       numberOfSeasons: item.number_of_seasons,
       numberOfEpisodes: item.number_of_episodes,
+      seasons:
+        item.seasons?.map((s) => ({
+          id: s.id,
+          name: s.name,
+          posterUrl: buildImageUrl(s.poster_path),
+          seasonNumber: s.season_number,
+          episodeCount: s.episode_count,
+          airDate: s.air_date || undefined,
+          rating: s.vote_average ?? undefined,
+        })) ?? [],
       crew: extractSeriesCrew(item.created_by),
       cast: extractAggregateCast(item.aggregate_credits?.cast),
       recommendations:

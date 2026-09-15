@@ -64,6 +64,12 @@ export interface TmdbAggregateCredits {
   cast: TmdbAggregateCastMember[]
 }
 
+export interface TmdbBelongsToCollection {
+  id: number
+  name: string
+  poster_path?: string | null
+}
+
 export interface TmdbRawMovie {
   id: number
   title: string
@@ -80,6 +86,23 @@ export interface TmdbRawSeries {
   first_air_date?: string
   poster_path?: string | null
   vote_average?: number
+}
+
+export interface TmdbRawSeason {
+  id: number
+  name: string
+  poster_path: string | null
+  season_number: number
+  episode_count: number
+  air_date?: string | null
+  vote_average?: number
+}
+
+export interface TmdbRawCollectionDetail {
+  id: number
+  name: string
+  poster_path: string | null
+  parts: TmdbRawMovie[]
 }
 
 export interface TmdbRawBaseDetail {
@@ -101,10 +124,7 @@ export interface TmdbRawMovieDetail extends TmdbRawMovie, TmdbRawBaseDetail {
   runtime: number | null
   budget: number
   revenue: number
-  belongs_to_collection: {
-    id: number
-    name: string
-  } | null
+  belongs_to_collection: TmdbBelongsToCollection | null
   recommendations?: TmdbPaginatedResponse<TmdbRawMovie>
 }
 
@@ -113,5 +133,6 @@ export interface TmdbRawSeriesDetail extends TmdbRawSeries, TmdbRawBaseDetail {
   number_of_episodes: number
   created_by?: TmdbCreatedBy[]
   aggregate_credits?: TmdbAggregateCredits
+  seasons?: TmdbRawSeason[]
   recommendations?: TmdbPaginatedResponse<TmdbRawSeries>
 }
