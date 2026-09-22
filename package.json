@@ -37,7 +37,8 @@
     "#services/*": "./app/services/*.js",
     "#types/*": "./app/types/*.js",
     "#mappers/*": "./app/mappers/*.js",
-    "#constants/*": "./app/constants/*.js"
+    "#constants/*": "./app/constants/*.js",
+    "#utils/*": "./app/utils/*.js"
   },
   "devDependencies": {
     "@adonisjs/assembler": "^8.5.0",
