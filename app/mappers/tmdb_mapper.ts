@@ -13,8 +13,16 @@ import type {
   TmdbRawSeriesDetail,
   TmdbVideoResults,
 } from '#types/tmdb'
+import {
+  formatArray,
+  formatCountryCodes,
+  formatCurrency,
+  formatDate,
+  formatRuntime,
+  formatText,
+} from '#utils/formatters'
 
-// construct poster url
+// co nstruct poster url
 function buildImageUrl(
   path?: string | null,
   size: string = TMDB_CONSTANTS.posterSizes.medium
@@ -137,20 +145,21 @@ function extractFrenchTitle(
   return cleanFr
 }
 
+function extractYear(rawDate?: string | null): string | undefined {
+  if (!rawDate) return undefined
+  const year = rawDate.split('-')[0]
+  return year && year.length === 4 ? year : undefined
+}
+
 function extractCommonDetails(item: TmdbRawBaseDetail) {
   return {
-    overview: item.overview || undefined,
-
+    overview: item.overview?.trim() || undefined,
     genres: item.genres?.map((g) => g.name) ?? [],
-    status: item.status,
+    status: formatText(item.status),
     trailerKey: extractTrailerKey(item.videos),
-    originCountry: item.origin_country ?? [],
-    spokenLanguages: item.spoken_languages?.map((l) => l.english_name || l.name) ?? [],
-    productionCompanies:
-      item.production_companies?.map((c) => ({
-        id: c.id,
-        name: c.name,
-      })) ?? [],
+    originCountry: formatCountryCodes(item.origin_country),
+    spokenLanguages: formatArray(item.spoken_languages?.map((l) => l.english_name || l.name)),
+    productionCompanies: formatArray(item.production_companies),
   }
 }
 
@@ -161,7 +170,8 @@ export class TmdbMapper {
       provider: 'tmdb',
       category: 'movie',
       title: item.title,
-      releaseDate: item.release_date || undefined,
+      releaseDate: formatDate(item.release_date),
+      releaseYear: extractYear(item.release_date),
       posterUrl: buildImageUrl(item.poster_path),
       rating: item.vote_average ?? undefined,
     }
@@ -173,7 +183,8 @@ export class TmdbMapper {
       provider: 'tmdb',
       category: 'series',
       title: item.name,
-      releaseDate: item.first_air_date || undefined,
+      releaseDate: formatDate(item.first_air_date),
+      releaseYear: extractYear(item.first_air_date),
       posterUrl: buildImageUrl(item.poster_path),
       rating: item.vote_average ?? undefined,
     }
@@ -191,9 +202,9 @@ export class TmdbMapper {
       ...extractCommonDetails(item),
       originalTitle,
       frenchTitle: extractFrenchTitle(item.alternative_titles, baseItem.title, originalTitle),
-      runtime: item.runtime ?? undefined,
-      budget: item.budget || undefined,
-      revenue: item.revenue || undefined,
+      runtime: formatRuntime(item.runtime),
+      budget: formatCurrency(item.budget),
+      revenue: formatCurrency(item.revenue),
       belongsToCollection: item.belongs_to_collection
         ? {
             id: item.belongs_to_collection.id,
@@ -227,7 +238,8 @@ export class TmdbMapper {
           posterUrl: buildImageUrl(s.poster_path),
           seasonNumber: s.season_number,
           episodeCount: s.episode_count,
-          airDate: s.air_date || undefined,
+          airDate: formatDate(s.air_date),
+          airYear: extractYear(s.air_date),
           rating: s.vote_average ?? undefined,
         })) ?? [],
       crew: extractSeriesCrew(item.created_by),

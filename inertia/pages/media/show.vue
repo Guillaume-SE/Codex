@@ -5,19 +5,10 @@ import AppHead from '~/components/AppHead.vue'
 import BaseButton from '~/components/ui/BaseButton.vue'
 import RightChevronIcon from '~/components/ui/icons/RightChevronIcon.vue'
 
-const props = defineProps<{
+defineProps<{
   media: Data.PresentedMediaDetail
   userProgress: Data.UserMedia | null
 }>()
-
-const formatCurrency = (amount?: number) => {
-  if (!amount) return 'N/A'
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
-    maximumFractionDigits: 0,
-  }).format(amount)
-}
 </script>
 
 <template>
@@ -25,7 +16,7 @@ const formatCurrency = (amount?: number) => {
 
   <main class="min-h-screen bg-base-100 pb-16">
     <div class="container mx-auto px-4 pt-8 space-y-10">
-      <!-- Hero Section (Reference 1564) -->
+      <!-- Hero Section -->
       <div class="flex flex-col md:flex-row gap-8 items-start">
         <!-- Poster -->
         <div
@@ -70,8 +61,8 @@ const formatCurrency = (amount?: number) => {
             </div>
           </div>
 
-          <!-- Genres & Languages -->
-          <div class="space-y-2">
+          <!-- Genres -->
+          <div v-if="media.genres?.length" class="space-y-2">
             <div class="flex flex-wrap gap-2">
               <span
                 v-for="genre in media.genres"
@@ -99,7 +90,7 @@ const formatCurrency = (amount?: number) => {
             <div v-else class="text-xs text-base-content/50">Crew: N/A</div>
           </div>
 
-          <!-- Enhanced Rating Card -->
+          <!-- Rating Card -->
           <div class="flex flex-wrap items-center gap-6">
             <div
               class="flex items-center gap-3 bg-base-200 border border-base-300 rounded-box px-4 py-2"
@@ -111,17 +102,18 @@ const formatCurrency = (amount?: number) => {
               </div>
               <div class="divider divider-horizontal my-0 mx-0"></div>
               <div class="text-xs leading-tight">
-                <div class="font-bold text-base-content">TMDB score</div>
-                <div class="text-base-content/60">1,234 votes</div>
+                <div class="font-bold text-base-content">Score</div>
+                <div class="text-base-content/60 uppercase">{{ media.provider }}</div>
               </div>
             </div>
-            <!-- Placeholder Trailer Button -->
-            <BaseButton variant="soft" color="neutral" size="md"> ▶ Trailer </BaseButton>
+
+            <BaseButton v-if="media.trailerKey" variant="soft" color="neutral" size="md">
+              ▶ Trailer
+            </BaseButton>
           </div>
 
           <!-- Actions & Progression Card -->
           <div class="flex flex-wrap items-center gap-4 pt-2">
-            <!-- Progression Tracking Card -->
             <div
               class="card bg-base-200/70 border border-base-300 p-4 w-full sm:w-80 space-y-3 rounded-box"
             >
@@ -149,71 +141,60 @@ const formatCurrency = (amount?: number) => {
             <div class="divide-y divide-base-300 text-xs">
               <div class="py-2.5 flex justify-between gap-4">
                 <span class="font-bold text-base-content/50 tracking-wider">Format</span>
-                <span class="font-medium text-right capitalize">{{ media.category ?? 'N/A' }}</span>
+                <span class="font-medium text-right capitalize">{{ media.category }}</span>
               </div>
 
               <div class="py-2.5 flex justify-between gap-4">
                 <span class="font-bold text-base-content/50 tracking-wider">Release Date</span>
-                <span class="font-medium text-right">{{ media.releaseDate ?? 'N/A' }}</span>
+                <span class="font-medium text-right">{{ media.releaseDate }}</span>
               </div>
 
               <div class="py-2.5 flex justify-between gap-4">
                 <span class="font-bold text-base-content/50 tracking-wider">Status</span>
-                <span class="font-medium text-right">{{ media.status ?? 'N/A' }}</span>
+                <span class="font-medium text-right">{{ media.status }}</span>
               </div>
 
-              <div v-if="media.category !== 'series'" class="py-2.5 flex justify-between gap-4">
+              <div v-if="media.runtime" class="py-2.5 flex justify-between gap-4">
                 <span class="font-bold text-base-content/50 tracking-wider shrink-0">Runtime</span>
-                <span class="font-medium text-right">{{
-                  media.runtime ? `${media.runtime} min` : 'N/A'
-                }}</span>
+                <span class="font-medium text-right">{{ media.runtime }}</span>
               </div>
 
               <div class="py-2.5 flex justify-between gap-4">
                 <span class="font-bold text-base-content/50 tracking-wider">Studios</span>
-                <span class="font-medium text-right">
-                  {{
-                    media.productionCompanies?.length
-                      ? media.productionCompanies.map((c) => c.name).join(', ')
-                      : 'N/A'
-                  }}
-                </span>
+                <span class="font-medium text-right">{{ media.productionCompanies }}</span>
               </div>
 
               <div class="py-2.5 flex justify-between gap-4">
                 <span class="font-bold text-base-content/50 tracking-wider">Country</span>
-                <span class="font-medium text-right">
-                  {{ media.originCountry?.length ? media.originCountry.join(', ') : 'N/A' }}
-                </span>
+                <span class="font-medium text-right">{{ media.originCountry }}</span>
               </div>
 
               <div class="py-2.5 flex justify-between gap-4">
                 <span class="font-bold text-base-content/50 tracking-wider">Languages</span>
-                <span class="font-medium text-right">
-                  {{ media.spokenLanguages?.length ? media.spokenLanguages.join(', ') : 'N/A' }}
-                </span>
+                <span class="font-medium text-right">{{ media.spokenLanguages }}</span>
               </div>
 
-              <div v-if="media.category !== 'series'" class="py-2.5 flex justify-between gap-4">
+              <div v-if="media.budget" class="py-2.5 flex justify-between gap-4">
                 <span class="font-bold text-base-content/50 tracking-wider shrink-0">Budget</span>
-                <span class="font-medium text-right">{{ formatCurrency(media.budget) }}</span>
+                <span class="font-medium text-right">{{ media.budget }}</span>
               </div>
 
-              <div v-if="media.category !== 'series'" class="py-2.5 flex justify-between gap-4">
+              <div v-if="media.revenue" class="py-2.5 flex justify-between gap-4">
                 <span class="font-bold text-base-content/50 tracking-wider shrink-0">Revenue</span>
-                <span class="font-medium text-right">{{ formatCurrency(media.revenue) }}</span>
+                <span class="font-medium text-right">{{ media.revenue }}</span>
               </div>
 
               <div class="py-2.5 flex justify-between gap-4">
                 <span class="font-bold text-base-content/50 tracking-wider">Provider</span>
-                <span class="font-medium text-right capitalize">{{ media.provider ?? 'N/A' }}</span>
+                <span class="font-medium text-right uppercase">{{ media.provider }}</span>
               </div>
             </div>
           </div>
         </div>
+
         <!-- Left / Main Column -->
         <div class="lg:col-span-3 space-y-8">
-          <!-- Cast (DaisyUI Carousel) -->
+          <!-- Cast Carousel -->
           <div v-if="media.cast?.length" class="space-y-3">
             <div class="flex items-center justify-between">
               <h2 class="text-xl font-bold">Cast</h2>
@@ -297,7 +278,7 @@ const formatCurrency = (amount?: number) => {
                   <p class="font-bold text-xs truncate">{{ season.name }}</p>
                   <div class="flex items-center justify-between text-[10px] text-base-content/60">
                     <span>{{ season.episodeCount }} Eps</span>
-                    <span v-if="season.airDate">{{ season.airDate.split('-')[0] }}</span>
+                    <span v-if="season.airYear">{{ season.airYear }}</span>
                   </div>
                   <div v-if="season.rating" class="text-[10px] font-semibold">
                     <span class="text-warning">★</span> {{ season.rating.toFixed(1) }}
@@ -343,10 +324,10 @@ const formatCurrency = (amount?: number) => {
                   <div class="space-y-0.5">
                     <p class="font-semibold text-xs line-clamp-1">{{ movie.title }}</p>
                     <div class="flex items-center justify-between text-[10px] text-base-content/60">
-                      <span v-if="movie.releaseDate">{{ movie.releaseDate.split('-')[0] }}</span>
-                      <div v-if="movie.rating" class="font-semibold">
+                      <span v-if="movie.releaseYear">{{ movie.releaseYear }}</span>
+                      <span v-if="movie.rating" class="font-semibold">
                         <span class="text-warning">★</span> {{ movie.rating.toFixed(1) }}
-                      </div>
+                      </span>
                     </div>
                   </div>
                 </Link>
@@ -383,7 +364,7 @@ const formatCurrency = (amount?: number) => {
                   <div class="space-y-0.5">
                     <p class="font-semibold text-xs line-clamp-1">{{ item.title }}</p>
                     <div class="flex items-center justify-between text-[10px] text-base-content/60">
-                      <span v-if="item.releaseDate">{{ item.releaseDate.split('-')[0] }}</span>
+                      <span v-if="item.releaseYear">{{ item.releaseYear }}</span>
                       <span v-if="item.rating" class="font-semibold">
                         <span class="text-warning">★</span> {{ item.rating.toFixed(1) }}
                       </span>

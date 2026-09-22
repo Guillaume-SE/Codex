@@ -7,6 +7,7 @@ import type { BelongsTo, HasMany } from '@adonisjs/lucid/types/relations'
 import { DateTime } from 'luxon'
 
 export default class Media extends MediaSchema {
+  static table = 'media'
   // declared here to allow autoCreate args on this specific column
   @column.dateTime({ autoCreate: true })
   declare lastSyncedAt: DateTime

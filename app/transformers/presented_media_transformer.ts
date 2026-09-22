@@ -9,6 +9,7 @@ export default class PresentedMediaTransformer extends BaseTransformer<UnifiedMe
       'category',
       'title',
       'releaseDate',
+      'releaseYear',
       'posterUrl',
       'rating',
     ])

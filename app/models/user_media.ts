@@ -7,6 +7,8 @@ import { belongsTo, manyToMany } from '@adonisjs/lucid/orm'
 import type { BelongsTo, ManyToMany } from '@adonisjs/lucid/types/relations'
 
 export default class UserMedia extends UserMediaSchema {
+  static table = 'user_media'
+
   @belongsTo(() => User, {
     foreignKey: 'userId',
   })

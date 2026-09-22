@@ -24,6 +24,7 @@ export interface SeasonItem {
   seasonNumber: number
   episodeCount: number
   airDate?: string
+  airYear?: string
   rating?: number
 }
 
@@ -32,30 +33,30 @@ export interface UnifiedMediaItem {
   provider: MediaProvider
   category: MediaCategory
   title: string
-  releaseDate?: string
+  releaseDate: string
+  releaseYear?: string
   posterUrl?: string
   rating?: number
 }
 
 export interface UnifiedMediaDetail extends UnifiedMediaItem {
+  //always present in details
+  status: string
+  originCountry: string
+  spokenLanguages: string
+  productionCompanies: string
+  runtime?: string
+  budget?: string
+  revenue?: string
+  genres: string[]
+  //optional
   originalTitle?: string
   frenchTitle?: string
   overview?: string
-  genres: string[]
-  status?: string
   trailerKey?: string
-  originCountry?: string[]
-  spokenLanguages?: string[]
-  productionCompanies?: {
-    id: number
-    name: string
-  }[]
   crew?: CrewMember[]
   cast?: CastMember[]
   recommendations?: UnifiedMediaItem[]
-  runtime?: number
-  budget?: number
-  revenue?: number
   seasons?: SeasonItem[]
   belongsToCollection?: {
     id: number

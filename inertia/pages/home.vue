@@ -6,6 +6,7 @@ import { computed } from 'vue'
 import AppHead from '~/components/AppHead.vue'
 import BaseCarousel from '~/components/BaseCarousel.vue'
 import RightChevronIcon from '~/components/ui/icons/RightChevronIcon.vue'
+import RatingBox from '~/components/ui/RatingBox.vue'
 
 const props = defineProps<{
   movies: Data.PresentedMedia[]
@@ -60,13 +61,6 @@ const categorySections = computed(() => [
                 >
                   No Image
                 </div>
-
-                <div
-                  v-if="item.rating"
-                  class="badge badge-sm badge-warning font-semibold absolute top-2 right-2"
-                >
-                  ★ {{ item.rating }}
-                </div>
               </figure>
 
               <!-- Card Info -->
@@ -74,9 +68,12 @@ const categorySections = computed(() => [
                 <h3 class="card-title text-xs sm:text-sm line-clamp-1" :title="item.title">
                   {{ item.title }}
                 </h3>
-                <span v-if="item.releaseDate" class="text-xs text-base-content/60">
-                  {{ item.releaseDate }}
-                </span>
+                <div class="flex justify-between">
+                  <span v-if="item.releaseDate" class="text-xs text-base-content/60">
+                    {{ item.releaseDate }}
+                  </span>
+                  <RatingBox :rating="item.rating" />
+                </div>
               </div>
             </Link>
           </template>
