@@ -32,7 +32,7 @@ export default class InertiaMiddleware extends BaseInertiaMiddleware {
         success,
       }),
       user: ctx.inertia.always(auth?.user ? UserTransformer.transform(auth.user) : undefined),
-      hasPendingRecoveryCode: ctx.session.has('pendingRecoveryCode'),
+      hasPendingRecoveryCode: ctx.session?.has('pendingRecoveryCode') ?? false,
     }
   }
 
