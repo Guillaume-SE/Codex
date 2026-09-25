@@ -77,6 +77,7 @@ export interface TmdbRawMovie {
   release_date?: string
   poster_path?: string | null
   vote_average?: number
+  vote_count?: number
 }
 
 export interface TmdbRawSeries {
@@ -86,6 +87,7 @@ export interface TmdbRawSeries {
   first_air_date?: string
   poster_path?: string | null
   vote_average?: number
+  vote_count?: number
 }
 
 export interface TmdbRawSeason {
@@ -96,6 +98,7 @@ export interface TmdbRawSeason {
   episode_count: number
   air_date?: string | null
   vote_average?: number
+  vote_count?: number
 }
 
 export interface TmdbRawCollectionDetail {

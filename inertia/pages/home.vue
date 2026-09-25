@@ -5,6 +5,7 @@ import type { Data } from '@generated/data'
 import { computed } from 'vue'
 import AppHead from '~/components/AppHead.vue'
 import BaseCarousel from '~/components/BaseCarousel.vue'
+import CardMedia from '~/components/CardMedia.vue'
 import RightChevronIcon from '~/components/ui/icons/RightChevronIcon.vue'
 import RatingBox from '~/components/ui/RatingBox.vue'
 
@@ -39,44 +40,18 @@ const categorySections = computed(() => [
             </div>
           </template>
 
-          <!-- Media Card Item -->
           <template #item="{ item }">
-            <Link
-              route="media.show"
-              :params="{ category: item.category, apiId: item.apiId }"
-              class="w-36 sm:w-44 card bg-base-100 shadow-sm border border-base-200 overflow-hidden hover:shadow-md transition-shadow"
-            >
-              <!-- Poster & Rating -->
-              <figure class="aspect-2/3 bg-base-200 relative">
-                <img
-                  v-if="item.posterUrl"
-                  :src="item.posterUrl"
-                  :alt="item.title"
-                  class="w-full h-full object-cover"
-                  loading="lazy"
-                />
-                <div
-                  v-else
-                  class="flex items-center justify-center h-full text-xs text-base-content/50"
-                >
-                  No Image
-                </div>
-              </figure>
-
-              <!-- Card Info -->
-              <div class="card-body p-2 sm:p-3">
-                <h3 class="card-title text-xs sm:text-sm line-clamp-1" :title="item.title">
-                  {{ item.title }}
-                </h3>
-                <div class="flex justify-between">
-                  <span v-if="item.releaseDate" class="text-xs text-base-content/60">
-                    {{ item.releaseDate }}
-                  </span>
-                  <RatingBox :rating="item.rating" />
-                </div>
-              </div>
-            </Link>
+            <CardMedia
+              :apiId="item.apiId"
+              :category="item.category"
+              :title="item.title"
+              :cover-url="item.posterUrl"
+              :release-date="item.releaseDate"
+              :rating="item.rating"
+              class="w-42"
+            />
           </template>
+
           <template #append>
             <Link
               route="register.create"

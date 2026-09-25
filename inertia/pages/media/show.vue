@@ -2,8 +2,12 @@
 import { Link } from '@adonisjs/inertia/vue'
 import { Data } from '@generated/data'
 import AppHead from '~/components/AppHead.vue'
+import BaseCarousel from '~/components/BaseCarousel.vue'
+import CardCast from '~/components/CardCast.vue'
+import CardMedia from '~/components/CardMedia.vue'
 import BaseButton from '~/components/ui/BaseButton.vue'
 import RightChevronIcon from '~/components/ui/icons/RightChevronIcon.vue'
+import RatingBox from '~/components/ui/RatingBox.vue'
 
 defineProps<{
   media: Data.PresentedMediaDetail
@@ -96,8 +100,7 @@ defineProps<{
               class="flex items-center gap-3 bg-base-200 border border-base-300 rounded-box px-4 py-2"
             >
               <div class="text-xl font-black flex items-center gap-1">
-                <span class="text-warning">★</span>
-                <span>{{ media.rating ? media.rating.toFixed(1) : 'N/A' }}</span>
+                <RatingBox :rating="media.rating" />
                 <span class="text-xs text-base-content/50 font-normal">/ 10</span>
               </div>
               <div class="divider divider-horizontal my-0 mx-0"></div>
@@ -145,17 +148,17 @@ defineProps<{
               </div>
 
               <div class="py-2.5 flex justify-between gap-4">
-                <span class="font-bold text-base-content/50 tracking-wider">Release Date</span>
+                <span class="font-bold text-base-content/50 tracking-wider">Date de sortie</span>
                 <span class="font-medium text-right">{{ media.releaseDate }}</span>
               </div>
 
               <div class="py-2.5 flex justify-between gap-4">
-                <span class="font-bold text-base-content/50 tracking-wider">Status</span>
+                <span class="font-bold text-base-content/50 tracking-wider">Statut</span>
                 <span class="font-medium text-right">{{ media.status }}</span>
               </div>
 
               <div v-if="media.runtime" class="py-2.5 flex justify-between gap-4">
-                <span class="font-bold text-base-content/50 tracking-wider shrink-0">Runtime</span>
+                <span class="font-bold text-base-content/50 tracking-wider shrink-0">Durée</span>
                 <span class="font-medium text-right">{{ media.runtime }}</span>
               </div>
 
@@ -170,7 +173,7 @@ defineProps<{
               </div>
 
               <div class="py-2.5 flex justify-between gap-4">
-                <span class="font-bold text-base-content/50 tracking-wider">Languages</span>
+                <span class="font-bold text-base-content/50 tracking-wider">Langue d'origine</span>
                 <span class="font-medium text-right">{{ media.spokenLanguages }}</span>
               </div>
 
@@ -180,7 +183,7 @@ defineProps<{
               </div>
 
               <div v-if="media.revenue" class="py-2.5 flex justify-between gap-4">
-                <span class="font-bold text-base-content/50 tracking-wider shrink-0">Revenue</span>
+                <span class="font-bold text-base-content/50 tracking-wider shrink-0">Recette</span>
                 <span class="font-medium text-right">{{ media.revenue }}</span>
               </div>
 
@@ -192,188 +195,84 @@ defineProps<{
           </div>
         </div>
 
-        <!-- Left / Main Column -->
         <div class="lg:col-span-3 space-y-8">
           <!-- Cast Carousel -->
-          <div v-if="media.cast?.length" class="space-y-3">
-            <div class="flex items-center justify-between">
-              <h2 class="text-xl font-bold">Cast</h2>
+          <BaseCarousel v-if="media.cast?.length" title="Cast" :items="media.cast">
+            <template #item="{ item }">
+              <CardCast :name="item.name" :character="item.character" :image="item.profileUrl" />
+            </template>
+
+            <!-- "See Full Cast" Tile -->
+            <template v-if="media.provider === 'tmdb'" #append>
               <a
-                v-if="media.provider === 'tmdb'"
                 :href="`https://www.themoviedb.org/${media.category === 'series' ? 'tv' : 'movie'}/${media.apiId}/cast`"
                 target="_blank"
                 rel="noopener noreferrer"
-                class="text-xs text-primary hover:underline font-medium"
-              >
-                Full cast on TMDB →
-              </a>
-            </div>
-
-            <div class="carousel w-full space-x-3 p-2 rounded-box">
-              <div
-                v-for="person in media.cast"
-                :key="person.id"
-                class="carousel-item w-28 bg-base-200 rounded-box p-2 text-center border border-base-300 flex-col items-center"
+                class="flex h-full w-32 flex-col items-center justify-center gap-2 rounded-2xl border border-base-300/60 bg-base-200/40 p-3 text-center transition-colors hover:bg-base-200/80"
               >
                 <div
-                  class="w-20 h-20 mx-auto rounded-full overflow-hidden bg-base-300 mb-2 shrink-0"
+                  class="flex h-9 w-9 items-center justify-center rounded-full bg-primary/10 text-primary"
                 >
-                  <img
-                    v-if="person.profileUrl"
-                    :src="person.profileUrl"
-                    :alt="person.name"
-                    class="w-full h-full object-cover"
-                  />
+                  <RightChevronIcon class="size-5" />
                 </div>
-                <p class="font-bold text-xs truncate w-full">{{ person.name }}</p>
-                <p class="text-[10px] text-base-content/60 truncate w-full">
-                  {{ person.character }}
-                </p>
-              </div>
-
-              <!-- See More Cast Tile -->
-              <div v-if="media.provider === 'tmdb'" class="carousel-item">
-                <a
-                  :href="`https://www.themoviedb.org/${media.category === 'series' ? 'tv' : 'movie'}/${media.apiId}/cast`"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  class="w-28 h-full bg-base-200 rounded-box p-2 border border-base-300 flex flex-col items-center justify-center text-center gap-2"
-                >
-                  <div
-                    class="w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center"
-                  >
-                    <RightChevronIcon class="size-5" />
-                  </div>
-                  <span class="text-xs font-semibold text-base-content/80">See full cast</span>
-                </a>
-              </div>
-            </div>
-          </div>
+                <span class="text-xs font-semibold text-base-content/80">See full cast</span>
+              </a>
+            </template>
+          </BaseCarousel>
 
           <!-- Seasons Carousel -->
-          <div v-if="media.seasons?.length" class="space-y-3">
-            <h2 class="text-xl font-bold">Seasons</h2>
-            <div class="carousel w-full space-x-4 p-2 rounded-box">
-              <div
-                v-for="season in media.seasons"
-                :key="season.id"
-                class="carousel-item w-32 bg-base-200 rounded-box border border-base-300 overflow-hidden flex-col"
-              >
-                <div class="aspect-2/3 bg-base-300 relative overflow-hidden w-full">
-                  <img
-                    v-if="season.posterUrl"
-                    :src="season.posterUrl"
-                    :alt="season.name"
-                    loading="lazy"
-                    class="w-full h-full object-cover"
-                  />
-                  <div
-                    v-else
-                    class="w-full h-full flex items-center justify-center text-xs text-base-content/50"
-                  >
-                    No Image
-                  </div>
-                </div>
-                <div class="p-2 space-y-1 w-full">
-                  <p class="font-bold text-xs truncate">{{ season.name }}</p>
-                  <div class="flex items-center justify-between text-[10px] text-base-content/60">
-                    <span>{{ season.episodeCount }} Eps</span>
-                    <span v-if="season.airYear">{{ season.airYear }}</span>
-                  </div>
-                  <div v-if="season.rating" class="text-[10px] font-semibold">
-                    <span class="text-warning">★</span> {{ season.rating.toFixed(1) }}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+          <BaseCarousel v-if="media.seasons?.length" title="Saisons" :items="media.seasons">
+            <template #item="{ item: season }">
+              <CardMedia
+                :apiId="season.id"
+                category="series"
+                :title="season.name"
+                :cover-url="season.posterUrl"
+                :episode-count="season.episodeCount"
+                :release-date="season.airYear"
+                :rating="season.rating"
+                class="w-32"
+              />
+            </template>
+          </BaseCarousel>
 
-          <!-- Collection Carousel -->
-          <div v-if="media.belongsToCollection?.parts?.length" class="space-y-3">
-            <h2 class="text-xl font-bold">Part of {{ media.belongsToCollection.name }}</h2>
-            <div
-              class="carousel carousel-center w-full space-x-4 p-2 bg-base-200/40 rounded-box border border-base-300"
-            >
-              <div
-                v-for="movie in media.belongsToCollection.parts"
-                :key="movie.apiId"
-                class="carousel-item w-32"
-              >
-                <Link
-                  route="media.show"
-                  :params="{ category: 'movie', apiId: movie.apiId }"
-                  class="w-full space-y-1.5"
-                >
-                  <div
-                    class="aspect-2/3 rounded-box overflow-hidden bg-base-200 border border-base-300 relative"
-                  >
-                    <img
-                      v-if="movie.posterUrl"
-                      :src="movie.posterUrl"
-                      :alt="movie.title"
-                      loading="lazy"
-                      class="w-full h-full object-cover"
-                    />
-                    <div
-                      v-else
-                      class="w-full h-full flex items-center justify-center text-xs text-base-content/50"
-                    >
-                      No Image
-                    </div>
-                  </div>
-                  <div class="space-y-0.5">
-                    <p class="font-semibold text-xs line-clamp-1">{{ movie.title }}</p>
-                    <div class="flex items-center justify-between text-[10px] text-base-content/60">
-                      <span v-if="movie.releaseYear">{{ movie.releaseYear }}</span>
-                      <span v-if="movie.rating" class="font-semibold">
-                        <span class="text-warning">★</span> {{ movie.rating.toFixed(1) }}
-                      </span>
-                    </div>
-                  </div>
-                </Link>
-              </div>
-            </div>
-          </div>
+          <!-- Movie Collection Carousel -->
+          <BaseCarousel
+            v-if="media.belongsToCollection?.parts?.length"
+            :title="`Part of ${media.belongsToCollection.name}`"
+            :items="media.belongsToCollection.parts"
+          >
+            <template #item="{ item: movie }">
+              <CardMedia
+                :apiId="movie.apiId"
+                category="movie"
+                :title="movie.title"
+                :cover-url="movie.posterUrl"
+                :release-date="movie.releaseYear"
+                :rating="movie.rating"
+                class="w-32"
+              />
+            </template>
+          </BaseCarousel>
 
           <!-- Recommendations Carousel -->
-          <div v-if="media.recommendations?.length" class="space-y-3">
-            <h2 class="text-xl font-bold">You Might Also Like</h2>
-            <div
-              class="carousel carousel-center w-full space-x-4 p-2 bg-base-200/40 rounded-box border border-base-300"
-            >
-              <div
-                v-for="item in media.recommendations"
-                :key="item.apiId"
-                class="carousel-item w-32"
-              >
-                <Link
-                  route="media.show"
-                  :params="{ category: item.category, apiId: item.apiId }"
-                  class="w-full space-y-1.5"
-                >
-                  <div
-                    class="aspect-2/3 rounded-box overflow-hidden bg-base-200 border border-base-300"
-                  >
-                    <img
-                      v-if="item.posterUrl"
-                      :src="item.posterUrl"
-                      :alt="item.title"
-                      class="w-full h-full object-cover"
-                    />
-                  </div>
-                  <div class="space-y-0.5">
-                    <p class="font-semibold text-xs line-clamp-1">{{ item.title }}</p>
-                    <div class="flex items-center justify-between text-[10px] text-base-content/60">
-                      <span v-if="item.releaseYear">{{ item.releaseYear }}</span>
-                      <span v-if="item.rating" class="font-semibold">
-                        <span class="text-warning">★</span> {{ item.rating.toFixed(1) }}
-                      </span>
-                    </div>
-                  </div>
-                </Link>
-              </div>
-            </div>
-          </div>
+          <BaseCarousel
+            v-if="media.recommendations?.length"
+            title="Dans le même genre"
+            :items="media.recommendations"
+          >
+            <template #item="{ item: media }">
+              <CardMedia
+                :apiId="media.apiId"
+                :category="media.category"
+                :title="media.title"
+                :cover-url="media.posterUrl"
+                :release-date="media.releaseYear"
+                :rating="media.rating"
+                class="w-32"
+              />
+            </template>
+          </BaseCarousel>
 
           <!-- Embedded Trailer Section -->
           <div v-if="media.trailerKey" class="space-y-3 pt-4 border-t border-base-300">

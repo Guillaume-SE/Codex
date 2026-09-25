@@ -163,6 +163,14 @@ function extractCommonDetails(item: TmdbRawBaseDetail) {
   }
 }
 
+function extractRating(voteAverage?: number | null, voteCount?: number | null): number | undefined {
+  // if no votes or voteAverage is 0, return undefined for ui purpose
+  if (!voteCount || !voteAverage || voteAverage === 0) {
+    return undefined
+  }
+  return voteAverage
+}
+
 export class TmdbMapper {
   static toUnifiedMovie(item: TmdbRawMovie): UnifiedMediaItem {
     return {
@@ -173,7 +181,7 @@ export class TmdbMapper {
       releaseDate: formatDate(item.release_date),
       releaseYear: extractYear(item.release_date),
       posterUrl: buildImageUrl(item.poster_path),
-      rating: item.vote_average ?? undefined,
+      rating: extractRating(item.vote_average, item.vote_count),
     }
   }
 
@@ -186,7 +194,7 @@ export class TmdbMapper {
       releaseDate: formatDate(item.first_air_date),
       releaseYear: extractYear(item.first_air_date),
       posterUrl: buildImageUrl(item.poster_path),
-      rating: item.vote_average ?? undefined,
+      rating: extractRating(item.vote_average, item.vote_count),
     }
   }
 
@@ -240,7 +248,7 @@ export class TmdbMapper {
           episodeCount: s.episode_count,
           airDate: formatDate(s.air_date),
           airYear: extractYear(s.air_date),
-          rating: s.vote_average ?? undefined,
+          rating: extractRating(s.vote_average, s.vote_count ?? (s.vote_average ? 1 : 0)),
         })) ?? [],
       crew: extractSeriesCrew(item.created_by),
       cast: extractAggregateCast(item.aggregate_credits?.cast),
