@@ -7,7 +7,6 @@ import AppHead from '~/components/AppHead.vue'
 import BaseCarousel from '~/components/BaseCarousel.vue'
 import CardMedia from '~/components/CardMedia.vue'
 import RightChevronIcon from '~/components/ui/icons/RightChevronIcon.vue'
-import RatingBox from '~/components/ui/RatingBox.vue'
 
 const props = defineProps<{
   movies: Data.PresentedMedia[]
@@ -45,7 +44,7 @@ const categorySections = computed(() => [
               :apiId="item.apiId"
               :category="item.category"
               :title="item.title"
-              :cover-url="item.posterUrl"
+              :poster-url="item.posterUrl"
               :release-date="item.releaseDate"
               :rating="item.rating"
               class="w-42"

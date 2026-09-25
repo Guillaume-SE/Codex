@@ -151,6 +151,14 @@ function extractYear(rawDate?: string | null): string | undefined {
   return year && year.length === 4 ? year : undefined
 }
 
+function extractRating(voteAverage?: number | null, voteCount?: number | null): number | undefined {
+  // if no votes or voteAverage is 0, return undefined for ui purpose
+  if (!voteCount || !voteAverage || voteAverage === 0) {
+    return undefined
+  }
+  return voteAverage
+}
+
 function extractCommonDetails(item: TmdbRawBaseDetail) {
   return {
     overview: item.overview?.trim() || undefined,
@@ -161,14 +169,6 @@ function extractCommonDetails(item: TmdbRawBaseDetail) {
     spokenLanguages: formatArray(item.spoken_languages?.map((l) => l.english_name || l.name)),
     productionCompanies: formatArray(item.production_companies),
   }
-}
-
-function extractRating(voteAverage?: number | null, voteCount?: number | null): number | undefined {
-  // if no votes or voteAverage is 0, return undefined for ui purpose
-  if (!voteCount || !voteAverage || voteAverage === 0) {
-    return undefined
-  }
-  return voteAverage
 }
 
 export class TmdbMapper {
@@ -215,7 +215,7 @@ export class TmdbMapper {
       revenue: formatCurrency(item.revenue),
       belongsToCollection: item.belongs_to_collection
         ? {
-            id: item.belongs_to_collection.id,
+            apiId: item.belongs_to_collection.id,
             name: item.belongs_to_collection.name,
             posterUrl: buildImageUrl(item.belongs_to_collection.poster_path),
             parts: collectionParts,
@@ -241,7 +241,7 @@ export class TmdbMapper {
       numberOfEpisodes: item.number_of_episodes,
       seasons:
         item.seasons?.map((s) => ({
-          id: s.id,
+          apiId: s.id,
           name: s.name,
           posterUrl: buildImageUrl(s.poster_path),
           seasonNumber: s.season_number,

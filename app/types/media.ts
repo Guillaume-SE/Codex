@@ -18,7 +18,7 @@ export interface CrewMember {
 }
 
 export interface SeasonItem {
-  id: number
+  apiId: number
   name: string
   posterUrl?: string
   seasonNumber: number
@@ -59,7 +59,7 @@ export interface UnifiedMediaDetail extends UnifiedMediaItem {
   recommendations?: UnifiedMediaItem[]
   seasons?: SeasonItem[]
   belongsToCollection?: {
-    id: number
+    apiId: number
     name: string
     posterUrl?: string
     parts?: UnifiedMediaItem[]

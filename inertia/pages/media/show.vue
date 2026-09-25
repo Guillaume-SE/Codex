@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { Link } from '@adonisjs/inertia/vue'
 import { Data } from '@generated/data'
 import AppHead from '~/components/AppHead.vue'
 import BaseCarousel from '~/components/BaseCarousel.vue'
@@ -224,10 +223,10 @@ defineProps<{
           <BaseCarousel v-if="media.seasons?.length" title="Saisons" :items="media.seasons">
             <template #item="{ item: season }">
               <CardMedia
-                :apiId="season.id"
+                :apiId="season.apiId"
                 category="series"
                 :title="season.name"
-                :cover-url="season.posterUrl"
+                :poster-url="season.posterUrl"
                 :episode-count="season.episodeCount"
                 :release-date="season.airYear"
                 :rating="season.rating"
@@ -247,7 +246,7 @@ defineProps<{
                 :apiId="movie.apiId"
                 category="movie"
                 :title="movie.title"
-                :cover-url="movie.posterUrl"
+                :poster-url="movie.posterUrl"
                 :release-date="movie.releaseYear"
                 :rating="movie.rating"
                 class="w-32"
@@ -266,7 +265,7 @@ defineProps<{
                 :apiId="media.apiId"
                 :category="media.category"
                 :title="media.title"
-                :cover-url="media.posterUrl"
+                :poster-url="media.posterUrl"
                 :release-date="media.releaseYear"
                 :rating="media.rating"
                 class="w-32"

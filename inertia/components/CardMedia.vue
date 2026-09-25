@@ -8,20 +8,20 @@ interface Props {
   apiId: number | string
   title: string
   category: MediaCategory
-  coverUrl?: string | null
-  releaseDate?: string | null
-  episodeCount?: number | string | null
-  rating?: number | string | null
+  posterUrl?: string | null
+  releaseDate?: string
+  episodeCount?: number
+  rating?: number
 }
 
 const {
   apiId,
   title,
   category,
-  coverUrl = null,
-  releaseDate = null,
-  episodeCount = null,
-  rating = null,
+  posterUrl = null,
+  releaseDate,
+  episodeCount,
+  rating,
 } = defineProps<Props>()
 
 // format into "2024 • 12 Eps", "2024", "12 Eps", or "TBA"
@@ -32,7 +32,7 @@ const metaText = computed(() => {
     parts.push(String(releaseDate))
   }
 
-  if (episodeCount !== null && episodeCount !== undefined && episodeCount !== '') {
+  if (episodeCount !== null && episodeCount !== undefined) {
     const formattedEps =
       typeof episodeCount === 'number' ? `${episodeCount} Eps` : String(episodeCount)
     parts.push(formattedEps)
@@ -52,9 +52,9 @@ const metaText = computed(() => {
       tabindex="-1"
     >
       <img
-        v-if="coverUrl"
-        :src="coverUrl"
-        :alt="`Cover for ${title}`"
+        v-if="posterUrl"
+        :src="posterUrl"
+        :alt="`Poster for ${title}`"
         loading="lazy"
         class="h-full w-full object-cover"
       />
