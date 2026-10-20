@@ -1,10 +1,13 @@
 <script setup lang="ts">
 import { Data } from '@generated/data'
+import { defineProps, onMounted, ref } from 'vue'
 import AppHead from '~/components/AppHead.vue'
 import BaseCarousel from '~/components/BaseCarousel.vue'
+import BaseModal from '~/components/BaseModal.vue'
 import CardCast from '~/components/CardCast.vue'
 import CardMedia from '~/components/CardMedia.vue'
 import BaseButton from '~/components/ui/BaseButton.vue'
+import PlayIcon from '~/components/ui/icons/PlayIcon.vue'
 import RightChevronIcon from '~/components/ui/icons/RightChevronIcon.vue'
 import RatingBox from '~/components/ui/RatingBox.vue'
 
@@ -12,14 +15,26 @@ defineProps<{
   media: Data.PresentedMediaDetail
   userProgress: Data.UserMedia | null
 }>()
+
+const isProgressModalOpen = ref(false)
+const isTrailerModalOpen = ref(false)
+const hasYtConsent = ref(false)
+
+onMounted(() => {
+  hasYtConsent.value = localStorage.getItem('yt_consent') === 'true'
+})
+
+function acceptYtConsent() {
+  localStorage.setItem('yt_consent', 'true')
+  hasYtConsent.value = true
+}
 </script>
 
 <template>
   <AppHead :title="media.title" />
 
-  <main class="min-h-screen bg-base-100 pb-16">
+  <div class="min-h-screen bg-base-100 pb-16">
     <div class="container mx-auto px-4 pt-8 space-y-10">
-      <!-- Hero Section -->
       <div class="flex flex-col md:flex-row gap-8 items-start">
         <!-- Poster -->
         <div
@@ -41,26 +56,18 @@ defineProps<{
 
         <!-- Main Info Header -->
         <div class="flex-1 space-y-5">
-          <!-- Main Title & Localized Subtitles -->
+          <!-- Title -->
           <div class="space-y-1">
             <h1 class="text-3xl sm:text-4xl font-heading font-extrabold text-base-content">
               {{ media.title }}
             </h1>
 
             <div
-              v-if="media.originalTitle || media.frenchTitle"
-              class="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-base-content/70 pt-0.5"
+              v-if="media.originalTitle"
+              class="flex items-center gap-x-1.5 text-xs text-base-content/70 pt-0.5"
             >
-              <span v-if="media.frenchTitle">
-                <span class="text-base-content/50 font-medium">FR:</span>
-                <span class="font-semibold text-base-content/80 ml-1">{{ media.frenchTitle }}</span>
-              </span>
-              <span v-if="media.originalTitle">
-                <span class="text-base-content/50 font-medium">Original:</span>
-                <span class="font-semibold text-base-content/80 ml-1">{{
-                  media.originalTitle
-                }}</span>
-              </span>
+              <span class="text-base-content/50 font-medium">Original:</span>
+              <span class="font-semibold text-base-content/80">{{ media.originalTitle }}</span>
             </div>
           </div>
 
@@ -82,7 +89,7 @@ defineProps<{
             {{ media.overview ?? 'No overview available.' }}
           </p>
 
-          <!-- Key Crew -->
+          <!-- Crew -->
           <div class="flex flex-wrap gap-x-6 gap-y-2 text-sm pt-1">
             <template v-if="media.crew?.length">
               <div v-for="member in media.crew" :key="member.id" class="flex items-center gap-1.5">
@@ -93,7 +100,7 @@ defineProps<{
             <div v-else class="text-xs text-base-content/50">Crew: N/A</div>
           </div>
 
-          <!-- Rating Card -->
+          <!-- Rating Card & Trailer Button -->
           <div class="flex flex-wrap items-center gap-6">
             <div
               class="flex items-center gap-3 bg-base-200 border border-base-300 rounded-box px-4 py-2"
@@ -109,8 +116,14 @@ defineProps<{
               </div>
             </div>
 
-            <BaseButton v-if="media.trailerKey" variant="soft" color="neutral" size="md">
-              ▶ Trailer
+            <BaseButton
+              v-if="media.trailerKey"
+              color="neutral"
+              size="md"
+              @click="isTrailerModalOpen = true"
+            >
+              <PlayIcon class="size-5" />
+              Bande annonce
             </BaseButton>
           </div>
 
@@ -121,11 +134,11 @@ defineProps<{
             >
               <div class="flex items-center justify-between text-xs">
                 <span class="font-semibold">Your Progression</span>
-                <span class="badge badge-primary badge-sm">
+                <span class="badge badge-neutral badge-sm">
                   {{ userProgress?.status?.name ?? 'Not Tracked' }}
                 </span>
               </div>
-              <BaseButton color="primary" size="sm" block>
+              <BaseButton color="primary" size="sm" block @click="isProgressModalOpen = true">
                 {{ userProgress ? 'Update Status' : 'Add to List' }}
               </BaseButton>
             </div>
@@ -133,9 +146,63 @@ defineProps<{
         </div>
       </div>
 
+      <!-- Progression Modal -->
+      <BaseModal
+        v-model="isProgressModalOpen"
+        :title="userProgress ? 'Update Progression' : 'Add to List'"
+      >
+        <p class="py-4 text-sm text-base-content/80">
+          Modal content placeholder for managing this media entry.
+        </p>
+
+        <template #action>
+          <div class="flex justify-end gap-3">
+            <BaseButton variant="ghost" @click="isProgressModalOpen = false"> Cancel </BaseButton>
+            <BaseButton color="primary"> Save </BaseButton>
+          </div>
+        </template>
+      </BaseModal>
+
+      <!-- Trailer Modal -->
+      <BaseModal
+        v-if="media.trailerKey"
+        v-model="isTrailerModalOpen"
+        :title="`Bande annonce - ${media.title}`"
+        box-class="max-w-4xl"
+      >
+        <div
+          class="aspect-video w-full rounded-box overflow-hidden bg-base-200 border border-base-300 mt-2"
+        >
+          <!-- when yt cookies accepted -->
+          <iframe
+            v-if="hasYtConsent && isTrailerModalOpen"
+            :src="`https://www.youtube-nocookie.com/embed/${media.trailerKey}`"
+            :title="`Trailer for ${media.title}`"
+            class="w-full h-full border-0"
+            allowfullscreen
+          ></iframe>
+
+          <div v-else class="hero h-full bg-base-200">
+            <div class="hero-content text-center">
+              <div class="max-w-xs sm:max-w-sm space-y-3">
+                <p class="text-xs sm:text-sm text-base-content/80 leading-relaxed">
+                  Par souci de transparence, Codex bloque les contenus tiers par défaut. L'affichage
+                  de cette vidéo déposera des cookies provenant de YouTube.
+                </p>
+                <BaseButton color="primary" size="sm" @click="acceptYtConsent">
+                  Autoriser et lire la vidéo
+                </BaseButton>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <template #action><span /></template>
+      </BaseModal>
+
       <!-- Content + Details Side Panel -->
       <div class="grid grid-cols-1 lg:grid-cols-4 gap-8 pt-4">
-        <!-- Right Side Panel: Media Details -->
+        <!-- Details Side Panel -->
         <div class="lg:col-span-1">
           <div class="bg-base-200/80 border border-base-300 rounded-box p-5 space-y-4 sticky top-6">
             <h2 class="text-lg font-bold border-b border-base-300 pb-2">Details</h2>
@@ -194,6 +261,7 @@ defineProps<{
           </div>
         </div>
 
+        <!-- Carousels Section -->
         <div class="lg:col-span-3 space-y-8">
           <!-- Cast Carousel -->
           <BaseCarousel v-if="media.cast?.length" title="Cast" :items="media.cast">
@@ -272,23 +340,8 @@ defineProps<{
               />
             </template>
           </BaseCarousel>
-
-          <!-- Embedded Trailer Section -->
-          <div v-if="media.trailerKey" class="space-y-3 pt-4 border-t border-base-300">
-            <h2 class="text-lg font-bold">Trailer</h2>
-            <div
-              class="aspect-video w-full rounded-box overflow-hidden border border-base-300 bg-base-200"
-            >
-              <iframe
-                :src="`https://www.youtube-nocookie.com/embed/${media.trailerKey}`"
-                :title="`Trailer for ${media.title}`"
-                class="w-full h-full"
-                allowfullscreen
-              ></iframe>
-            </div>
-          </div>
         </div>
       </div>
     </div>
-  </main>
+  </div>
 </template>
