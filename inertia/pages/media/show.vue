@@ -10,6 +10,7 @@ import BaseButton from '~/components/ui/BaseButton.vue'
 import PlayIcon from '~/components/ui/icons/PlayIcon.vue'
 import RightChevronIcon from '~/components/ui/icons/RightChevronIcon.vue'
 import RatingBox from '~/components/ui/RatingBox.vue'
+import { useYtConsent } from '~/composables/useYtConsent'
 
 defineProps<{
   media: Data.PresentedMediaDetail
@@ -18,16 +19,8 @@ defineProps<{
 
 const isProgressModalOpen = ref(false)
 const isTrailerModalOpen = ref(false)
-const hasYtConsent = ref(false)
 
-onMounted(() => {
-  hasYtConsent.value = localStorage.getItem('yt_consent') === 'true'
-})
-
-function acceptYtConsent() {
-  localStorage.setItem('yt_consent', 'true')
-  hasYtConsent.value = true
-}
+const { hasYtConsent, acceptYtConsent } = useYtConsent()
 </script>
 
 <template>
@@ -177,7 +170,7 @@ function acceptYtConsent() {
           <iframe
             v-if="hasYtConsent && isTrailerModalOpen"
             :src="`https://www.youtube-nocookie.com/embed/${media.trailerKey}`"
-            :title="`Trailer for ${media.title}`"
+            :title="`Bande annonce de ${media.title}`"
             class="w-full h-full border-0"
             allowfullscreen
           ></iframe>
