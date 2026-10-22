@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Data } from '@generated/data'
-import { defineProps, onMounted, ref } from 'vue'
+import { defineProps, ref } from 'vue'
 import AppHead from '~/components/AppHead.vue'
 import BaseCarousel from '~/components/BaseCarousel.vue'
 import BaseModal from '~/components/BaseModal.vue'
@@ -12,7 +12,8 @@ import RightChevronIcon from '~/components/ui/icons/RightChevronIcon.vue'
 import RatingBox from '~/components/ui/RatingBox.vue'
 import { useYtConsent } from '~/composables/useYtConsent'
 
-defineProps<{
+// Vue 3.5 Reactive Prop Destructuring
+const { media, userProgress } = defineProps<{
   media: Data.PresentedMediaDetail
   userProgress: Data.UserMedia | null
 }>()
@@ -39,10 +40,7 @@ const { hasYtConsent, acceptYtConsent } = useYtConsent()
             :alt="media.title"
             class="w-full h-auto object-cover"
           />
-          <div
-            v-else
-            class="aspect-2/3 flex items-center justify-center text-sm text-base-content/50"
-          >
+          <div v-else class="aspect-2/3 flex items-center justify-center text-sm opacity-50">
             No Image
           </div>
         </div>
@@ -51,34 +49,32 @@ const { hasYtConsent, acceptYtConsent } = useYtConsent()
         <div class="flex-1 space-y-5">
           <!-- Title -->
           <div class="space-y-1">
-            <h1 class="text-3xl sm:text-4xl font-heading font-extrabold text-base-content">
+            <h1 class="text-3xl sm:text-4xl font-heading font-extrabold">
               {{ media.title }}
             </h1>
 
             <div
               v-if="media.originalTitle"
-              class="flex items-center gap-x-1.5 text-xs text-base-content/70 pt-0.5"
+              class="flex items-center gap-1.5 text-xs opacity-70 pt-0.5"
             >
-              <span class="text-base-content/50 font-medium">Original:</span>
-              <span class="font-semibold text-base-content/80">{{ media.originalTitle }}</span>
+              <span class="opacity-70 font-medium">Original:</span>
+              <span class="font-semibold">{{ media.originalTitle }}</span>
             </div>
           </div>
 
           <!-- Genres -->
-          <div v-if="media.genres?.length" class="space-y-2">
-            <div class="flex flex-wrap gap-2">
-              <span
-                v-for="genre in media.genres"
-                :key="genre"
-                class="badge badge-sm bg-base-200 border-base-300"
-              >
-                {{ genre }}
-              </span>
-            </div>
+          <div v-if="media.genres?.length" class="flex flex-wrap gap-2">
+            <span
+              v-for="genre in media.genres"
+              :key="genre"
+              class="badge badge-sm bg-base-200 border-base-300"
+            >
+              {{ genre }}
+            </span>
           </div>
 
           <!-- Overview -->
-          <p class="text-sm text-base-content/80 max-w-3xl leading-relaxed">
+          <p class="text-sm opacity-80 max-w-3xl leading-relaxed">
             {{ media.overview ?? 'No overview available.' }}
           </p>
 
@@ -86,11 +82,11 @@ const { hasYtConsent, acceptYtConsent } = useYtConsent()
           <div class="flex flex-wrap gap-x-6 gap-y-2 text-sm pt-1">
             <template v-if="media.crew?.length">
               <div v-for="member in media.crew" :key="member.id" class="flex items-center gap-1.5">
-                <span class="text-base-content/60 font-medium">{{ member.job }}:</span>
+                <span class="opacity-60 font-medium">{{ member.job }}:</span>
                 <span class="font-semibold">{{ member.name }}</span>
               </div>
             </template>
-            <div v-else class="text-xs text-base-content/50">Crew: N/A</div>
+            <div v-else class="text-xs opacity-50">Crew: N/A</div>
           </div>
 
           <!-- Rating Card & Trailer Button -->
@@ -100,12 +96,12 @@ const { hasYtConsent, acceptYtConsent } = useYtConsent()
             >
               <div class="text-xl font-black flex items-center gap-1">
                 <RatingBox :rating="media.rating" />
-                <span class="text-xs text-base-content/50 font-normal">/ 10</span>
+                <span class="text-xs opacity-50 font-normal">/ 10</span>
               </div>
-              <div class="divider divider-horizontal my-0 mx-0"></div>
+              <div class="divider divider-horizontal m-0"></div>
               <div class="text-xs leading-tight">
-                <div class="font-bold text-base-content">Score</div>
-                <div class="text-base-content/60 uppercase">{{ media.provider }}</div>
+                <div class="font-bold">Score</div>
+                <div class="opacity-60 uppercase">{{ media.provider }}</div>
               </div>
             </div>
 
@@ -144,14 +140,14 @@ const { hasYtConsent, acceptYtConsent } = useYtConsent()
         v-model="isProgressModalOpen"
         :title="userProgress ? 'Update Progression' : 'Add to List'"
       >
-        <p class="py-4 text-sm text-base-content/80">
+        <p class="py-4 text-sm opacity-80">
           Modal content placeholder for managing this media entry.
         </p>
 
         <template #action>
           <div class="flex justify-end gap-3">
-            <BaseButton variant="ghost" @click="isProgressModalOpen = false"> Cancel </BaseButton>
-            <BaseButton color="primary"> Save </BaseButton>
+            <BaseButton variant="ghost" @click="isProgressModalOpen = false">Cancel</BaseButton>
+            <BaseButton color="primary">Save</BaseButton>
           </div>
         </template>
       </BaseModal>
@@ -166,7 +162,6 @@ const { hasYtConsent, acceptYtConsent } = useYtConsent()
         <div
           class="aspect-video w-full rounded-box overflow-hidden bg-base-200 border border-base-300 mt-2"
         >
-          <!-- when yt cookies accepted -->
           <iframe
             v-if="hasYtConsent && isTrailerModalOpen"
             :src="`https://www.youtube-nocookie.com/embed/${media.trailerKey}`"
@@ -178,7 +173,7 @@ const { hasYtConsent, acceptYtConsent } = useYtConsent()
           <div v-else class="hero h-full bg-base-200">
             <div class="hero-content text-center">
               <div class="max-w-xs sm:max-w-sm space-y-3">
-                <p class="text-xs sm:text-sm text-base-content/80 leading-relaxed">
+                <p class="text-xs sm:text-sm opacity-80 leading-relaxed">
                   Par souci de transparence, Codex bloque les contenus tiers par défaut. L'affichage
                   de cette vidéo déposera des cookies provenant de YouTube.
                 </p>
@@ -189,8 +184,7 @@ const { hasYtConsent, acceptYtConsent } = useYtConsent()
             </div>
           </div>
         </div>
-
-        <template #action><span /></template>
+        <template v-if="hasYtConsent && isTrailerModalOpen" #action><span /></template>
       </BaseModal>
 
       <!-- Content + Details Side Panel -->
@@ -202,52 +196,52 @@ const { hasYtConsent, acceptYtConsent } = useYtConsent()
 
             <div class="divide-y divide-base-300 text-xs">
               <div class="py-2.5 flex justify-between gap-4">
-                <span class="font-bold text-base-content/50 tracking-wider">Format</span>
+                <span class="font-bold opacity-50 tracking-wider">Format</span>
                 <span class="font-medium text-right capitalize">{{ media.category }}</span>
               </div>
 
               <div class="py-2.5 flex justify-between gap-4">
-                <span class="font-bold text-base-content/50 tracking-wider">Date de sortie</span>
+                <span class="font-bold opacity-50 tracking-wider">Date de sortie</span>
                 <span class="font-medium text-right">{{ media.releaseDate }}</span>
               </div>
 
               <div class="py-2.5 flex justify-between gap-4">
-                <span class="font-bold text-base-content/50 tracking-wider">Statut</span>
+                <span class="font-bold opacity-50 tracking-wider">Statut</span>
                 <span class="font-medium text-right">{{ media.status }}</span>
               </div>
 
               <div v-if="media.runtime" class="py-2.5 flex justify-between gap-4">
-                <span class="font-bold text-base-content/50 tracking-wider shrink-0">Durée</span>
+                <span class="font-bold opacity-50 tracking-wider shrink-0">Durée</span>
                 <span class="font-medium text-right">{{ media.runtime }}</span>
               </div>
 
               <div class="py-2.5 flex justify-between gap-4">
-                <span class="font-bold text-base-content/50 tracking-wider">Studios</span>
+                <span class="font-bold opacity-50 tracking-wider">Studios</span>
                 <span class="font-medium text-right">{{ media.productionCompanies }}</span>
               </div>
 
               <div class="py-2.5 flex justify-between gap-4">
-                <span class="font-bold text-base-content/50 tracking-wider">Country</span>
+                <span class="font-bold opacity-50 tracking-wider">Country</span>
                 <span class="font-medium text-right">{{ media.originCountry }}</span>
               </div>
 
               <div class="py-2.5 flex justify-between gap-4">
-                <span class="font-bold text-base-content/50 tracking-wider">Langue d'origine</span>
+                <span class="font-bold opacity-50 tracking-wider">Langue d'origine</span>
                 <span class="font-medium text-right">{{ media.spokenLanguages }}</span>
               </div>
 
               <div v-if="media.budget" class="py-2.5 flex justify-between gap-4">
-                <span class="font-bold text-base-content/50 tracking-wider shrink-0">Budget</span>
+                <span class="font-bold opacity-50 tracking-wider shrink-0">Budget</span>
                 <span class="font-medium text-right">{{ media.budget }}</span>
               </div>
 
               <div v-if="media.revenue" class="py-2.5 flex justify-between gap-4">
-                <span class="font-bold text-base-content/50 tracking-wider shrink-0">Recette</span>
+                <span class="font-bold opacity-50 tracking-wider shrink-0">Recette</span>
                 <span class="font-medium text-right">{{ media.revenue }}</span>
               </div>
 
               <div class="py-2.5 flex justify-between gap-4">
-                <span class="font-bold text-base-content/50 tracking-wider">Provider</span>
+                <span class="font-bold opacity-50 tracking-wider">Provider</span>
                 <span class="font-medium text-right uppercase">{{ media.provider }}</span>
               </div>
             </div>
@@ -262,7 +256,6 @@ const { hasYtConsent, acceptYtConsent } = useYtConsent()
               <CardCast :name="item.name" :character="item.character" :image="item.profileUrl" />
             </template>
 
-            <!-- "See Full Cast" Tile -->
             <template v-if="media.provider === 'tmdb'" #append>
               <a
                 :href="`https://www.themoviedb.org/${media.category === 'series' ? 'tv' : 'movie'}/${media.apiId}/cast`"
@@ -275,7 +268,7 @@ const { hasYtConsent, acceptYtConsent } = useYtConsent()
                 >
                   <RightChevronIcon class="size-5" />
                 </div>
-                <span class="text-xs font-semibold text-base-content/80">See full cast</span>
+                <span class="text-xs font-semibold opacity-80">See full cast</span>
               </a>
             </template>
           </BaseCarousel>
@@ -321,14 +314,14 @@ const { hasYtConsent, acceptYtConsent } = useYtConsent()
             title="Dans le même genre"
             :items="media.recommendations"
           >
-            <template #item="{ item: media }">
+            <template #item="{ item: rec }">
               <CardMedia
-                :apiId="media.apiId"
-                :category="media.category"
-                :title="media.title"
-                :poster-url="media.posterUrl"
-                :release-date="media.releaseYear"
-                :rating="media.rating"
+                :apiId="rec.apiId"
+                :category="rec.category"
+                :title="rec.title"
+                :poster-url="rec.posterUrl"
+                :release-date="rec.releaseYear"
+                :rating="rec.rating"
                 class="w-32"
               />
             </template>

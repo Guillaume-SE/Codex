@@ -11,6 +11,7 @@ import type {
   TmdbRawMovieDetail,
   TmdbRawSeries,
   TmdbRawSeriesDetail,
+  TmdbTranslationsResponse,
   TmdbVideoResults,
 } from '#types/tmdb'
 import {
@@ -118,33 +119,6 @@ function extractSeriesCrew(createdBy?: TmdbCreatedBy[]): CrewMember[] {
   }))
 }
 
-function extractFrenchTitle(
-  rawTitles?: TmdbAlternativeTitlesResponse,
-  mainTitle?: string,
-  originalTitle?: string
-): string | undefined {
-  const list = rawTitles?.titles ?? rawTitles?.results ?? []
-  if (!list.length) {
-    return undefined
-  }
-
-  const frEntry = list.find((item) => item.iso_3166_1 === 'FR')
-  if (!frEntry?.title) {
-    return undefined
-  }
-
-  const cleanFr = frEntry.title.trim()
-  const cleanMain = mainTitle?.trim().toLowerCase()
-  const cleanOriginal = originalTitle?.trim().toLowerCase()
-
-  // suppress if French title is identical to main English title or original title
-  if (cleanFr.toLowerCase() === cleanMain || cleanFr.toLowerCase() === cleanOriginal) {
-    return undefined
-  }
-
-  return cleanFr
-}
-
 function extractYear(rawDate?: string | null): string | undefined {
   if (!rawDate) return undefined
   const year = rawDate.split('-')[0]
@@ -159,9 +133,53 @@ function extractRating(voteAverage?: number | null, voteCount?: number | null): 
   return voteAverage
 }
 
-function extractCommonDetails(item: TmdbRawBaseDetail) {
+function resolveLocalizedContent(
+  item: {
+    title?: string
+    name?: string
+    original_title?: string
+    original_name?: string
+    original_language?: string
+    overview?: string | null
+    translations?: TmdbTranslationsResponse
+  },
+  targetLocale: string = 'fr-FR'
+): { title: string; overview?: string } {
+  const defaultTitle = item.title || item.name || ''
+  const defaultOverview = item.overview?.trim() || undefined
+  const isoLang = targetLocale.slice(0, 2).toLowerCase()
+
+  if (isoLang === 'en') {
+    return { title: defaultTitle, overview: defaultOverview }
+  }
+
+  const translation = item.translations?.translations?.find(
+    (t) => t.iso_639_1?.toLowerCase() === isoLang
+  )
+
+  const translationTitle = (translation?.data?.title || translation?.data?.name)?.trim()
+  const translationOverview = translation?.data?.overview?.trim()
+
+  let title = defaultTitle
+  if (translationTitle) {
+    title = translationTitle
+  } else if (item.original_language?.toLowerCase() === isoLang) {
+    const orig = item.original_title || item.original_name
+    if (orig?.trim()) {
+      title = orig.trim()
+    }
+  }
+
+  const overview = translationOverview || defaultOverview
+
+  return { title, overview }
+}
+
+function extractCommonDetails(item: TmdbRawBaseDetail, targetLocale: string = 'fr-FR') {
+  const { overview } = resolveLocalizedContent(item, targetLocale)
+
   return {
-    overview: item.overview?.trim() || undefined,
+    overview,
     genres: item.genres?.map((g) => g.name) ?? [],
     status: formatText(item.status),
     trailerKey: extractTrailerKey(item.videos),
@@ -200,16 +218,17 @@ export class TmdbMapper {
 
   static toUnifiedMovieDetail(
     item: TmdbRawMovieDetail,
-    collectionParts: UnifiedMediaItem[] = []
+    collectionParts: UnifiedMediaItem[] = [],
+    targetLocale: string = 'fr-FR'
   ): UnifiedMediaDetail {
+    const localized = resolveLocalizedContent(item, targetLocale)
     const baseItem = TmdbMapper.toUnifiedMovie(item)
-    const originalTitle = item.original_title !== item.title ? item.original_title : undefined
 
     return {
       ...baseItem,
-      ...extractCommonDetails(item),
-      originalTitle,
-      frenchTitle: extractFrenchTitle(item.alternative_titles, baseItem.title, originalTitle),
+      ...extractCommonDetails(item, targetLocale),
+      title: localized.title,
+      originalTitle: item.original_title !== localized.title ? item.original_title : undefined,
       runtime: formatRuntime(item.runtime),
       budget: formatCurrency(item.budget),
       revenue: formatCurrency(item.revenue),
@@ -228,15 +247,18 @@ export class TmdbMapper {
     }
   }
 
-  static toUnifiedSeriesDetail(item: TmdbRawSeriesDetail): UnifiedMediaDetail {
+  static toUnifiedSeriesDetail(
+    item: TmdbRawSeriesDetail,
+    targetLocale: string = 'fr-FR'
+  ): UnifiedMediaDetail {
+    const localized = resolveLocalizedContent(item, targetLocale)
     const baseItem = TmdbMapper.toUnifiedSeries(item)
-    const originalTitle = item.original_name !== item.name ? item.original_name : undefined
 
     return {
       ...baseItem,
-      ...extractCommonDetails(item),
-      originalTitle,
-      frenchTitle: extractFrenchTitle(item.alternative_titles, baseItem.title, originalTitle),
+      ...extractCommonDetails(item, targetLocale),
+      title: localized.title,
+      originalTitle: item.original_name !== localized.title ? item.original_name : undefined,
       numberOfSeasons: item.number_of_seasons,
       numberOfEpisodes: item.number_of_episodes,
       seasons:

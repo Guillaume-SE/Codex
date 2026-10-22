@@ -51,7 +51,6 @@ export interface UnifiedMediaDetail extends UnifiedMediaItem {
   genres: string[]
   //optional
   originalTitle?: string
-  frenchTitle?: string
   overview?: string
   trailerKey?: string
   crew?: CrewMember[]
@@ -71,6 +70,10 @@ export interface UnifiedMediaDetail extends UnifiedMediaItem {
 export interface MediaApiProvider {
   readonly providerName: string
   getRecentRelease(page?: number, options?: Record<string, any>): Promise<UnifiedMediaItem[]>
-  getDetails(apiId: string, category: MediaCategory): Promise<UnifiedMediaDetail>
+  getDetails(
+    apiId: string,
+    category: MediaCategory,
+    options?: Record<string, any>
+  ): Promise<UnifiedMediaDetail>
   // search(query: string, page?: number, options?: Record<string, any>): Promise<UnifiedMediaItem[]>
 }

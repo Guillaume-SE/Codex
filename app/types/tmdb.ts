@@ -70,6 +70,24 @@ export interface TmdbBelongsToCollection {
   poster_path?: string | null
 }
 
+export interface TmdbTranslationData {
+  title?: string
+  name?: string
+  overview?: string
+}
+
+export interface TmdbTranslationItem {
+  iso_3166_1: string
+  iso_639_1: string
+  name: string
+  english_name: string
+  data: TmdbTranslationData
+}
+
+export interface TmdbTranslationsResponse {
+  translations: TmdbTranslationItem[]
+}
+
 export interface TmdbRawMovie {
   id: number
   title: string
@@ -113,6 +131,7 @@ export interface TmdbRawBaseDetail {
   genres: { id: number; name: string }[]
   status: string
   origin_country: string[]
+  original_language?: string
   alternative_titles?: TmdbAlternativeTitlesResponse
   spoken_languages: { english_name: string; iso_639_1: string; name: string }[]
   production_companies: { id: number; name: string }[]
@@ -121,6 +140,7 @@ export interface TmdbRawBaseDetail {
     crew: TmdbCrewMember[]
     cast: TmdbCastMember[]
   }
+  translations?: TmdbTranslationsResponse
 }
 
 export interface TmdbRawMovieDetail extends TmdbRawMovie, TmdbRawBaseDetail {
