@@ -2,7 +2,6 @@ import { TMDB_CONSTANTS } from '#constants/tmdb'
 import type { CastMember, CrewMember, UnifiedMediaDetail, UnifiedMediaItem } from '#types/media'
 import type {
   TmdbAggregateCastMember,
-  TmdbAlternativeTitlesResponse,
   TmdbCastMember,
   TmdbCreatedBy,
   TmdbCrewMember,
@@ -23,21 +22,16 @@ import {
   formatText,
 } from '#utils/formatters'
 
-// co nstruct poster url
 function buildImageUrl(
   path?: string | null,
   size: string = TMDB_CONSTANTS.posterSizes.medium
 ): string | undefined {
-  if (!path) {
-    return undefined
-  }
+  if (!path) return undefined
   return `${TMDB_CONSTANTS.imageBaseUrl}/${size}${path}`
 }
 
 function extractTrailerKey(videos?: TmdbVideoResults): string | undefined {
-  if (!videos?.results?.length) {
-    return undefined
-  }
+  if (!videos?.results?.length) return undefined
 
   const youtubeVideos = videos.results.filter((v) => v.site === 'YouTube')
   const video =
@@ -47,11 +41,8 @@ function extractTrailerKey(videos?: TmdbVideoResults): string | undefined {
   return video?.key
 }
 
-// extract movie cast (standard credits)
 function extractCast(cast?: TmdbCastMember[]): CastMember[] {
-  if (!cast?.length) {
-    return []
-  }
+  if (!cast?.length) return []
   return cast.slice(0, 10).map((person) => ({
     id: person.id,
     name: person.name,
@@ -60,11 +51,8 @@ function extractCast(cast?: TmdbCastMember[]): CastMember[] {
   }))
 }
 
-// extract TV series cast (aggregate credits with fallback)
 function extractAggregateCast(aggregateCast?: TmdbAggregateCastMember[]): CastMember[] {
-  if (!aggregateCast?.length) {
-    return []
-  }
+  if (!aggregateCast?.length) return []
   return aggregateCast.slice(0, 10).map((person) => ({
     id: person.id,
     name: person.name,
@@ -73,14 +61,11 @@ function extractAggregateCast(aggregateCast?: TmdbAggregateCastMember[]): CastMe
   }))
 }
 
-// extracts Directors & Key Writers for Movies
 function extractMovieCrew(crew?: TmdbCrewMember[]): CrewMember[] {
-  if (!crew?.length) {
-    return []
-  }
+  if (!crew?.length) return []
 
   const relevantJobs = ['Director', 'Writer', 'Screenplay', 'Story']
-  const crewMap = new Map<number, { person: TmdbCrewMember; jobs: Set<string> }>() // group multiple jobs into one person
+  const crewMap = new Map<number, { person: TmdbCrewMember; jobs: Set<string> }>()
 
   for (const member of crew) {
     if (!relevantJobs.includes(member.job)) continue
@@ -93,13 +78,13 @@ function extractMovieCrew(crew?: TmdbCrewMember[]): CrewMember[] {
     } else {
       crewMap.set(member.id, {
         person: member,
-        jobs: new Set([jobLabel]), // group all unique job of the person
+        jobs: new Set([jobLabel]),
       })
     }
   }
 
   return Array.from(crewMap.values())
-    .slice(0, 4) // Keep max 4 key crew members
+    .slice(0, 4)
     .map(({ person, jobs }) => ({
       id: person.id,
       name: person.name,
@@ -107,11 +92,8 @@ function extractMovieCrew(crew?: TmdbCrewMember[]): CrewMember[] {
     }))
 }
 
-// extracts Creators for TV Series
 function extractSeriesCrew(createdBy?: TmdbCreatedBy[]): CrewMember[] {
-  if (!createdBy?.length) {
-    return []
-  }
+  if (!createdBy?.length) return []
   return createdBy.map((person) => ({
     id: person.id,
     name: person.name,
@@ -126,10 +108,8 @@ function extractYear(rawDate?: string | null): string | undefined {
 }
 
 function extractRating(voteAverage?: number | null, voteCount?: number | null): number | undefined {
-  // if no votes or voteAverage is 0, return undefined for ui purpose
-  if (!voteCount || !voteAverage || voteAverage === 0) {
-    return undefined
-  }
+  if (!voteAverage || voteAverage === 0) return undefined
+  if (voteCount === 0) return undefined
   return voteAverage
 }
 
@@ -270,7 +250,7 @@ export class TmdbMapper {
           episodeCount: s.episode_count,
           airDate: formatDate(s.air_date),
           airYear: extractYear(s.air_date),
-          rating: extractRating(s.vote_average, s.vote_count ?? (s.vote_average ? 1 : 0)),
+          rating: extractRating(s.vote_average, s.vote_count),
         })) ?? [],
       crew: extractSeriesCrew(item.created_by),
       cast: extractAggregateCast(item.aggregate_credits?.cast),
