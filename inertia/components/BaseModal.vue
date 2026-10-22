@@ -1,19 +1,16 @@
 <script setup lang="ts">
-import { defineModel, defineProps, ref, watch, withDefaults } from 'vue'
+import { defineModel, defineProps, ref, watch } from 'vue'
 import CloseIcon from '~/components/ui/icons/CloseIcon.vue'
 
-const props = withDefaults(
-  defineProps<{
-    title?: string
-    boxClass?: string
-    showCloseButton?: boolean
-  }>(),
-  {
-    title: '',
-    boxClass: 'max-w-2xl',
-    showCloseButton: true,
-  }
-)
+const {
+  title = '',
+  boxClass = 'max-w-2xl',
+  showCloseButton = true,
+} = defineProps<{
+  title?: string
+  boxClass?: string
+  showCloseButton?: boolean
+}>()
 
 const isOpen = defineModel<boolean>({ default: false })
 
@@ -46,7 +43,7 @@ function handleNativeClose() {
         <button
           type="submit"
           class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
-          aria-label="Close"
+          aria-label="Fermer"
         >
           <CloseIcon class="size-6" />
         </button>
@@ -60,14 +57,10 @@ function handleNativeClose() {
       <!-- Default Body Content Slot -->
       <slot />
 
-      <!-- Action Footer Slot -->
-      <slot name="action">
-        <div class="modal-action">
-          <form method="dialog">
-            <button type="submit" class="btn">Close</button>
-          </form>
-        </div>
-      </slot>
+      <!-- Action Footer Slot who only renders if parent provides #action -->
+      <div v-if="$slots.action" class="modal-action">
+        <slot name="action" />
+      </div>
     </div>
 
     <!-- Backdrop Click Outside Target -->

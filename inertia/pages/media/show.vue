@@ -146,8 +146,8 @@ const { hasYtConsent, acceptYtConsent } = useYtConsent()
 
         <template #action>
           <div class="flex justify-end gap-3">
-            <BaseButton variant="ghost" @click="isProgressModalOpen = false">Cancel</BaseButton>
-            <BaseButton color="primary">Save</BaseButton>
+            <BaseButton variant="ghost" @click="isProgressModalOpen = false">Retour</BaseButton>
+            <BaseButton color="primary">Confirmer</BaseButton>
           </div>
         </template>
       </BaseModal>
@@ -184,7 +184,7 @@ const { hasYtConsent, acceptYtConsent } = useYtConsent()
             </div>
           </div>
         </div>
-        <template v-if="hasYtConsent && isTrailerModalOpen" #action><span /></template>
+        <template #action><span /></template>
       </BaseModal>
 
       <!-- Content + Details Side Panel -->
