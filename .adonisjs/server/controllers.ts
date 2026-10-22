@@ -10,4 +10,6 @@ export const controllers = {
     Register: () => import('#controllers/auth/register_controller'),
     Session: () => import('#controllers/auth/session_controller'),
   },
+  Home: () => import('#controllers/home_controller'),
+  Media: () => import('#controllers/media_controller'),
 }

@@ -13,9 +13,8 @@ const page = usePage<Data.SharedProps>()
 
 const menuItems = computed(() => {
   return navLinks.map((link) => ({
-    label: link.label,
-    params: { category: link.category },
-    isActive: page.url.includes(`/categories/${link.category}`),
+    ...link,
+    isActive: page.url.startsWith(link.activePattern),
   }))
 })
 </script>
@@ -34,10 +33,10 @@ const menuItems = computed(() => {
 
     <div class="navbar-center hidden md:flex">
       <ul class="flex gap-6 font-semibold">
-        <li v-for="link in menuItems" :key="link.params.category">
+        <li v-for="link in menuItems" :key="link.route">
           <Link
-            route="home"
-            :route-params="link.params"
+            :route="link.route"
+            :route-params="link.routeParams"
             class="border-b-2 pb-1 transition-colors duration-150"
             :class="
               link.isActive

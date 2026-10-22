@@ -25,6 +25,7 @@ export default class extends BaseSchema {
       table.string('poster_url').nullable()
       table.string('released').nullable()
 
+      table.timestamp('last_synced_at', { useTz: true }).notNullable()
       table.timestamp('created_at', { useTz: true })
       table.timestamp('updated_at', { useTz: true })
 

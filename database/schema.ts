@@ -70,7 +70,7 @@ export class FormatSchema extends BaseModel {
 }
 
 export class MediaSchema extends BaseModel {
-  static $columns = ['apiId', 'createdAt', 'formatId', 'id', 'posterUrl', 'providerId', 'released', 'title', 'updatedAt'] as const
+  static $columns = ['apiId', 'createdAt', 'formatId', 'id', 'lastSyncedAt', 'posterUrl', 'providerId', 'released', 'title', 'updatedAt'] as const
   $columns = MediaSchema.$columns
   @column()
   declare apiId: string
@@ -80,6 +80,8 @@ export class MediaSchema extends BaseModel {
   declare formatId: number
   @column({ isPrimary: true })
   declare id: number
+  @column.dateTime()
+  declare lastSyncedAt: DateTime
   @column()
   declare posterUrl: string | null
   @column()

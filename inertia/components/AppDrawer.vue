@@ -22,9 +22,8 @@ watch(
 
 const menuItems = computed(() => {
   return navLinks.map((link) => ({
-    label: link.label,
-    params: { category: link.category },
-    isActive: page.url.includes(`/categories/${link.category}`),
+    ...link,
+    isActive: page.url.startsWith(link.activePattern),
   }))
 })
 </script>
@@ -61,10 +60,10 @@ const menuItems = computed(() => {
           </div>
 
           <ul class="menu w-full gap-1 p-0">
-            <li v-for="link in menuItems" :key="link.params.category">
+            <li v-for="link in menuItems" :key="link.route">
               <Link
-                route="home"
-                :route-params="link.params"
+                :route="link.route"
+                :route-params="link.routeParams"
                 class="py-3 font-semibold"
                 :class="link.isActive ? 'bg-primary text-primary-content' : 'active:bg-base-300'"
               >
