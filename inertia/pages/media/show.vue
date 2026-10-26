@@ -12,7 +12,6 @@ import RightChevronIcon from '~/components/ui/icons/RightChevronIcon.vue'
 import RatingBox from '~/components/ui/RatingBox.vue'
 import { useYtConsent } from '~/composables/useYtConsent'
 
-// Vue 3.5 Reactive Prop Destructuring
 const { media, userProgress } = defineProps<{
   media: Data.PresentedMediaDetail
   userProgress: Data.UserMedia | null
