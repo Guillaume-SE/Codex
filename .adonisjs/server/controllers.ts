@@ -11,5 +11,6 @@ export const controllers = {
     Session: () => import('#controllers/auth/session_controller'),
   },
   Home: () => import('#controllers/home_controller'),
+  Languages: () => import('#controllers/languages_controller'),
   Media: () => import('#controllers/media_controller'),
 }

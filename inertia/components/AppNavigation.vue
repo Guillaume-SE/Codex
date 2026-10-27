@@ -3,6 +3,7 @@ import { Link } from '@adonisjs/inertia/vue'
 import type { Data } from '@generated/data'
 import { usePage } from '@inertiajs/vue3'
 import { computed } from 'vue'
+import LanguageAction from '~/components/LanguageAction.vue'
 import NotificationAction from '~/components/NotificationAction.vue'
 import ThemeController from '~/components/ThemeController.vue'
 import MenuBarsIcon from '~/components/ui/icons/MenuBarsIcon.vue'
@@ -51,6 +52,7 @@ const menuItems = computed(() => {
     </div>
 
     <div class="navbar-end gap-2 sm:gap-3">
+      <LanguageAction />
       <ThemeController />
       <NotificationAction v-if="page.props.user" :show-dot="true" />
       <UserMenu />

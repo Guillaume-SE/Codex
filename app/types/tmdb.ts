@@ -88,6 +88,15 @@ export interface TmdbTranslationsResponse {
   translations: TmdbTranslationItem[]
 }
 
+export interface TmdbImageItem {
+  file_path: string
+  iso_639_1: string | null
+}
+
+export interface TmdbImagesResponse {
+  posters?: TmdbImageItem[]
+}
+
 export interface TmdbRawMovie {
   id: number
   title: string
@@ -136,6 +145,7 @@ export interface TmdbRawBaseDetail {
   spoken_languages: { english_name: string; iso_639_1: string; name: string }[]
   production_companies: { id: number; name: string }[]
   videos?: TmdbVideoResults
+  images?: TmdbImagesResponse
   credits?: {
     crew: TmdbCrewMember[]
     cast: TmdbCastMember[]

@@ -5,6 +5,7 @@ import type {
   TmdbCastMember,
   TmdbCreatedBy,
   TmdbCrewMember,
+  TmdbImagesResponse,
   TmdbRawBaseDetail,
   TmdbRawMovie,
   TmdbRawMovieDetail,
@@ -28,6 +29,22 @@ function buildImageUrl(
 ): string | undefined {
   if (!path) return undefined
   return `${TMDB_CONSTANTS.imageBaseUrl}/${size}${path}`
+}
+
+function resolveLocalizedPosterUrl(
+  item: { poster_path?: string | null; images?: TmdbImagesResponse },
+  targetLocale: string = 'fr-FR'
+): string | undefined {
+  const isoLang = targetLocale.slice(0, 2).toLowerCase()
+
+  if (isoLang !== 'en' && item.images?.posters?.length) {
+    const localizedPoster = item.images.posters.find((p) => p.iso_639_1?.toLowerCase() === isoLang)
+    if (localizedPoster?.file_path) {
+      return buildImageUrl(localizedPoster.file_path)
+    }
+  }
+
+  return buildImageUrl(item.poster_path)
 }
 
 function extractTrailerKey(videos?: TmdbVideoResults): string | undefined {
@@ -208,6 +225,7 @@ export class TmdbMapper {
       ...baseItem,
       ...extractCommonDetails(item, targetLocale),
       title: localized.title,
+      posterUrl: resolveLocalizedPosterUrl(item, targetLocale),
       originalTitle: item.original_title !== localized.title ? item.original_title : undefined,
       runtime: formatRuntime(item.runtime),
       budget: formatCurrency(item.budget),
@@ -238,6 +256,7 @@ export class TmdbMapper {
       ...baseItem,
       ...extractCommonDetails(item, targetLocale),
       title: localized.title,
+      posterUrl: resolveLocalizedPosterUrl(item, targetLocale),
       originalTitle: item.original_name !== localized.title ? item.original_name : undefined,
       numberOfSeasons: item.number_of_seasons,
       numberOfEpisodes: item.number_of_episodes,

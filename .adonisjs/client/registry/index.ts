@@ -72,6 +72,12 @@ const routes = {
     tokens: [{"old":"/:category/:apiId","type":1,"val":"category","end":""},{"old":"/:category/:apiId","type":1,"val":"apiId","end":""}],
     types: placeholder as Registry['media.show']['types'],
   },
+  'languages.update': {
+    methods: ["POST"],
+    pattern: '/language',
+    tokens: [{"old":"/language","type":0,"val":"language","end":""}],
+    types: placeholder as Registry['languages.update']['types'],
+  },
 } as const satisfies Record<string, AdonisEndpoint>
 
 export { routes }

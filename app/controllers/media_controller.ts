@@ -9,7 +9,7 @@ import { HttpContext } from '@adonisjs/core/http'
 export default class MediaController {
   constructor(protected mediaService: MediaService) {}
 
-  public async show({ params, inertia, auth }: HttpContext) {
+  public async show({ params, inertia, auth, locale }: HttpContext) {
     const { category, apiId } = params as {
       category: MediaCategory
       apiId: string
@@ -18,6 +18,7 @@ export default class MediaController {
     const { details, userProgress } = await this.mediaService.getMediaDetails(
       category,
       apiId,
+      locale,
       auth.user?.id
     )
 

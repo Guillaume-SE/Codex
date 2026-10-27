@@ -23,4 +23,7 @@ export interface ApiDefinition {
   media: {
     show: typeof routes['media.show']
   }
+  languages: {
+    update: typeof routes['languages.update']
+  }
 }

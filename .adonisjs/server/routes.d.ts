@@ -15,6 +15,7 @@ export type ScannedRoutes = {
     'onboardings.destroy': { paramsTuple?: []; params?: {} }
     'session.destroy': { paramsTuple?: []; params?: {} }
     'media.show': { paramsTuple: [ParamValue,ParamValue]; params: {'category': ParamValue,'apiId': ParamValue} }
+    'languages.update': { paramsTuple?: []; params?: {} }
   }
   GET: {
     'home': { paramsTuple?: []; params?: {} }
@@ -38,6 +39,7 @@ export type ScannedRoutes = {
     'account_recovery.store': { paramsTuple?: []; params?: {} }
     'onboardings.destroy': { paramsTuple?: []; params?: {} }
     'session.destroy': { paramsTuple?: []; params?: {} }
+    'languages.update': { paramsTuple?: []; params?: {} }
   }
 }
 declare module '@adonisjs/core/types/http' {

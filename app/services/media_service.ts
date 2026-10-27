@@ -15,21 +15,26 @@ const CATEGORY_PROVIDER_MAP: Record<MediaCategory, MediaProvider> = {
 export class MediaService {
   constructor(protected tmdbService: TmdbService) {}
 
-  async getHomeFeed() {
+  async getHomeFeed(locale: string = 'en-US') {
     const [movies, series] = await Promise.all([
-      this.tmdbService.getRecentRelease(1, { category: 'movie' }),
-      this.tmdbService.getRecentRelease(1, { category: 'series' }),
+      this.tmdbService.getRecentRelease(1, { category: 'movie', language: locale }),
+      this.tmdbService.getRecentRelease(1, { category: 'series', language: locale }),
     ])
 
     return { movies, series }
   }
 
-  async getMediaDetails(category: MediaCategory, apiId: string, userId?: number) {
+  async getMediaDetails(
+    category: MediaCategory,
+    apiId: string,
+    locale: string = 'fr-FR',
+    userId?: number
+  ) {
     const provider = CATEGORY_PROVIDER_MAP[category]
     let details: UnifiedMediaDetail
 
     if (provider === 'tmdb') {
-      details = await this.tmdbService.getDetails(apiId, category)
+      details = await this.tmdbService.getDetails(apiId, category, { language: locale })
     } else {
       throw new Error(`Provider ${provider} is not supported`)
     }

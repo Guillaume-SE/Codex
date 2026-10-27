@@ -64,14 +64,16 @@ export class TmdbService extends BaseApiService implements MediaApiProvider {
     options?: TmdbOptions
   ): Promise<UnifiedMediaDetail> {
     const language = options?.language || 'fr-FR'
+    const isoLang = language.slice(0, 2).toLowerCase()
     const appendToResponse =
       category === 'series'
-        ? 'videos,aggregate_credits,recommendations,translations'
-        : 'videos,credits,recommendations,translations'
+        ? 'videos,aggregate_credits,recommendations,translations,images'
+        : 'videos,credits,recommendations,translations,images'
 
     const params = new URLSearchParams({
       language: 'en-US',
       append_to_response: appendToResponse,
+      include_image_language: `${isoLang},en,null`,
     })
 
     const endpoint = `/${category === 'series' ? 'tv' : 'movie'}/${apiId}?${params}`
