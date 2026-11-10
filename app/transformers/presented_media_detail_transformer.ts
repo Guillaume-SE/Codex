@@ -13,6 +13,7 @@ export default class PresentedMediaDetailTransformer extends BaseTransformer<Uni
       'releaseYear',
       'posterUrl',
       'rating',
+      'ratingCount',
       'overview',
       'genres',
       'status',

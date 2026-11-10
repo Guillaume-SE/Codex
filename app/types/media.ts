@@ -26,6 +26,7 @@ export interface SeasonItem {
   airDate?: string
   airYear?: string
   rating?: number
+  // ratingCount?: number
 }
 
 export interface UnifiedMediaItem {
@@ -37,6 +38,7 @@ export interface UnifiedMediaItem {
   releaseYear?: string
   posterUrl?: string
   rating?: number
+  ratingCount?: number
 }
 
 export interface UnifiedMediaDetail extends UnifiedMediaItem {

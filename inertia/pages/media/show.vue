@@ -6,6 +6,7 @@ import BaseCarousel from '~/components/BaseCarousel.vue'
 import BaseModal from '~/components/BaseModal.vue'
 import CardCast from '~/components/CardCast.vue'
 import CardMedia from '~/components/CardMedia.vue'
+import LanguageAction from '~/components/LanguageAction.vue'
 import BaseButton from '~/components/ui/BaseButton.vue'
 import PlayIcon from '~/components/ui/icons/PlayIcon.vue'
 import RightChevronIcon from '~/components/ui/icons/RightChevronIcon.vue'
@@ -21,6 +22,11 @@ const isProgressModalOpen = ref(false)
 const isTrailerModalOpen = ref(false)
 
 const { hasYtConsent, acceptYtConsent } = useYtConsent()
+
+const formatCount = (count?: number) => {
+  if (!count) return '0'
+  return new Intl.NumberFormat('fr-FR').format(count)
+}
 </script>
 
 <template>
@@ -44,20 +50,26 @@ const { hasYtConsent, acceptYtConsent } = useYtConsent()
           </div>
         </div>
 
-        <!-- Main Info Header -->
-        <div class="flex-1 space-y-5">
-          <!-- Title -->
-          <div class="space-y-1">
-            <h1 class="text-3xl sm:text-4xl font-heading font-extrabold">
-              {{ media.title }}
-            </h1>
+        <div class="flex-1 space-y-5 w-full">
+          <!-- Title & Language Selector Header Row -->
+          <div class="flex items-start justify-between gap-4">
+            <div class="space-y-1 min-w-0">
+              <h1 class="text-3xl sm:text-4xl font-heading font-extrabold leading-tight">
+                {{ media.title }}
+              </h1>
 
-            <div
-              v-if="media.originalTitle"
-              class="flex items-center gap-1.5 text-xs opacity-70 pt-0.5"
-            >
-              <span class="opacity-70 font-medium">Original:</span>
-              <span class="font-semibold">{{ media.originalTitle }}</span>
+              <div
+                v-if="media.originalTitle"
+                class="flex items-center gap-1.5 text-xs opacity-70 pt-0.5"
+              >
+                <span class="opacity-70 font-medium">Original:</span>
+                <span class="font-semibold truncate">{{ media.originalTitle }}</span>
+              </div>
+            </div>
+
+            <!-- Language Switcher (TMDB only) -->
+            <div v-if="media.provider === 'tmdb'" class="shrink-0 pt-1">
+              <LanguageAction />
             </div>
           </div>
 
@@ -74,7 +86,7 @@ const { hasYtConsent, acceptYtConsent } = useYtConsent()
 
           <!-- Overview -->
           <p class="text-sm opacity-80 max-w-3xl leading-relaxed">
-            {{ media.overview ?? 'No overview available.' }}
+            {{ media.overview ?? 'Aucun synopsis disponible.' }}
           </p>
 
           <!-- Crew -->
@@ -85,23 +97,33 @@ const { hasYtConsent, acceptYtConsent } = useYtConsent()
                 <span class="font-semibold">{{ member.name }}</span>
               </div>
             </template>
-            <div v-else class="text-xs opacity-50">Crew: N/A</div>
+            <div v-else class="text-xs opacity-50">Équipe technique: N/A</div>
           </div>
 
           <!-- Rating Card & Trailer Button -->
-          <div class="flex flex-wrap items-center gap-6">
-            <div
-              class="flex items-center gap-3 bg-base-200 border border-base-300 rounded-box px-4 py-2"
-            >
-              <div class="text-xl font-black flex items-center gap-1">
-                <RatingBox :rating="media.rating" />
-                <span class="text-xs opacity-50 font-normal">/ 10</span>
+          <div class="flex items-start gap-3 flex-wrap">
+            <div class="flex flex-col gap-1 w-fit">
+              <div
+                class="flex items-center gap-3 bg-base-200 border border-base-300 rounded-box px-4 py-2"
+              >
+                <div class="text-xl font-black flex items-center gap-1">
+                  <RatingBox :rating="media.rating" />
+                  <span class="text-xs opacity-50 font-normal">/ 10</span>
+                </div>
+
+                <template v-if="media.ratingCount">
+                  <div class="divider divider-horizontal m-0"></div>
+                  <div class="text-xs leading-tight">
+                    <div class="font-bold">{{ formatCount(media.ratingCount) }}</div>
+                    <div class="opacity-60 lowercase">notes</div>
+                  </div>
+                </template>
               </div>
-              <div class="divider divider-horizontal m-0"></div>
-              <div class="text-xs leading-tight">
-                <div class="font-bold">Score</div>
-                <div class="opacity-60 uppercase">{{ media.provider }}</div>
-              </div>
+
+              <!-- Provider Footnote -->
+              <span class="text-[11px] opacity-50 px-1">
+                Notes provenant de <span class="uppercase font-semibold">{{ media.provider }}</span>
+              </span>
             </div>
 
             <BaseButton
@@ -240,7 +262,7 @@ const { hasYtConsent, acceptYtConsent } = useYtConsent()
               </div>
 
               <div class="py-2.5 flex justify-between gap-4">
-                <span class="font-bold opacity-50 tracking-wider">Provider</span>
+                <span class="font-bold opacity-50 tracking-wider">Source</span>
                 <span class="font-medium text-right uppercase">{{ media.provider }}</span>
               </div>
             </div>

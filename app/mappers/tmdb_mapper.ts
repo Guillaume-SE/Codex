@@ -130,6 +130,11 @@ function extractRating(voteAverage?: number | null, voteCount?: number | null): 
   return voteAverage
 }
 
+function extractVoteCount(voteCount?: number | null): number | undefined {
+  if (!voteCount || voteCount <= 0) return undefined
+  return voteCount
+}
+
 function resolveLocalizedContent(
   item: {
     title?: string
@@ -197,6 +202,7 @@ export class TmdbMapper {
       releaseYear: extractYear(item.release_date),
       posterUrl: buildImageUrl(item.poster_path),
       rating: extractRating(item.vote_average, item.vote_count),
+      ratingCount: extractVoteCount(item.vote_count),
     }
   }
 
@@ -210,6 +216,7 @@ export class TmdbMapper {
       releaseYear: extractYear(item.first_air_date),
       posterUrl: buildImageUrl(item.poster_path),
       rating: extractRating(item.vote_average, item.vote_count),
+      ratingCount: extractVoteCount(item.vote_count),
     }
   }
 
