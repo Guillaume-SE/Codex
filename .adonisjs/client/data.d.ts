@@ -8,6 +8,7 @@ import type { InferData, InferVariants } from '@adonisjs/core/types/transformers
 import type { InferSharedProps, InferFlashData } from '@adonisjs/inertia/types'
 import type PresentedMediaDetailTransformer from '#transformers/presented_media_detail_transformer'
 import type PresentedMediaTransformer from '#transformers/presented_media_transformer'
+import type PresentedSeasonDetailTransformer from '#transformers/presented_season_detail_transformer'
 import type UserMediaTransformer from '#transformers/user_media_transformer'
 import type UserTransformer from '#transformers/user_transformer'
 import type InertiaMiddleware from '#middleware/inertia_middleware'
@@ -20,6 +21,10 @@ export namespace Data {
   export type PresentedMedia = InferData<PresentedMediaTransformer>
   export namespace PresentedMedia {
     export type Variants = InferVariants<PresentedMediaTransformer>
+  }
+  export type PresentedSeasonDetail = InferData<PresentedSeasonDetailTransformer>
+  export namespace PresentedSeasonDetail {
+    export type Variants = InferVariants<PresentedSeasonDetailTransformer>
   }
   export type UserMedia = InferData<UserMediaTransformer>
   export namespace UserMedia {

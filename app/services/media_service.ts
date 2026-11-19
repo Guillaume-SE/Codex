@@ -31,26 +31,54 @@ export class MediaService {
     userId?: number
   ) {
     const provider = CATEGORY_PROVIDER_MAP[category]
-    let details: UnifiedMediaDetail
 
-    if (provider === 'tmdb') {
-      details = await this.tmdbService.getDetails(apiId, category, { language: locale })
-    } else {
+    if (provider !== 'tmdb') {
       throw new Error(`Provider ${provider} is not supported`)
     }
 
-    // Check user tracking in local DB if user is logged in
-    let userProgress: UserMedia | null = null
-    if (userId) {
-      userProgress = await UserMedia.query()
-        .where('user_id', userId)
-        .whereHas('media', (query) => {
-          query.where('api_id', apiId).whereHas('provider', (p) => p.where('name', provider))
-        })
-        .preload('status')
-        .first()
-    }
+    const [details, userProgress] = await Promise.all([
+      this.tmdbService.getDetails(apiId, category, { language: locale }),
+      userId ? this.getUserProgress(category, apiId, userId) : null,
+    ])
 
     return { details, userProgress }
+  }
+
+  async getSeasonDetails(
+    category: MediaCategory,
+    seriesApiId: string,
+    seasonNumber: number,
+    locale: string = 'fr-FR',
+    userId?: number
+  ) {
+    const [season, userProgress] = await Promise.all([
+      this.tmdbService.getSeasonDetails(seriesApiId, seasonNumber, { language: locale }),
+      userId ? this.getUserProgress(category, seriesApiId, userId) : null,
+    ])
+
+    return { season, userProgress }
+  }
+
+  private async getUserProgress(
+    category: MediaCategory,
+    apiId: string,
+    userId: number
+  ): Promise<UserMedia | null> {
+    const provider = CATEGORY_PROVIDER_MAP[category]
+
+    return UserMedia.query()
+      .where('user_id', userId)
+      .whereHas('media', (mediaQuery) => {
+        mediaQuery
+          .where('api_id', apiId)
+          .whereHas('provider', (providerQuery) => providerQuery.where('name', provider))
+          .whereHas('format', (formatQuery) => {
+            formatQuery.whereHas('category', (categoryQuery) => {
+              categoryQuery.where('name', category)
+            })
+          })
+      })
+      .preload('status')
+      .first()
   }
 }

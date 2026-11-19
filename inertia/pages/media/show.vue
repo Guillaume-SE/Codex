@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Data } from '@generated/data'
 import { defineProps, ref } from 'vue'
+import { urlFor } from '~/client'
 import AppHead from '~/components/AppHead.vue'
 import BaseCarousel from '~/components/BaseCarousel.vue'
 import BaseModal from '~/components/BaseModal.vue'
@@ -299,7 +300,14 @@ const formatCount = (count?: number) => {
             <template #item="{ item: season }">
               <CardMedia
                 :apiId="season.apiId"
-                category="series"
+                :category="media.category"
+                :href="
+                  urlFor('media.show_season', {
+                    category: media.category,
+                    apiId: media.apiId,
+                    seasonNumber: season.seasonNumber,
+                  })
+                "
                 :title="season.name"
                 :poster-url="season.posterUrl"
                 :episode-count="season.episodeCount"

@@ -66,6 +66,12 @@ const routes = {
     tokens: [{"old":"/logout","type":0,"val":"logout","end":""}],
     types: placeholder as Registry['session.destroy']['types'],
   },
+  'media.show_season': {
+    methods: ["GET","HEAD"],
+    pattern: '/:category/:apiId/seasons/:seasonNumber',
+    tokens: [{"old":"/:category/:apiId/seasons/:seasonNumber","type":1,"val":"category","end":""},{"old":"/:category/:apiId/seasons/:seasonNumber","type":1,"val":"apiId","end":""},{"old":"/:category/:apiId/seasons/:seasonNumber","type":0,"val":"seasons","end":""},{"old":"/:category/:apiId/seasons/:seasonNumber","type":1,"val":"seasonNumber","end":""}],
+    types: placeholder as Registry['media.show_season']['types'],
+  },
   'media.show': {
     methods: ["GET","HEAD"],
     pattern: '/:category/:apiId',

@@ -127,6 +127,18 @@ export interface Registry {
       errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/auth/session_controller').default['destroy']>>>
     }
   }
+  'media.show_season': {
+    methods: ["GET","HEAD"]
+    pattern: '/:category/:apiId/seasons/:seasonNumber'
+    types: {
+      body: {}
+      paramsTuple: [ParamValue, ParamValue, ParamValue]
+      params: { category: ParamValue; apiId: ParamValue; seasonNumber: ParamValue }
+      query: {}
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/media_controller').default['showSeason']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/media_controller').default['showSeason']>>>
+    }
+  }
   'media.show': {
     methods: ["GET","HEAD"]
     pattern: '/:category/:apiId'

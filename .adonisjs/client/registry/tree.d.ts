@@ -21,6 +21,7 @@ export interface ApiDefinition {
     destroy: typeof routes['onboardings.destroy']
   }
   media: {
+    showSeason: typeof routes['media.show_season']
     show: typeof routes['media.show']
   }
   languages: {

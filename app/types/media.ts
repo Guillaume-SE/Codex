@@ -29,6 +29,29 @@ export interface SeasonItem {
   // ratingCount?: number
 }
 
+export interface UnifiedEpisodeItem {
+  id: number
+  episodeNumber: number
+  title: string
+  overview?: string
+  imageUrl?: string
+  airDate?: string
+  runtime?: string
+}
+
+export interface UnifiedSeasonDetail {
+  apiId: number
+  seriesApiId: string
+  name: string
+  seasonNumber: number
+  overview?: string
+  posterUrl?: string
+  airDate?: string
+  airYear?: string
+  rating?: number
+  episodes: UnifiedEpisodeItem[]
+}
+
 export interface UnifiedMediaItem {
   apiId: string
   provider: MediaProvider

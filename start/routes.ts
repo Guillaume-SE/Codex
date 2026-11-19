@@ -28,7 +28,12 @@ router
   })
   .use([middleware.auth(), middleware.trackLastSeen()])
 
+router
+  .get('/:category/:apiId/seasons/:seasonNumber', [controllers.Media, 'showSeason'])
+  .where('category', /^(series|anime)$/)
+  .where('seasonNumber', router.matchers.number())
 router.get('/:category/:apiId', [controllers.Media, 'show']).where('category', CATEGORY_MATCH_REGEX)
+
 router.post('/language', [controllers.Languages, 'update'])
 
 // router.get('/discover/:category', [DiscoverController, 'index']).as('discover.index')

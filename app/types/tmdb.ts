@@ -128,6 +128,30 @@ export interface TmdbRawSeason {
   vote_count?: number
 }
 
+export interface TmdbRawEpisode {
+  id: number
+  episode_number: number
+  name: string
+  overview?: string | null
+  still_path?: string | null
+  air_date?: string | null
+  runtime?: number | null
+  vote_average?: number | null
+  vote_count?: number | null
+}
+
+export interface TmdbRawSeasonDetail {
+  id: number
+  name: string
+  overview?: string | null
+  poster_path?: string | null
+  season_number: number
+  air_date?: string | null
+  vote_average?: number | null
+  vote_count?: number | null
+  episodes: TmdbRawEpisode[]
+}
+
 export interface TmdbRawCollectionDetail {
   id: number
   name: string

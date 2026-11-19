@@ -6,12 +6,14 @@ import type {
   MediaCategory,
   UnifiedMediaDetail,
   UnifiedMediaItem,
+  UnifiedSeasonDetail,
 } from '#types/media'
 import type {
   TmdbPaginatedResponse,
   TmdbRawCollectionDetail,
   TmdbRawMovie,
   TmdbRawMovieDetail,
+  TmdbRawSeasonDetail,
   TmdbRawSeries,
   TmdbRawSeriesDetail,
 } from '#types/tmdb'
@@ -91,6 +93,20 @@ export class TmdbService extends BaseApiService implements MediaApiProvider {
     }
 
     return TmdbMapper.toUnifiedMovieDetail(data, collectionParts, language)
+  }
+
+  async getSeasonDetails(
+    seriesId: string,
+    seasonNumber: number,
+    options?: TmdbOptions
+  ): Promise<UnifiedSeasonDetail> {
+    const language = options?.language || 'fr-FR'
+    const params = new URLSearchParams({ language })
+
+    const endpoint = `/tv/${seriesId}/season/${seasonNumber}?${params}`
+    const data = await this.request<TmdbRawSeasonDetail>(endpoint)
+
+    return TmdbMapper.toUnifiedSeasonDetail(data, seriesId)
   }
 
   async getCollectionParts(collectionId: number, language = 'fr-FR'): Promise<UnifiedMediaItem[]> {

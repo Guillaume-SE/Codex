@@ -16,6 +16,7 @@ declare module '@adonisjs/inertia/types' {
     'errors/not_found': ExtractProps<(typeof import('../../inertia/pages/errors/not_found.vue'))['default']>
     'errors/server_error': ExtractProps<(typeof import('../../inertia/pages/errors/server_error.vue'))['default']>
     'home': ExtractProps<(typeof import('../../inertia/pages/home.vue'))['default']>
+    'media/show_season': ExtractProps<(typeof import('../../inertia/pages/media/show_season.vue'))['default']>
     'media/show': ExtractProps<(typeof import('../../inertia/pages/media/show.vue'))['default']>
   }
 }

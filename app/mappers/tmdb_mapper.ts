@@ -1,5 +1,12 @@
 import { TMDB_CONSTANTS } from '#constants/tmdb'
-import type { CastMember, CrewMember, UnifiedMediaDetail, UnifiedMediaItem } from '#types/media'
+import type {
+  CastMember,
+  CrewMember,
+  UnifiedEpisodeItem,
+  UnifiedMediaDetail,
+  UnifiedMediaItem,
+  UnifiedSeasonDetail,
+} from '#types/media'
 import type {
   TmdbAggregateCastMember,
   TmdbCastMember,
@@ -7,8 +14,10 @@ import type {
   TmdbCrewMember,
   TmdbImagesResponse,
   TmdbRawBaseDetail,
+  TmdbRawEpisode,
   TmdbRawMovie,
   TmdbRawMovieDetail,
+  TmdbRawSeasonDetail,
   TmdbRawSeries,
   TmdbRawSeriesDetail,
   TmdbTranslationsResponse,
@@ -206,6 +215,18 @@ export class TmdbMapper {
     }
   }
 
+  static toUnifiedEpisode(item: TmdbRawEpisode): UnifiedEpisodeItem {
+    return {
+      id: item.id,
+      episodeNumber: item.episode_number,
+      title: item.name,
+      overview: item.overview?.trim() || undefined,
+      imageUrl: buildImageUrl(item.still_path, 'w300'),
+      airDate: formatDate(item.air_date),
+      runtime: formatRuntime(item.runtime),
+    }
+  }
+
   static toUnifiedSeries(item: TmdbRawSeries): UnifiedMediaItem {
     return {
       apiId: String(item.id),
@@ -282,6 +303,24 @@ export class TmdbMapper {
       cast: extractAggregateCast(item.aggregate_credits?.cast),
       recommendations:
         item.recommendations?.results?.slice(0, 8).map(TmdbMapper.toUnifiedSeries) ?? [],
+    }
+  }
+
+  static toUnifiedSeasonDetail(
+    item: TmdbRawSeasonDetail,
+    seriesApiId: string
+  ): UnifiedSeasonDetail {
+    return {
+      apiId: item.id,
+      seriesApiId,
+      name: item.name,
+      seasonNumber: item.season_number,
+      overview: item.overview?.trim() || undefined,
+      posterUrl: buildImageUrl(item.poster_path),
+      airDate: formatDate(item.air_date),
+      airYear: extractYear(item.air_date),
+      rating: extractRating(item.vote_average, item.vote_count),
+      episodes: item.episodes?.map(TmdbMapper.toUnifiedEpisode) ?? [],
     }
   }
 }

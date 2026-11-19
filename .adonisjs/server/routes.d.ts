@@ -14,6 +14,7 @@ export type ScannedRoutes = {
     'onboardings.show': { paramsTuple?: []; params?: {} }
     'onboardings.destroy': { paramsTuple?: []; params?: {} }
     'session.destroy': { paramsTuple?: []; params?: {} }
+    'media.show_season': { paramsTuple: [ParamValue,ParamValue,ParamValue]; params: {'category': ParamValue,'apiId': ParamValue,'seasonNumber': ParamValue} }
     'media.show': { paramsTuple: [ParamValue,ParamValue]; params: {'category': ParamValue,'apiId': ParamValue} }
     'languages.update': { paramsTuple?: []; params?: {} }
   }
@@ -23,6 +24,7 @@ export type ScannedRoutes = {
     'session.create': { paramsTuple?: []; params?: {} }
     'account_recovery.create': { paramsTuple?: []; params?: {} }
     'onboardings.show': { paramsTuple?: []; params?: {} }
+    'media.show_season': { paramsTuple: [ParamValue,ParamValue,ParamValue]; params: {'category': ParamValue,'apiId': ParamValue,'seasonNumber': ParamValue} }
     'media.show': { paramsTuple: [ParamValue,ParamValue]; params: {'category': ParamValue,'apiId': ParamValue} }
   }
   HEAD: {
@@ -31,6 +33,7 @@ export type ScannedRoutes = {
     'session.create': { paramsTuple?: []; params?: {} }
     'account_recovery.create': { paramsTuple?: []; params?: {} }
     'onboardings.show': { paramsTuple?: []; params?: {} }
+    'media.show_season': { paramsTuple: [ParamValue,ParamValue,ParamValue]; params: {'category': ParamValue,'apiId': ParamValue,'seasonNumber': ParamValue} }
     'media.show': { paramsTuple: [ParamValue,ParamValue]; params: {'category': ParamValue,'apiId': ParamValue} }
   }
   POST: {

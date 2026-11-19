@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { MediaCategory } from '#types/media'
 import { Link } from '@adonisjs/inertia/vue'
-import { computed } from 'vue'
+import { computed, defineProps } from 'vue'
 import RatingBox from '~/components/ui/RatingBox.vue'
 
 interface Props {
@@ -12,6 +12,7 @@ interface Props {
   releaseDate?: string
   episodeCount?: number
   rating?: number
+  href?: string
 }
 
 const {
@@ -22,7 +23,12 @@ const {
   releaseDate,
   episodeCount,
   rating,
+  href,
 } = defineProps<Props>()
+
+const linkProps = computed(() =>
+  href ? { href } : { route: 'media.show' as const, params: { category, apiId } }
+)
 
 // format into "2024 • 12 Eps", "2024", "12 Eps", or "TBA"
 const metaText = computed(() => {
@@ -46,8 +52,7 @@ const metaText = computed(() => {
   <div class="group flex flex-col">
     <!-- Poster Container -->
     <Link
-      route="media.show"
-      :params="{ category, apiId }"
+      v-bind="linkProps"
       class="relative aspect-2/3 w-full overflow-hidden rounded-xl bg-base-300"
       tabindex="-1"
     >
@@ -68,7 +73,7 @@ const metaText = computed(() => {
 
     <!-- Info Section -->
     <div class="mt-2 flex flex-col px-0.5">
-      <Link route="media.show" :params="{ category, apiId }" class="group-hover:text-primary">
+      <Link v-bind="linkProps" class="group-hover:text-primary">
         <h3 class="truncate text-sm font-semibold leading-tight text-base-content" :title="title">
           {{ title }}
         </h3>
